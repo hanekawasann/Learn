@@ -1,4 +1,4 @@
-package com.yukms;
+package com.yukms.learn.swagger;
 
 import static org.junit.Assert.assertTrue;
 

@@ -1,4 +1,4 @@
-package com.yukms.swagger.controller;
+package com.yukms.learn.swagger.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

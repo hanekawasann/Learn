@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="suite">
+
+    <test name="example1">
+
+        <parameter name="age" value="24"/>
+        <parameter name="job" value="学生"/>
+
+        <classes>
+            <class name="com.yukms.learn.testng.annotation.ParametersTest"/>
+        </classes>
+
+    </test>
+
+</suite>

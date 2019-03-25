@@ -1,13 +1,13 @@
-package com.yukms.swagger;
+package com.yukms.learn.testng;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SwaggerApplication {
+public class TestngApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SwaggerApplication.class, args);
+        SpringApplication.run(TestngApplication.class, args);
     }
 
 }
