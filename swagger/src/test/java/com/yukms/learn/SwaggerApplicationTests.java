@@ -1,4 +1,4 @@
-package com.yukms.learn.swagger;
+package com.yukms.learn;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

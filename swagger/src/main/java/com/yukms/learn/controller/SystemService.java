@@ -1,4 +1,4 @@
-package com.yukms.learn.swagger.controller;
+package com.yukms.learn.controller;
 
 import org.springframework.stereotype.Service;
 
