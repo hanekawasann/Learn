@@ -28,6 +28,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <!-- 这里的顺序没有影响 -->
         <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
@@ -76,15 +77,7 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <argLine>
-                            -javaagent:"${settings.localRepository}/org/jmockit/jmockit/1.36/jmockit-1.36.jar=coverage"
-                        </argLine>
-                        <!--<disableXmlReport>true</disableXmlReport>-->
-                        <!--<systemPropertyVariables>-->
-                        <!--<coverage-output>html</coverage-output>-->
-                        <!--<coverage-outputDir>${project.build.directory}/codecoverage-output</coverage-outputDir>-->
-                        <!--<coverage-metrics>all</coverage-metrics>-->
-                        <!--</systemPropertyVariables>-->
+                        <argLine>-javaagent:"${settings.localRepository}/org/jmockit/jmockit/1.36/jmockit-1.36.jar=coverage"</argLine>
                     </configuration>
                 </plugin>
             </plugins>

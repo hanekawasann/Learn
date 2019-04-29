@@ -13,7 +13,9 @@ public class ConstructorAndBlockMockingTest {
     public static class AnOrdinaryClassWithBlockMockUp extends MockUp<AnOrdinaryClassWithBlock> {
         /** 构造函数和初始代码块 */
         @Mock
-        public void $init(int i) { }
+        public void $init(int i) {
+            // TODO: 2019/4/29 怎么使用的？
+        }
 
         /** 静态代码块 */
         @Mock

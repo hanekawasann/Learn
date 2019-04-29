@@ -7,6 +7,7 @@ import java.util.List;
  * @author yukms 763803382@qq.com 2019/4/29 18:35
  */
 public class SayHello implements ISayHello {
+
     @Override
     public String sayHello(String who, int gender) {
         if (gender != FEMALE) {

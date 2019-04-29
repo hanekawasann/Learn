@@ -58,7 +58,7 @@ public class GenericMockUpTest {
 
     // 其实用@Capturing也是一样的效果
     @Test
-    public <T extends AnOrdinaryInterface> void sameEffect(@Capturing AnOrdinaryInterface instance) {
+    public /*<T extends AnOrdinaryInterface>*/ void sameEffect(@Capturing AnOrdinaryInterface instance) {
         new Expectations() {
             {
                 instance.method1();
@@ -86,7 +86,6 @@ public class GenericMockUpTest {
 
             @Override
             public int method2() {
-
                 return 2;
             }
         };

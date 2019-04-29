@@ -15,9 +15,9 @@ public class DeletgateResultTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testDelegate() {
+        SayHello instance = new SayHello();
         new Expectations(SayHello.class) {
             {
-                SayHello instance = new SayHello();
                 instance.sayHello(anyString, anyInt);
                 result = new Delegate() {
                     // 当调用sayHello(anyString, anyInt)时，返回的结果就会匹配delegate方法，
@@ -34,7 +34,6 @@ public class DeletgateResultTest {
             }
         };
 
-        SayHello instance = new SayHello();
         Assert.isTrue(instance.sayHello("david", ISayHello.MALE).equals("hello Mr david"));
         Assert.isTrue(instance.sayHello("lucy", ISayHello.FEMALE).equals("hello Mrs lucy"));
         Assert.isTrue(instance.sayHello("Polly", ISayHello.FEMALE).equals("hello,Polly"));

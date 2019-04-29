@@ -28,12 +28,12 @@ public class CapturingTest {
             }
         };
         Assert.assertTrue(privilegeManager1.isAllow(testUserId));
-        //Assert.assertTrue(privilegeManager2.isAllow(testUserId));
+        Assert.assertTrue(privilegeManager2.isAllow(testUserId));
     }
 
     @Test
     public void testWithoutCaputring() {
         Assert.assertTrue(!privilegeManager1.isAllow(testUserId));
-        //Assert.assertTrue(!privilegeManager2.isAllow(testUserId));
+        Assert.assertTrue(!privilegeManager2.isAllow(testUserId));
     }
 }

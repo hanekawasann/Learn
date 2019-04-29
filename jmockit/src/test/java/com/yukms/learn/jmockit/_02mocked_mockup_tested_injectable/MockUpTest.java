@@ -33,12 +33,11 @@ public class MockUpTest {
                 return 0;
             }
         };
-        Calendar cal = Calendar.getInstance(Locale.FRANCE);
-        Assert.assertEquals(2017, cal.get(Calendar.YEAR));
-        Assert.assertEquals(12, cal.get(Calendar.MONTH));
-        Assert.assertEquals(25, cal.get(Calendar.DAY_OF_MONTH));
-        Assert.assertEquals(7, cal.get(Calendar.HOUR_OF_DAY));
-        Assert.assertTrue((cal.getFirstDayOfWeek() == Calendar.MONDAY));
-
+        Calendar calendar = Calendar.getInstance(Locale.FRANCE);
+        Assert.assertEquals(2017, calendar.get(Calendar.YEAR));
+        Assert.assertEquals(12, calendar.get(Calendar.MONTH));
+        Assert.assertEquals(25, calendar.get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(7, calendar.get(Calendar.HOUR_OF_DAY));
+        Assert.assertTrue((calendar.getFirstDayOfWeek() == Calendar.MONDAY));
     }
 }

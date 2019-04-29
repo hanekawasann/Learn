@@ -34,7 +34,9 @@ public class MethodCostPerformanceTest {
         sayHello.sayHello("david", ISayHello.MALE);
         sayHello.sayHello("lucy", ISayHello.FEMALE);
         for (String methodName : costMap.keySet()) {
-            Assert.isTrue(costMap.get(methodName) < 20);
+            Long aLong = costMap.get(methodName);
+            System.out.println(methodName + ":" + aLong);
+            Assert.isTrue(aLong < 20);
         }
     }
 }

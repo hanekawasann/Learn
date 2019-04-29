@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class ClassMockingByMockUpTest {
     // AnOrdinaryClass的MockUp类，继承MockUp即可
-    public static class AnOrdinaryClassMockUp extends MockUp<AnOrdinaryClass> {
+    private static class AnOrdinaryClassMockUp extends MockUp<AnOrdinaryClass> {
         @Mock
         public static int staticMethod() {
             return 10;
@@ -47,7 +47,7 @@ public class ClassMockingByMockUpTest {
         Assert.assertEquals(20, instance.ordinaryMethod());
         Assert.assertEquals(30, instance.finalMethod());
         // native方法被mock了
-        //Assert.assertEquals(40, instance.navtiveMethod());
+        Assert.assertEquals(40, instance.navtiveMethod());
         // private方法被mock了
         Assert.assertEquals(50, instance.callPrivateMethod());
     }
