@@ -12,8 +12,7 @@
     <groupId>com.yukms.learn.jmockit</groupId>
     <artifactId>learn-jmockit</artifactId>
 
-    <name>learn-jmockit</name>
-    <!-- FIXME change it to the project's website -->
+    <name>jmockit</name>
     <url>http://www.example.com</url>
 
     <properties>
@@ -23,25 +22,71 @@
     </properties>
 
     <dependencies>
-        <!-- 先声明jmockit的依赖 -->
-        <dependency>
-            <groupId>org.jmockit</groupId>
-            <artifactId>jmockit</artifactId>
-            <version>1.36</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- 再声明junit的依赖 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>1.46</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>9.0.16</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.1.6.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.6.2.Final</version>
+        </dependency>
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>
+                            -javaagent:"${settings.localRepository}/org/jmockit/jmockit/1.36/jmockit-1.36.jar=coverage"
+                        </argLine>
+                        <!--<disableXmlReport>true</disableXmlReport>-->
+                        <!--<systemPropertyVariables>-->
+                        <!--<coverage-output>html</coverage-output>-->
+                        <!--<coverage-outputDir>${project.build.directory}/codecoverage-output</coverage-outputDir>-->
+                        <!--<coverage-metrics>all</coverage-metrics>-->
+                        <!--</systemPropertyVariables>-->
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
