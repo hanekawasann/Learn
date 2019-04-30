@@ -1,6 +1,8 @@
 package com.yukms.learn.jmockit._05verifications;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import mockit.Expectations;
 import mockit.Verifications;
@@ -29,12 +31,12 @@ public class VerificationTest {
             {
                 Calendar.getInstance();
                 times = 1;
-                calendar.get(anyInt);
-                times = 2;
-                //calendar.get(Calendar.YEAR);
-                //times = 1;
-                //calendar.get(Calendar.HOUR_OF_DAY);
-                //times = 1;
+                calendar.get(Calendar.YEAR);
+                times = 1;
+                calendar.get(Calendar.HOUR_OF_DAY);
+                times = 1;
+                //calendar.get(anyInt);
+                //times = 2;
             }
         };
 

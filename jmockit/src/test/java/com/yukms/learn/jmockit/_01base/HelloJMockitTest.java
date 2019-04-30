@@ -5,6 +5,7 @@ import java.util.Locale;
 import com.yukms.learn.jmockit.HelloJMockit;
 import mockit.Expectations;
 import mockit.Verifications;
+import mockit.VerificationsInOrder;
 import org.junit.Assert;
 import org.junit.Test;
 
