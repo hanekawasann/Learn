@@ -22,6 +22,9 @@ public class JavaVMStackOOM {
         }
     }
 
+    /**
+     * 别运行会卡死
+     */
     public static void main(String[] args) {
         JavaVMStackOOM oom = new JavaVMStackOOM();
         oom.stackLeakByThread();
