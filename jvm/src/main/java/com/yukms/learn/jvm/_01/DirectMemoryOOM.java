@@ -6,6 +6,10 @@ import sun.misc.Unsafe;
 
 /**
  * VM Args: -Xmx20M -XX:MaxDirectMemorySize=10M
+ * <p>
+ * Exception in thread "main" java.lang.OutOfMemoryError
+ * at sun.misc.Unsafe.allocateMemory(Native Method)
+ * at com.yukms.learn.jvm._01.DirectMemoryOOM.main(DirectMemoryOOM.java:21)
  *
  * @author yukms 763803382@qq.com 2019/5/12.
  */

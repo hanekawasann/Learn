@@ -3,6 +3,8 @@ package com.yukms.learn.jvm._01;
 /**
  * VM Args: -Xss2M
  *
+ * java.lang.OutOfMemoryError: unable to create new native thread
+ *
  * @author yukms 763803382@qq.com 2019/5/6 18:52
  */
 public class JavaVMStackOOM {
