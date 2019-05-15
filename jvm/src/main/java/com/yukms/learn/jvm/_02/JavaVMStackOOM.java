@@ -1,4 +1,4 @@
-package com.yukms.learn.jvm._01;
+package com.yukms.learn.jvm._02;
 
 /**
  * VM Args: -Xss2M

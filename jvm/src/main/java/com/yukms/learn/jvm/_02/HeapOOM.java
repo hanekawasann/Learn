@@ -1,4 +1,4 @@
-package com.yukms.learn.jvm._01;
+package com.yukms.learn.jvm._02;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:239)
  * at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:231)
  * at java.util.ArrayList.add(ArrayList.java:462)
- * at com.yukms.learn.jvm._01.HeapOOM.main(HeapOOM.java:18)
+ * at com.yukms.learn.jvm._02.HeapOOM.main(HeapOOM.java:18)
  *
  * @author yukms 763803382@qq.com 2019/5/6 17:51
  */

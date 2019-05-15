@@ -1,4 +1,4 @@
-package com.yukms.learn.jvm._01;
+package com.yukms.learn.jvm._02;
 
 import java.lang.reflect.Field;
 
@@ -9,7 +9,7 @@ import sun.misc.Unsafe;
  * <p>
  * Exception in thread "main" java.lang.OutOfMemoryError
  * at sun.misc.Unsafe.allocateMemory(Native Method)
- * at com.yukms.learn.jvm._01.DirectMemoryOOM.main(DirectMemoryOOM.java:21)
+ * at com.yukms.learn.jvm._02.DirectMemoryOOM.main(DirectMemoryOOM.java:21)
  *
  * @author yukms 763803382@qq.com 2019/5/12.
  */
