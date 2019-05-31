@@ -2,6 +2,8 @@ package com.yukms.learn.jvm._02;
 
 import java.lang.reflect.Field;
 
+import static com.yukms.learn.jvm.JvmConstants._1MB;
+import com.yukms.learn.jvm.JvmConstants;
 import sun.misc.Unsafe;
 
 /**
@@ -14,8 +16,6 @@ import sun.misc.Unsafe;
  * @author yukms 763803382@qq.com 2019/5/12.
  */
 public class DirectMemoryOOM {
-
-    private static final int _1MB = 1024 * 1024;
 
     public static void main(String[] args) throws IllegalAccessException {
         Field unsafeField = Unsafe.class.getDeclaredFields()[0];
