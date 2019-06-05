@@ -15,7 +15,7 @@ import org.junit.Test;
 public class HelloJMockitTest {
     @Test
     public void testSayHelloAtChina() {
-        new Expectations(/*Locale.class*/) {
+        new Expectations(Locale.class) {
             {
                 Locale.getDefault();
                 result = Locale.CHINA;
