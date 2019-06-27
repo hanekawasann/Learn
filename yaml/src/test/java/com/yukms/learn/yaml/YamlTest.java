@@ -54,7 +54,7 @@ public class YamlTest {
         Teacher read_0 = (Teacher) read.get(0);
         Assert.assertEquals("teacher", read_0.getName());
         Assert.assertEquals(18, read_0.getAge());
-        Student read_1 = (Student)read.get(1);
+        Student read_1 = (Student) read.get(1);
         Assert.assertEquals("student", read_1.getName());
         Assert.assertEquals(18, read_1.getAge());
         Assert.assertEquals("teacher", read_1.getTeacherName());
