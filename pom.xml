@@ -13,6 +13,7 @@
         <module>swagger</module>
         <module>jmockit</module>
         <module>jvm</module>
+        <module>yaml</module>
     </modules>
 
     <name>learn</name>
