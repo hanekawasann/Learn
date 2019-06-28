@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import org.junit.Assert;
@@ -33,17 +35,7 @@ public class YamlTest {
 
     @Test
     public void test_02() throws IOException {
-        Teacher teacher = new Teacher();
-        teacher.setName("teacher");
-        teacher.setAge(18);
-        Student student = new Student();
-        student.setName("student");
-        student.setAge(18);
-        student.setTeacherName("teacher");
-
-        List<People> people = new ArrayList<>();
-        people.add(teacher);
-        people.add(student);
+        List<People> people = getSubclassesOfPeople();
         YamlWriter writer = new YamlWriter(new FileWriter("src/test/resource/yamlFile02.yaml"));
         writer.write(people);
         writer.close();
@@ -58,6 +50,21 @@ public class YamlTest {
         Assert.assertEquals("student", read_1.getName());
         Assert.assertEquals(18, read_1.getAge());
         Assert.assertEquals("teacher", read_1.getTeacherName());
+    }
+
+    private List<People> getSubclassesOfPeople() {
+        Teacher teacher = new Teacher();
+        teacher.setName("teacher");
+        teacher.setAge(18);
+        Student student = new Student();
+        student.setName("student");
+        student.setAge(18);
+        student.setTeacherName("teacher");
+
+        List<People> people = new ArrayList<>();
+        people.add(teacher);
+        people.add(student);
+        return people;
     }
 
     @Test
@@ -81,5 +88,14 @@ public class YamlTest {
         Assert.assertEquals(18, read_0.getAge());
         People read_1 = read.get(1);
         Assert.assertSame(read_0, read_1);
+    }
+
+    @Test
+    public void test_json() {
+        List<People> people = getSubclassesOfPeople();
+        List<People> array = JSON.parseArray(JSON.toJSONString(people), People.class);
+        Assert.assertTrue(array.get(0) instanceof People);
+        Assert.assertTrue(array.get(1) instanceof People);
+        JSONArray jsonArray = JSON.parseArray(JSON.toJSONString(people));
     }
 }
