@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * @author hudingpeng hudingpeng@souche.com 2019/6/27 18:24
+ * @author yukms 763803382@qq.com 2019/6/27 18:24
  */
 @Data
 public class People {

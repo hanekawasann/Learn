@@ -14,7 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author hudingpeng hudingpeng@souche.com 2019/6/27 18:25
+ * @author yukms 763803382@qq.com 2019/6/27 18:25
  */
 public class YamlTest {
     @Test
