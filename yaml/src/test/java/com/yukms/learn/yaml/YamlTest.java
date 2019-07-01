@@ -46,7 +46,6 @@ public class YamlTest {
         writer.close();
 
         YamlReader reader = new YamlReader(new FileReader("src/test/resource/yamlFile01.yaml"), CONFIG);
-        //People read = reader.read(People.class);
         People read = (People) reader.read();
         Assert.assertEquals("yukms", read.getName());
         Assert.assertEquals(18, read.getAge());
