@@ -3,7 +3,7 @@ package com.yukms.learn.yaml;
 import lombok.Data;
 
 /**
- * @author hudingpeng hudingpeng@souche.com 2019/7/1 14:01
+ * @author yukms 763803382@qq.com 2019/7/1 14:01
  */
 @Data
 public class ClassObject {
