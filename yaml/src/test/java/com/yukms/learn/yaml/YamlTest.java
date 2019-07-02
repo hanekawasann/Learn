@@ -9,6 +9,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.esotericsoftware.yamlbeans.YamlConfig;
+import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import org.junit.Assert;
@@ -118,6 +119,21 @@ public class YamlTest {
         YamlReader reader = new YamlReader(new FileReader("src/test/resource/yamlFile04.yaml"), CONFIG);
         NullObject read = reader.read(NullObject.class);
         Assert.assertNull(read.getObject());
+    }
+
+    @Test(expected = YamlException.class)
+    public void test_exception() throws IOException {
+        YamlWriter writer = new YamlWriter(new FileWriter("src/test/resource/yamlFile05.yaml"));
+        writer.write(new RuntimeException("exception"));
+        writer.close();
+    }
+
+    @Test
+    public void test_noGetterObject() throws IOException {
+        NoGetterObject object = new NoGetterObject("NoGetterObject");
+        YamlWriter writer = new YamlWriter(new FileWriter("src/test/resource/yamlFile06.yaml"));
+        writer.write(object);
+        writer.close();
     }
 
     @Test
