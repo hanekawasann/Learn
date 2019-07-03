@@ -1,0 +1,11 @@
+[
+	{
+		"age":18,
+		"name":"teacher"
+	},
+	{
+		"age":18,
+		"name":"student",
+		"teacherName":"teacher"
+	}
+]

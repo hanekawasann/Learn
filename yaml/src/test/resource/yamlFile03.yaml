@@ -1,4 +1,0 @@
-- &1 !com.yukms.learn.yaml.Teacher
-  name: teacher
-  age: 18
-- *1

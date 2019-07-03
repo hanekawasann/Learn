@@ -1,0 +1,4 @@
+- &1 !com.yukms.learn.serialization.Teacher
+   name: teacher
+   age: 18
+- *1
