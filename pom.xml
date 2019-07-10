@@ -14,6 +14,7 @@
         <module>jmockit</module>
         <module>jvm</module>
         <module>serialization</module>
+        <module>logback</module>
     </modules>
 
     <name>learn</name>
@@ -24,4 +25,21 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.20</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.56</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
