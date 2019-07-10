@@ -22,16 +22,16 @@ public class YamlTest extends BaseTest {
     static {
         YamlConfig.WriteConfig writeConfig = CONFIG.writeConfig;
         //保存默认字段（无法保存null）
-        //writeConfig.setWriteDefaultValues(true);
+        writeConfig.setWriteDefaultValues(true);
         // 文件字段顺序与字段定义顺序相同
         writeConfig.setKeepBeanPropertyOrder(true);
-        //// 格式化输出
-        //writeConfig.setCanonical(true);
-        //// 不换行
+        // 格式化输出
+        writeConfig.setCanonical(true);
+        // 不换行
         writeConfig.setWrapColumn(Integer.MAX_VALUE);
-        //// 中文不转义
+        // 中文不转义
         writeConfig.setEscapeUnicode(false);
-        //// 总是输出类名
+        // 总是输出类名
         writeConfig.setWriteClassname(YamlConfig.WriteClassName.ALWAYS);
     }
 
@@ -94,12 +94,13 @@ public class YamlTest extends BaseTest {
 
     @Test
     public void test_null_field() throws IOException {
+        String path = "src/test/resource/yaml/nullField.yaml";
         NullObject object = new NullObject();
-        YamlWriter writer = new YamlWriter(new FileWriter("src/test/resource/yaml/nullField.yaml"), CONFIG);
+        YamlWriter writer = new YamlWriter(new FileWriter(path), CONFIG);
         writer.write(object);
         writer.close();
 
-        YamlReader reader = new YamlReader(new FileReader("src/test/resource/yaml/nullField.yaml"), CONFIG);
+        YamlReader reader = new YamlReader(new FileReader(path), CONFIG);
         NullObject read = reader.read(NullObject.class);
         Assert.assertNull(read.getObject());
     }
