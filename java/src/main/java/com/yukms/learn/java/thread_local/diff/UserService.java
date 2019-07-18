@@ -1,4 +1,4 @@
-package com.yukms.learn.java.thread_local;
+package com.yukms.learn.java.thread_local.diff;
 
 import lombok.Data;
 

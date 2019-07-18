@@ -1,4 +1,4 @@
-package com.yukms.learn.java.thread_local;
+package com.yukms.learn.java.thread_local.diff;
 
 /**
  * @author hudingpeng hudingpeng@souche.com 2019/7/18 9:57
