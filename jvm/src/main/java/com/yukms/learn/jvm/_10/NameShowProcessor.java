@@ -16,7 +16,7 @@ import com.google.auto.service.AutoService;
 
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@AutoService(Processor.class)
+//@AutoService(Processor.class)
 public class NameShowProcessor extends AbstractProcessor {
     private NameShower nameShower;
 
