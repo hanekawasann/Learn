@@ -17,6 +17,7 @@
         <module>logback</module>
         <module>java</module>
         <module>freemarker</module>
+        <module>sourcecode</module>
     </modules>
 
     <name>learn</name>
