@@ -50,13 +50,15 @@ package java.awt;
  * alt="Shows three checkboxes, arranged vertically, labeled one, two, and three. Checkbox one is in the on state."
  * ALIGN=center HSPACE=10 VSPACE=7>
  * <p>
- * @author      Sami Shaio
- * @see         java.awt.Checkbox
- * @since       JDK1.0
+ *
+ * @author Sami Shaio
+ * @see java.awt.Checkbox
+ * @since JDK1.0
  */
 public class CheckboxGroup implements java.io.Serializable {
     /**
      * The current choice.
+     *
      * @serial
      * @see #getCurrent()
      * @see #setCurrent(Checkbox)
@@ -80,11 +82,12 @@ public class CheckboxGroup implements java.io.Serializable {
      * group that is currently in the "on" state,
      * or <code>null</code> if all check boxes in the
      * group are off.
-     * @return   the check box that is currently in the
-     *                 "on" state, or <code>null</code>.
-     * @see      java.awt.Checkbox
-     * @see      java.awt.CheckboxGroup#setSelectedCheckbox
-     * @since    JDK1.1
+     *
+     * @return the check box that is currently in the
+     * "on" state, or <code>null</code>.
+     * @see java.awt.Checkbox
+     * @see java.awt.CheckboxGroup#setSelectedCheckbox
+     * @since JDK1.1
      */
     public Checkbox getSelectedCheckbox() {
         return getCurrent();
@@ -109,11 +112,12 @@ public class CheckboxGroup implements java.io.Serializable {
      * in this check box group are deselected. If the check box argument
      * belongs to a different check box group, this method does
      * nothing.
-     * @param     box   the <code>Checkbox</code> to set as the
-     *                      current selection.
-     * @see      java.awt.Checkbox
-     * @see      java.awt.CheckboxGroup#getSelectedCheckbox
-     * @since    JDK1.1
+     *
+     * @param box the <code>Checkbox</code> to set as the
+     *            current selection.
+     * @see java.awt.Checkbox
+     * @see java.awt.CheckboxGroup#getSelectedCheckbox
+     * @since JDK1.1
      */
     public void setSelectedCheckbox(Checkbox box) {
         setCurrent(box);
@@ -141,7 +145,8 @@ public class CheckboxGroup implements java.io.Serializable {
     /**
      * Returns a string representation of this check box group,
      * including the value of its current selection.
-     * @return    a string representation of this check box group.
+     *
+     * @return a string representation of this check box group.
      */
     public String toString() {
         return getClass().getName() + "[selectedCheckbox=" + selectedCheckbox + "]";

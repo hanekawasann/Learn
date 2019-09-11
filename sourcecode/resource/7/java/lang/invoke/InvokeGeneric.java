@@ -26,11 +26,13 @@
 package java.lang.invoke;
 
 import sun.invoke.util.*;
+
 import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
 
 /**
  * Adapters which manage inexact MethodHandle.invoke calls.
  * The JVM calls one of these when the exact type match fails.
+ *
  * @author jrose
  */
 class InvokeGeneric {
@@ -39,16 +41,17 @@ class InvokeGeneric {
     // an invoker of type (MT, MH; A...) -> R
     private final MethodHandle initialInvoker;
 
-    /** Compute and cache information for this adapter, so that it can
-     *  call out to targets of the erasure-family of the given erased type.
+    /**
+     * Compute and cache information for this adapter, so that it can
+     * call out to targets of the erasure-family of the given erased type.
      */
     /*non-public*/ InvokeGeneric(MethodType erasedCallerType) throws ReflectiveOperationException {
-        assert(erasedCallerType.equals(erasedCallerType.erase()));
+        assert (erasedCallerType.equals(erasedCallerType.erase()));
         this.erasedCallerType = erasedCallerType;
         this.initialInvoker = makeInitialInvoker();
-        assert initialInvoker.type().equals(erasedCallerType
-                                            .insertParameterTypes(0, MethodType.class, MethodHandle.class))
-            : initialInvoker.type();
+        assert initialInvoker.type()
+            .equals(erasedCallerType.insertParameterTypes(0, MethodType.class, MethodHandle.class)) : initialInvoker
+            .type();
     }
 
     private static MethodHandles.Lookup lookup() {
@@ -56,7 +59,8 @@ class InvokeGeneric {
     }
 
     /** Return the adapter information for this type's erasure. */
-    /*non-public*/ static MethodHandle generalInvokerOf(MethodType erasedCallerType) throws ReflectiveOperationException {
+    /*non-public*/
+    static MethodHandle generalInvokerOf(MethodType erasedCallerType) throws ReflectiveOperationException {
         InvokeGeneric gen = new InvokeGeneric(erasedCallerType);
         return gen.initialInvoker;
     }
@@ -66,8 +70,7 @@ class InvokeGeneric {
         MethodHandle postDispatch = makePostDispatchInvoker();
         MethodHandle invoker;
         if (returnConversionPossible()) {
-            invoker = MethodHandles.foldArguments(postDispatch,
-                                                  dispatcher("dispatchWithConversion"));
+            invoker = MethodHandles.foldArguments(postDispatch, dispatcher("dispatchWithConversion"));
         } else {
             invoker = MethodHandles.foldArguments(postDispatch, dispatcher("dispatch"));
         }
@@ -75,27 +78,29 @@ class InvokeGeneric {
     }
 
     private static final Class<?>[] EXTRA_ARGS = { MethodType.class, MethodHandle.class };
+
     private MethodHandle makePostDispatchInvoker() {
         // Take (MH'; MT, MH; A...) and run MH'(MT, MH; A...).
         MethodType invokerType = erasedCallerType.insertParameterTypes(0, EXTRA_ARGS);
         return invokerType.invokers().exactInvoker();
     }
+
     private MethodHandle dropDispatchArguments(MethodHandle targetInvoker) {
-        assert(targetInvoker.type().parameterType(0) == MethodHandle.class);
+        assert (targetInvoker.type().parameterType(0) == MethodHandle.class);
         return MethodHandles.dropArguments(targetInvoker, 1, EXTRA_ARGS);
     }
 
     private MethodHandle dispatcher(String dispatchName) throws ReflectiveOperationException {
-        return lookup().bind(this, dispatchName,
-                             MethodType.methodType(MethodHandle.class,
-                                                   MethodType.class, MethodHandle.class));
+        return lookup()
+            .bind(this, dispatchName, MethodType.methodType(MethodHandle.class, MethodType.class, MethodHandle.class));
     }
 
     static final boolean USE_AS_TYPE_PATH = true;
 
-    /** Return a method handle to invoke on the callerType, target, and remaining arguments.
-     *  The method handle must finish the call.
-     *  This is the first look at the caller type and target.
+    /**
+     * Return a method handle to invoke on the callerType, target, and remaining arguments.
+     * The method handle must finish the call.
+     * This is the first look at the caller type and target.
      */
     private MethodHandle dispatch(MethodType callerType, MethodHandle target) {
         MethodType targetType = target.type();
@@ -105,8 +110,7 @@ class InvokeGeneric {
             Invokers invokers = targetType.invokers();
             MethodHandle invoker = invokers.erasedInvokerWithDrops;
             if (invoker == null) {
-                invokers.erasedInvokerWithDrops = invoker =
-                    dropDispatchArguments(invokers.erasedInvoker());
+                invokers.erasedInvokerWithDrops = invoker = dropDispatchArguments(invokers.erasedInvoker());
             }
             return invoker.bindTo(newTarget);
         }
@@ -115,8 +119,9 @@ class InvokeGeneric {
 
     private MethodHandle dispatchWithConversion(MethodType callerType, MethodHandle target) {
         MethodHandle finisher = dispatch(callerType, target);
-        if (returnConversionNeeded(callerType, target))
+        if (returnConversionNeeded(callerType, target)) {
             finisher = addReturnConversion(finisher, callerType.returnType());  //FIXME: slow
+        }
         return finisher;
     }
 
@@ -124,15 +129,17 @@ class InvokeGeneric {
         Class<?> needType = erasedCallerType.returnType();
         return !needType.isPrimitive();
     }
+
     private boolean returnConversionNeeded(MethodType callerType, MethodHandle target) {
         Class<?> needType = callerType.returnType();
-        if (needType == erasedCallerType.returnType())
+        if (needType == erasedCallerType.returnType()) {
             return false;  // no conversions possible, since must be primitive or Object
+        }
         Class<?> haveType = target.type().returnType();
-        if (VerifyType.isNullConversion(haveType, needType) && !needType.isInterface())
-            return false;
+        if (VerifyType.isNullConversion(haveType, needType) && !needType.isInterface()) { return false; }
         return true;
     }
+
     private MethodHandle addReturnConversion(MethodHandle finisher, Class<?> type) {
         // FIXME: This is slow because it creates a closure node on every call that requires a return cast.
         MethodType finisherType = finisher.type();
@@ -143,6 +150,6 @@ class InvokeGeneric {
     }
 
     public String toString() {
-        return "InvokeGeneric"+erasedCallerType;
+        return "InvokeGeneric" + erasedCallerType;
     }
 }

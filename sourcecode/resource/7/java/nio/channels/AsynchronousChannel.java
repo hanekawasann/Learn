@@ -37,7 +37,7 @@ import java.util.concurrent.Future;  // javadoc
  * <li><pre>void <em>operation</em>(<em>...</em> A attachment, {@link
  *   CompletionHandler}&lt;V,? super A&gt; handler)</pre></li>
  * </ol>
- *
+ * <p>
  * where <i>operation</i> is the name of the I/O operation (read or write for
  * example), <i>V</i> is the result type of the I/O operation, and <i>A</i> is
  * the type of an object attached to the I/O operation to provide context when
@@ -91,13 +91,11 @@ import java.util.concurrent.Future;  // javadoc
  * operations then it is recommended that all buffers used in the I/O operations
  * be discarded or care taken to ensure that the buffers are not accessed while
  * the channel remains open.
- *
+ * <p>
  *  @since 1.7
  */
 
-public interface AsynchronousChannel
-    extends Channel
-{
+public interface AsynchronousChannel extends Channel {
     /**
      * Closes this channel.
      *
@@ -109,8 +107,7 @@ public interface AsynchronousChannel
      * <p>  This method otherwise behaves exactly as specified by the {@link
      * Channel} interface.
      *
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     @Override
     void close() throws IOException;

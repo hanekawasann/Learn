@@ -35,9 +35,9 @@ import java.util.EventListener;
  * the membership of the BeanContext changes.
  * </p>
  *
- * @author      Laurence P. G. Cable
- * @since       1.2
- * @see         java.beans.beancontext.BeanContext
+ * @author Laurence P. G. Cable
+ * @see java.beans.beancontext.BeanContext
+ * @since 1.2
  */
 
 public interface BeanContextMembershipListener extends EventListener {
@@ -45,8 +45,9 @@ public interface BeanContextMembershipListener extends EventListener {
     /**
      * Called when a child or list of children is added to a
      * <code>BeanContext</code> that this listener is registered with.
+     *
      * @param bcme The <code>BeanContextMembershipEvent</code>
-     * describing the change that occurred.
+     *             describing the change that occurred.
      */
     void childrenAdded(BeanContextMembershipEvent bcme);
 
@@ -54,8 +55,9 @@ public interface BeanContextMembershipListener extends EventListener {
      * Called when a child or list of children is removed
      * from a <code>BeanContext</code> that this listener
      * is registered with.
+     *
      * @param bcme The <code>BeanContextMembershipEvent</code>
-     * describing the change that occurred.
+     *             describing the change that occurred.
      */
     void childrenRemoved(BeanContextMembershipEvent bcme);
 }

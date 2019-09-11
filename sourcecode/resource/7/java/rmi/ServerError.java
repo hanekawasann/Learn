@@ -30,12 +30,12 @@ package java.rmi;
  * invocation when an <code>Error</code> is thrown while processing
  * the invocation on the server, either while unmarshalling the arguments,
  * executing the remote method itself, or marshalling the return value.
- *
+ * <p>
  * A <code>ServerError</code> instance contains the original
  * <code>Error</code> that occurred as its cause.
  *
- * @author  Ann Wollrath
- * @since   JDK1.1
+ * @author Ann Wollrath
+ * @since JDK1.1
  */
 public class ServerError extends RemoteException {
 
@@ -46,7 +46,7 @@ public class ServerError extends RemoteException {
      * Constructs a <code>ServerError</code> with the specified
      * detail message and nested error.
      *
-     * @param s the detail message
+     * @param s   the detail message
      * @param err the nested error
      * @since JDK1.1
      */

@@ -61,12 +61,10 @@ import java.util.Iterator;
  * class loader that was initially queried to locate the configuration file;
  * this is not necessarily the class loader that loaded the file. </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
- * @since 1.4
- *
  * @see java.nio.charset.Charset
+ * @since 1.4
  */
 
 public abstract class CharsetProvider {
@@ -74,14 +72,12 @@ public abstract class CharsetProvider {
     /**
      * Initializes a new charset provider. </p>
      *
-     * @throws  SecurityException
-     *          If a security manager has been installed and it denies
-     *          {@link RuntimePermission}<tt>("charsetProvider")</tt>
+     * @throws SecurityException If a security manager has been installed and it denies
+     *                           {@link RuntimePermission}<tt>("charsetProvider")</tt>
      */
     protected CharsetProvider() {
         SecurityManager sm = System.getSecurityManager();
-        if (sm != null)
-            sm.checkPermission(new RuntimePermission("charsetProvider"));
+        if (sm != null) { sm.checkPermission(new RuntimePermission("charsetProvider")); }
     }
 
     /**
@@ -90,20 +86,18 @@ public abstract class CharsetProvider {
      * java.nio.charset.Charset#availableCharsets Charset.availableCharsets}
      * method. </p>
      *
-     * @return  The new iterator
+     * @return The new iterator
      */
     public abstract Iterator<Charset> charsets();
 
     /**
      * Retrieves a charset for the given charset name. </p>
      *
-     * @param  charsetName
-     *         The name of the requested charset; may be either
-     *         a canonical name or an alias
-     *
-     * @return  A charset object for the named charset,
-     *          or <tt>null</tt> if the named charset
-     *          is not supported by this provider
+     * @param charsetName The name of the requested charset; may be either
+     *                    a canonical name or an alias
+     * @return A charset object for the named charset,
+     * or <tt>null</tt> if the named charset
+     * is not supported by this provider
      */
     public abstract Charset charsetForName(String charsetName);
 

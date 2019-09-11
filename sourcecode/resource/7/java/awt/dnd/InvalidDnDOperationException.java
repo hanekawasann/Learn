@@ -36,7 +36,8 @@ package java.awt.dnd;
 
 public class InvalidDnDOperationException extends IllegalStateException {
 
-    static private String dft_msg = "The operation requested cannot be performed by the DnD system since it is not in the appropriate state";
+    static private String dft_msg
+        = "The operation requested cannot be performed by the DnD system since it is not in the appropriate state";
 
     /**
      * Create a default Exception
@@ -46,7 +47,8 @@ public class InvalidDnDOperationException extends IllegalStateException {
 
     /**
      * Create an Exception with its own descriptive message
-     * <P>
+     * <p>
+     *
      * @param msg the detail message
      */
 

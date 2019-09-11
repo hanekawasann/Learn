@@ -34,6 +34,7 @@
  **********************************************************************/
 
 package java.awt.image.renderable;
+
 import java.util.*;
 import java.awt.geom.*;
 import java.awt.*;
@@ -63,7 +64,7 @@ public class RenderContext implements Cloneable {
     /** Table of hints. May be null. */
     RenderingHints hints;
 
-    /** Transform to convert user coordinates to device coordinates.  */
+    /** Transform to convert user coordinates to device coordinates. */
     AffineTransform usr2dev;
 
     /** The area of interest.  May be null. */
@@ -79,15 +80,13 @@ public class RenderContext implements Cloneable {
      * and the rendering hints are supplied as a RenderingHints object.
      *
      * @param usr2dev an AffineTransform.
-     * @param aoi a Shape representing the area of interest.
-     * @param hints a RenderingHints object containing rendering hints.
+     * @param aoi     a Shape representing the area of interest.
+     * @param hints   a RenderingHints object containing rendering hints.
      */
-    public RenderContext(AffineTransform usr2dev,
-                         Shape aoi,
-                         RenderingHints hints) {
+    public RenderContext(AffineTransform usr2dev, Shape aoi, RenderingHints hints) {
         this.hints = hints;
         this.aoi = aoi;
-        this.usr2dev = (AffineTransform)usr2dev.clone();
+        this.usr2dev = (AffineTransform) usr2dev.clone();
     }
 
     /**
@@ -106,7 +105,7 @@ public class RenderContext implements Cloneable {
      * The area of interest is taken to be the entire renderable area.
      *
      * @param usr2dev an AffineTransform.
-     * @param hints a RenderingHints object containing rendering hints.
+     * @param hints   a RenderingHints object containing rendering hints.
      */
     public RenderContext(AffineTransform usr2dev, RenderingHints hints) {
         this(usr2dev, null, hints);
@@ -118,7 +117,7 @@ public class RenderContext implements Cloneable {
      * No rendering hints are used.
      *
      * @param usr2dev an AffineTransform.
-     * @param aoi a Shape representing the area of interest.
+     * @param aoi     a Shape representing the area of interest.
      */
     public RenderContext(AffineTransform usr2dev, Shape aoi) {
         this(usr2dev, aoi, null);
@@ -126,6 +125,7 @@ public class RenderContext implements Cloneable {
 
     /**
      * Gets the rendering hints of this <code>RenderContext</code>.
+     *
      * @return a <code>RenderingHints</code> object that represents
      * the rendering hints of this <code>RenderContext</code>.
      * @see #setRenderingHints(RenderingHints)
@@ -136,8 +136,9 @@ public class RenderContext implements Cloneable {
 
     /**
      * Sets the rendering hints of this <code>RenderContext</code>.
+     *
      * @param hints a <code>RenderingHints</code> object that represents
-     * the rendering hints to assign to this <code>RenderContext</code>.
+     *              the rendering hints to assign to this <code>RenderContext</code>.
      * @see #getRenderingHints
      */
     public void setRenderingHints(RenderingHints hints) {
@@ -152,7 +153,7 @@ public class RenderContext implements Cloneable {
      * @see #getTransform
      */
     public void setTransform(AffineTransform newTransform) {
-        usr2dev = (AffineTransform)newTransform.clone();
+        usr2dev = (AffineTransform) newTransform.clone();
     }
 
     /**
@@ -163,7 +164,7 @@ public class RenderContext implements Cloneable {
      * </pre>
      *
      * @param modTransform the AffineTransform to prepend to the
-     *        current usr2dev transform.
+     *                     current usr2dev transform.
      * @since 1.3
      */
     public void preConcatenateTransform(AffineTransform modTransform) {
@@ -181,9 +182,9 @@ public class RenderContext implements Cloneable {
      * which misspelled the method name.
      *
      * @param modTransform the AffineTransform to prepend to the
-     *        current usr2dev transform.
-     * @deprecated     replaced by
-     *                 <code>preConcatenateTransform(AffineTransform)</code>.
+     *                     current usr2dev transform.
+     * @deprecated replaced by
+     * <code>preConcatenateTransform(AffineTransform)</code>.
      */
     @Deprecated
     public void preConcetenateTransform(AffineTransform modTransform) {
@@ -198,7 +199,7 @@ public class RenderContext implements Cloneable {
      * </pre>
      *
      * @param modTransform the AffineTransform to append to the
-     *        current usr2dev transform.
+     *                     current usr2dev transform.
      * @since 1.3
      */
     public void concatenateTransform(AffineTransform modTransform) {
@@ -216,9 +217,9 @@ public class RenderContext implements Cloneable {
      * which misspelled the method name.
      *
      * @param modTransform the AffineTransform to append to the
-     *        current usr2dev transform.
-     * @deprecated     replaced by
-     *                 <code>concatenateTransform(AffineTransform)</code>.
+     *                     current usr2dev transform.
+     * @deprecated replaced by
+     * <code>concatenateTransform(AffineTransform)</code>.
      */
     @Deprecated
     public void concetenateTransform(AffineTransform modTransform) {
@@ -232,7 +233,7 @@ public class RenderContext implements Cloneable {
      * @see #setTransform(AffineTransform)
      */
     public AffineTransform getTransform() {
-        return (AffineTransform)usr2dev.clone();
+        return (AffineTransform) usr2dev.clone();
     }
 
     /**
@@ -250,7 +251,7 @@ public class RenderContext implements Cloneable {
      * RenderContext.
      *
      * @return a reference to the area of interest of the RenderContext,
-     *         or null if none is specified.
+     * or null if none is specified.
      * @see #setAreaOfInterest(Shape)
      */
     public Shape getAreaOfInterest() {
@@ -265,8 +266,7 @@ public class RenderContext implements Cloneable {
      * @return the new cloned RenderContext.
      */
     public Object clone() {
-        RenderContext newRenderContext = new RenderContext(usr2dev,
-                                                           aoi, hints);
+        RenderContext newRenderContext = new RenderContext(usr2dev, aoi, hints);
         return newRenderContext;
     }
 }

@@ -34,7 +34,9 @@
  */
 
 package java.util.concurrent.locks;
+
 import java.util.concurrent.*;
+
 import sun.misc.Unsafe;
 
 
@@ -126,8 +128,7 @@ public class LockSupport {
 
     static {
         try {
-            parkBlockerOffset = unsafe.objectFieldOffset
-                (java.lang.Thread.class.getDeclaredField("parkBlocker"));
+            parkBlockerOffset = unsafe.objectFieldOffset(java.lang.Thread.class.getDeclaredField("parkBlocker"));
         } catch (Exception ex) { throw new Error(ex); }
     }
 
@@ -145,11 +146,10 @@ public class LockSupport {
      * thread has not been started.
      *
      * @param thread the thread to unpark, or {@code null}, in which case
-     *        this operation has no effect
+     *               this operation has no effect
      */
     public static void unpark(Thread thread) {
-        if (thread != null)
-            unsafe.unpark(thread);
+        if (thread != null) { unsafe.unpark(thread); }
     }
 
     /**
@@ -177,7 +177,7 @@ public class LockSupport {
      * for example, the interrupt status of the thread upon return.
      *
      * @param blocker the synchronization object responsible for this
-     *        thread parking
+     *                thread parking
      * @since 1.6
      */
     public static void park(Object blocker) {
@@ -215,8 +215,8 @@ public class LockSupport {
      * upon return.
      *
      * @param blocker the synchronization object responsible for this
-     *        thread parking
-     * @param nanos the maximum number of nanoseconds to wait
+     *                thread parking
+     * @param nanos   the maximum number of nanoseconds to wait
      * @since 1.6
      */
     public static void parkNanos(Object blocker, long nanos) {
@@ -255,10 +255,10 @@ public class LockSupport {
      * for example, the interrupt status of the thread, or the current time
      * upon return.
      *
-     * @param blocker the synchronization object responsible for this
-     *        thread parking
+     * @param blocker  the synchronization object responsible for this
+     *                 thread parking
      * @param deadline the absolute time, in milliseconds from the Epoch,
-     *        to wait until
+     *                 to wait until
      * @since 1.6
      */
     public static void parkUntil(Object blocker, long deadline) {
@@ -281,8 +281,7 @@ public class LockSupport {
      * @since 1.6
      */
     public static Object getBlocker(Thread t) {
-        if (t == null)
-            throw new NullPointerException();
+        if (t == null) { throw new NullPointerException(); }
         return unsafe.getObjectVolatile(t, parkBlockerOffset);
     }
 
@@ -345,8 +344,7 @@ public class LockSupport {
      * @param nanos the maximum number of nanoseconds to wait
      */
     public static void parkNanos(long nanos) {
-        if (nanos > 0)
-            unsafe.park(false, nanos);
+        if (nanos > 0) { unsafe.park(false, nanos); }
     }
 
     /**
@@ -377,7 +375,7 @@ public class LockSupport {
      * upon return.
      *
      * @param deadline the absolute time, in milliseconds from the Epoch,
-     *        to wait until
+     *                 to wait until
      */
     public static void parkUntil(long deadline) {
         unsafe.park(true, deadline);

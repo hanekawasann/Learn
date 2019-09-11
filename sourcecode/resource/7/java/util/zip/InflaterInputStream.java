@@ -35,11 +35,10 @@ import java.io.EOFException;
  * "deflate" compression format. It is also used as the basis for other
  * decompression filters, such as GZIPInputStream.
  *
- * @see         Inflater
- * @author      David Connelly
+ * @author David Connelly
+ * @see Inflater
  */
-public
-class InflaterInputStream extends FilterInputStream {
+public class InflaterInputStream extends FilterInputStream {
     /**
      * Decompressor for this stream.
      */
@@ -72,10 +71,11 @@ class InflaterInputStream extends FilterInputStream {
     /**
      * Creates a new input stream with the specified decompressor and
      * buffer size.
-     * @param in the input stream
-     * @param inf the decompressor ("inflater")
+     *
+     * @param in   the input stream
+     * @param inf  the decompressor ("inflater")
      * @param size the input buffer size
-     * @exception IllegalArgumentException if size is <= 0
+     * @throws IllegalArgumentException if size is <= 0
      */
     public InflaterInputStream(InputStream in, Inflater inf, int size) {
         super(in);
@@ -91,7 +91,8 @@ class InflaterInputStream extends FilterInputStream {
     /**
      * Creates a new input stream with the specified decompressor and a
      * default buffer size.
-     * @param in the input stream
+     *
+     * @param in  the input stream
      * @param inf the decompressor ("inflater")
      */
     public InflaterInputStream(InputStream in, Inflater inf) {
@@ -102,6 +103,7 @@ class InflaterInputStream extends FilterInputStream {
 
     /**
      * Creates a new input stream with a default decompressor and buffer size.
+     *
      * @param in the input stream
      */
     public InflaterInputStream(InputStream in) {
@@ -114,8 +116,9 @@ class InflaterInputStream extends FilterInputStream {
     /**
      * Reads a byte of uncompressed data. This method will block until
      * enough input is available for decompression.
+     *
      * @return the byte read, or -1 if end of compressed input is reached
-     * @exception IOException if an I/O error has occurred
+     * @throws IOException if an I/O error has occurred
      */
     public int read() throws IOException {
         ensureOpen();
@@ -126,17 +129,18 @@ class InflaterInputStream extends FilterInputStream {
      * Reads uncompressed data into an array of bytes. If <code>len</code> is not
      * zero, the method will block until some input can be decompressed; otherwise,
      * no bytes are read and <code>0</code> is returned.
-     * @param b the buffer into which the data is read
+     *
+     * @param b   the buffer into which the data is read
      * @param off the start offset in the destination array <code>b</code>
      * @param len the maximum number of bytes read
      * @return the actual number of bytes read, or -1 if the end of the
-     *         compressed input is reached or a preset dictionary is needed
-     * @exception  NullPointerException If <code>b</code> is <code>null</code>.
-     * @exception  IndexOutOfBoundsException If <code>off</code> is negative,
-     * <code>len</code> is negative, or <code>len</code> is greater than
-     * <code>b.length - off</code>
-     * @exception ZipException if a ZIP format error has occurred
-     * @exception IOException if an I/O error has occurred
+     * compressed input is reached or a preset dictionary is needed
+     * @throws NullPointerException      If <code>b</code> is <code>null</code>.
+     * @throws IndexOutOfBoundsException If <code>off</code> is negative,
+     *                                   <code>len</code> is negative, or <code>len</code> is greater than
+     *                                   <code>b.length - off</code>
+     * @throws ZipException              if a ZIP format error has occurred
+     * @throws IOException               if an I/O error has occurred
      */
     public int read(byte[] b, int off, int len) throws IOException {
         ensureOpen();
@@ -171,9 +175,8 @@ class InflaterInputStream extends FilterInputStream {
      * Programs should not count on this method to return the actual number
      * of bytes that could be read without blocking.
      *
-     * @return     1 before EOF and 0 after EOF.
-     * @exception  IOException  if an I/O error occurs.
-     *
+     * @return 1 before EOF and 0 after EOF.
+     * @throws IOException if an I/O error occurs.
      */
     public int available() throws IOException {
         ensureOpen();
@@ -188,17 +191,18 @@ class InflaterInputStream extends FilterInputStream {
 
     /**
      * Skips specified number of bytes of uncompressed data.
+     *
      * @param n the number of bytes to skip
      * @return the actual number of bytes skipped.
-     * @exception IOException if an I/O error has occurred
-     * @exception IllegalArgumentException if n < 0
+     * @throws IOException              if an I/O error has occurred
+     * @throws IllegalArgumentException if n < 0
      */
     public long skip(long n) throws IOException {
         if (n < 0) {
             throw new IllegalArgumentException("negative skip length");
         }
         ensureOpen();
-        int max = (int)Math.min(n, Integer.MAX_VALUE);
+        int max = (int) Math.min(n, Integer.MAX_VALUE);
         int total = 0;
         while (total < max) {
             int len = max - total;
@@ -218,12 +222,12 @@ class InflaterInputStream extends FilterInputStream {
     /**
      * Closes this input stream and releases any system resources associated
      * with the stream.
-     * @exception IOException if an I/O error has occurred
+     *
+     * @throws IOException if an I/O error has occurred
      */
     public void close() throws IOException {
         if (!closed) {
-            if (usesDefaultInflater)
-                inf.end();
+            if (usesDefaultInflater) { inf.end(); }
             in.close();
             closed = true;
         }
@@ -231,7 +235,8 @@ class InflaterInputStream extends FilterInputStream {
 
     /**
      * Fills input buffer with more data to decompress.
-     * @exception IOException if an I/O error has occurred
+     *
+     * @throws IOException if an I/O error has occurred
      */
     protected void fill() throws IOException {
         ensureOpen();
@@ -248,10 +253,10 @@ class InflaterInputStream extends FilterInputStream {
      * method of <code>InflaterInputStream</code> returns
      * <code>false</code>.
      *
-     * @return  a <code>boolean</code> indicating if this stream type supports
-     *          the <code>mark</code> and <code>reset</code> methods.
-     * @see     java.io.InputStream#mark(int)
-     * @see     java.io.InputStream#reset()
+     * @return a <code>boolean</code> indicating if this stream type supports
+     * the <code>mark</code> and <code>reset</code> methods.
+     * @see java.io.InputStream#mark(int)
+     * @see java.io.InputStream#reset()
      */
     public boolean markSupported() {
         return false;
@@ -263,9 +268,9 @@ class InflaterInputStream extends FilterInputStream {
      * <p> The <code>mark</code> method of <code>InflaterInputStream</code>
      * does nothing.
      *
-     * @param   readlimit   the maximum limit of bytes that can be read before
-     *                      the mark position becomes invalid.
-     * @see     java.io.InputStream#reset()
+     * @param readlimit the maximum limit of bytes that can be read before
+     *                  the mark position becomes invalid.
+     * @see java.io.InputStream#reset()
      */
     public synchronized void mark(int readlimit) {
     }
@@ -278,9 +283,9 @@ class InflaterInputStream extends FilterInputStream {
      * <code>InflaterInputStream</code> does nothing except throw an
      * <code>IOException</code>.
      *
-     * @exception  IOException  if this method is invoked.
-     * @see     java.io.InputStream#mark(int)
-     * @see     java.io.IOException
+     * @throws IOException if this method is invoked.
+     * @see java.io.InputStream#mark(int)
+     * @see java.io.IOException
      */
     public synchronized void reset() throws IOException {
         throw new IOException("mark/reset not supported");

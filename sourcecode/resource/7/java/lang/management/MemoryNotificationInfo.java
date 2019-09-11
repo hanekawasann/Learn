@@ -24,7 +24,9 @@
  */
 
 package java.lang.management;
+
 import javax.management.openmbean.CompositeData;
+
 import sun.management.MemoryNotifInfoCompositeData;
 
 /**
@@ -100,9 +102,8 @@ import sun.management.MemoryNotifInfoCompositeData;
  *       memory pool.</li>
  * </ul>
  *
- * @author  Mandy Chung
- * @since   1.5
- *
+ * @author Mandy Chung
+ * @since 1.5
  */
 public class MemoryNotificationInfo {
     private final String poolName;
@@ -121,8 +122,7 @@ public class MemoryNotificationInfo {
      * The value of this notification type is
      * <tt>java.management.memory.threshold.exceeded</tt>.
      */
-    public static final String MEMORY_THRESHOLD_EXCEEDED =
-        "java.management.memory.threshold.exceeded";
+    public static final String MEMORY_THRESHOLD_EXCEEDED = "java.management.memory.threshold.exceeded";
 
     /**
      * Notification type denoting that
@@ -135,19 +135,17 @@ public class MemoryNotificationInfo {
      * The value of this notification type is
      * <tt>java.management.memory.collection.threshold.exceeded</tt>.
      */
-    public static final String MEMORY_COLLECTION_THRESHOLD_EXCEEDED =
-        "java.management.memory.collection.threshold.exceeded";
+    public static final String MEMORY_COLLECTION_THRESHOLD_EXCEEDED
+        = "java.management.memory.collection.threshold.exceeded";
 
     /**
      * Constructs a <tt>MemoryNotificationInfo</tt> object.
      *
      * @param poolName The name of the memory pool which triggers this notification.
-     * @param usage Memory usage of the memory pool.
-     * @param count The threshold crossing count.
+     * @param usage    Memory usage of the memory pool.
+     * @param count    The threshold crossing count.
      */
-    public MemoryNotificationInfo(String poolName,
-                                  MemoryUsage usage,
-                                  long count) {
+    public MemoryNotificationInfo(String poolName, MemoryUsage usage, long count) {
         if (poolName == null) {
             throw new NullPointerException("Null poolName");
         }
@@ -214,33 +212,31 @@ public class MemoryNotificationInfo {
      * <blockquote>
      * <table border>
      * <tr>
-     *   <th align=left>Attribute Name</th>
-     *   <th align=left>Type</th>
+     * <th align=left>Attribute Name</th>
+     * <th align=left>Type</th>
      * </tr>
      * <tr>
-     *   <td>poolName</td>
-     *   <td><tt>java.lang.String</tt></td>
+     * <td>poolName</td>
+     * <td><tt>java.lang.String</tt></td>
      * </tr>
      * <tr>
-     *   <td>usage</td>
-     *   <td><tt>javax.management.openmbean.CompositeData</tt></td>
+     * <td>usage</td>
+     * <td><tt>javax.management.openmbean.CompositeData</tt></td>
      * </tr>
      * <tr>
-     *   <td>count</td>
-     *   <td><tt>java.lang.Long</tt></td>
+     * <td>count</td>
+     * <td><tt>java.lang.Long</tt></td>
      * </tr>
      * </table>
      * </blockquote>
      *
      * @param cd <tt>CompositeData</tt> representing a
      *           <tt>MemoryNotificationInfo</tt>
-     *
-     * @throws IllegalArgumentException if <tt>cd</tt> does not
-     *   represent a <tt>MemoryNotificationInfo</tt> object.
-     *
      * @return a <tt>MemoryNotificationInfo</tt> object represented
-     *         by <tt>cd</tt> if <tt>cd</tt> is not <tt>null</tt>;
-     *         <tt>null</tt> otherwise.
+     * by <tt>cd</tt> if <tt>cd</tt> is not <tt>null</tt>;
+     * <tt>null</tt> otherwise.
+     * @throws IllegalArgumentException if <tt>cd</tt> does not
+     *                                  represent a <tt>MemoryNotificationInfo</tt> object.
      */
     public static MemoryNotificationInfo from(CompositeData cd) {
         if (cd == null) {

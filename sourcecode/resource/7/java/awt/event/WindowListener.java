@@ -41,11 +41,9 @@ import java.util.EventListener;
  * <code>WindowEvent</code> is passed to it.
  *
  * @author Carl Quinn
- *
  * @see WindowAdapter
  * @see WindowEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/windowlistener.html">Tutorial: How to Write Window Listeners</a>
- *
  * @since 1.1
  */
 public interface WindowListener extends EventListener {
@@ -71,6 +69,7 @@ public interface WindowListener extends EventListener {
      * minimized state. For many platforms, a minimized window
      * is displayed as the icon specified in the window's
      * iconImage property.
+     *
      * @see java.awt.Frame#setIconImage
      */
     public void windowIconified(WindowEvent e);

@@ -49,8 +49,8 @@ import java.security.InvalidAlgorithmParameterException;
  * manipulating a different <code>CertPathBuilderSpi</code> instance need not
  * synchronize.
  *
- * @since       1.4
- * @author      Sean Mullan
+ * @author Sean Mullan
+ * @since 1.4
  */
 public abstract class CertPathBuilderSpi {
 
@@ -65,10 +65,10 @@ public abstract class CertPathBuilderSpi {
      *
      * @param params the algorithm parameters
      * @return the result of the build algorithm
-     * @throws CertPathBuilderException if the builder is unable to construct
-     * a certification path that satisfies the specified parameters
+     * @throws CertPathBuilderException           if the builder is unable to construct
+     *                                            a certification path that satisfies the specified parameters
      * @throws InvalidAlgorithmParameterException if the specified parameters
-     * are inappropriate for this <code>CertPathBuilder</code>
+     *                                            are inappropriate for this <code>CertPathBuilder</code>
      */
     public abstract CertPathBuilderResult engineBuild(CertPathParameters params)
         throws CertPathBuilderException, InvalidAlgorithmParameterException;

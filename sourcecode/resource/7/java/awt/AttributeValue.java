@@ -45,11 +45,13 @@ abstract class AttributeValue {
         this.value = value;
         this.names = names;
     }
+
     // This hashCode is used by the sun.awt implementation as an array
     // index.
     public int hashCode() {
         return value;
     }
+
     public String toString() {
         return names[value];
     }

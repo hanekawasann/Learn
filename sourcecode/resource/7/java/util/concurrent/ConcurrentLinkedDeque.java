@@ -85,15 +85,13 @@ import java.util.Queue;
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
- * @since 1.7
+ * @param <E> the type of elements held in this collection
  * @author Doug Lea
  * @author Martin Buchholz
- * @param <E> the type of elements held in this collection
+ * @since 1.7
  */
 
-public class ConcurrentLinkedDeque<E>
-    extends AbstractCollection<E>
-    implements Deque<E>, java.io.Serializable {
+public class ConcurrentLinkedDeque<E> extends AbstractCollection<E> implements Deque<E>, java.io.Serializable {
 
     /*
      * This is an implementation of a concurrent lock-free deque
@@ -336,12 +334,9 @@ public class ConcurrentLinkedDeque<E>
             try {
                 UNSAFE = sun.misc.Unsafe.getUnsafe();
                 Class k = Node.class;
-                prevOffset = UNSAFE.objectFieldOffset
-                    (k.getDeclaredField("prev"));
-                itemOffset = UNSAFE.objectFieldOffset
-                    (k.getDeclaredField("item"));
-                nextOffset = UNSAFE.objectFieldOffset
-                    (k.getDeclaredField("next"));
+                prevOffset = UNSAFE.objectFieldOffset(k.getDeclaredField("prev"));
+                itemOffset = UNSAFE.objectFieldOffset(k.getDeclaredField("item"));
+                nextOffset = UNSAFE.objectFieldOffset(k.getDeclaredField("next"));
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -356,16 +351,13 @@ public class ConcurrentLinkedDeque<E>
         final Node<E> newNode = new Node<E>(e);
 
         restartFromHead:
-        for (;;)
-            for (Node<E> h = head, p = h, q;;) {
-                if ((q = p.prev) != null &&
-                    (q = (p = q).prev) != null)
-                    // Check for head updates every other hop.
-                    // If p == q, we are sure to follow head instead.
-                    p = (h != (h = head)) ? h : q;
-                else if (p.next == p) // PREV_TERMINATOR
-                    continue restartFromHead;
-                else {
+        for (; ; ) {
+            for (Node<E> h = head, p = h, q; ; ) {
+                if ((q = p.prev) != null && (q = (p = q).prev) != null)
+                // Check for head updates every other hop.
+                // If p == q, we are sure to follow head instead.
+                { p = (h != (h = head)) ? h : q; } else if (p.next == p) // PREV_TERMINATOR
+                { continue restartFromHead; } else {
                     // p is first node
                     newNode.lazySetNext(p); // CAS piggyback
                     if (p.casPrev(null, newNode)) {
@@ -373,12 +365,15 @@ public class ConcurrentLinkedDeque<E>
                         // for e to become an element of this deque,
                         // and for newNode to become "live".
                         if (p != h) // hop two nodes at a time
+                        {
                             casHead(h, newNode);  // Failure is OK.
+                        }
                         return;
                     }
                     // Lost CAS race to another thread; re-read prev
                 }
             }
+        }
     }
 
     /**
@@ -389,16 +384,13 @@ public class ConcurrentLinkedDeque<E>
         final Node<E> newNode = new Node<E>(e);
 
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
-                    (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p.prev == p) // NEXT_TERMINATOR
-                    continue restartFromTail;
-                else {
+        for (; ; ) {
+            for (Node<E> t = tail, p = t, q; ; ) {
+                if ((q = p.next) != null && (q = (p = q).next) != null)
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                { p = (t != (t = tail)) ? t : q; } else if (p.prev == p) // NEXT_TERMINATOR
+                { continue restartFromTail; } else {
                     // p is last node
                     newNode.lazySetPrev(p); // CAS piggyback
                     if (p.casNext(null, newNode)) {
@@ -406,12 +398,15 @@ public class ConcurrentLinkedDeque<E>
                         // for e to become an element of this deque,
                         // and for newNode to become "live".
                         if (p != t) // hop two nodes at a time
+                        {
                             casTail(t, newNode);  // Failure is OK.
+                        }
                         return;
                     }
                     // Lost CAS race to another thread; re-read next
                 }
             }
+        }
     }
 
     private static final int HOPS = 2;
@@ -464,16 +459,11 @@ public class ConcurrentLinkedDeque<E>
                 }
                 Node<E> q = p.prev;
                 if (q == null) {
-                    if (p.next == p)
-                        return;
+                    if (p.next == p) { return; }
                     activePred = p;
                     isFirst = true;
                     break;
-                }
-                else if (p == q)
-                    return;
-                else
-                    p = q;
+                } else if (p == q) { return; } else { p = q; }
             }
 
             // Find active successor
@@ -485,23 +475,17 @@ public class ConcurrentLinkedDeque<E>
                 }
                 Node<E> q = p.next;
                 if (q == null) {
-                    if (p.prev == p)
-                        return;
+                    if (p.prev == p) { return; }
                     activeSucc = p;
                     isLast = true;
                     break;
-                }
-                else if (p == q)
-                    return;
-                else
-                    p = q;
+                } else if (p == q) { return; } else { p = q; }
             }
 
             // TODO: better HOP heuristics
             if (hops < HOPS
                 // always squeeze out interior deleted nodes
-                && (isFirst | isLast))
-                return;
+                && (isFirst | isLast)) { return; }
 
             // Squeeze out deleted nodes between activePred and
             // activeSucc, including x.
@@ -512,17 +496,16 @@ public class ConcurrentLinkedDeque<E>
             if ((isFirst | isLast) &&
 
                 // Recheck expected state of predecessor and successor
-                (activePred.next == activeSucc) &&
-                (activeSucc.prev == activePred) &&
+                (activePred.next == activeSucc) && (activeSucc.prev == activePred) &&
                 (isFirst ? activePred.prev == null : activePred.item != null) &&
-                (isLast  ? activeSucc.next == null : activeSucc.item != null)) {
+                (isLast ? activeSucc.next == null : activeSucc.item != null)) {
 
                 updateHead(); // Ensure x is not reachable from head
                 updateTail(); // Ensure x is not reachable from tail
 
                 // Finally, actually gc-unlink
                 x.lazySetPrev(isFirst ? prevTerminator() : x);
-                x.lazySetNext(isLast  ? nextTerminator() : x);
+                x.lazySetNext(isLast ? nextTerminator() : x);
             }
         }
     }
@@ -534,13 +517,11 @@ public class ConcurrentLinkedDeque<E>
         // assert first != null;
         // assert next != null;
         // assert first.item == null;
-        for (Node<E> o = null, p = next, q;;) {
+        for (Node<E> o = null, p = next, q; ; ) {
             if (p.item != null || (q = p.next) == null) {
                 if (o != null && p.prev != p && first.casNext(next, p)) {
                     skipDeletedPredecessors(p);
-                    if (first.prev == null &&
-                        (p.next == null || p.item != null) &&
-                        p.prev == first) {
+                    if (first.prev == null && (p.next == null || p.item != null) && p.prev == first) {
 
                         updateHead(); // Ensure o is not reachable from head
                         updateTail(); // Ensure o is not reachable from tail
@@ -551,10 +532,7 @@ public class ConcurrentLinkedDeque<E>
                     }
                 }
                 return;
-            }
-            else if (p == q)
-                return;
-            else {
+            } else if (p == q) { return; } else {
                 o = p;
                 p = q;
             }
@@ -568,13 +546,11 @@ public class ConcurrentLinkedDeque<E>
         // assert last != null;
         // assert prev != null;
         // assert last.item == null;
-        for (Node<E> o = null, p = prev, q;;) {
+        for (Node<E> o = null, p = prev, q; ; ) {
             if (p.item != null || (q = p.prev) == null) {
                 if (o != null && p.next != p && last.casPrev(prev, p)) {
                     skipDeletedSuccessors(p);
-                    if (last.next == null &&
-                        (p.prev == null || p.item != null) &&
-                        p.next == last) {
+                    if (last.next == null && (p.prev == null || p.item != null) && p.next == last) {
 
                         updateHead(); // Ensure o is not reachable from head
                         updateTail(); // Ensure o is not reachable from tail
@@ -585,10 +561,7 @@ public class ConcurrentLinkedDeque<E>
                     }
                 }
                 return;
-            }
-            else if (p == q)
-                return;
-            else {
+            } else if (p == q) { return; } else {
                 o = p;
                 p = q;
             }
@@ -607,20 +580,12 @@ public class ConcurrentLinkedDeque<E>
         Node<E> h, p, q;
         restartFromHead:
         while ((h = head).item == null && (p = h.prev) != null) {
-            for (;;) {
-                if ((q = p.prev) == null ||
-                    (q = (p = q).prev) == null) {
+            for (; ; ) {
+                if ((q = p.prev) == null || (q = (p = q).prev) == null) {
                     // It is possible that p is PREV_TERMINATOR,
                     // but if so, the CAS is guaranteed to fail.
-                    if (casHead(h, p))
-                        return;
-                    else
-                        continue restartFromHead;
-                }
-                else if (h != head)
-                    continue restartFromHead;
-                else
-                    p = q;
+                    if (casHead(h, p)) { return; } else { continue restartFromHead; }
+                } else if (h != head) { continue restartFromHead; } else { p = q; }
             }
         }
     }
@@ -637,20 +602,12 @@ public class ConcurrentLinkedDeque<E>
         Node<E> t, p, q;
         restartFromTail:
         while ((t = tail).item == null && (p = t.next) != null) {
-            for (;;) {
-                if ((q = p.next) == null ||
-                    (q = (p = q).next) == null) {
+            for (; ; ) {
+                if ((q = p.next) == null || (q = (p = q).next) == null) {
                     // It is possible that p is NEXT_TERMINATOR,
                     // but if so, the CAS is guaranteed to fail.
-                    if (casTail(t, p))
-                        return;
-                    else
-                        continue restartFromTail;
-                }
-                else if (t != tail)
-                    continue restartFromTail;
-                else
-                    p = q;
+                    if (casTail(t, p)) { return; } else { continue restartFromTail; }
+                } else if (t != tail) { continue restartFromTail; } else { p = q; }
             }
         }
     }
@@ -664,24 +621,17 @@ public class ConcurrentLinkedDeque<E>
             // assert x != PREV_TERMINATOR;
             Node<E> p = prev;
             findActive:
-            for (;;) {
-                if (p.item != null)
-                    break findActive;
+            for (; ; ) {
+                if (p.item != null) { break findActive; }
                 Node<E> q = p.prev;
                 if (q == null) {
-                    if (p.next == p)
-                        continue whileActive;
+                    if (p.next == p) { continue whileActive; }
                     break findActive;
-                }
-                else if (p == q)
-                    continue whileActive;
-                else
-                    p = q;
+                } else if (p == q) { continue whileActive; } else { p = q; }
             }
 
             // found active CAS target
-            if (prev == p || x.casPrev(prev, p))
-                return;
+            if (prev == p || x.casPrev(prev, p)) { return; }
 
         } while (x.item != null || x.next == null);
     }
@@ -695,24 +645,17 @@ public class ConcurrentLinkedDeque<E>
             // assert x != PREV_TERMINATOR;
             Node<E> p = next;
             findActive:
-            for (;;) {
-                if (p.item != null)
-                    break findActive;
+            for (; ; ) {
+                if (p.item != null) { break findActive; }
                 Node<E> q = p.next;
                 if (q == null) {
-                    if (p.prev == p)
-                        continue whileActive;
+                    if (p.prev == p) { continue whileActive; }
                     break findActive;
-                }
-                else if (p == q)
-                    continue whileActive;
-                else
-                    p = q;
+                } else if (p == q) { continue whileActive; } else { p = q; }
             }
 
             // found active CAS target
-            if (next == p || x.casNext(next, p))
-                return;
+            if (next == p || x.casNext(next, p)) { return; }
 
         } while (x.item != null || x.prev == null);
     }
@@ -740,52 +683,44 @@ public class ConcurrentLinkedDeque<E>
 
     /**
      * Returns the first node, the unique node p for which:
-     *     p.prev == null && p.next != p
+     * p.prev == null && p.next != p
      * The returned node may or may not be logically deleted.
      * Guarantees that head is set to the returned node.
      */
     Node<E> first() {
         restartFromHead:
-        for (;;)
-            for (Node<E> h = head, p = h, q;;) {
-                if ((q = p.prev) != null &&
-                    (q = (p = q).prev) != null)
-                    // Check for head updates every other hop.
-                    // If p == q, we are sure to follow head instead.
-                    p = (h != (h = head)) ? h : q;
-                else if (p == h
-                         // It is possible that p is PREV_TERMINATOR,
-                         // but if so, the CAS is guaranteed to fail.
-                         || casHead(h, p))
-                    return p;
-                else
-                    continue restartFromHead;
+        for (; ; ) {
+            for (Node<E> h = head, p = h, q; ; ) {
+                if ((q = p.prev) != null && (q = (p = q).prev) != null)
+                // Check for head updates every other hop.
+                // If p == q, we are sure to follow head instead.
+                { p = (h != (h = head)) ? h : q; } else if (p == h
+                    // It is possible that p is PREV_TERMINATOR,
+                    // but if so, the CAS is guaranteed to fail.
+                    || casHead(h, p)) { return p; } else { continue restartFromHead; }
             }
+        }
     }
 
     /**
      * Returns the last node, the unique node p for which:
-     *     p.next == null && p.prev != p
+     * p.next == null && p.prev != p
      * The returned node may or may not be logically deleted.
      * Guarantees that tail is set to the returned node.
      */
     Node<E> last() {
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
-                    (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p == t
-                         // It is possible that p is NEXT_TERMINATOR,
-                         // but if so, the CAS is guaranteed to fail.
-                         || casTail(t, p))
-                    return p;
-                else
-                    continue restartFromTail;
+        for (; ; ) {
+            for (Node<E> t = tail, p = t, q; ; ) {
+                if ((q = p.next) != null && (q = (p = q).next) != null)
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                { p = (t != (t = tail)) ? t : q; } else if (p == t
+                    // It is possible that p is NEXT_TERMINATOR,
+                    // but if so, the CAS is guaranteed to fail.
+                    || casTail(t, p)) { return p; } else { continue restartFromTail; }
             }
+        }
     }
 
     // Minor convenience utilities
@@ -796,8 +731,7 @@ public class ConcurrentLinkedDeque<E>
      * @param v the element
      */
     private static void checkNotNull(Object v) {
-        if (v == null)
-            throw new NullPointerException();
+        if (v == null) { throw new NullPointerException(); }
     }
 
     /**
@@ -808,8 +742,7 @@ public class ConcurrentLinkedDeque<E>
      * @return the element
      */
     private E screenNullResult(E v) {
-        if (v == null)
-            throw new NoSuchElementException();
+        if (v == null) { throw new NoSuchElementException(); }
         return v;
     }
 
@@ -823,8 +756,7 @@ public class ConcurrentLinkedDeque<E>
         ArrayList<E> list = new ArrayList<E>();
         for (Node<E> p = first(); p != null; p = succ(p)) {
             E item = p.item;
-            if (item != null)
-                list.add(item);
+            if (item != null) { list.add(item); }
         }
         return list;
     }
@@ -843,7 +775,7 @@ public class ConcurrentLinkedDeque<E>
      *
      * @param c the collection of elements to initially contain
      * @throws NullPointerException if the specified collection or any
-     *         of its elements are null
+     *                              of its elements are null
      */
     public ConcurrentLinkedDeque(Collection<? extends E> c) {
         // Copy c into a private chain of Nodes
@@ -851,9 +783,7 @@ public class ConcurrentLinkedDeque<E>
         for (E e : c) {
             checkNotNull(e);
             Node<E> newNode = new Node<E>(e);
-            if (h == null)
-                h = t = newNode;
-            else {
+            if (h == null) { h = t = newNode; } else {
                 t.lazySetNext(newNode);
                 newNode.lazySetPrev(t);
                 t = newNode;
@@ -867,9 +797,7 @@ public class ConcurrentLinkedDeque<E>
      */
     private void initHeadTail(Node<E> h, Node<E> t) {
         if (h == t) {
-            if (h == null)
-                h = t = new Node<E>(null);
-            else {
+            if (h == null) { h = t = new Node<E>(null); } else {
                 // Avoid edge case of a single Node with non-null item.
                 Node<E> newNode = new Node<E>(null);
                 t.lazySetNext(newNode);
@@ -934,8 +862,7 @@ public class ConcurrentLinkedDeque<E>
     public E peekFirst() {
         for (Node<E> p = first(); p != null; p = succ(p)) {
             E item = p.item;
-            if (item != null)
-                return item;
+            if (item != null) { return item; }
         }
         return null;
     }
@@ -943,8 +870,7 @@ public class ConcurrentLinkedDeque<E>
     public E peekLast() {
         for (Node<E> p = last(); p != null; p = pred(p)) {
             E item = p.item;
-            if (item != null)
-                return item;
+            if (item != null) { return item; }
         }
         return null;
     }
@@ -1024,12 +950,17 @@ public class ConcurrentLinkedDeque<E>
         return offerLast(e);
     }
 
-    public E poll()           { return pollFirst(); }
-    public E remove()         { return removeFirst(); }
-    public E peek()           { return peekFirst(); }
-    public E element()        { return getFirst(); }
-    public void push(E e)     { addFirst(e); }
-    public E pop()            { return removeFirst(); }
+    public E poll() { return pollFirst(); }
+
+    public E remove() { return removeFirst(); }
+
+    public E peek() { return peekFirst(); }
+
+    public E element() { return getFirst(); }
+
+    public void push(E e) { addFirst(e); }
+
+    public E pop() { return removeFirst(); }
 
     /**
      * Removes the first element {@code e} such that
@@ -1081,11 +1012,10 @@ public class ConcurrentLinkedDeque<E>
      * @return {@code true} if this deque contains the specified element
      */
     public boolean contains(Object o) {
-        if (o == null) return false;
+        if (o == null) { return false; }
         for (Node<E> p = first(); p != null; p = succ(p)) {
             E item = p.item;
-            if (item != null && o.equals(item))
-                return true;
+            if (item != null && o.equals(item)) { return true; }
         }
         return false;
     }
@@ -1117,11 +1047,11 @@ public class ConcurrentLinkedDeque<E>
      */
     public int size() {
         int count = 0;
-        for (Node<E> p = first(); p != null; p = succ(p))
+        for (Node<E> p = first(); p != null; p = succ(p)) {
             if (p.item != null)
-                // Collection.size() spec says to max out
-                if (++count == Integer.MAX_VALUE)
-                    break;
+            // Collection.size() spec says to max out
+            { if (++count == Integer.MAX_VALUE) { break; } }
+        }
         return count;
     }
 
@@ -1146,43 +1076,37 @@ public class ConcurrentLinkedDeque<E>
      *
      * @param c the elements to be inserted into this deque
      * @return {@code true} if this deque changed as a result of the call
-     * @throws NullPointerException if the specified collection or any
-     *         of its elements are null
+     * @throws NullPointerException     if the specified collection or any
+     *                                  of its elements are null
      * @throws IllegalArgumentException if the collection is this deque
      */
     public boolean addAll(Collection<? extends E> c) {
         if (c == this)
-            // As historically specified in AbstractQueue#addAll
-            throw new IllegalArgumentException();
+        // As historically specified in AbstractQueue#addAll
+        { throw new IllegalArgumentException(); }
 
         // Copy c into a private chain of Nodes
         Node<E> beginningOfTheEnd = null, last = null;
         for (E e : c) {
             checkNotNull(e);
             Node<E> newNode = new Node<E>(e);
-            if (beginningOfTheEnd == null)
-                beginningOfTheEnd = last = newNode;
-            else {
+            if (beginningOfTheEnd == null) { beginningOfTheEnd = last = newNode; } else {
                 last.lazySetNext(newNode);
                 newNode.lazySetPrev(last);
                 last = newNode;
             }
         }
-        if (beginningOfTheEnd == null)
-            return false;
+        if (beginningOfTheEnd == null) { return false; }
 
         // Atomically append the chain at the tail of this collection
         restartFromTail:
-        for (;;)
-            for (Node<E> t = tail, p = t, q;;) {
-                if ((q = p.next) != null &&
-                    (q = (p = q).next) != null)
-                    // Check for tail updates every other hop.
-                    // If p == q, we are sure to follow tail instead.
-                    p = (t != (t = tail)) ? t : q;
-                else if (p.prev == p) // NEXT_TERMINATOR
-                    continue restartFromTail;
-                else {
+        for (; ; ) {
+            for (Node<E> t = tail, p = t, q; ; ) {
+                if ((q = p.next) != null && (q = (p = q).next) != null)
+                // Check for tail updates every other hop.
+                // If p == q, we are sure to follow tail instead.
+                { p = (t != (t = tail)) ? t : q; } else if (p.prev == p) // NEXT_TERMINATOR
+                { continue restartFromTail; } else {
                     // p is last node
                     beginningOfTheEnd.lazySetPrev(p); // CAS piggyback
                     if (p.casNext(null, beginningOfTheEnd)) {
@@ -1192,22 +1116,21 @@ public class ConcurrentLinkedDeque<E>
                             // Try a little harder to update tail,
                             // since we may be adding many elements.
                             t = tail;
-                            if (last.next == null)
-                                casTail(t, last);
+                            if (last.next == null) { casTail(t, last); }
                         }
                         return true;
                     }
                     // Lost CAS race to another thread; re-read next
                 }
             }
+        }
     }
 
     /**
      * Removes all of the elements from this deque.
      */
     public void clear() {
-        while (pollFirst() != null)
-            ;
+        while (pollFirst() != null) { ; }
     }
 
     /**
@@ -1252,7 +1175,7 @@ public class ConcurrentLinkedDeque<E>
      *
      * <pre>
      *     String[] y = x.toArray(new String[0]);</pre>
-     *
+     * <p>
      * Note that {@code toArray(new Object[0])} is identical in function to
      * {@code toArray()}.
      *
@@ -1260,9 +1183,9 @@ public class ConcurrentLinkedDeque<E>
      *          be stored, if it is big enough; otherwise, a new array of the
      *          same runtime type is allocated for this purpose
      * @return an array containing all of the elements in this deque
-     * @throws ArrayStoreException if the runtime type of the specified array
-     *         is not a supertype of the runtime type of every element in
-     *         this deque
+     * @throws ArrayStoreException  if the runtime type of the specified array
+     *                              is not a supertype of the runtime type of every element in
+     *                              this deque
      * @throws NullPointerException if the specified array is null
      */
     public <T> T[] toArray(T[] a) {
@@ -1325,6 +1248,7 @@ public class ConcurrentLinkedDeque<E>
         private Node<E> lastRet;
 
         abstract Node<E> startNode();
+
         abstract Node<E> nextNode(Node<E> p);
 
         AbstractItr() {
@@ -1339,7 +1263,7 @@ public class ConcurrentLinkedDeque<E>
             lastRet = nextNode;
 
             Node<E> p = (nextNode == null) ? startNode() : nextNode(nextNode);
-            for (;; p = nextNode(p)) {
+            for (; ; p = nextNode(p)) {
                 if (p == null) {
                     // p might be active end or TERMINATOR node; both are OK
                     nextNode = null;
@@ -1361,14 +1285,14 @@ public class ConcurrentLinkedDeque<E>
 
         public E next() {
             E item = nextItem;
-            if (item == null) throw new NoSuchElementException();
+            if (item == null) { throw new NoSuchElementException(); }
             advance();
             return item;
         }
 
         public void remove() {
             Node<E> l = lastRet;
-            if (l == null) throw new IllegalStateException();
+            if (l == null) { throw new IllegalStateException(); }
             l.item = null;
             unlink(l);
             lastRet = null;
@@ -1378,24 +1302,25 @@ public class ConcurrentLinkedDeque<E>
     /** Forward iterator */
     private class Itr extends AbstractItr {
         Node<E> startNode() { return first(); }
+
         Node<E> nextNode(Node<E> p) { return succ(p); }
     }
 
     /** Descending iterator */
     private class DescendingItr extends AbstractItr {
         Node<E> startNode() { return last(); }
+
         Node<E> nextNode(Node<E> p) { return pred(p); }
     }
 
     /**
      * Saves the state to a stream (that is, serializes it).
      *
+     * @param s the stream
      * @serialData All of the elements (each an {@code E}) in
      * the proper order, followed by a null
-     * @param s the stream
      */
-    private void writeObject(java.io.ObjectOutputStream s)
-        throws java.io.IOException {
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
 
         // Write out any hidden stuff
         s.defaultWriteObject();
@@ -1403,8 +1328,7 @@ public class ConcurrentLinkedDeque<E>
         // Write out all elements in the proper order.
         for (Node<E> p = first(); p != null; p = succ(p)) {
             E item = p.item;
-            if (item != null)
-                s.writeObject(item);
+            if (item != null) { s.writeObject(item); }
         }
 
         // Use trailing null as sentinel
@@ -1413,10 +1337,10 @@ public class ConcurrentLinkedDeque<E>
 
     /**
      * Reconstitutes the instance from a stream (that is, deserializes it).
+     *
      * @param s the stream
      */
-    private void readObject(java.io.ObjectInputStream s)
-        throws java.io.IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();
 
         // Read in elements until trailing null sentinel found
@@ -1425,9 +1349,7 @@ public class ConcurrentLinkedDeque<E>
         while ((item = s.readObject()) != null) {
             @SuppressWarnings("unchecked")
             Node<E> newNode = new Node<E>((E) item);
-            if (h == null)
-                h = t = newNode;
-            else {
+            if (h == null) { h = t = newNode; } else {
                 t.lazySetNext(newNode);
                 newNode.lazySetPrev(t);
                 t = newNode;
@@ -1450,6 +1372,7 @@ public class ConcurrentLinkedDeque<E>
     private static final sun.misc.Unsafe UNSAFE;
     private static final long headOffset;
     private static final long tailOffset;
+
     static {
         PREV_TERMINATOR = new Node<Object>();
         PREV_TERMINATOR.next = PREV_TERMINATOR;
@@ -1458,10 +1381,8 @@ public class ConcurrentLinkedDeque<E>
         try {
             UNSAFE = sun.misc.Unsafe.getUnsafe();
             Class k = ConcurrentLinkedDeque.class;
-            headOffset = UNSAFE.objectFieldOffset
-                (k.getDeclaredField("head"));
-            tailOffset = UNSAFE.objectFieldOffset
-                (k.getDeclaredField("tail"));
+            headOffset = UNSAFE.objectFieldOffset(k.getDeclaredField("head"));
+            tailOffset = UNSAFE.objectFieldOffset(k.getDeclaredField("tail"));
         } catch (Exception e) {
             throw new Error(e);
         }

@@ -33,7 +33,7 @@ import java.io.ObjectStreamException;
 
 /**
  * This is the common base class of all Java language enumeration types.
- *
+ * <p>
  * More information about enums, including descriptions of the
  * implicitly declared methods synthesized by the compiler, can be
  * found in section 8.9 of
@@ -45,15 +45,14 @@ import java.io.ObjectStreamException;
  * java.util.EnumMap map} implementations are available.
  *
  * @param <E> The enum type subclass
- * @author  Josh Bloch
- * @author  Neal Gafter
- * @see     Class#getEnumConstants()
- * @see     java.util.EnumSet
- * @see     java.util.EnumMap
- * @since   1.5
+ * @author Josh Bloch
+ * @author Neal Gafter
+ * @see Class#getEnumConstants()
+ * @see java.util.EnumSet
+ * @see java.util.EnumMap
+ * @since 1.5
  */
-public abstract class Enum<E extends Enum<E>>
-        implements Comparable<E>, Serializable {
+public abstract class Enum<E extends Enum<E>> implements Comparable<E>, Serializable {
     /**
      * The name of this enum constant, as declared in the enum declaration.
      * Most programmers should use the {@link #toString} method rather than
@@ -81,7 +80,7 @@ public abstract class Enum<E extends Enum<E>>
      * The ordinal of this enumeration constant (its position
      * in the enum declaration, where the initial constant is assigned
      * an ordinal of zero).
-     *
+     * <p>
      * Most programmers will have no use for this field.  It is designed
      * for use by sophisticated enum-based data structures, such as
      * {@link java.util.EnumSet} and {@link java.util.EnumMap}.
@@ -92,7 +91,7 @@ public abstract class Enum<E extends Enum<E>>
      * Returns the ordinal of this enumeration constant (its position
      * in its enum declaration, where the initial constant is assigned
      * an ordinal of zero).
-     *
+     * <p>
      * Most programmers will have no use for this method.  It is
      * designed for use by sophisticated enum-based data structures, such
      * as {@link java.util.EnumSet} and {@link java.util.EnumMap}.
@@ -108,11 +107,11 @@ public abstract class Enum<E extends Enum<E>>
      * It is for use by code emitted by the compiler in response to
      * enum type declarations.
      *
-     * @param name - The name of this enum constant, which is the identifier
-     *               used to declare it.
+     * @param name    - The name of this enum constant, which is the identifier
+     *                used to declare it.
      * @param ordinal - The ordinal of this enumeration constant (its position
-     *         in the enum declaration, where the initial constant is assigned
-     *         an ordinal of zero).
+     *                in the enum declaration, where the initial constant is assigned
+     *                an ordinal of zero).
      */
     protected Enum(String name, int ordinal) {
         this.name = name;
@@ -136,11 +135,11 @@ public abstract class Enum<E extends Enum<E>>
      * enum constant.
      *
      * @param other the object to be compared for equality with this object.
-     * @return  true if the specified object is equal to this
-     *          enum constant.
+     * @return true if the specified object is equal to this
+     * enum constant.
      */
     public final boolean equals(Object other) {
-        return this==other;
+        return this == other;
     }
 
     /**
@@ -167,17 +166,16 @@ public abstract class Enum<E extends Enum<E>>
      * Compares this enum with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
-     *
+     * <p>
      * Enum constants are only comparable to other enum constants of the
      * same enum type.  The natural order implemented by this
      * method is the order in which the constants are declared.
      */
     public final int compareTo(E o) {
-        Enum other = (Enum)o;
+        Enum other = (Enum) o;
         Enum self = this;
         if (self.getClass() != other.getClass() && // optimization
-            self.getDeclaringClass() != other.getDeclaringClass())
-            throw new ClassCastException();
+            self.getDeclaringClass() != other.getDeclaringClass()) { throw new ClassCastException(); }
         return self.ordinal - other.ordinal;
     }
 
@@ -185,13 +183,13 @@ public abstract class Enum<E extends Enum<E>>
      * Returns the Class object corresponding to this enum constant's
      * enum type.  Two enum constants e1 and  e2 are of the
      * same enum type if and only if
-     *   e1.getDeclaringClass() == e2.getDeclaringClass().
+     * e1.getDeclaringClass() == e2.getDeclaringClass().
      * (The value returned by this method may differ from the one returned
      * by the {@link Object#getClass} method for enum constants with
      * constant-specific class bodies.)
      *
      * @return the Class object corresponding to this enum constant's
-     *     enum type
+     * enum type
      */
     public final Class<E> getDeclaringClass() {
         Class clazz = getClass();
@@ -213,28 +211,24 @@ public abstract class Enum<E extends Enum<E>>
      * implicit {@code public static T[] values()} method of that
      * type.
      *
-     * @param <T> The enum type whose constant is to be returned
+     * @param <T>      The enum type whose constant is to be returned
      * @param enumType the {@code Class} object of the enum type from which
-     *      to return a constant
-     * @param name the name of the constant to return
+     *                 to return a constant
+     * @param name     the name of the constant to return
      * @return the enum constant of the specified enum type with the
-     *      specified name
+     * specified name
      * @throws IllegalArgumentException if the specified enum type has
-     *         no constant with the specified name, or the specified
-     *         class object does not represent an enum type
-     * @throws NullPointerException if {@code enumType} or {@code name}
-     *         is null
+     *                                  no constant with the specified name, or the specified
+     *                                  class object does not represent an enum type
+     * @throws NullPointerException     if {@code enumType} or {@code name}
+     *                                  is null
      * @since 1.5
      */
-    public static <T extends Enum<T>> T valueOf(Class<T> enumType,
-                                                String name) {
+    public static <T extends Enum<T>> T valueOf(Class<T> enumType, String name) {
         T result = enumType.enumConstantDirectory().get(name);
-        if (result != null)
-            return result;
-        if (name == null)
-            throw new NullPointerException("Name is null");
-        throw new IllegalArgumentException(
-            "No enum constant " + enumType.getCanonicalName() + "." + name);
+        if (result != null) { return result; }
+        if (name == null) { throw new NullPointerException("Name is null"); }
+        throw new IllegalArgumentException("No enum constant " + enumType.getCanonicalName() + "." + name);
     }
 
     /**
@@ -245,8 +239,7 @@ public abstract class Enum<E extends Enum<E>>
     /**
      * prevent default deserialization
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-        ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         throw new InvalidObjectException("can't deserialize enum");
     }
 

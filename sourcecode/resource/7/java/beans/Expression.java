@@ -37,12 +37,10 @@ package java.beans;
  * is instead computed by dynamically finding the method and invoking
  * it when the first call to <code>getValue</code> is made.
  *
+ * @author Philip Milne
  * @see #getValue
  * @see #setValue
- *
  * @since 1.4
- *
- * @author Philip Milne
  */
 public class Expression extends Statement {
 
@@ -61,13 +59,12 @@ public class Expression extends Statement {
      * If the {@code arguments} value is {@code null},
      * an empty array is used as the value of the {@code arguments} property.
      *
-     * @param target  the target object of this expression
-     * @param methodName  the name of the method to invoke on the specified target
+     * @param target     the target object of this expression
+     * @param methodName the name of the method to invoke on the specified target
      * @param arguments  the array of arguments to invoke the specified method
-     *
      * @see #getValue
      */
-    @ConstructorProperties({"target", "methodName", "arguments"})
+    @ConstructorProperties( { "target", "methodName", "arguments" })
     public Expression(Object target, String methodName, Object[] arguments) {
         super(target, methodName, arguments);
     }
@@ -86,11 +83,10 @@ public class Expression extends Statement {
      * If the {@code arguments} value is {@code null},
      * an empty array is used as the value of the {@code arguments} property.
      *
-     * @param value  the value of this expression
-     * @param target  the target object of this expression
-     * @param methodName  the name of the method to invoke on the specified target
+     * @param value      the value of this expression
+     * @param target     the target object of this expression
+     * @param methodName the name of the method to invoke on the specified target
      * @param arguments  the array of arguments to invoke the specified method
-     *
      * @see #setValue
      */
     public Expression(Object value, Object target, String methodName, Object[] arguments) {
@@ -106,13 +102,12 @@ public class Expression extends Statement {
      * Note that the {@code value} property is set to {@code null},
      * if the return type of the underlying method is {@code void}.
      *
-     * @throws NullPointerException if the value of the {@code target} or
-     *                              {@code methodName} property is {@code null}
+     * @throws NullPointerException  if the value of the {@code target} or
+     *                               {@code methodName} property is {@code null}
      * @throws NoSuchMethodException if a matching method is not found
-     * @throws SecurityException if a security manager exists and
-     *                           it denies the method invocation
-     * @throws Exception that is thrown by the invoked method
-     *
+     * @throws SecurityException     if a security manager exists and
+     *                               it denies the method invocation
+     * @throws Exception             that is thrown by the invoked method
      * @see java.lang.reflect.Method
      * @since 1.7
      */
@@ -143,10 +138,9 @@ public class Expression extends Statement {
      * methods are chosen using the dynamic types of the target
      * and arguments.
      *
+     * @return The result of applying this method to these arguments.
      * @see Statement#execute
      * @see #setValue
-     *
-     * @return The result of applying this method to these arguments.
      */
     public Object getValue() throws Exception {
         if (value == unbound) {
@@ -162,7 +156,6 @@ public class Expression extends Statement {
      * expression.
      *
      * @param value The value of this expression.
-     *
      * @see #getValue
      */
     public void setValue(Object value) {

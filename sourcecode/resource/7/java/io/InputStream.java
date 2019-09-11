@@ -32,15 +32,15 @@ package java.io;
  * <p> Applications that need to define a subclass of <code>InputStream</code>
  * must always provide a method that returns the next byte of input.
  *
- * @author  Arthur van Hoff
- * @see     java.io.BufferedInputStream
- * @see     java.io.ByteArrayInputStream
- * @see     java.io.DataInputStream
- * @see     java.io.FilterInputStream
- * @see     java.io.InputStream#read()
- * @see     java.io.OutputStream
- * @see     java.io.PushbackInputStream
- * @since   JDK1.0
+ * @author Arthur van Hoff
+ * @see java.io.BufferedInputStream
+ * @see java.io.ByteArrayInputStream
+ * @see java.io.DataInputStream
+ * @see java.io.FilterInputStream
+ * @see java.io.InputStream#read()
+ * @see java.io.OutputStream
+ * @see java.io.PushbackInputStream
+ * @since JDK1.0
  */
 public abstract class InputStream implements Closeable {
 
@@ -59,9 +59,9 @@ public abstract class InputStream implements Closeable {
      *
      * <p> A subclass must provide an implementation of this method.
      *
-     * @return     the next byte of data, or <code>-1</code> if the end of the
-     *             stream is reached.
-     * @exception  IOException  if an I/O error occurs.
+     * @return the next byte of data, or <code>-1</code> if the end of the
+     * stream is reached.
+     * @throws IOException if an I/O error occurs.
      */
     public abstract int read() throws IOException;
 
@@ -88,15 +88,15 @@ public abstract class InputStream implements Closeable {
      * <p> The <code>read(b)</code> method for class <code>InputStream</code>
      * has the same effect as: <pre><code> read(b, 0, b.length) </code></pre>
      *
-     * @param      b   the buffer into which the data is read.
-     * @return     the total number of bytes read into the buffer, or
-     *             <code>-1</code> if there is no more data because the end of
-     *             the stream has been reached.
-     * @exception  IOException  If the first byte cannot be read for any reason
-     * other than the end of the file, if the input stream has been closed, or
-     * if some other I/O error occurs.
-     * @exception  NullPointerException  if <code>b</code> is <code>null</code>.
-     * @see        java.io.InputStream#read(byte[], int, int)
+     * @param b the buffer into which the data is read.
+     * @return the total number of bytes read into the buffer, or
+     * <code>-1</code> if there is no more data because the end of
+     * the stream has been reached.
+     * @throws IOException          If the first byte cannot be read for any reason
+     *                              other than the end of the file, if the input stream has been closed, or
+     *                              if some other I/O error occurs.
+     * @throws NullPointerException if <code>b</code> is <code>null</code>.
+     * @see java.io.InputStream#read(byte[], int, int)
      */
     public int read(byte b[]) throws IOException {
         return read(b, 0, b.length);
@@ -143,21 +143,21 @@ public abstract class InputStream implements Closeable {
      * end of file is detected, or an exception is thrown. Subclasses are encouraged
      * to provide a more efficient implementation of this method.
      *
-     * @param      b     the buffer into which the data is read.
-     * @param      off   the start offset in array <code>b</code>
-     *                   at which the data is written.
-     * @param      len   the maximum number of bytes to read.
-     * @return     the total number of bytes read into the buffer, or
-     *             <code>-1</code> if there is no more data because the end of
-     *             the stream has been reached.
-     * @exception  IOException If the first byte cannot be read for any reason
-     * other than end of file, or if the input stream has been closed, or if
-     * some other I/O error occurs.
-     * @exception  NullPointerException If <code>b</code> is <code>null</code>.
-     * @exception  IndexOutOfBoundsException If <code>off</code> is negative,
-     * <code>len</code> is negative, or <code>len</code> is greater than
-     * <code>b.length - off</code>
-     * @see        java.io.InputStream#read()
+     * @param b   the buffer into which the data is read.
+     * @param off the start offset in array <code>b</code>
+     *            at which the data is written.
+     * @param len the maximum number of bytes to read.
+     * @return the total number of bytes read into the buffer, or
+     * <code>-1</code> if there is no more data because the end of
+     * the stream has been reached.
+     * @throws IOException               If the first byte cannot be read for any reason
+     *                                   other than end of file, or if the input stream has been closed, or if
+     *                                   some other I/O error occurs.
+     * @throws NullPointerException      If <code>b</code> is <code>null</code>.
+     * @throws IndexOutOfBoundsException If <code>off</code> is negative,
+     *                                   <code>len</code> is negative, or <code>len</code> is greater than
+     *                                   <code>b.length - off</code>
+     * @see java.io.InputStream#read()
      */
     public int read(byte b[], int off, int len) throws IOException {
         if (b == null) {
@@ -172,16 +172,16 @@ public abstract class InputStream implements Closeable {
         if (c == -1) {
             return -1;
         }
-        b[off] = (byte)c;
+        b[off] = (byte) c;
 
         int i = 1;
         try {
-            for (; i < len ; i++) {
+            for (; i < len; i++) {
                 c = read();
                 if (c == -1) {
                     break;
                 }
-                b[off + i] = (byte)c;
+                b[off + i] = (byte) c;
             }
         } catch (IOException ee) {
         }
@@ -203,17 +203,16 @@ public abstract class InputStream implements Closeable {
      * encouraged to provide a more efficient implementation of this method.
      * For instance, the implementation may depend on the ability to seek.
      *
-     * @param      n   the number of bytes to be skipped.
-     * @return     the actual number of bytes skipped.
-     * @exception  IOException  if the stream does not support seek,
-     *                          or if some other I/O error occurs.
+     * @param n the number of bytes to be skipped.
+     * @return the actual number of bytes skipped.
+     * @throws IOException if the stream does not support seek,
+     *                     or if some other I/O error occurs.
      */
     public long skip(long n) throws IOException {
 
         long remaining = n;
         int nr;
-        if (skipBuffer == null)
-            skipBuffer = new byte[SKIP_BUFFER_SIZE];
+        if (skipBuffer == null) { skipBuffer = new byte[SKIP_BUFFER_SIZE]; }
 
         byte[] localSkipBuffer = skipBuffer;
 
@@ -222,8 +221,7 @@ public abstract class InputStream implements Closeable {
         }
 
         while (remaining > 0) {
-            nr = read(localSkipBuffer, 0,
-                      (int) Math.min(SKIP_BUFFER_SIZE, remaining));
+            nr = read(localSkipBuffer, 0, (int) Math.min(SKIP_BUFFER_SIZE, remaining));
             if (nr < 0) {
                 break;
             }
@@ -254,10 +252,10 @@ public abstract class InputStream implements Closeable {
      *
      * <p> This method should be overridden by subclasses.
      *
-     * @return     an estimate of the number of bytes that can be read (or skipped
-     *             over) from this input stream without blocking or {@code 0} when
-     *             it reaches the end of the input stream.
-     * @exception  IOException if an I/O error occurs.
+     * @return an estimate of the number of bytes that can be read (or skipped
+     * over) from this input stream without blocking or {@code 0} when
+     * it reaches the end of the input stream.
+     * @throws IOException if an I/O error occurs.
      */
     public int available() throws IOException {
         return 0;
@@ -270,7 +268,7 @@ public abstract class InputStream implements Closeable {
      * <p> The <code>close</code> method of <code>InputStream</code> does
      * nothing.
      *
-     * @exception  IOException  if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     public void close() throws IOException {}
 
@@ -296,9 +294,9 @@ public abstract class InputStream implements Closeable {
      * <p> The <code>mark</code> method of <code>InputStream</code> does
      * nothing.
      *
-     * @param   readlimit   the maximum limit of bytes that can be read before
-     *                      the mark position becomes invalid.
-     * @see     java.io.InputStream#reset()
+     * @param readlimit the maximum limit of bytes that can be read before
+     *                  the mark position becomes invalid.
+     * @see java.io.InputStream#reset()
      */
     public synchronized void mark(int readlimit) {}
 
@@ -342,10 +340,10 @@ public abstract class InputStream implements Closeable {
      * <p>The method <code>reset</code> for class <code>InputStream</code>
      * does nothing except throw an <code>IOException</code>.
      *
-     * @exception  IOException  if this stream has not been marked or if the
-     *               mark has been invalidated.
-     * @see     java.io.InputStream#mark(int)
-     * @see     java.io.IOException
+     * @throws IOException if this stream has not been marked or if the
+     *                     mark has been invalidated.
+     * @see java.io.InputStream#mark(int)
+     * @see java.io.IOException
      */
     public synchronized void reset() throws IOException {
         throw new IOException("mark/reset not supported");
@@ -358,10 +356,10 @@ public abstract class InputStream implements Closeable {
      * particular input stream instance. The <code>markSupported</code> method
      * of <code>InputStream</code> returns <code>false</code>.
      *
-     * @return  <code>true</code> if this stream instance supports the mark
-     *          and reset methods; <code>false</code> otherwise.
-     * @see     java.io.InputStream#mark(int)
-     * @see     java.io.InputStream#reset()
+     * @return <code>true</code> if this stream instance supports the mark
+     * and reset methods; <code>false</code> otherwise.
+     * @see java.io.InputStream#mark(int)
+     * @see java.io.InputStream#reset()
      */
     public boolean markSupported() {
         return false;

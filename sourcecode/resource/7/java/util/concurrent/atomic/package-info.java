@@ -115,7 +115,7 @@
  * contains <em>Updater</em> classes that can be used to obtain
  * {@code compareAndSet} operations on any selected {@code volatile}
  * field of any selected class.
- *
+ * <p>
  * {@link java.util.concurrent.atomic.AtomicReferenceFieldUpdater},
  * {@link java.util.concurrent.atomic.AtomicIntegerFieldUpdater}, and
  * {@link java.util.concurrent.atomic.AtomicLongFieldUpdater} are
@@ -165,7 +165,7 @@
  * class associates a single boolean with a reference.  For example, this
  * bit might be used inside a data structure to mean that the object
  * being referenced has logically been deleted.
- *
+ * <p>
  * The {@link java.util.concurrent.atomic.AtomicStampedReference}
  * class associates an integer value with a reference.  This may be
  * used for example, to represent version numbers corresponding to
@@ -187,7 +187,7 @@
  * representing {@code byte}.  In those infrequent cases where you would
  * like to do so, you can use an {@code AtomicInteger} to hold
  * {@code byte} values, and cast appropriately.
- *
+ * <p>
  * You can also hold floats using
  * {@link java.lang.Float#floatToIntBits} and
  * {@link java.lang.Float#intBitsToFloat} conversions, and doubles using

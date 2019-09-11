@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * table for each class encountered at a message send call site,
  * it can use a {@code ClassValue} to cache information needed to
  * perform the message send quickly, for each class encountered.
+ *
  * @author John Rose, JSR 292 EG
  * @since 1.7
  */
@@ -196,8 +197,7 @@ public abstract class ClassValue<T> {
     }
 
     // Replace this map by a per-class slot.
-    private static final WeakHashMap<Class<?>, ClassValueMap> ROOT
-        = new WeakHashMap<Class<?>, ClassValueMap>();
+    private static final WeakHashMap<Class<?>, ClassValueMap> ROOT = new WeakHashMap<Class<?>, ClassValueMap>();
 
     private static ClassValueMap getMap(Class<?> type) {
         type.getClass();  // test for null
@@ -207,8 +207,7 @@ public abstract class ClassValue<T> {
     private static ClassValueMap initializeMap(Class<?> type) {
         synchronized (ClassValue.class) {
             ClassValueMap map = ROOT.get(type);
-            if (map == null)
-                ROOT.put(type, map = new ClassValueMap());
+            if (map == null) { ROOT.put(type, map = new ClassValueMap()); }
             return map;
         }
     }
@@ -216,9 +215,9 @@ public abstract class ClassValue<T> {
     static class ClassValueMap extends WeakHashMap<ClassValue, Object> {
         /** Make sure this table contains an Entry for the given key, even if it is empty. */
         void preInitializeEntry(ClassValue key) {
-            if (!this.containsKey(key))
-                this.put(key, null);
+            if (!this.containsKey(key)) { this.put(key, null); }
         }
+
         /** Make sure this table contains a non-empty Entry for the given key. */
         Object initializeEntry(ClassValue key, Object value) {
             Object prior = this.get(key);
@@ -232,6 +231,7 @@ public abstract class ClassValue<T> {
         Object maskNull(Object x) {
             return x == null ? this : x;
         }
+
         Object unmaskNull(Object x) {
             return x == this ? null : x;
         }

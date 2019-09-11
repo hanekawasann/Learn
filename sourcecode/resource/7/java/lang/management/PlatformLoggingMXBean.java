@@ -48,7 +48,7 @@ package java.lang.management;
  * this {@code ObjectName} implements all attributes defined by
  * {@link java.util.logging.LoggingMXBean}.
  *
- * @since   1.7
+ * @since 1.7
  */
 public interface PlatformLoggingMXBean extends PlatformManagedObject {
 
@@ -59,7 +59,7 @@ public interface PlatformLoggingMXBean extends PlatformManagedObject {
      * returns a list of the logger names.
      *
      * @return A list of {@code String} each of which is a
-     *         currently registered {@code Logger} name.
+     * currently registered {@code Logger} name.
      */
     java.util.List<String> getLoggerNames();
 
@@ -71,8 +71,8 @@ public interface PlatformLoggingMXBean extends PlatformManagedObject {
      * This method first finds the logger of the given name and
      * then returns the name of the log level by calling:
      * <blockquote>
-     *   {@link java.util.logging.Logger#getLevel
-     *    Logger.getLevel()}.{@link java.util.logging.Level#getName getName()};
+     * {@link java.util.logging.Logger#getLevel
+     * Logger.getLevel()}.{@link java.util.logging.Level#getName getName()};
      * </blockquote>
      *
      * <p>
@@ -81,12 +81,10 @@ public interface PlatformLoggingMXBean extends PlatformManagedObject {
      * from its parent, an empty string will be returned.
      *
      * @param loggerName The name of the {@code Logger} to be retrieved.
-     *
      * @return The name of the log level of the specified logger; or
-     *         an empty string if the log level of the specified logger
-     *         is {@code null}.  If the specified logger does not
-     *         exist, {@code null} is returned.
-     *
+     * an empty string if the log level of the specified logger
+     * is {@code null}.  If the specified logger does not
+     * exist, {@code null} is returned.
      * @see java.util.logging.Logger#getLevel
      */
     String getLoggerLevel(String loggerName);
@@ -105,16 +103,13 @@ public interface PlatformLoggingMXBean extends PlatformManagedObject {
      *
      * @param loggerName The name of the {@code Logger} to be set.
      *                   Must be non-null.
-     * @param levelName The name of the level to set on the specified logger,
-     *                 or  {@code null} if setting the level to inherit
-     *                 from its nearest ancestor.
-     *
+     * @param levelName  The name of the level to set on the specified logger,
+     *                   or  {@code null} if setting the level to inherit
+     *                   from its nearest ancestor.
      * @throws IllegalArgumentException if the specified logger
-     * does not exist, or {@code levelName} is not a valid level name.
-     *
-     * @throws SecurityException if a security manager exists and if
-     * the caller does not have LoggingPermission("control").
-     *
+     *                                  does not exist, or {@code levelName} is not a valid level name.
+     * @throws SecurityException        if a security manager exists and if
+     *                                  the caller does not have LoggingPermission("control").
      * @see java.util.logging.Logger#setLevel
      */
     void setLoggerLevel(String loggerName, String levelName);
@@ -128,11 +123,10 @@ public interface PlatformLoggingMXBean extends PlatformManagedObject {
      * the result will be an empty string.
      *
      * @param loggerName The name of a {@code Logger}.
-     *
      * @return the name of the nearest existing parent logger;
-     *         an empty string if the specified logger is the root logger.
-     *         If the specified logger does not exist, {@code null}
-     *         is returned.
+     * an empty string if the specified logger is the root logger.
+     * If the specified logger does not exist, {@code null}
+     * is returned.
      */
     String getParentLoggerName(String loggerName);
 }

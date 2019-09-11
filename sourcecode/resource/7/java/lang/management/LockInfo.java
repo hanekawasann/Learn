@@ -26,6 +26,7 @@
 package java.lang.management;
 
 import javax.management.openmbean.CompositeData;
+
 import java.util.concurrent.locks.*;
 import java.beans.ConstructorProperties;
 
@@ -47,26 +48,25 @@ import java.beans.ConstructorProperties;
  * as specified in the <a href="../../../javax/management/MXBean.html#mapping-rules">
  * type mapping rules</a> of {@linkplain javax.management.MXBean MXBeans}.
  *
+ * @author Mandy Chung
  * @see java.util.concurrent.locks.AbstractOwnableSynchronizer
  * @see java.util.concurrent.locks.Condition
- *
- * @author  Mandy Chung
- * @since   1.6
+ * @since 1.6
  */
 
 public class LockInfo {
 
     private String className;
-    private int    identityHashCode;
+    private int identityHashCode;
 
     /**
      * Constructs a <tt>LockInfo</tt> object.
      *
-     * @param className the fully qualified name of the class of the lock object.
+     * @param className        the fully qualified name of the class of the lock object.
      * @param identityHashCode the {@link System#identityHashCode
      *                         identity hash code} of the lock object.
      */
-    @ConstructorProperties({"className", "identityHashCode"})
+    @ConstructorProperties( { "className", "identityHashCode" })
     public LockInfo(String className, int identityHashCode) {
         if (className == null) {
             throw new NullPointerException("Parameter className cannot be null");

@@ -26,6 +26,7 @@
 package java.awt.event;
 
 import java.awt.Component;
+
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 
@@ -55,12 +56,11 @@ import sun.awt.SunToolkit;
  * of any particular {@code FocusEvent} instance is not
  * in the range from {@code FOCUS_FIRST} to {@code FOCUS_LAST}.
  *
+ * @author Carl Quinn
+ * @author Amy Fowler
  * @see FocusAdapter
  * @see FocusListener
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/focuslistener.html">Tutorial: Writing a Focus Listener</a>
- *
- * @author Carl Quinn
- * @author Amy Fowler
  * @since 1.1
  */
 public class FocusEvent extends ComponentEvent {
@@ -68,12 +68,12 @@ public class FocusEvent extends ComponentEvent {
     /**
      * The first number in the range of ids used for focus events.
      */
-    public static final int FOCUS_FIRST         = 1004;
+    public static final int FOCUS_FIRST = 1004;
 
     /**
      * The last number in the range of ids used for focus events.
      */
-    public static final int FOCUS_LAST          = 1005;
+    public static final int FOCUS_LAST = 1005;
 
     /**
      * This event indicates that the Component is now the focus owner.
@@ -129,14 +129,14 @@ public class FocusEvent extends ComponentEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source     The <code>Component</code> that originated the event
-     * @param id         An integer indicating the type of event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link FocusEvent}
-     * @param temporary  Equals <code>true</code> if the focus change is temporary;
-     *                   <code>false</code> otherwise
-     * @param opposite   The other Component involved in the focus change,
-     *                   or <code>null</code>
+     * @param source    The <code>Component</code> that originated the event
+     * @param id        An integer indicating the type of event.
+     *                  For information on allowable values, see
+     *                  the class description for {@link FocusEvent}
+     * @param temporary Equals <code>true</code> if the focus change is temporary;
+     *                  <code>false</code> otherwise
+     * @param opposite  The other Component involved in the focus change,
+     *                  or <code>null</code>
      * @throws IllegalArgumentException if <code>source</code> equals {@code null}
      * @see #getSource()
      * @see #getID()
@@ -144,8 +144,7 @@ public class FocusEvent extends ComponentEvent {
      * @see #getOppositeComponent()
      * @since 1.4
      */
-    public FocusEvent(Component source, int id, boolean temporary,
-                      Component opposite) {
+    public FocusEvent(Component source, int id, boolean temporary, Component opposite) {
         super(source, id);
         this.temporary = temporary;
         this.opposite = opposite;
@@ -160,8 +159,8 @@ public class FocusEvent extends ComponentEvent {
      *
      * @param source    The <code>Component</code> that originated the event
      * @param id        An integer indicating the type of event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link FocusEvent}
+     *                  For information on allowable values, see
+     *                  the class description for {@link FocusEvent}
      * @param temporary Equals <code>true</code> if the focus change is temporary;
      *                  <code>false</code> otherwise
      * @throws IllegalArgumentException if <code>source</code> equals {@code null}
@@ -180,10 +179,10 @@ public class FocusEvent extends ComponentEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source    The <code>Component</code> that originated the event
-     * @param id        An integer indicating the type of event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link FocusEvent}
+     * @param source The <code>Component</code> that originated the event
+     * @param id     An integer indicating the type of event.
+     *               For information on allowable values, see
+     *               the class description for {@link FocusEvent}
      * @throws IllegalArgumentException if <code>source</code> equals {@code null}
      * @see #getSource()
      * @see #getID()
@@ -196,7 +195,7 @@ public class FocusEvent extends ComponentEvent {
      * Identifies the focus change event as temporary or permanent.
      *
      * @return <code>true</code> if the focus change is temporary;
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     public boolean isTemporary() {
         return temporary;
@@ -218,10 +217,7 @@ public class FocusEvent extends ComponentEvent {
             return null;
         }
 
-        return (SunToolkit.targetToAppContext(opposite) ==
-                AppContext.getAppContext())
-            ? opposite
-            : null;
+        return (SunToolkit.targetToAppContext(opposite) == AppContext.getAppContext()) ? opposite : null;
     }
 
     /**
@@ -232,18 +228,17 @@ public class FocusEvent extends ComponentEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case FOCUS_GAINED:
-              typeStr = "FOCUS_GAINED";
-              break;
-          case FOCUS_LOST:
-              typeStr = "FOCUS_LOST";
-              break;
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case FOCUS_GAINED:
+                typeStr = "FOCUS_GAINED";
+                break;
+            case FOCUS_LOST:
+                typeStr = "FOCUS_LOST";
+                break;
+            default:
+                typeStr = "unknown type";
         }
-        return typeStr + (temporary ? ",temporary" : ",permanent") +
-            ",opposite=" + getOppositeComponent();
+        return typeStr + (temporary ? ",temporary" : ",permanent") + ",opposite=" + getOppositeComponent();
     }
 
 }

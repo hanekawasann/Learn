@@ -26,6 +26,7 @@
 package java.nio;
 
 import java.io.FileDescriptor;
+
 import sun.misc.Unsafe;
 
 
@@ -57,15 +58,12 @@ import sun.misc.Unsafe;
  * <p> Mapped byte buffers otherwise behave no differently than ordinary direct
  * byte buffers. </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
  * @since 1.4
  */
 
-public abstract class MappedByteBuffer
-    extends ByteBuffer
-{
+public abstract class MappedByteBuffer extends ByteBuffer {
 
     // This is a little bit backwards: By rights MappedByteBuffer should be a
     // subclass of DirectByteBuffer, but to keep the spec clear and simple, and
@@ -79,8 +77,7 @@ public abstract class MappedByteBuffer
     // This should only be invoked by the DirectByteBuffer constructors
     //
     MappedByteBuffer(int mark, int pos, int lim, int cap, // package-private
-                     FileDescriptor fd)
-    {
+        FileDescriptor fd) {
         super(mark, pos, lim, cap);
         this.fd = fd;
     }
@@ -92,8 +89,8 @@ public abstract class MappedByteBuffer
 
     private void checkMapped() {
         if (fd == null)
-            // Can only happen if a luser explicitly casts a direct byte buffer
-            throw new UnsupportedOperationException();
+        // Can only happen if a luser explicitly casts a direct byte buffer
+        { throw new UnsupportedOperationException(); }
     }
 
     // Returns the distance (in bytes) of the buffer from the page aligned address
@@ -109,7 +106,7 @@ public abstract class MappedByteBuffer
     }
 
     private long mappingLength(long mappingOffset) {
-        return (long)capacity() + mappingOffset;
+        return (long) capacity() + mappingOffset;
     }
 
     /**
@@ -127,13 +124,12 @@ public abstract class MappedByteBuffer
      * underlying operating system may have paged out some of the buffer's data
      * by the time that an invocation of this method returns.  </p>
      *
-     * @return  <tt>true</tt> if it is likely that this buffer's content
-     *          is resident in physical memory
+     * @return <tt>true</tt> if it is likely that this buffer's content
+     * is resident in physical memory
      */
     public final boolean isLoaded() {
         checkMapped();
-        if ((address == 0) || (capacity() == 0))
-            return true;
+        if ((address == 0) || (capacity() == 0)) { return true; }
         long offset = mappingOffset();
         long length = mappingLength(offset);
         return isLoaded0(mappingAddress(offset), length, Bits.pageCount(length));
@@ -147,12 +143,11 @@ public abstract class MappedByteBuffer
      * method may cause some number of page faults and I/O operations to
      * occur. </p>
      *
-     * @return  This buffer
+     * @return This buffer
      */
     public final MappedByteBuffer load() {
         checkMapped();
-        if ((address == 0) || (capacity() == 0))
-            return this;
+        if ((address == 0) || (capacity() == 0)) { return this; }
         long offset = mappingOffset();
         long length = mappingLength(offset);
         load0(mappingAddress(offset), length);
@@ -162,7 +157,7 @@ public abstract class MappedByteBuffer
         int ps = Bits.pageSize();
         int count = Bits.pageCount(length);
         long a = mappingAddress(offset);
-        for (int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             unsafe.getByte(a);
             a += ps;
         }
@@ -186,7 +181,7 @@ public abstract class MappedByteBuffer
      * java.nio.channels.FileChannel.MapMode#READ_WRITE}) then invoking this
      * method has no effect. </p>
      *
-     * @return  This buffer
+     * @return This buffer
      */
     public final MappedByteBuffer force() {
         checkMapped();
@@ -198,6 +193,8 @@ public abstract class MappedByteBuffer
     }
 
     private native boolean isLoaded0(long address, long length, int pageCount);
+
     private native void load0(long address, long length);
+
     private native void force0(FileDescriptor fd, long address, long length);
 }

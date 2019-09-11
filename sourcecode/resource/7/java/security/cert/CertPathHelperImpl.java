@@ -55,8 +55,7 @@ class CertPathHelperImpl extends CertPathHelper {
         }
     }
 
-    protected void implSetPathToNames(X509CertSelector sel,
-            Set<GeneralNameInterface> names) {
+    protected void implSetPathToNames(X509CertSelector sel, Set<GeneralNameInterface> names) {
         sel.setPathToNamesInternal(names);
     }
 

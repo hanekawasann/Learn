@@ -37,7 +37,6 @@ import java.awt.dnd.InvalidDnDOperationException;
  * </p>
  *
  * @since 1.2
- *
  */
 
 public interface DropTargetContextPeer {

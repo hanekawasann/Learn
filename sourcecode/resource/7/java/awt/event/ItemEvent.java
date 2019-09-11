@@ -35,7 +35,7 @@ import java.awt.ItemSelectable;
  * The event is passed to every <code>ItemListener</code> object which
  * registered to receive such events using the component's
  * <code>addItemListener</code> method.
- * <P>
+ * <p>
  * The object that implements the <code>ItemListener</code> interface gets
  * this <code>ItemEvent</code> when the event occurs. The listener is
  * spared the details of processing individual mouse movements and mouse
@@ -55,11 +55,9 @@ import java.awt.ItemSelectable;
  * Assigning the value different from listed above will cause an unspecified behavior.
  *
  * @author Carl Quinn
- *
  * @see java.awt.ItemSelectable
  * @see ItemListener
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/itemlistener.html">Tutorial: Writing an Item Listener</a>
- *
  * @since 1.1
  */
 public class ItemEvent extends AWTEvent {
@@ -67,17 +65,17 @@ public class ItemEvent extends AWTEvent {
     /**
      * The first number in the range of ids used for item events.
      */
-    public static final int ITEM_FIRST          = 701;
+    public static final int ITEM_FIRST = 701;
 
     /**
      * The last number in the range of ids used for item events.
      */
-    public static final int ITEM_LAST           = 701;
+    public static final int ITEM_LAST = 701;
 
     /**
      * This event id indicates that an item's state changed.
      */
-    public static final int ITEM_STATE_CHANGED  = ITEM_FIRST; //Event.LIST_SELECT
+    public static final int ITEM_STATE_CHANGED = ITEM_FIRST; //Event.LIST_SELECT
 
     /**
      * This state-change value indicates that an item was selected.
@@ -87,7 +85,7 @@ public class ItemEvent extends AWTEvent {
     /**
      * This state-change-value indicates that a selected item was deselected.
      */
-    public static final int DESELECTED  = 2;
+    public static final int DESELECTED = 2;
 
     /**
      * The item whose selection state has changed.
@@ -117,16 +115,16 @@ public class ItemEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source The <code>ItemSelectable</code> object
-     *               that originated the event
-     * @param id           The integer that identifies the event type.
-     *                     For information on allowable values, see
-     *                     the class description for {@link ItemEvent}
-     * @param item   An object -- the item affected by the event
-     * @param stateChange  An integer that indicates whether the item was
-     *               selected or deselected.
-     *                     For information on allowable values, see
-     *                     the class description for {@link ItemEvent}
+     * @param source      The <code>ItemSelectable</code> object
+     *                    that originated the event
+     * @param id          The integer that identifies the event type.
+     *                    For information on allowable values, see
+     *                    the class description for {@link ItemEvent}
+     * @param item        An object -- the item affected by the event
+     * @param stateChange An integer that indicates whether the item was
+     *                    selected or deselected.
+     *                    For information on allowable values, see
+     *                    the class description for {@link ItemEvent}
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getItemSelectable()
      * @see #getID()
@@ -144,27 +142,26 @@ public class ItemEvent extends AWTEvent {
      * @return the ItemSelectable object that originated the event.
      */
     public ItemSelectable getItemSelectable() {
-        return (ItemSelectable)source;
+        return (ItemSelectable) source;
     }
 
-   /**
-    * Returns the item affected by the event.
-    *
-    * @return the item (object) that was affected by the event
-    */
+    /**
+     * Returns the item affected by the event.
+     *
+     * @return the item (object) that was affected by the event
+     */
     public Object getItem() {
         return item;
     }
 
-   /**
-    * Returns the type of state change (selected or deselected).
-    *
-    * @return an integer that indicates whether the item was selected
-    *         or deselected
-    *
-    * @see #SELECTED
-    * @see #DESELECTED
-    */
+    /**
+     * Returns the type of state change (selected or deselected).
+     *
+     * @return an integer that indicates whether the item was selected
+     * or deselected
+     * @see #SELECTED
+     * @see #DESELECTED
+     */
     public int getStateChange() {
         return stateChange;
     }
@@ -177,26 +174,26 @@ public class ItemEvent extends AWTEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case ITEM_STATE_CHANGED:
-              typeStr = "ITEM_STATE_CHANGED";
-              break;
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case ITEM_STATE_CHANGED:
+                typeStr = "ITEM_STATE_CHANGED";
+                break;
+            default:
+                typeStr = "unknown type";
         }
 
         String stateStr;
-        switch(stateChange) {
-          case SELECTED:
-              stateStr = "SELECTED";
-              break;
-          case DESELECTED:
-              stateStr = "DESELECTED";
-              break;
-          default:
-              stateStr = "unknown type";
+        switch (stateChange) {
+            case SELECTED:
+                stateStr = "SELECTED";
+                break;
+            case DESELECTED:
+                stateStr = "DESELECTED";
+                break;
+            default:
+                stateStr = "unknown type";
         }
-        return typeStr + ",item="+item + ",stateChange="+stateStr;
+        return typeStr + ",item=" + item + ",stateChange=" + stateStr;
     }
 
 }

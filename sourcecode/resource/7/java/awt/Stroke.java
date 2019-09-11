@@ -52,6 +52,7 @@ package java.awt;
  * If a <code>Stroke</code> object is modified after it is set in
  * the <code>Graphics2D</code> context then the behavior
  * of subsequent rendering would be undefined.
+ *
  * @see BasicStroke
  * @see Graphics2D#setStroke
  */
@@ -61,8 +62,9 @@ public interface Stroke {
      * should be painted when the <code>Shape</code> is stroked according
      * to the rules defined by the
      * object implementing the <code>Stroke</code> interface.
+     *
      * @param p a <code>Shape</code> to be stroked
      * @return the stroked outline <code>Shape</code>.
      */
-    Shape createStrokedShape (Shape p);
+    Shape createStrokedShape(Shape p);
 }

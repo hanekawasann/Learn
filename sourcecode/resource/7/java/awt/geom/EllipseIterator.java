@@ -31,7 +31,7 @@ import java.util.*;
  * A utility class to iterate over the path segments of an ellipse
  * through the PathIterator interface.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  */
 class EllipseIterator implements PathIterator {
     double x, y, w, h;
@@ -52,6 +52,7 @@ class EllipseIterator implements PathIterator {
     /**
      * Return the winding rule for determining the insideness of the
      * path.
+     *
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
      */
@@ -61,6 +62,7 @@ class EllipseIterator implements PathIterator {
 
     /**
      * Tests if there are more points to read.
+     *
      * @return true if there are more points to read
      */
     public boolean isDone() {
@@ -86,12 +88,8 @@ class EllipseIterator implements PathIterator {
      */
     private static final double pcv = 0.5 + CtrlVal * 0.5;
     private static final double ncv = 0.5 - CtrlVal * 0.5;
-    private static double ctrlpts[][] = {
-        {  1.0,  pcv,  pcv,  1.0,  0.5,  1.0 },
-        {  ncv,  1.0,  0.0,  pcv,  0.0,  0.5 },
-        {  0.0,  ncv,  ncv,  0.0,  0.5,  0.0 },
-        {  pcv,  0.0,  1.0,  ncv,  1.0,  0.5 }
-    };
+    private static double ctrlpts[][] = { { 1.0, pcv, pcv, 1.0, 0.5, 1.0 }, { ncv, 1.0, 0.0, pcv, 0.0, 0.5 },
+        { 0.0, ncv, ncv, 0.0, 0.5, 0.0 }, { pcv, 0.0, 1.0, ncv, 1.0, 0.5 } };
 
     /**
      * Returns the coordinates and type of the current path segment in
@@ -105,6 +103,7 @@ class EllipseIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO
@@ -152,6 +151,7 @@ class EllipseIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO

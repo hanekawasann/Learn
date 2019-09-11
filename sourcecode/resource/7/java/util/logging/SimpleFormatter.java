@@ -29,6 +29,7 @@ package java.util.logging;
 import java.io.*;
 import java.text.*;
 import java.util.Date;
+
 import sun.util.logging.LoggingSupport;
 
 /**
@@ -52,8 +53,8 @@ import sun.util.logging.LoggingSupport;
  * is {@linkplain java.util.IllegalFormatException illegal},
  * the default format is implementation-specific.
  *
- * @since 1.4
  * @see java.util.Formatter
+ * @since 1.4
  */
 
 public class SimpleFormatter extends Formatter {
@@ -143,7 +144,7 @@ public class SimpleFormatter extends Formatter {
         if (record.getSourceClassName() != null) {
             source = record.getSourceClassName();
             if (record.getSourceMethodName() != null) {
-               source += " " + record.getSourceMethodName();
+                source += " " + record.getSourceMethodName();
             }
         } else {
             source = record.getLoggerName();
@@ -158,12 +159,7 @@ public class SimpleFormatter extends Formatter {
             pw.close();
             throwable = sw.toString();
         }
-        return String.format(format,
-                             dat,
-                             source,
-                             record.getLoggerName(),
-                             record.getLevel().getLocalizedName(),
-                             message,
-                             throwable);
+        return String.format(format, dat, source, record.getLoggerName(), record.getLevel().getLocalizedName(), message,
+            throwable);
     }
 }

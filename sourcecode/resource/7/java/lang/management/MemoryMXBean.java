@@ -42,10 +42,10 @@ import javax.management.openmbean.CompositeData;
  * <p>The <tt>ObjectName</tt> for uniquely identifying the MXBean for
  * the memory system within an MBeanServer is:
  * <blockquote>
- *    {@link ManagementFactory#MEMORY_MXBEAN_NAME
- *           <tt>java.lang:type=Memory</tt>}
+ * {@link ManagementFactory#MEMORY_MXBEAN_NAME
+ * <tt>java.lang:type=Memory</tt>}
  * </blockquote>
- *
+ * <p>
  * It can be obtained by calling the
  * {@link PlatformManagedObject#getObjectName} method.
  *
@@ -106,7 +106,7 @@ import javax.management.openmbean.CompositeData;
  * A memory pool can be managed by more than one memory manager.
  *
  * <h4>Memory Usage Monitoring</h4>
- *
+ * <p>
  * Memory usage is a very important monitoring attribute for the memory system.
  * The memory usage, for example, could indicate:
  * <ul>
@@ -122,7 +122,7 @@ import javax.management.openmbean.CompositeData;
  *   <li>Usage Threshold Notification</li>
  *   <li>Collection Usage Threshold Notification</li>
  * </ul>
- *
+ * <p>
  * Details are specified in the {@link MemoryPoolMXBean} interface.
  *
  * <p>The memory usage monitoring mechanism is intended for load-balancing
@@ -175,7 +175,7 @@ import javax.management.openmbean.CompositeData;
  * the {@link javax.management.NotificationEmitter NotificationEmitter}
  * interface that allows a listener to be registered within the
  * <tt>MemoryMXBean</tt> as a notification listener.
- *
+ * <p>
  * Below is an example code that registers a <tt>MyListener</tt> to handle
  * notification emitted by the <tt>MemoryMXBean</tt>.
  *
@@ -193,14 +193,13 @@ import javax.management.openmbean.CompositeData;
  * emitter.addNotificationListener(listener, null, null);
  * </pre></blockquote>
  *
+ * @author Mandy Chung
  * @see ManagementFactory#getPlatformMXBeans(Class)
  * @see <a href="../../../javax/management/package-summary.html">
- *      JMX Specification.</a>
+ * JMX Specification.</a>
  * @see <a href="package-summary.html#examples">
- *      Ways to Access MXBeans</a>
- *
- * @author  Mandy Chung
- * @since   1.5
+ * Ways to Access MXBeans</a>
+ * @since 1.5
  */
 public interface MemoryMXBean extends PlatformManagedObject {
     /**
@@ -282,10 +281,9 @@ public interface MemoryMXBean extends PlatformManagedObject {
      *
      * @param value <tt>true</tt> to enable verbose output;
      *              <tt>false</tt> to disable.
-     *
-     * @exception  java.lang.SecurityException if a security manager
-     *             exists and the caller does not have
-     *             ManagementPermission("control").
+     * @throws java.lang.SecurityException if a security manager
+     *                                     exists and the caller does not have
+     *                                     ManagementPermission("control").
      */
     public void setVerbose(boolean value);
 
@@ -297,7 +295,7 @@ public interface MemoryMXBean extends PlatformManagedObject {
      * System.gc()
      * </pre></blockquote>
      *
-     * @see     java.lang.System#gc()
+     * @see java.lang.System#gc()
      */
     public void gc();
 

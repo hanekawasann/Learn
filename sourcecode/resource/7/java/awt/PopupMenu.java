@@ -26,6 +26,7 @@
 package java.awt;
 
 import java.awt.peer.PopupMenuPeer;
+
 import javax.accessibility.*;
 
 import sun.awt.AWTAccessor;
@@ -35,12 +36,12 @@ import sun.awt.AWTAccessor;
  * at a specified position within a component.
  * <p>
  * As the inheritance hierarchy implies, a <code>PopupMenu</code>
- *  can be used anywhere a <code>Menu</code> can be used.
+ * can be used anywhere a <code>Menu</code> can be used.
  * However, if you use a <code>PopupMenu</code> like a <code>Menu</code>
  * (e.g., you add it to a <code>MenuBar</code>), then you <b>cannot</b>
  * call <code>show</code> on that <code>PopupMenu</code>.
  *
- * @author      Amy Fowler
+ * @author Amy Fowler
  */
 public class PopupMenu extends Menu {
 
@@ -50,12 +51,11 @@ public class PopupMenu extends Menu {
     transient boolean isTrayIconPopup = false;
 
     static {
-        AWTAccessor.setPopupMenuAccessor(
-            new AWTAccessor.PopupMenuAccessor() {
-                public boolean isTrayIconPopup(PopupMenu popupMenu) {
-                    return popupMenu.isTrayIconPopup;
-                }
-            });
+        AWTAccessor.setPopupMenuAccessor(new AWTAccessor.PopupMenuAccessor() {
+            public boolean isTrayIconPopup(PopupMenu popupMenu) {
+                return popupMenu.isTrayIconPopup;
+            }
+        });
     }
 
     /*
@@ -65,8 +65,9 @@ public class PopupMenu extends Menu {
 
     /**
      * Creates a new popup menu with an empty name.
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     *
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless()
+     *                           returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public PopupMenu() throws HeadlessException {
@@ -77,9 +78,9 @@ public class PopupMenu extends Menu {
      * Creates a new popup menu with the specified name.
      *
      * @param label a non-<code>null</code> string specifying
-     *                the popup menu's label
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     *              the popup menu's label
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless()
+     *                           returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public PopupMenu(String label) throws HeadlessException {
@@ -117,12 +118,10 @@ public class PopupMenu extends Menu {
             // really just a plain, old Menu.
             if (parent != null && !(parent instanceof Component)) {
                 super.addNotify();
-            }
-            else {
-                if (peer == null)
-                    peer = Toolkit.getDefaultToolkit().createPopupMenu(this);
+            } else {
+                if (peer == null) { peer = Toolkit.getDefaultToolkit().createPopupMenu(this); }
                 int nitems = getItemCount();
-                for (int i = 0 ; i < nitems ; i++) {
+                for (int i = 0; i < nitems; i++) {
                     MenuItem mi = getItem(i);
                     mi.parent = this;
                     mi.addNotify();
@@ -131,7 +130,7 @@ public class PopupMenu extends Menu {
         }
     }
 
-   /**
+    /**
      * Shows the popup menu at the x, y position relative to an origin
      * component.
      * The origin component must be contained within the component
@@ -143,14 +142,14 @@ public class PopupMenu extends Menu {
      * then you cannot call this method on the <code>PopupMenu</code>.
      *
      * @param origin the component which defines the coordinate space
-     * @param x the x coordinate position to popup the menu
-     * @param y the y coordinate position to popup the menu
-     * @exception NullPointerException  if the parent is <code>null</code>
-     * @exception IllegalArgumentException  if this <code>PopupMenu</code>
-     *                has a non-<code>Component</code> parent
-     * @exception IllegalArgumentException if the origin is not in the
-     *                parent's heirarchy
-     * @exception RuntimeException if the parent is not showing on screen
+     * @param x      the x coordinate position to popup the menu
+     * @param y      the y coordinate position to popup the menu
+     * @throws NullPointerException     if the parent is <code>null</code>
+     * @throws IllegalArgumentException if this <code>PopupMenu</code>
+     *                                  has a non-<code>Component</code> parent
+     * @throws IllegalArgumentException if the origin is not in the
+     *                                  parent's heirarchy
+     * @throws RuntimeException         if the parent is not showing on screen
      */
     public void show(Component origin, int x, int y) {
         // Use localParent for thread safety.
@@ -159,16 +158,15 @@ public class PopupMenu extends Menu {
             throw new NullPointerException("parent is null");
         }
         if (!(localParent instanceof Component)) {
-            throw new IllegalArgumentException(
-                "PopupMenus with non-Component parents cannot be shown");
+            throw new IllegalArgumentException("PopupMenus with non-Component parents cannot be shown");
         }
-        Component compParent = (Component)localParent;
+        Component compParent = (Component) localParent;
         //Fixed 6278745: Incorrect exception throwing in PopupMenu.show() method
         //Exception was not thrown if compParent was not equal to origin and
         //was not Container
         if (compParent != origin) {
             if (compParent instanceof Container) {
-                if (!((Container)compParent).isAncestorOf(origin)) {
+                if (!((Container) compParent).isAncestorOf(origin)) {
                     throw new IllegalArgumentException("origin not in parent's hierarchy");
                 }
             } else {
@@ -183,23 +181,22 @@ public class PopupMenu extends Menu {
         }
         synchronized (getTreeLock()) {
             if (peer != null) {
-                ((PopupMenuPeer)peer).show(
-                    new Event(origin, 0, Event.MOUSE_DOWN, x, y, 0, 0));
+                ((PopupMenuPeer) peer).show(new Event(origin, 0, Event.MOUSE_DOWN, x, y, 0, 0));
             }
         }
     }
 
 
-/////////////////
-// Accessibility support
-////////////////
+    /////////////////
+    // Accessibility support
+    ////////////////
 
     /**
      * Gets the <code>AccessibleContext</code> associated with this
      * <code>PopupMenu</code>.
      *
      * @return the <code>AccessibleContext</code> of this
-     *                <code>PopupMenu</code>
+     * <code>PopupMenu</code>
      * @since 1.3
      */
     public AccessibleContext getAccessibleContext() {
@@ -216,10 +213,10 @@ public class PopupMenu extends Menu {
      * subclassed by menu component developers.
      * <p>
      * The class used to obtain the accessible role for this object.
+     *
      * @since 1.3
      */
-    protected class AccessibleAWTPopupMenu extends AccessibleAWTMenu
-    {
+    protected class AccessibleAWTPopupMenu extends AccessibleAWTMenu {
         /*
          * JDK 1.3 serialVersionUID
          */

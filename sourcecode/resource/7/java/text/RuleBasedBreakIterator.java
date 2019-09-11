@@ -52,6 +52,7 @@ import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+
 import sun.text.CompactByteArray;
 import sun.text.SupplementaryCharacterData;
 
@@ -239,11 +240,8 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Magic number for the BreakIterator data file format.
      */
-    static final byte[] LABEL = {
-        (byte)'B', (byte)'I', (byte)'d', (byte)'a', (byte)'t', (byte)'a',
-        (byte)'\0'
-    };
-    static final int    LABEL_LENGTH = LABEL.length;
+    static final byte[] LABEL = { (byte) 'B', (byte) 'I', (byte) 'd', (byte) 'a', (byte) 't', (byte) 'a', (byte) '\0' };
+    static final int LABEL_LENGTH = LABEL.length;
 
     /**
      * Version number of the dictionary that was read in.
@@ -319,8 +317,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      * Constructs a RuleBasedBreakIterator according to the datafile
      * provided.
      */
-    public RuleBasedBreakIterator(String datafile)
-        throws IOException, MissingResourceException {
+    public RuleBasedBreakIterator(String datafile) throws IOException, MissingResourceException {
         readTables(datafile);
     }
 
@@ -340,7 +337,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      * <p>
      * In <code>header</code>, each field except for checksum implies the
      * length of each field. Since <code>BMPdataLength</code> is a fixed-length
-     *  data(512 entries), its length isn't included in <code>header</code>.
+     * data(512 entries), its length isn't included in <code>header</code>.
      * <code>checksum</code> is a CRC32 value of all in <code>body</code>.
      * <pre>
      *   header_info {
@@ -355,7 +352,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      *   }
      * </pre>
      * <p>
-     *
+     * <p>
      * Finally, <code>BMPindices</code> and <code>BMPdata</code> are set to
      * <code>charCategoryTable</code>. <code>nonBMPdata</code> is set to
      * <code>supplementaryCharCategoryTable</code>.
@@ -372,8 +369,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      *   }
      * </pre>
      */
-    protected void readTables(String datafile)
-        throws IOException, MissingResourceException {
+    protected void readTables(String datafile) throws IOException, MissingResourceException {
 
         byte[] buffer = readFile(datafile);
 
@@ -390,31 +386,31 @@ class RuleBasedBreakIterator extends BreakIterator {
         /* Read stateTable[numCategories * numRows] */
         stateTable = new short[stateTableLength];
         int offset = HEADER_LENGTH;
-        for (int i = 0; i < stateTableLength; i++, offset+=2) {
-           stateTable[i] = BreakIterator.getShort(buffer, offset);
+        for (int i = 0; i < stateTableLength; i++, offset += 2) {
+            stateTable[i] = BreakIterator.getShort(buffer, offset);
         }
 
         /* Read backwardsStateTable[numCategories * numRows] */
         backwardsStateTable = new short[backwardsStateTableLength];
-        for (int i = 0; i < backwardsStateTableLength; i++, offset+=2) {
-           backwardsStateTable[i] = BreakIterator.getShort(buffer, offset);
+        for (int i = 0; i < backwardsStateTableLength; i++, offset += 2) {
+            backwardsStateTable[i] = BreakIterator.getShort(buffer, offset);
         }
 
         /* Read endStates[numRows] */
         endStates = new boolean[endStatesLength];
         for (int i = 0; i < endStatesLength; i++, offset++) {
-           endStates[i] = buffer[offset] == 1;
+            endStates[i] = buffer[offset] == 1;
         }
 
         /* Read lookaheadStates[numRows] */
         lookaheadStates = new boolean[lookaheadStatesLength];
         for (int i = 0; i < lookaheadStatesLength; i++, offset++) {
-           lookaheadStates[i] = buffer[offset] == 1;
+            lookaheadStates[i] = buffer[offset] == 1;
         }
 
         /* Read a category table and indices for BMP characters. */
         short[] temp1 = new short[BMP_INDICES_LENGTH];  // BMPindices
-        for (int i = 0; i < BMP_INDICES_LENGTH; i++, offset+=2) {
+        for (int i = 0; i < BMP_INDICES_LENGTH; i++, offset += 2) {
             temp1[i] = BreakIterator.getShort(buffer, offset);
         }
         byte[] temp2 = new byte[BMPdataLength];  // BMPdata
@@ -424,7 +420,7 @@ class RuleBasedBreakIterator extends BreakIterator {
 
         /* Read a category table for non-BMP characters. */
         int[] temp3 = new int[nonBMPdataLength];
-        for (int i = 0; i < nonBMPdataLength; i++, offset+=4) {
+        for (int i = 0; i < nonBMPdataLength; i++, offset += 4) {
             temp3[i] = BreakIterator.getInt(buffer, offset);
         }
         supplementaryCharCategoryTable = new SupplementaryCharacterData(temp3);
@@ -439,20 +435,16 @@ class RuleBasedBreakIterator extends BreakIterator {
         numCategories = stateTable.length / endStates.length;
     }
 
-    protected byte[] readFile(final String datafile)
-        throws IOException, MissingResourceException {
+    protected byte[] readFile(final String datafile) throws IOException, MissingResourceException {
 
         BufferedInputStream is;
         try {
-            is = (BufferedInputStream)AccessController.doPrivileged(
-                new PrivilegedExceptionAction() {
-                    public Object run() throws Exception {
-                        return new BufferedInputStream(getClass().getResourceAsStream("/sun/text/resources/" + datafile));
-                    }
+            is = (BufferedInputStream) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws Exception {
+                    return new BufferedInputStream(getClass().getResourceAsStream("/sun/text/resources/" + datafile));
                 }
-            );
-        }
-        catch (PrivilegedActionException e) {
+            });
+        } catch (PrivilegedActionException e) {
             throw new InternalError(e.toString());
         }
 
@@ -462,30 +454,26 @@ class RuleBasedBreakIterator extends BreakIterator {
         int len = LABEL_LENGTH + 5;
         byte[] buf = new byte[len];
         if (is.read(buf) != len) {
-            throw new MissingResourceException("Wrong header length",
-                                               datafile, "");
+            throw new MissingResourceException("Wrong header length", datafile, "");
         }
 
         /* Validate the magic number. */
         for (int i = 0; i < LABEL_LENGTH; i++, offset++) {
             if (buf[offset] != LABEL[offset]) {
-                throw new MissingResourceException("Wrong magic number",
-                                                   datafile, "");
+                throw new MissingResourceException("Wrong magic number", datafile, "");
             }
         }
 
         /* Validate the version number. */
         if (buf[offset] != supportedVersion) {
-            throw new MissingResourceException("Unsupported version(" + buf[offset] + ")",
-                                               datafile, "");
+            throw new MissingResourceException("Unsupported version(" + buf[offset] + ")", datafile, "");
         }
 
         /* Read data: totalDataSize + 8(for checksum) */
         len = BreakIterator.getInt(buf, ++offset);
         buf = new byte[len];
         if (is.read(buf) != len) {
-            throw new MissingResourceException("Wrong data length",
-                                               datafile, "");
+            throw new MissingResourceException("Wrong data length", datafile, "");
         }
 
         is.close();
@@ -504,8 +492,10 @@ class RuleBasedBreakIterator extends BreakIterator {
     //=======================================================================
     // boilerplate
     //=======================================================================
+
     /**
      * Clones this iterator.
+     *
      * @return A newly-constructed RuleBasedBreakIterator with the same
      * behavior as this one.
      */
@@ -536,8 +526,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             } else {
                 return text.equals(other.text);
             }
-        }
-        catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             return false;
         }
     }
@@ -555,10 +544,11 @@ class RuleBasedBreakIterator extends BreakIterator {
 
     /**
      * Compute a hashcode for this BreakIterator
+     *
      * @return A hash code
      */
     public int hashCode() {
-        return (int)checksum;
+        return (int) checksum;
     }
 
     //=======================================================================
@@ -568,6 +558,7 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Sets the current iteration position to the beginning of the text.
      * (i.e., the CharacterIterator's starting offset).
+     *
      * @return The offset of the beginning of the text.
      */
     public int first() {
@@ -580,6 +571,7 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Sets the current iteration position to the end of the text.
      * (i.e., the CharacterIterator's ending offset).
+     *
      * @return The text's past-the-end offset.
      */
     public int last() {
@@ -595,8 +587,9 @@ class RuleBasedBreakIterator extends BreakIterator {
      * Advances the iterator either forward or backward the specified number of steps.
      * Negative values move backward, and positive values move forward.  This is
      * equivalent to repeatedly calling next() or previous().
+     *
      * @param n The number of steps to move.  The sign indicates the direction
-     * (negative is backwards, and positive is forwards).
+     *          (negative is backwards, and positive is forwards).
      * @return The character offset of the boundary position n boundaries away from
      * the current one.
      */
@@ -615,6 +608,7 @@ class RuleBasedBreakIterator extends BreakIterator {
 
     /**
      * Advances the iterator to the next boundary position.
+     *
      * @return The position of the first boundary after this one.
      */
     public int next() {
@@ -625,6 +619,7 @@ class RuleBasedBreakIterator extends BreakIterator {
 
     /**
      * Advances the iterator backwards, to the last boundary preceding this one.
+     *
      * @return The position of the last boundary position preceding this one.
      */
     public int previous() {
@@ -672,8 +667,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      */
     private int getPrevious() {
         char c2 = text.previous();
-        if (Character.isLowSurrogate(c2) &&
-            text.getIndex() > text.getBeginIndex()) {
+        if (Character.isLowSurrogate(c2) && text.getIndex() > text.getBeginIndex()) {
             char c1 = text.previous();
             if (Character.isHighSurrogate(c1)) {
                 return Character.toCodePoint(c1, c2);
@@ -681,7 +675,7 @@ class RuleBasedBreakIterator extends BreakIterator {
                 text.next();
             }
         }
-        return (int)c2;
+        return (int) c2;
     }
 
     /**
@@ -689,15 +683,14 @@ class RuleBasedBreakIterator extends BreakIterator {
      */
     int getCurrent() {
         char c1 = text.current();
-        if (Character.isHighSurrogate(c1) &&
-            text.getIndex() < text.getEndIndex()) {
+        if (Character.isHighSurrogate(c1) && text.getIndex() < text.getEndIndex()) {
             char c2 = text.next();
             text.previous();
             if (Character.isLowSurrogate(c2)) {
                 return Character.toCodePoint(c1, c2);
             }
         }
-        return (int)c1;
+        return (int) c1;
     }
 
     /**
@@ -705,8 +698,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      */
     private int getCurrentCodePointCount() {
         char c1 = text.current();
-        if (Character.isHighSurrogate(c1) &&
-            text.getIndex() < text.getEndIndex()) {
+        if (Character.isHighSurrogate(c1) && text.getIndex() < text.getEndIndex()) {
             char c2 = text.next();
             text.previous();
             if (Character.isLowSurrogate(c2)) {
@@ -722,8 +714,7 @@ class RuleBasedBreakIterator extends BreakIterator {
     int getNext() {
         int index = text.getIndex();
         int endIndex = text.getEndIndex();
-        if (index == endIndex ||
-            (index = index + getCurrentCodePointCount()) >= endIndex) {
+        if (index == endIndex || (index = index + getCurrentCodePointCount()) >= endIndex) {
             return CharacterIterator.DONE;
         }
         text.setIndex(index);
@@ -755,8 +746,9 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Sets the iterator to refer to the first boundary position following
      * the specified position.
-     * @offset The position from which to begin searching for a break position.
+     *
      * @return The position of the first break after the current position.
+     * @offset The position from which to begin searching for a break position.
      */
     public int following(int offset) {
 
@@ -798,8 +790,9 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Sets the iterator to refer to the last boundary position before the
      * specified position.
-     * @offset The position to begin searching for a break from.
+     *
      * @return The position of the last boundary before the starting position.
+     * @offset The position to begin searching for a break from.
      */
     public int preceding(int offset) {
         // if we start by updating the current iteration position to the
@@ -815,6 +808,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      * Returns true if the specfied position is a boundary position.  As a side
      * effect, leaves the iterator pointing to the first boundary position at
      * or after "offset".
+     *
      * @param offset the offset to check.
      * @return True if "offset" is a boundary position.
      */
@@ -835,6 +829,7 @@ class RuleBasedBreakIterator extends BreakIterator {
 
     /**
      * Returns the current iteration position.
+     *
      * @return The current iteration position.
      */
     public int current() {
@@ -846,6 +841,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      * of this method returns the actual CharacterIterator we're using internally.
      * Changing the state of this iterator can have undefined consequences.  If
      * you need to change it, clone it first.
+     *
      * @return An iterator over the text being analyzed.
      */
     public CharacterIterator getText() {
@@ -861,6 +857,7 @@ class RuleBasedBreakIterator extends BreakIterator {
     /**
      * Set the iterator to analyze a new piece of text.  This function resets
      * the current iteration position to the beginning of the text.
+     *
      * @param newText An iterator over the text to analyze.
      */
     public void setText(CharacterIterator newText) {
@@ -874,15 +871,13 @@ class RuleBasedBreakIterator extends BreakIterator {
         try {
             newText.setIndex(end);  // some buggy iterators throw an exception here
             goodIterator = newText.getIndex() == end;
-        }
-        catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             goodIterator = false;
         }
 
         if (goodIterator) {
             text = newText;
-        }
-        else {
+        } else {
             text = new SafeCharIterator(newText);
         }
         text.first();
@@ -938,8 +933,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             if (lookaheadStates[state]) {
                 if (endStates[state]) {
                     result = lookaheadResult;
-                }
-                else {
+                } else {
                     lookaheadResult = getNextIndex();
                 }
             }
@@ -1008,8 +1002,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             if (lastCategory != IGNORE) {
                 getNext();
                 getNext();
-            }
-            else {
+            } else {
                 getNext();
             }
         }
@@ -1022,7 +1015,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      */
     protected int lookupCategory(int c) {
         if (c < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
-            return charCategoryTable.elementAt((char)c);
+            return charCategoryTable.elementAt((char) c);
         } else {
             return supplementaryCharCategoryTable.getValue(c);
         }
@@ -1053,8 +1046,7 @@ class RuleBasedBreakIterator extends BreakIterator {
      * One caveat:  if the base iterator's begin and end indices change
      * the change will not be reflected by this wrapper.  Does that matter?
      */
-    private static final class SafeCharIterator implements CharacterIterator,
-                                                           Cloneable {
+    private static final class SafeCharIterator implements CharacterIterator, Cloneable {
 
         private CharacterIterator base;
         private int rangeStart;
@@ -1079,8 +1071,7 @@ class RuleBasedBreakIterator extends BreakIterator {
         public char current() {
             if (currentIndex < rangeStart || currentIndex >= rangeLimit) {
                 return DONE;
-            }
-            else {
+            } else {
                 return base.setIndex(currentIndex);
             }
         }
@@ -1091,8 +1082,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             if (currentIndex >= rangeLimit) {
                 currentIndex = rangeLimit;
                 return DONE;
-            }
-            else {
+            } else {
                 return base.setIndex(currentIndex);
             }
         }
@@ -1103,8 +1093,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             if (currentIndex < rangeStart) {
                 currentIndex = rangeStart;
                 return DONE;
-            }
-            else {
+            } else {
                 return base.setIndex(currentIndex);
             }
         }
@@ -1135,8 +1124,7 @@ class RuleBasedBreakIterator extends BreakIterator {
             SafeCharIterator copy = null;
             try {
                 copy = (SafeCharIterator) super.clone();
-            }
-            catch(CloneNotSupportedException e) {
+            } catch (CloneNotSupportedException e) {
                 throw new Error("Clone not supported: " + e);
             }
 

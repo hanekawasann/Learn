@@ -39,7 +39,7 @@ public interface CookiePolicy {
     /**
      * One pre-defined policy which accepts all cookies.
      */
-    public static final CookiePolicy ACCEPT_ALL = new CookiePolicy(){
+    public static final CookiePolicy ACCEPT_ALL = new CookiePolicy() {
         public boolean shouldAccept(URI uri, HttpCookie cookie) {
             return true;
         }
@@ -48,7 +48,7 @@ public interface CookiePolicy {
     /**
      * One pre-defined policy which accepts no cookies.
      */
-    public static final CookiePolicy ACCEPT_NONE = new CookiePolicy(){
+    public static final CookiePolicy ACCEPT_NONE = new CookiePolicy() {
         public boolean shouldAccept(URI uri, HttpCookie cookie) {
             return false;
         }
@@ -57,7 +57,7 @@ public interface CookiePolicy {
     /**
      * One pre-defined policy which only accepts cookies from original server.
      */
-    public static final CookiePolicy ACCEPT_ORIGINAL_SERVER  = new CookiePolicy(){
+    public static final CookiePolicy ACCEPT_ORIGINAL_SERVER = new CookiePolicy() {
         public boolean shouldAccept(URI uri, HttpCookie cookie) {
             return HttpCookie.domainMatches(cookie.getDomain(), uri.getHost());
         }
@@ -67,10 +67,10 @@ public interface CookiePolicy {
     /**
      * Will be called to see whether or not this cookie should be accepted.
      *
-     * @param uri       the URI to consult accept policy with
-     * @param cookie    the HttpCookie object in question
-     * @return          <tt>true</tt> if this cookie should be accepted;
-     *                  otherwise, <tt>false</tt>
+     * @param uri    the URI to consult accept policy with
+     * @param cookie the HttpCookie object in question
+     * @return <tt>true</tt> if this cookie should be accepted;
+     * otherwise, <tt>false</tt>
      */
     public boolean shouldAccept(URI uri, HttpCookie cookie);
 }

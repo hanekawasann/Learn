@@ -39,30 +39,30 @@ import java.util.concurrent.atomic.AtomicInteger;
  * state variable into a method handle chain.
  * <!-- JavaDocExamplesTest.testMutableCallSite -->
  * <blockquote><pre>
-MutableCallSite name = new MutableCallSite(MethodType.methodType(String.class));
-MethodHandle MH_name = name.dynamicInvoker();
-MethodType MT_str1 = MethodType.methodType(String.class);
-MethodHandle MH_upcase = MethodHandles.lookup()
-    .findVirtual(String.class, "toUpperCase", MT_str1);
-MethodHandle worker1 = MethodHandles.filterReturnValue(MH_name, MH_upcase);
-name.setTarget(MethodHandles.constant(String.class, "Rocky"));
-assertEquals("ROCKY", (String) worker1.invokeExact());
-name.setTarget(MethodHandles.constant(String.class, "Fred"));
-assertEquals("FRED", (String) worker1.invokeExact());
-// (mutation can be continued indefinitely)
+ * MutableCallSite name = new MutableCallSite(MethodType.methodType(String.class));
+ * MethodHandle MH_name = name.dynamicInvoker();
+ * MethodType MT_str1 = MethodType.methodType(String.class);
+ * MethodHandle MH_upcase = MethodHandles.lookup()
+ * .findVirtual(String.class, "toUpperCase", MT_str1);
+ * MethodHandle worker1 = MethodHandles.filterReturnValue(MH_name, MH_upcase);
+ * name.setTarget(MethodHandles.constant(String.class, "Rocky"));
+ * assertEquals("ROCKY", (String) worker1.invokeExact());
+ * name.setTarget(MethodHandles.constant(String.class, "Fred"));
+ * assertEquals("FRED", (String) worker1.invokeExact());
+ * // (mutation can be continued indefinitely)
  * </pre></blockquote>
  * <p>
  * The same call site may be used in several places at once.
  * <blockquote><pre>
-MethodType MT_str2 = MethodType.methodType(String.class, String.class);
-MethodHandle MH_cat = lookup().findVirtual(String.class,
-  "concat", methodType(String.class, String.class));
-MethodHandle MH_dear = MethodHandles.insertArguments(MH_cat, 1, ", dear?");
-MethodHandle worker2 = MethodHandles.filterReturnValue(MH_name, MH_dear);
-assertEquals("Fred, dear?", (String) worker2.invokeExact());
-name.setTarget(MethodHandles.constant(String.class, "Wilma"));
-assertEquals("WILMA", (String) worker1.invokeExact());
-assertEquals("Wilma, dear?", (String) worker2.invokeExact());
+ * MethodType MT_str2 = MethodType.methodType(String.class, String.class);
+ * MethodHandle MH_cat = lookup().findVirtual(String.class,
+ * "concat", methodType(String.class, String.class));
+ * MethodHandle MH_dear = MethodHandles.insertArguments(MH_cat, 1, ", dear?");
+ * MethodHandle worker2 = MethodHandles.filterReturnValue(MH_name, MH_dear);
+ * assertEquals("Fred, dear?", (String) worker2.invokeExact());
+ * name.setTarget(MethodHandles.constant(String.class, "Wilma"));
+ * assertEquals("WILMA", (String) worker1.invokeExact());
+ * assertEquals("Wilma, dear?", (String) worker2.invokeExact());
  * </pre></blockquote>
  * <p>
  * <em>Non-synchronization of target values:</em>
@@ -79,6 +79,7 @@ assertEquals("Wilma, dear?", (String) worker2.invokeExact());
  * <p>
  * For target values which will be frequently updated, consider using
  * a {@linkplain VolatileCallSite volatile call site} instead.
+ *
  * @author John Rose, JSR 292 EG
  */
 public class MutableCallSite extends CallSite {
@@ -93,6 +94,7 @@ public class MutableCallSite extends CallSite {
      * or invoked in some other manner,
      * it is usually provided with a more useful target method,
      * via a call to {@link CallSite#setTarget(MethodHandle) setTarget}.
+     *
      * @param type the method type that this call site will have
      * @throws NullPointerException if the proposed type is null
      */
@@ -103,6 +105,7 @@ public class MutableCallSite extends CallSite {
     /**
      * Creates a call site object with an initial target method handle.
      * The type of the call site is permanently set to the initial target's type.
+     *
      * @param target the method handle that will be the initial target of the call site
      * @throws NullPointerException if the proposed target is null
      */
@@ -125,7 +128,8 @@ public class MutableCallSite extends CallSite {
      * @return the linkage state of this call site, a method handle which can change over time
      * @see #setTarget
      */
-    @Override public final MethodHandle getTarget() {
+    @Override
+    public final MethodHandle getTarget() {
         return target;
     }
 
@@ -144,12 +148,13 @@ public class MutableCallSite extends CallSite {
      * at any given call site.
      *
      * @param newTarget the new target
-     * @throws NullPointerException if the proposed new target is null
+     * @throws NullPointerException     if the proposed new target is null
      * @throws WrongMethodTypeException if the proposed new target
-     *         has a method type that differs from the previous target
+     *                                  has a method type that differs from the previous target
      * @see #getTarget
      */
-    @Override public void setTarget(MethodHandle newTarget) {
+    @Override
+    public void setTarget(MethodHandle newTarget) {
         checkTargetChange(this.target, newTarget);
         setTargetNormal(newTarget);
     }
@@ -272,12 +277,13 @@ public class MutableCallSite extends CallSite {
      *                              or the array contains a null
      */
     public static void syncAll(MutableCallSite[] sites) {
-        if (sites.length == 0)  return;
+        if (sites.length == 0) { return; }
         STORE_BARRIER.lazySet(0);
         for (int i = 0; i < sites.length; i++) {
             sites[i].getClass();  // trigger NPE on first null
         }
         // FIXME: NYI
     }
+
     private static final AtomicInteger STORE_BARRIER = new AtomicInteger();
 }

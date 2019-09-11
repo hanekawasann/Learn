@@ -40,7 +40,6 @@ import java.awt.dnd.InvalidDnDOperationException;
  * </p>
  *
  * @since 1.2
- *
  */
 
 public interface DragSourceContextPeer {
@@ -49,7 +48,8 @@ public interface DragSourceContextPeer {
      * start a drag
      */
 
-    void startDrag(DragSourceContext dsc, Cursor c, Image dragImage, Point imageOffset) throws InvalidDnDOperationException;
+    void startDrag(DragSourceContext dsc, Cursor c, Image dragImage, Point imageOffset)
+        throws InvalidDnDOperationException;
 
     /**
      * return the current drag cursor

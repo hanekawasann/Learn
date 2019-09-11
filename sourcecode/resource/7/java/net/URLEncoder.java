@@ -33,10 +33,11 @@ import java.io.UnsupportedEncodingException;
 import java.io.CharArrayWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException ;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.BitSet;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
 import sun.security.action.GetBooleanAction;
 import sun.security.action.GetPropertyAction;
 
@@ -77,8 +78,8 @@ import sun.security.action.GetPropertyAction;
  * &#252; is encoded as two bytes C3 (hex) and BC (hex), and the
  * character @ is encoded as one byte 40 (hex).
  *
- * @author  Herb Jellinek
- * @since   JDK1.0
+ * @author Herb Jellinek
+ * @since JDK1.0
  */
 public class URLEncoder {
     static BitSet dontNeedEncoding;
@@ -135,15 +136,13 @@ public class URLEncoder {
             dontNeedEncoding.set(i);
         }
         dontNeedEncoding.set(' '); /* encoding a space to a + is done
-                                    * in the encode() method */
+         * in the encode() method */
         dontNeedEncoding.set('-');
         dontNeedEncoding.set('_');
         dontNeedEncoding.set('.');
         dontNeedEncoding.set('*');
 
-        dfltEncName = AccessController.doPrivileged(
-            new GetPropertyAction("file.encoding")
-        );
+        dfltEncName = AccessController.doPrivileged(new GetPropertyAction("file.encoding"));
     }
 
     /**
@@ -156,11 +155,11 @@ public class URLEncoder {
      * format. This method uses the platform's default encoding
      * as the encoding scheme to obtain the bytes for unsafe characters.
      *
-     * @param   s   <code>String</code> to be translated.
+     * @param s <code>String</code> to be translated.
+     * @return the translated <code>String</code>.
      * @deprecated The resulting string may vary depending on the platform's
-     *             default encoding. Instead, use the encode(String,String)
-     *             method to specify the encoding.
-     * @return  the translated <code>String</code>.
+     * default encoding. Instead, use the encode(String,String)
+     * method to specify the encoding.
      */
     @Deprecated
     public static String encode(String s) {
@@ -188,26 +187,23 @@ public class URLEncoder {
      * UTF-8 should be used. Not doing so may introduce
      * incompatibilites.</em>
      *
-     * @param   s   <code>String</code> to be translated.
-     * @param   enc   The name of a supported
-     *    <a href="../lang/package-summary.html#charenc">character
-     *    encoding</a>.
-     * @return  the translated <code>String</code>.
-     * @exception  UnsupportedEncodingException
-     *             If the named encoding is not supported
+     * @param s   <code>String</code> to be translated.
+     * @param enc The name of a supported
+     *            <a href="../lang/package-summary.html#charenc">character
+     *            encoding</a>.
+     * @return the translated <code>String</code>.
+     * @throws UnsupportedEncodingException If the named encoding is not supported
      * @see URLDecoder#decode(java.lang.String, java.lang.String)
      * @since 1.4
      */
-    public static String encode(String s, String enc)
-        throws UnsupportedEncodingException {
+    public static String encode(String s, String enc) throws UnsupportedEncodingException {
 
         boolean needToChange = false;
         StringBuffer out = new StringBuffer(s.length());
         Charset charset;
         CharArrayWriter charArrayWriter = new CharArrayWriter();
 
-        if (enc == null)
-            throw new NullPointerException("charsetName");
+        if (enc == null) { throw new NullPointerException("charsetName"); }
 
         try {
             charset = Charset.forName(enc);
@@ -217,7 +213,7 @@ public class URLEncoder {
             throw new UnsupportedEncodingException(enc);
         }
 
-        for (int i = 0; i < s.length();) {
+        for (int i = 0; i < s.length(); ) {
             int c = (int) s.charAt(i);
             //System.out.println("Examining character: " + c);
             if (dontNeedEncoding.get(c)) {
@@ -226,7 +222,7 @@ public class URLEncoder {
                     needToChange = true;
                 }
                 //System.out.println("Storing: " + c);
-                out.append((char)c);
+                out.append((char) c);
                 i++;
             } else {
                 // convert to external encoding before hex conversion
@@ -245,8 +241,8 @@ public class URLEncoder {
                           System.out.println(Integer.toHexString(c)
                           + " is high surrogate");
                         */
-                        if ( (i+1) < s.length()) {
-                            int d = (int) s.charAt(i+1);
+                        if ((i + 1) < s.length()) {
+                            int d = (int) s.charAt(i + 1);
                             /*
                               System.out.println("\tExamining "
                               + Integer.toHexString(d));
@@ -288,6 +284,6 @@ public class URLEncoder {
             }
         }
 
-        return (needToChange? out.toString() : s);
+        return (needToChange ? out.toString() : s);
     }
 }

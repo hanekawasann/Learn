@@ -76,7 +76,7 @@ package java.util;
  * one of the threads modifies the set, it <em>must</em> be synchronized
  * externally.  This is typically accomplished by synchronizing on some
  * object that naturally encapsulates the set.
- *
+ * <p>
  * If no such object exists, the set should be "wrapped" using the
  * {@link Collections#synchronizedSet Collections.synchronizedSet}
  * method.  This is best done at creation time, to prevent accidental
@@ -104,20 +104,17 @@ package java.util;
  * Java Collections Framework</a>.
  *
  * @param <E> the type of elements maintained by this set
- *
- * @author  Josh Bloch
- * @see     Object#hashCode()
- * @see     Collection
- * @see     Set
- * @see     HashSet
- * @see     TreeSet
- * @see     Hashtable
- * @since   1.4
+ * @author Josh Bloch
+ * @see Object#hashCode()
+ * @see Collection
+ * @see Set
+ * @see HashSet
+ * @see TreeSet
+ * @see Hashtable
+ * @since 1.4
  */
 
-public class LinkedHashSet<E>
-    extends HashSet<E>
-    implements Set<E>, Cloneable, java.io.Serializable {
+public class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable, java.io.Serializable {
 
     private static final long serialVersionUID = -2851667679971038690L;
 
@@ -125,10 +122,10 @@ public class LinkedHashSet<E>
      * Constructs a new, empty linked hash set with the specified initial
      * capacity and load factor.
      *
-     * @param      initialCapacity the initial capacity of the linked hash set
-     * @param      loadFactor      the load factor of the linked hash set
-     * @throws     IllegalArgumentException  if the initial capacity is less
-     *               than zero, or if the load factor is nonpositive
+     * @param initialCapacity the initial capacity of the linked hash set
+     * @param loadFactor      the load factor of the linked hash set
+     * @throws IllegalArgumentException if the initial capacity is less
+     *                                  than zero, or if the load factor is nonpositive
      */
     public LinkedHashSet(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor, true);
@@ -138,9 +135,9 @@ public class LinkedHashSet<E>
      * Constructs a new, empty linked hash set with the specified initial
      * capacity and the default load factor (0.75).
      *
-     * @param   initialCapacity   the initial capacity of the LinkedHashSet
-     * @throws  IllegalArgumentException if the initial capacity is less
-     *              than zero
+     * @param initialCapacity the initial capacity of the LinkedHashSet
+     * @throws IllegalArgumentException if the initial capacity is less
+     *                                  than zero
      */
     public LinkedHashSet(int initialCapacity) {
         super(initialCapacity, .75f, true);
@@ -160,12 +157,12 @@ public class LinkedHashSet<E>
      * capacity sufficient to hold the elements in the specified collection
      * and the default load factor (0.75).
      *
-     * @param c  the collection whose elements are to be placed into
-     *           this set
+     * @param c the collection whose elements are to be placed into
+     *          this set
      * @throws NullPointerException if the specified collection is null
      */
     public LinkedHashSet(Collection<? extends E> c) {
-        super(Math.max(2*c.size(), 11), .75f, true);
+        super(Math.max(2 * c.size(), 11), .75f, true);
         addAll(c);
     }
 }

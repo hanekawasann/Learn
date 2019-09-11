@@ -27,6 +27,7 @@ package java.security;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import sun.security.util.Debug;
 import sun.security.util.SecurityConstants;
 import sun.misc.JavaSecurityAccess;
@@ -71,9 +72,8 @@ import sun.misc.SharedSecrets;
  *   acc.checkPermission(permission)
  * </pre>
  *
- * @see AccessController
- *
  * @author Roland Schemers
+ * @see AccessController
  */
 
 public final class AccessControlContext {
@@ -90,11 +90,8 @@ public final class AccessControlContext {
     private static boolean debugInit = false;
     private static Debug debug = null;
 
-    static Debug getDebug()
-    {
-        if (debugInit)
-            return debug;
-        else {
+    static Debug getDebug() {
+        if (debugInit) { return debug; } else {
             if (Policy.isSet()) {
                 debug = Debug.getInstance("access");
                 debugInit = true;
@@ -109,12 +106,11 @@ public final class AccessControlContext {
      * context.
      *
      * @param context the ProtectionDomains associated with this context.
-     * The non-duplicate domains are copied from the array. Subsequent
-     * changes to the array will not affect this AccessControlContext.
+     *                The non-duplicate domains are copied from the array. Subsequent
+     *                changes to the array will not affect this AccessControlContext.
      * @throws NullPointerException if <code>context</code> is <code>null</code>
      */
-    public AccessControlContext(ProtectionDomain context[])
-    {
+    public AccessControlContext(ProtectionDomain context[]) {
         if (context.length == 0) {
             this.context = null;
         } else if (context.length == 1) {
@@ -125,9 +121,8 @@ public final class AccessControlContext {
             }
         } else {
             List<ProtectionDomain> v = new ArrayList<>(context.length);
-            for (int i =0; i< context.length; i++) {
-                if ((context[i] != null) &&  (!v.contains(context[i])))
-                    v.add(context[i]);
+            for (int i = 0; i < context.length; i++) {
+                if ((context[i] != null) && (!v.contains(context[i]))) { v.add(context[i]); }
             }
             if (!v.isEmpty()) {
                 this.context = new ProtectionDomain[v.size()];
@@ -145,22 +140,18 @@ public final class AccessControlContext {
      *
      * <p>
      *
-     * @param acc the <code>AccessControlContext</code> associated
-     *          with the provided <code>DomainCombiner</code>.
-     *
+     * @param acc      the <code>AccessControlContext</code> associated
+     *                 with the provided <code>DomainCombiner</code>.
      * @param combiner the <code>DomainCombiner</code> to be associated
-     *          with the provided <code>AccessControlContext</code>.
-     *
-     * @exception NullPointerException if the provided
-     *          <code>context</code> is <code>null</code>.
-     *
-     * @exception SecurityException if a security manager is installed and the
-     *          caller does not have the "createAccessControlContext"
-     *          {@link SecurityPermission}
+     *                 with the provided <code>AccessControlContext</code>.
+     * @throws NullPointerException if the provided
+     *                              <code>context</code> is <code>null</code>.
+     * @throws SecurityException    if a security manager is installed and the
+     *                              caller does not have the "createAccessControlContext"
+     *                              {@link SecurityPermission}
      * @since 1.3
      */
-    public AccessControlContext(AccessControlContext acc,
-                                DomainCombiner combiner) {
+    public AccessControlContext(AccessControlContext acc, DomainCombiner combiner) {
 
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
@@ -192,9 +183,7 @@ public final class AccessControlContext {
      * package private constructor for AccessController.getContext()
      */
 
-    AccessControlContext(ProtectionDomain context[],
-                                 boolean isPrivileged)
-    {
+    AccessControlContext(ProtectionDomain context[], boolean isPrivileged) {
         this.context = context;
         this.isPrivileged = isPrivileged;
     }
@@ -202,9 +191,7 @@ public final class AccessControlContext {
     /**
      * Constructor for JavaSecurityAccess.doIntersectionPrivilege()
      */
-    AccessControlContext(ProtectionDomain[] context,
-                         AccessControlContext privilegedContext)
-    {
+    AccessControlContext(ProtectionDomain[] context, AccessControlContext privilegedContext) {
         this.context = context;
         this.privilegedContext = privilegedContext;
         this.isPrivileged = true;
@@ -220,8 +207,7 @@ public final class AccessControlContext {
     /**
      * Returns true if this context is privileged.
      */
-    boolean isPrivileged()
-    {
+    boolean isPrivileged() {
         return isPrivileged;
     }
 
@@ -248,12 +234,11 @@ public final class AccessControlContext {
      * <p>
      *
      * @return the <code>DomainCombiner</code> associated with this
-     *          <code>AccessControlContext</code>, or <code>null</code>
-     *          if there is none.
-     *
-     * @exception SecurityException if a security manager is installed and
-     *          the caller does not have the "getDomainCombiner"
-     *          {@link SecurityPermission}
+     * <code>AccessControlContext</code>, or <code>null</code>
+     * if there is none.
+     * @throws SecurityException if a security manager is installed and
+     *                           the caller does not have the "getDomainCombiner"
+     *                           {@link SecurityPermission}
      * @since 1.3
      */
     public DomainCombiner getDomainCombiner() {
@@ -278,15 +263,12 @@ public final class AccessControlContext {
      * is permitted, or throws a suitable AccessControlException otherwise.
      *
      * @param perm the requested permission.
-     *
-     * @exception AccessControlException if the specified permission
-     * is not permitted, based on the current security policy and the
-     * context encapsulated by this object.
-     * @exception NullPointerException if the permission to check for is null.
+     * @throws AccessControlException if the specified permission
+     *                                is not permitted, based on the current security policy and the
+     *                                context encapsulated by this object.
+     * @throws NullPointerException   if the permission to check for is null.
      */
-    public void checkPermission(Permission perm)
-        throws AccessControlException
-    {
+    public void checkPermission(Permission perm) throws AccessControlException {
         boolean dumpDebug = false;
 
         if (perm == null) {
@@ -299,8 +281,7 @@ public final class AccessControlContext {
                 // If "codebase" is specified, only dump if the specified code
                 // value is in the stack.
                 for (int i = 0; context != null && i < context.length; i++) {
-                    if (context[i].getCodeSource() != null &&
-                        context[i].getCodeSource().getLocation() != null &&
+                    if (context[i].getCodeSource() != null && context[i].getCodeSource().getLocation() != null &&
                         Debug.isOn("codebase=" + context[i].getCodeSource().getLocation().toString())) {
                         dumpDebug = true;
                         break;
@@ -308,8 +289,7 @@ public final class AccessControlContext {
                 }
             }
 
-            dumpDebug &= !Debug.isOn("permission=") ||
-                Debug.isOn("permission=" + perm.getClass().getCanonicalName());
+            dumpDebug &= !Debug.isOn("permission=") || Debug.isOn("permission=" + perm.getClass().getCanonicalName());
 
             if (dumpDebug && Debug.isOn("stack")) {
                 Thread.currentThread().dumpStack();
@@ -319,8 +299,8 @@ public final class AccessControlContext {
                 if (context == null) {
                     debug.println("domain (context is null)");
                 } else {
-                    for (int i=0; i< context.length; i++) {
-                        debug.println("domain "+i+" "+context[i]);
+                    for (int i = 0; i < context.length; i++) {
+                        debug.println("domain " + i + " " + context[i]);
                     }
                 }
             }
@@ -337,11 +317,10 @@ public final class AccessControlContext {
            or the first domain was a Privileged system domain. This
            is to make the common case for system code very fast */
 
-        if (context == null)
-            return;
+        if (context == null) { return; }
 
-        for (int i=0; i< context.length; i++) {
-            if (context[i] != null &&  !context[i].implies(perm)) {
+        for (int i = 0; i < context.length; i++) {
+            if (context[i] != null && !context[i].implies(perm)) {
                 if (dumpDebug) {
                     debug.println("access denied " + perm);
                 }
@@ -356,20 +335,20 @@ public final class AccessControlContext {
                     Thread.currentThread().dumpStack();
                     final ProtectionDomain pd = context[i];
                     final Debug db = debug;
-                    AccessController.doPrivileged (new PrivilegedAction<Void>() {
+                    AccessController.doPrivileged(new PrivilegedAction<Void>() {
                         public Void run() {
-                            db.println("domain that failed "+pd);
+                            db.println("domain that failed " + pd);
                             return null;
                         }
                     });
                 }
-                throw new AccessControlException("access denied "+perm, perm);
+                throw new AccessControlException("access denied " + perm, perm);
             }
         }
 
         // allow if all of them allowed access
         if (dumpDebug) {
-            debug.println("access allowed "+perm);
+            debug.println("access allowed " + perm);
         }
 
         return;
@@ -439,7 +418,7 @@ public final class AccessControlContext {
         }
 
         // now add the stack context domains, discarding nulls and duplicates
-    outer:
+        outer:
         for (int i = 0; i < context.length; i++) {
             ProtectionDomain sd = context[i];
             if (sd != null) {
@@ -476,8 +455,7 @@ public final class AccessControlContext {
         return this;
     }
 
-    private AccessControlContext goCombiner(ProtectionDomain[] current,
-                                        AccessControlContext assigned) {
+    private AccessControlContext goCombiner(ProtectionDomain[] current, AccessControlContext assigned) {
 
         // the assigned ACC's combiner is not null --
         // let the combiner do its thing
@@ -490,8 +468,7 @@ public final class AccessControlContext {
 
         // No need to clone current and assigned.context
         // combine() will not update them
-        ProtectionDomain[] combinedPds = assigned.combiner.combine(
-            current, assigned.context);
+        ProtectionDomain[] combinedPds = assigned.combiner.combine(current, assigned.context);
 
         // return new AccessControlContext(combinedPds, assigned.combiner);
 
@@ -508,17 +485,16 @@ public final class AccessControlContext {
      * Checks that <i>obj</i> is
      * an AccessControlContext and has the same set of ProtectionDomains
      * as this context.
-     * <P>
+     * <p>
+     *
      * @param obj the object we are testing for equality with this object.
      * @return true if <i>obj</i> is an AccessControlContext, and has the
      * same set of ProtectionDomains as this context, false otherwise.
      */
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
+        if (obj == this) { return true; }
 
-        if (! (obj instanceof AccessControlContext))
-            return false;
+        if (!(obj instanceof AccessControlContext)) { return false; }
 
         AccessControlContext that = (AccessControlContext) obj;
 
@@ -527,20 +503,15 @@ public final class AccessControlContext {
             return (that.context == null);
         }
 
-        if (that.context == null)
-            return false;
+        if (that.context == null) { return false; }
 
-        if (!(this.containsAllPDs(that) && that.containsAllPDs(this)))
-            return false;
+        if (!(this.containsAllPDs(that) && that.containsAllPDs(this))) { return false; }
 
-        if (this.combiner == null)
-            return (that.combiner == null);
+        if (this.combiner == null) { return (that.combiner == null); }
 
-        if (that.combiner == null)
-            return false;
+        if (that.combiner == null) { return false; }
 
-        if (!this.combiner.equals(that.combiner))
-            return false;
+        if (!this.combiner.equals(that.combiner)) { return false; }
 
         return true;
     }
@@ -567,14 +538,14 @@ public final class AccessControlContext {
                     thatPd = that.context[j];
 
                     // Class check required to avoid PD exposure (4285406)
-                    match = (thatPd != null &&
-                        thisPdClass == thatPd.getClass() && thisPd.equals(thatPd));
+                    match = (thatPd != null && thisPdClass == thatPd.getClass() && thisPd.equals(thatPd));
                 }
             }
-            if (!match) return false;
+            if (!match) { return false; }
         }
         return match;
     }
+
     /**
      * Returns the hash code value for this context. The hash code
      * is computed by exclusive or-ing the hash code of all the protection
@@ -586,12 +557,10 @@ public final class AccessControlContext {
     public int hashCode() {
         int hashCode = 0;
 
-        if (context == null)
-            return hashCode;
+        if (context == null) { return hashCode; }
 
-        for (int i =0; i < context.length; i++) {
-            if (context[i] != null)
-                hashCode ^= context[i].hashCode();
+        for (int i = 0; i < context.length; i++) {
+            if (context[i] != null) { hashCode ^= context[i].hashCode(); }
         }
         return hashCode;
     }

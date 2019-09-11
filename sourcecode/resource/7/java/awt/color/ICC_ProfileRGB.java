@@ -36,10 +36,10 @@
 package java.awt.color;
 
 import java.awt.image.LookupTable;
+
 import sun.java2d.cmm.ProfileDeferralInfo;
 
 /**
- *
  * The ICC_ProfileRGB class is a subclass of the ICC_Profile class
  * that represents profiles which meet the following criteria:
  * <ul>
@@ -86,9 +86,7 @@ import sun.java2d.cmm.ProfileDeferralInfo;
  */
 
 
-
-public class ICC_ProfileRGB
-extends ICC_Profile {
+public class ICC_ProfileRGB extends ICC_Profile {
 
     static final long serialVersionUID = 8505067385152579334L;
 
@@ -112,7 +110,6 @@ extends ICC_Profile {
      * Constructs an new <code>ICC_ProfileRGB</code> from a CMM ID.
      *
      * @param ID The CMM ID for the profile.
-     *
      */
     ICC_ProfileRGB(long ID) {
         super(ID);
@@ -190,32 +187,33 @@ extends ICC_Profile {
      * &nbsp;                                         gamma
      * &nbsp;        linearComponent = deviceComponent
      *
-     *</pre>
+     * </pre>
+     *
      * @param component The <CODE>ICC_ProfileRGB</CODE> constant that
-     * represents the component whose TRC you want to retrieve
+     *                  represents the component whose TRC you want to retrieve
      * @return the gamma value as a float.
-     * @exception ProfileDataException if the profile does not specify
-     *            the corresponding TRC as a single gamma value.
+     * @throws ProfileDataException if the profile does not specify
+     *                              the corresponding TRC as a single gamma value.
      */
     public float getGamma(int component) {
-    float theGamma;
-    int theSignature;
+        float theGamma;
+        int theSignature;
 
         switch (component) {
-        case REDCOMPONENT:
-            theSignature = ICC_Profile.icSigRedTRCTag;
-            break;
+            case REDCOMPONENT:
+                theSignature = ICC_Profile.icSigRedTRCTag;
+                break;
 
-        case GREENCOMPONENT:
-            theSignature = ICC_Profile.icSigGreenTRCTag;
-            break;
+            case GREENCOMPONENT:
+                theSignature = ICC_Profile.icSigGreenTRCTag;
+                break;
 
-        case BLUECOMPONENT:
-            theSignature = ICC_Profile.icSigBlueTRCTag;
-            break;
+            case BLUECOMPONENT:
+                theSignature = ICC_Profile.icSigBlueTRCTag;
+                break;
 
-        default:
-            throw new IllegalArgumentException("Must be Red, Green, or Blue");
+            default:
+                throw new IllegalArgumentException("Must be Red, Green, or Blue");
         }
 
         theGamma = super.getGamma(theSignature);
@@ -238,40 +236,39 @@ extends ICC_Profile {
      * value 1.0 by 0xFFFF.  In other words, the values are really unsigned
      * <code>short</code> values even though they are returned in a
      * <code>short</code> array.
-     *
+     * <p>
      * If the profile has specified the corresponding TRC
      * as linear (gamma = 1.0) or as a simple gamma value, this method
      * throws an exception.  In this case, the {@link #getGamma(int)}
      * method should be used to get the gamma value.
      *
      * @param component The <CODE>ICC_ProfileRGB</CODE> constant that
-     * represents the component whose TRC you want to retrieve:
-     * <CODE>REDCOMPONENT</CODE>, <CODE>GREENCOMPONENT</CODE>, or
-     * <CODE>BLUECOMPONENT</CODE>.
-     *
+     *                  represents the component whose TRC you want to retrieve:
+     *                  <CODE>REDCOMPONENT</CODE>, <CODE>GREENCOMPONENT</CODE>, or
+     *                  <CODE>BLUECOMPONENT</CODE>.
      * @return a short array representing the TRC.
-     * @exception ProfileDataException if the profile does not specify
-     *            the corresponding TRC as a table.
+     * @throws ProfileDataException if the profile does not specify
+     *                              the corresponding TRC as a table.
      */
     public short[] getTRC(int component) {
-    short[] theTRC;
-    int theSignature;
+        short[] theTRC;
+        int theSignature;
 
         switch (component) {
-        case REDCOMPONENT:
-            theSignature = ICC_Profile.icSigRedTRCTag;
-            break;
+            case REDCOMPONENT:
+                theSignature = ICC_Profile.icSigRedTRCTag;
+                break;
 
-        case GREENCOMPONENT:
-            theSignature = ICC_Profile.icSigGreenTRCTag;
-            break;
+            case GREENCOMPONENT:
+                theSignature = ICC_Profile.icSigGreenTRCTag;
+                break;
 
-        case BLUECOMPONENT:
-            theSignature = ICC_Profile.icSigBlueTRCTag;
-            break;
+            case BLUECOMPONENT:
+                theSignature = ICC_Profile.icSigBlueTRCTag;
+                break;
 
-        default:
-            throw new IllegalArgumentException("Must be Red, Green, or Blue");
+            default:
+                throw new IllegalArgumentException("Must be Red, Green, or Blue");
         }
 
         theTRC = super.getTRC(theSignature);

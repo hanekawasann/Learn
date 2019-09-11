@@ -32,10 +32,9 @@ import java.util.*;
  * private key). It does not enforce any security, and, when initialized,
  * should be treated like a PrivateKey.
  *
+ * @author Benjamin Renaud
  * @see PublicKey
  * @see PrivateKey
- *
- * @author Benjamin Renaud
  */
 
 public final class KeyPair implements java.io.Serializable {
@@ -52,8 +51,7 @@ public final class KeyPair implements java.io.Serializable {
      * and private key components in the generated key pair. This is safe,
      * because <code>Key</code> objects are immutable.
      *
-     * @param publicKey the public key.
-     *
+     * @param publicKey  the public key.
      * @param privateKey the private key.
      */
     public KeyPair(PublicKey publicKey, PrivateKey privateKey) {
@@ -70,12 +68,12 @@ public final class KeyPair implements java.io.Serializable {
         return publicKey;
     }
 
-     /**
+    /**
      * Returns a reference to the private key component of this key pair.
      *
      * @return a reference to the private key.
      */
-   public PrivateKey getPrivate() {
+    public PrivateKey getPrivate() {
         return privateKey;
     }
 }

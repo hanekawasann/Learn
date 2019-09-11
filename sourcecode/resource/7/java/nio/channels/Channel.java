@@ -47,7 +47,6 @@ import java.io.Closeable;
  * as described in the specifications of the interfaces and classes that extend
  * and implement this interface.
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
  * @since 1.4
@@ -77,7 +76,7 @@ public interface Channel extends Closeable {
      * the first invocation is complete, after which it will return without
      * effect. </p>
      *
-     * @throws  IOException  If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     public void close() throws IOException;
 

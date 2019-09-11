@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.WeakHashMap;
+
 import sun.misc.ProxyGenerator;
 
 /**
@@ -62,12 +63,12 @@ import sun.misc.ProxyGenerator;
  * class</i> below) is a class that implements a list of interfaces
  * specified at runtime when the class is created, with behavior as
  * described below.
- *
+ * <p>
  * A <i>proxy interface</i> is such an interface that is implemented
  * by a proxy class.
- *
+ * <p>
  * A <i>proxy instance</i> is an instance of a proxy class.
- *
+ * <p>
  * Each proxy instance has an associated <i>invocation handler</i>
  * object, which implements the interface {@link InvocationHandler}.
  * A method invocation on a proxy instance through one of its proxy
@@ -215,9 +216,9 @@ import sun.misc.ProxyGenerator;
  * passed to the {@code invoke} method can necessarily be thrown
  * successfully by the {@code invoke} method.
  *
- * @author      Peter Jones
- * @see         InvocationHandler
- * @since       1.3
+ * @author Peter Jones
+ * @see InvocationHandler
+ * @since 1.3
  */
 public class Proxy implements java.io.Serializable {
 
@@ -227,12 +228,10 @@ public class Proxy implements java.io.Serializable {
     private final static String proxyClassNamePrefix = "$Proxy";
 
     /** parameter types of a proxy class constructor */
-    private final static Class[] constructorParams =
-        { InvocationHandler.class };
+    private final static Class[] constructorParams = { InvocationHandler.class };
 
     /** maps a class loader to the proxy class cache for that loader */
-    private static Map<ClassLoader, Map<List<String>, Object>> loaderToCache
-        = new WeakHashMap<>();
+    private static Map<ClassLoader, Map<List<String>, Object>> loaderToCache = new WeakHashMap<>();
 
     /** marks that a particular proxy class is currently being generated */
     private static Object pendingGenerationMarker = new Object();
@@ -242,11 +241,11 @@ public class Proxy implements java.io.Serializable {
     private static Object nextUniqueNumberLock = new Object();
 
     /** set of all generated proxy classes, for isProxyClass implementation */
-    private static Map<Class<?>, Void> proxyClasses =
-        Collections.synchronizedMap(new WeakHashMap<Class<?>, Void>());
+    private static Map<Class<?>, Void> proxyClasses = Collections.synchronizedMap(new WeakHashMap<Class<?>, Void>());
 
     /**
      * the invocation handler for this proxy instance.
+     *
      * @serial
      */
     protected InvocationHandler h;
@@ -262,7 +261,7 @@ public class Proxy implements java.io.Serializable {
      * (typically, a dynamic proxy class) with the specified value
      * for its invocation handler.
      *
-     * @param   h the invocation handler for this proxy instance
+     * @param h the invocation handler for this proxy instance
      */
     protected Proxy(InvocationHandler h) {
         this.h = h;
@@ -331,21 +330,18 @@ public class Proxy implements java.io.Serializable {
      * of interfaces but in a different order will result in two distinct
      * proxy classes.
      *
-     * @param   loader the class loader to define the proxy class
-     * @param   interfaces the list of interfaces for the proxy class
-     *          to implement
-     * @return  a proxy class that is defined in the specified class loader
-     *          and that implements the specified interfaces
-     * @throws  IllegalArgumentException if any of the restrictions on the
-     *          parameters that may be passed to {@code getProxyClass}
-     *          are violated
-     * @throws  NullPointerException if the {@code interfaces} array
-     *          argument or any of its elements are {@code null}
+     * @param loader     the class loader to define the proxy class
+     * @param interfaces the list of interfaces for the proxy class
+     *                   to implement
+     * @return a proxy class that is defined in the specified class loader
+     * and that implements the specified interfaces
+     * @throws IllegalArgumentException if any of the restrictions on the
+     *                                  parameters that may be passed to {@code getProxyClass}
+     *                                  are violated
+     * @throws NullPointerException     if the {@code interfaces} array
+     *                                  argument or any of its elements are {@code null}
      */
-    public static Class<?> getProxyClass(ClassLoader loader,
-                                         Class<?>... interfaces)
-        throws IllegalArgumentException
-    {
+    public static Class<?> getProxyClass(ClassLoader loader, Class<?>... interfaces) throws IllegalArgumentException {
         if (interfaces.length > 65535) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
@@ -370,8 +366,7 @@ public class Proxy implements java.io.Serializable {
             } catch (ClassNotFoundException e) {
             }
             if (interfaceClass != interfaces[i]) {
-                throw new IllegalArgumentException(
-                    interfaces[i] + " is not visible from class loader");
+                throw new IllegalArgumentException(interfaces[i] + " is not visible from class loader");
             }
 
             /*
@@ -379,16 +374,14 @@ public class Proxy implements java.io.Serializable {
              * interface.
              */
             if (!interfaceClass.isInterface()) {
-                throw new IllegalArgumentException(
-                    interfaceClass.getName() + " is not an interface");
+                throw new IllegalArgumentException(interfaceClass.getName() + " is not an interface");
             }
 
             /*
              * Verify that this interface is not a duplicate.
              */
             if (interfaceSet.contains(interfaceClass)) {
-                throw new IllegalArgumentException(
-                    "repeated interface: " + interfaceClass.getName());
+                throw new IllegalArgumentException("repeated interface: " + interfaceClass.getName());
             }
             interfaceSet.add(interfaceClass);
 
@@ -491,8 +484,7 @@ public class Proxy implements java.io.Serializable {
                     if (proxyPkg == null) {
                         proxyPkg = pkg;
                     } else if (!pkg.equals(proxyPkg)) {
-                        throw new IllegalArgumentException(
-                            "non-public interfaces from different packages");
+                        throw new IllegalArgumentException("non-public interfaces from different packages");
                     }
                 }
             }
@@ -518,11 +510,9 @@ public class Proxy implements java.io.Serializable {
                 /*
                  * Generate the specified proxy class.
                  */
-                byte[] proxyClassFile = ProxyGenerator.generateProxyClass(
-                    proxyName, interfaces);
+                byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces);
                 try {
-                    proxyClass = defineClass0(loader, proxyName,
-                        proxyClassFile, 0, proxyClassFile.length);
+                    proxyClass = defineClass0(loader, proxyName, proxyClassFile, 0, proxyClassFile.length);
                 } catch (ClassFormatError e) {
                     /*
                      * A ClassFormatError here means that (barring bugs in the
@@ -571,26 +561,23 @@ public class Proxy implements java.io.Serializable {
      * {@code IllegalArgumentException} for the same reasons that
      * {@code Proxy.getProxyClass} does.
      *
-     * @param   loader the class loader to define the proxy class
-     * @param   interfaces the list of interfaces for the proxy class
-     *          to implement
-     * @param   h the invocation handler to dispatch method invocations to
-     * @return  a proxy instance with the specified invocation handler of a
-     *          proxy class that is defined by the specified class loader
-     *          and that implements the specified interfaces
-     * @throws  IllegalArgumentException if any of the restrictions on the
-     *          parameters that may be passed to {@code getProxyClass}
-     *          are violated
-     * @throws  NullPointerException if the {@code interfaces} array
-     *          argument or any of its elements are {@code null}, or
-     *          if the invocation handler, {@code h}, is
-     *          {@code null}
+     * @param loader     the class loader to define the proxy class
+     * @param interfaces the list of interfaces for the proxy class
+     *                   to implement
+     * @param h          the invocation handler to dispatch method invocations to
+     * @return a proxy instance with the specified invocation handler of a
+     * proxy class that is defined by the specified class loader
+     * and that implements the specified interfaces
+     * @throws IllegalArgumentException if any of the restrictions on the
+     *                                  parameters that may be passed to {@code getProxyClass}
+     *                                  are violated
+     * @throws NullPointerException     if the {@code interfaces} array
+     *                                  argument or any of its elements are {@code null}, or
+     *                                  if the invocation handler, {@code h}, is
+     *                                  {@code null}
      */
-    public static Object newProxyInstance(ClassLoader loader,
-                                          Class<?>[] interfaces,
-                                          InvocationHandler h)
-        throws IllegalArgumentException
-    {
+    public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)
+        throws IllegalArgumentException {
         if (h == null) {
             throw new NullPointerException();
         }
@@ -626,10 +613,10 @@ public class Proxy implements java.io.Serializable {
      * to use it to make security decisions, so its implementation should
      * not just test if the class in question extends {@code Proxy}.
      *
-     * @param   cl the class to test
-     * @return  {@code true} if the class is a proxy class and
-     *          {@code false} otherwise
-     * @throws  NullPointerException if {@code cl} is {@code null}
+     * @param cl the class to test
+     * @return {@code true} if the class is a proxy class and
+     * {@code false} otherwise
+     * @throws NullPointerException if {@code cl} is {@code null}
      */
     public static boolean isProxyClass(Class<?> cl) {
         if (cl == null) {
@@ -642,14 +629,12 @@ public class Proxy implements java.io.Serializable {
     /**
      * Returns the invocation handler for the specified proxy instance.
      *
-     * @param   proxy the proxy instance to return the invocation handler for
-     * @return  the invocation handler for the proxy instance
-     * @throws  IllegalArgumentException if the argument is not a
-     *          proxy instance
+     * @param proxy the proxy instance to return the invocation handler for
+     * @return the invocation handler for the proxy instance
+     * @throws IllegalArgumentException if the argument is not a
+     *                                  proxy instance
      */
-    public static InvocationHandler getInvocationHandler(Object proxy)
-        throws IllegalArgumentException
-    {
+    public static InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException {
         /*
          * Verify that the object is actually a proxy instance.
          */
@@ -661,6 +646,5 @@ public class Proxy implements java.io.Serializable {
         return p.h;
     }
 
-    private static native Class defineClass0(ClassLoader loader, String name,
-                                             byte[] b, int off, int len);
+    private static native Class defineClass0(ClassLoader loader, String name, byte[] b, int off, int len);
 }

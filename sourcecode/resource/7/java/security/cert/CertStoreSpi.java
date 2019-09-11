@@ -52,8 +52,8 @@ import java.util.Collection;
  * <code>engineGetCertificates</code> and <code>engineGetCRLs</code> methods.
  * More sophisticated ones may allow truly concurrent access.
  *
- * @since       1.4
- * @author      Steve Hanna
+ * @author Steve Hanna
+ * @since 1.4
  */
 public abstract class CertStoreSpi {
 
@@ -62,10 +62,9 @@ public abstract class CertStoreSpi {
      *
      * @param params the initialization parameters (may be <code>null</code>)
      * @throws InvalidAlgorithmParameterException if the initialization
-     * parameters are inappropriate for this <code>CertStoreSpi</code>
+     *                                            parameters are inappropriate for this <code>CertStoreSpi</code>
      */
-    public CertStoreSpi(CertStoreParameters params)
-    throws InvalidAlgorithmParameterException { }
+    public CertStoreSpi(CertStoreParameters params) throws InvalidAlgorithmParameterException { }
 
     /**
      * Returns a <code>Collection</code> of <code>Certificate</code>s that
@@ -86,14 +85,14 @@ public abstract class CertStoreSpi {
      * and/or subject names are especially useful criteria.
      *
      * @param selector A <code>CertSelector</code> used to select which
-     *  <code>Certificate</code>s should be returned. Specify <code>null</code>
-     *  to return all <code>Certificate</code>s (if supported).
+     *                 <code>Certificate</code>s should be returned. Specify <code>null</code>
+     *                 to return all <code>Certificate</code>s (if supported).
      * @return A <code>Collection</code> of <code>Certificate</code>s that
-     *         match the specified selector (never <code>null</code>)
+     * match the specified selector (never <code>null</code>)
      * @throws CertStoreException if an exception occurs
      */
-    public abstract Collection<? extends Certificate> engineGetCertificates
-            (CertSelector selector) throws CertStoreException;
+    public abstract Collection<? extends Certificate> engineGetCertificates(CertSelector selector)
+        throws CertStoreException;
 
     /**
      * Returns a <code>Collection</code> of <code>CRL</code>s that
@@ -114,12 +113,11 @@ public abstract class CertStoreSpi {
      * and/or the certificate to be checked are especially useful.
      *
      * @param selector A <code>CRLSelector</code> used to select which
-     *  <code>CRL</code>s should be returned. Specify <code>null</code>
-     *  to return all <code>CRL</code>s (if supported).
+     *                 <code>CRL</code>s should be returned. Specify <code>null</code>
+     *                 to return all <code>CRL</code>s (if supported).
      * @return A <code>Collection</code> of <code>CRL</code>s that
-     *         match the specified selector (never <code>null</code>)
+     * match the specified selector (never <code>null</code>)
      * @throws CertStoreException if an exception occurs
      */
-    public abstract Collection<? extends CRL> engineGetCRLs
-            (CRLSelector selector) throws CertStoreException;
+    public abstract Collection<? extends CRL> engineGetCRLs(CRLSelector selector) throws CertStoreException;
 }

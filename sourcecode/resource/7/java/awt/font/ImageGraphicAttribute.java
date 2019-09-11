@@ -48,6 +48,7 @@ import java.awt.geom.Rectangle2D;
  * The <code>ImageGraphicAttribute</code> class is an implementation of
  * {@link GraphicAttribute} which draws images in
  * a {@link TextLayout}.
+ *
  * @see GraphicAttribute
  */
 
@@ -60,11 +61,12 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
     /**
      * Constucts an <code>ImageGraphicAttribute</code> from the specified
      * {@link Image}.  The origin is at (0,&nbsp;0).
-     * @param image the <code>Image</code> rendered by this
-     * <code>ImageGraphicAttribute</code>.
-     * This object keeps a reference to <code>image</code>.
+     *
+     * @param image     the <code>Image</code> rendered by this
+     *                  <code>ImageGraphicAttribute</code>.
+     *                  This object keeps a reference to <code>image</code>.
      * @param alignment one of the alignments from this
-     * <code>ImageGraphicAttribute</code>
+     *                  <code>ImageGraphicAttribute</code>
      */
     public ImageGraphicAttribute(Image image, int alignment) {
 
@@ -77,22 +79,20 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
      * (<code>originX</code>,&nbsp;<code>originY</code>) in the
      * <code>Image</code> appears at the origin of the
      * <code>ImageGraphicAttribute</code> within the text.
-     * @param image the <code>Image</code> rendered by this
-     * <code>ImageGraphicAttribute</code>.
-     * This object keeps a reference to <code>image</code>.
+     *
+     * @param image     the <code>Image</code> rendered by this
+     *                  <code>ImageGraphicAttribute</code>.
+     *                  This object keeps a reference to <code>image</code>.
      * @param alignment one of the alignments from this
-     * <code>ImageGraphicAttribute</code>
-     * @param originX the X coordinate of the point within
-     * the <code>Image</code> that appears at the origin of the
-     * <code>ImageGraphicAttribute</code> in the text line.
-     * @param originY the Y coordinate of the point within
-     * the <code>Image</code> that appears at the origin of the
-     * <code>ImageGraphicAttribute</code> in the text line.
+     *                  <code>ImageGraphicAttribute</code>
+     * @param originX   the X coordinate of the point within
+     *                  the <code>Image</code> that appears at the origin of the
+     *                  <code>ImageGraphicAttribute</code> in the text line.
+     * @param originY   the Y coordinate of the point within
+     *                  the <code>Image</code> that appears at the origin of the
+     *                  <code>ImageGraphicAttribute</code> in the text line.
      */
-    public ImageGraphicAttribute(Image image,
-                                 int alignment,
-                                 float originX,
-                                 float originY) {
+    public ImageGraphicAttribute(Image image, int alignment, float originX, float originY) {
 
         super(alignment);
 
@@ -112,6 +112,7 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
      * Returns the ascent of this <code>ImageGraphicAttribute</code>.  The
      * ascent of an <code>ImageGraphicAttribute</code> is the distance
      * from the top of the image to the origin.
+     *
      * @return the ascent of this <code>ImageGraphicAttribute</code>.
      */
     public float getAscent() {
@@ -123,22 +124,24 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
      * Returns the descent of this <code>ImageGraphicAttribute</code>.
      * The descent of an <code>ImageGraphicAttribute</code> is the
      * distance from the origin to the bottom of the image.
+     *
      * @return the descent of this <code>ImageGraphicAttribute</code>.
      */
     public float getDescent() {
 
-        return Math.max(0, fImageHeight-fOriginY);
+        return Math.max(0, fImageHeight - fOriginY);
     }
 
     /**
      * Returns the advance of this <code>ImageGraphicAttribute</code>.
      * The advance of an <code>ImageGraphicAttribute</code> is the
      * distance from the origin to the right edge of the image.
+     *
      * @return the advance of this <code>ImageGraphicAttribute</code>.
      */
     public float getAdvance() {
 
-        return Math.max(0, fImageWidth-fOriginX);
+        return Math.max(0, fImageWidth - fOriginX);
     }
 
     /**
@@ -147,13 +150,13 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
      * to the rendering position.  A graphic can be rendered beyond its
      * origin, ascent, descent, or advance;  but if it is, this
      * method's implementation must indicate where the graphic is rendered.
+     *
      * @return a <code>Rectangle2D</code> that encloses all of the bits
      * rendered by this <code>ImageGraphicAttribute</code>.
      */
     public Rectangle2D getBounds() {
 
-        return new Rectangle2D.Float(
-                        -fOriginX, -fOriginY, fImageWidth, fImageHeight);
+        return new Rectangle2D.Float(-fOriginX, -fOriginY, fImageWidth, fImageHeight);
     }
 
     /**
@@ -161,12 +164,13 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
      */
     public void draw(Graphics2D graphics, float x, float y) {
 
-        graphics.drawImage(fImage, (int) (x-fOriginX), (int) (y-fOriginY), null);
+        graphics.drawImage(fImage, (int) (x - fOriginX), (int) (y - fOriginY), null);
     }
 
     /**
      * Returns a hashcode for this <code>ImageGraphicAttribute</code>.
-     * @return  a hash code value for this object.
+     *
+     * @return a hash code value for this object.
      */
     public int hashCode() {
 
@@ -176,6 +180,7 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
     /**
      * Compares this <code>ImageGraphicAttribute</code> to the specified
      * {@link Object}.
+     *
      * @param rhs the <code>Object</code> to compare for equality
      * @return <code>true</code> if this
      * <code>ImageGraphicAttribute</code> equals <code>rhs</code>;
@@ -185,8 +190,7 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
 
         try {
             return equals((ImageGraphicAttribute) rhs);
-        }
-        catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             return false;
         }
     }
@@ -194,8 +198,9 @@ public final class ImageGraphicAttribute extends GraphicAttribute {
     /**
      * Compares this <code>ImageGraphicAttribute</code> to the specified
      * <code>ImageGraphicAttribute</code>.
+     *
      * @param rhs the <code>ImageGraphicAttribute</code> to compare for
-     * equality
+     *            equality
      * @return <code>true</code> if this
      * <code>ImageGraphicAttribute</code> equals <code>rhs</code>;
      * <code>false</code> otherwise.

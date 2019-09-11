@@ -33,11 +33,10 @@ package java.lang.annotation;
  * Documented, its annotations become part of the public API
  * of the annotated elements.
  *
- * @author  Joshua Bloch
+ * @author Joshua Bloch
  * @since 1.5
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface Documented {
-}
+public @interface Documented { }

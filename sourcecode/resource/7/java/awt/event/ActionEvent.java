@@ -39,7 +39,7 @@ import java.awt.Event;
  * <p>
  * <b>Note:</b> To invoke an <code>ActionEvent</code> on a
  * <code>Button</code> using the keyboard, use the Space bar.
- * <P>
+ * <p>
  * The object that implements the <code>ActionListener</code> interface
  * gets this <code>ActionEvent</code> when the event occurs. The listener
  * is therefore spared the details of processing individual mouse movements
@@ -50,10 +50,9 @@ import java.awt.Event;
  * of any particular {@code ActionEvent} instance is not
  * in the range from {@code ACTION_FIRST} to {@code ACTION_LAST}.
  *
+ * @author Carl Quinn
  * @see ActionListener
  * @see <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/actionlistener.html">Tutorial: How to Write an Action Listener</a>
- *
- * @author Carl Quinn
  * @since 1.1
  */
 public class ActionEvent extends AWTEvent {
@@ -62,48 +61,48 @@ public class ActionEvent extends AWTEvent {
      * The shift modifier. An indicator that the shift key was held
      * down during the event.
      */
-    public static final int SHIFT_MASK          = Event.SHIFT_MASK;
+    public static final int SHIFT_MASK = Event.SHIFT_MASK;
 
     /**
      * The control modifier. An indicator that the control key was held
      * down during the event.
      */
-    public static final int CTRL_MASK           = Event.CTRL_MASK;
+    public static final int CTRL_MASK = Event.CTRL_MASK;
 
     /**
      * The meta modifier. An indicator that the meta key was held
      * down during the event.
      */
-    public static final int META_MASK           = Event.META_MASK;
+    public static final int META_MASK = Event.META_MASK;
 
     /**
      * The alt modifier. An indicator that the alt key was held
      * down during the event.
      */
-    public static final int ALT_MASK            = Event.ALT_MASK;
+    public static final int ALT_MASK = Event.ALT_MASK;
 
 
     /**
      * The first number in the range of ids used for action events.
      */
-    public static final int ACTION_FIRST                = 1001;
+    public static final int ACTION_FIRST = 1001;
 
     /**
      * The last number in the range of ids used for action events.
      */
-    public static final int ACTION_LAST                 = 1001;
+    public static final int ACTION_LAST = 1001;
 
     /**
      * This event id indicates that a meaningful action occured.
      */
-    public static final int ACTION_PERFORMED    = ACTION_FIRST; //Event.ACTION_EVENT
+    public static final int ACTION_PERFORMED = ACTION_FIRST; //Event.ACTION_EVENT
 
     /**
      * The nonlocalized string that gives more details
      * of what actually caused the event.
      * This information is very specific to the component
      * that fired it.
-
+     *
      * @serial
      * @see #getActionCommand
      */
@@ -146,8 +145,8 @@ public class ActionEvent extends AWTEvent {
      *
      * @param source  The object that originated the event
      * @param id      An integer that identifies the event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link ActionEvent}
+     *                For information on allowable values, see
+     *                the class description for {@link ActionEvent}
      * @param command A string that may specify a command (possibly one
      *                of several) associated with the event
      * @throws IllegalArgumentException if <code>source</code> is null
@@ -168,12 +167,12 @@ public class ActionEvent extends AWTEvent {
      * A <code>null</code> <code>command</code> string is legal,
      * but not recommended.
      *
-     * @param source  The object that originated the event
-     * @param id      An integer that identifies the event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link ActionEvent}
-     * @param command A string that may specify a command (possibly one
-     *                of several) associated with the event
+     * @param source    The object that originated the event
+     * @param id        An integer that identifies the event.
+     *                  For information on allowable values, see
+     *                  the class description for {@link ActionEvent}
+     * @param command   A string that may specify a command (possibly one
+     *                  of several) associated with the event
      * @param modifiers The modifier keys down during event
      *                  (shift, ctrl, alt, meta).
      *                  Passing negative parameter is not recommended.
@@ -199,29 +198,27 @@ public class ActionEvent extends AWTEvent {
      * but not recommended.
      *
      * @param source    The object that originated the event
-     * @param id      An integer that identifies the event.
-     *                     For information on allowable values, see
-     *                     the class description for {@link ActionEvent}
-     * @param command A string that may specify a command (possibly one
-     *                of several) associated with the event
+     * @param id        An integer that identifies the event.
+     *                  For information on allowable values, see
+     *                  the class description for {@link ActionEvent}
+     * @param command   A string that may specify a command (possibly one
+     *                  of several) associated with the event
      * @param modifiers The modifier keys down during event
      *                  (shift, ctrl, alt, meta).
      *                  Passing negative parameter is not recommended.
      *                  Zero value means that no modifiers were passed
-     * @param when   A long that gives the time the event occurred.
-     *               Passing negative or zero value
-     *               is not recommended
+     * @param when      A long that gives the time the event occurred.
+     *                  Passing negative or zero value
+     *                  is not recommended
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getSource()
      * @see #getID()
      * @see #getActionCommand()
      * @see #getModifiers()
      * @see #getWhen()
-     *
      * @since 1.4
      */
-    public ActionEvent(Object source, int id, String command, long when,
-                       int modifiers) {
+    public ActionEvent(Object source, int id, String command, long when, int modifiers) {
         super(source, id);
         this.actionCommand = command;
         this.when = when;
@@ -275,14 +272,14 @@ public class ActionEvent extends AWTEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case ACTION_PERFORMED:
-              typeStr = "ACTION_PERFORMED";
-              break;
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case ACTION_PERFORMED:
+                typeStr = "ACTION_PERFORMED";
+                break;
+            default:
+                typeStr = "unknown type";
         }
-        return typeStr + ",cmd="+actionCommand+",when="+when+",modifiers="+
+        return typeStr + ",cmd=" + actionCommand + ",when=" + when + ",modifiers=" +
             KeyEvent.getKeyModifiersText(modifiers);
     }
 }

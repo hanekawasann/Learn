@@ -46,8 +46,8 @@ package java.awt;
  * making calls into user code from a system thread. Doing so avoids
  * potential deadlocks and denial-of-service attacks.
  *
- * @author  Timothy Prinzing
- * @since   1.2
+ * @author Timothy Prinzing
+ * @since 1.2
  */
 public interface ActiveEvent {
 

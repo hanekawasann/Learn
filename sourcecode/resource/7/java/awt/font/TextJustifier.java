@@ -67,10 +67,9 @@ class TextJustifier {
             System.out.println("start: " + start + ", limit: " + limit);
             for (int i = start; i < limit; i++) {
                 GlyphJustificationInfo gji = info[i];
-                System.out.println("w: " + gji.weight + ", gp: " +
-                                   gji.growPriority + ", gll: " +
-                                   gji.growLeftLimit + ", grl: " +
-                                   gji.growRightLimit);
+                System.out.println(
+                    "w: " + gji.weight + ", gp: " + gji.growPriority + ", gll: " + gji.growLeftLimit + ", grl: " +
+                        gji.growRightLimit);
             }
         }
     }
@@ -81,7 +80,7 @@ class TextJustifier {
      * Return an array of deltas twice as long as the original info array,
      * indicating the amount by which each side of each glyph should grow
      * or shrink.
-     *
+     * <p>
      * Delta should be positive to expand the line, and negative to compress it.
      */
     public float[] justify(float delta) {
@@ -89,8 +88,7 @@ class TextJustifier {
 
         boolean grow = delta > 0;
 
-        if (DEBUG)
-            System.out.println("delta: " + delta);
+        if (DEBUG) { System.out.println("delta: " + delta); }
 
         // make separate passes through glyphs in order of decreasing priority
         // until justifyDelta is zero or we run out of priorities.
@@ -101,8 +99,7 @@ class TextJustifier {
              * highest priority
              */
             boolean lastPass = p > MAX_PRIORITY;
-            if (lastPass)
-                p = fallbackPriority;
+            if (lastPass) { p = fallbackPriority; }
 
             // pass through glyphs, first collecting weights and limits
             float weight = 0;
@@ -163,14 +160,9 @@ class TextJustifier {
             }
 
             if (DEBUG) {
-                System.out.println("pass: " + p +
-                    ", d: " + delta +
-                    ", l: " + gslimit +
-                    ", w: " + weight +
-                    ", aw: " + absorbweight +
-                    ", wd: " + weightedDelta +
-                    ", wa: " + weightedAbsorb +
-                    ", hit: " + (hitLimit ? "y" : "n"));
+                System.out.println(
+                    "pass: " + p + ", d: " + delta + ", l: " + gslimit + ", w: " + weight + ", aw: " + absorbweight +
+                        ", wd: " + weightedDelta + ", wa: " + weightedAbsorb + ", hit: " + (hitLimit ? "y" : "n"));
             }
 
             // now allocate this based on ratio of weight to total weight
@@ -185,7 +177,7 @@ class TextJustifier {
                             d = grow ? gi.growLeftLimit : -gi.shrinkLeftLimit;
                             if (absorbing) {
                                 // sign factored in already
-                               d += gi.weight * weightedAbsorb;
+                                d += gi.weight * weightedAbsorb;
                             }
                         } else {
                             // sign factored in already

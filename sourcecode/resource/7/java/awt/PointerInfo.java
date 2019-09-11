@@ -37,9 +37,9 @@ package java.awt;
  * as the mouse moves. To get the updated location, you must call
  * {@link MouseInfo#getPointerInfo} again.
  *
+ * @author Roman Poborchiy
  * @see MouseInfo#getPointerInfo
- * @author      Roman Poborchiy
- * @since       1.5
+ * @since 1.5
  */
 
 public class PointerInfo {
@@ -59,8 +59,8 @@ public class PointerInfo {
      * Returns the <code>GraphicsDevice</code> where the mouse pointer
      * was at the moment this <code>PointerInfo</code> was created.
      *
-     * @return   <code>GraphicsDevice</code> corresponding to the pointer
-     * @since    1.5
+     * @return <code>GraphicsDevice</code> corresponding to the pointer
+     * @since 1.5
      */
     public GraphicsDevice getDevice() {
         return device;
@@ -72,10 +72,10 @@ public class PointerInfo {
      * for more information about coordinate calculation for multiscreen
      * systems.
      *
+     * @return coordinates of mouse pointer
      * @see MouseInfo
      * @see MouseInfo#getPointerInfo
-     * @return   coordinates of mouse pointer
-     * @since    1.5
+     * @since 1.5
      */
     public Point getLocation() {
         return location;

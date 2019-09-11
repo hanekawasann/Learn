@@ -31,7 +31,7 @@ import java.util.*;
  * A utility class to iterate over the path segments of a rectangle
  * through the PathIterator interface.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  */
 class RectIterator implements PathIterator {
     double x, y, w, h;
@@ -52,6 +52,7 @@ class RectIterator implements PathIterator {
     /**
      * Return the winding rule for determining the insideness of the
      * path.
+     *
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
      */
@@ -61,6 +62,7 @@ class RectIterator implements PathIterator {
 
     /**
      * Tests if there are more points to read.
+     *
      * @return true if there are more points to read
      */
     public boolean isDone() {
@@ -88,6 +90,7 @@ class RectIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO
@@ -127,6 +130,7 @@ class RectIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO

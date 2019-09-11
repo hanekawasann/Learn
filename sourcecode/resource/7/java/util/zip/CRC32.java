@@ -28,11 +28,10 @@ package java.util.zip;
 /**
  * A class that can be used to compute the CRC-32 of a data stream.
  *
- * @see         Checksum
- * @author      David Connelly
+ * @author David Connelly
+ * @see Checksum
  */
-public
-class CRC32 implements Checksum {
+public class CRC32 implements Checksum {
     private int crc;
 
     /**
@@ -85,9 +84,10 @@ class CRC32 implements Checksum {
      * Returns CRC-32 value.
      */
     public long getValue() {
-        return (long)crc & 0xffffffffL;
+        return (long) crc & 0xffffffffL;
     }
 
     private native static int update(int crc, int b);
+
     private native static int updateBytes(int crc, byte[] b, int off, int len);
 }

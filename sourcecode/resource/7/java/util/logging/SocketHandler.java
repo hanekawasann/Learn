@@ -77,11 +77,11 @@ public class SocketHandler extends StreamHandler {
         LogManager manager = LogManager.getLogManager();
         String cname = getClass().getName();
 
-        setLevel(manager.getLevelProperty(cname +".level", Level.ALL));
-        setFilter(manager.getFilterProperty(cname +".filter", null));
-        setFormatter(manager.getFormatterProperty(cname +".formatter", new XMLFormatter()));
+        setLevel(manager.getLevelProperty(cname + ".level", Level.ALL));
+        setFilter(manager.getFilterProperty(cname + ".filter", null));
+        setFormatter(manager.getFormatterProperty(cname + ".formatter", new XMLFormatter()));
         try {
-            setEncoding(manager.getStringProperty(cname +".encoding", null));
+            setEncoding(manager.getStringProperty(cname + ".encoding", null));
         } catch (Exception ex) {
             try {
                 setEncoding(null);
@@ -98,10 +98,11 @@ public class SocketHandler extends StreamHandler {
     /**
      * Create a <tt>SocketHandler</tt>, using only <tt>LogManager</tt> properties
      * (or their defaults).
+     *
      * @throws IllegalArgumentException if the host or port are invalid or
-     *          are not specified as LogManager properties.
-     * @throws IOException if we are unable to connect to the target
-     *         host and port.
+     *                                  are not specified as LogManager properties.
+     * @throws IOException              if we are unable to connect to the target
+     *                                  host and port.
      */
     public SocketHandler() throws IOException {
         // We are going to use the logging defaults.
@@ -119,7 +120,7 @@ public class SocketHandler extends StreamHandler {
 
     /**
      * Construct a <tt>SocketHandler</tt> using a specified host and port.
-     *
+     * <p>
      * The <tt>SocketHandler</tt> is configured based on <tt>LogManager</tt>
      * properties (or their default values) except that the given target host
      * and port arguments are used. If the host argument is empty, but not
@@ -127,10 +128,9 @@ public class SocketHandler extends StreamHandler {
      *
      * @param host target host.
      * @param port target port.
-     *
      * @throws IllegalArgumentException if the host or port are invalid.
-     * @throws IOException if we are unable to connect to the target
-     *         host and port.
+     * @throws IOException              if we are unable to connect to the target
+     *                                  host and port.
      */
     public SocketHandler(String host, int port) throws IOException {
         sealed = false;
@@ -160,8 +160,8 @@ public class SocketHandler extends StreamHandler {
     /**
      * Close this output stream.
      *
-     * @exception  SecurityException  if a security manager exists and if
-     *             the caller does not have <tt>LoggingPermission("control")</tt>.
+     * @throws SecurityException if a security manager exists and if
+     *                           the caller does not have <tt>LoggingPermission("control")</tt>.
      */
     public synchronized void close() throws SecurityException {
         super.close();
@@ -178,8 +178,8 @@ public class SocketHandler extends StreamHandler {
     /**
      * Format and publish a <tt>LogRecord</tt>.
      *
-     * @param  record  description of the log event. A null record is
-     *                 silently ignored and is not published
+     * @param record description of the log event. A null record is
+     *               silently ignored and is not published
      */
     public synchronized void publish(LogRecord record) {
         if (!isLoggable(record)) {

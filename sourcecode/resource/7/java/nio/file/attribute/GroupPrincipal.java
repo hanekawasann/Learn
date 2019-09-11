@@ -34,9 +34,8 @@ package java.nio.file.attribute;
  * groups, and whether groups can be nested, are implementation specified and
  * therefore not specified.
  *
- * @since 1.7
- *
  * @see UserPrincipalLookupService#lookupPrincipalByGroupName
+ * @since 1.7
  */
 
 public interface GroupPrincipal extends UserPrincipal { }

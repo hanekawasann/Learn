@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.security.cert.*;
 
 /**
- *
  * <p>This class extends the concept of a codebase to
  * encapsulate not only the location (URL) but also the certificate chains
  * that were used to verify signed code originating from that location.
@@ -76,10 +75,9 @@ public class CodeSource implements java.io.Serializable {
      * Constructs a CodeSource and associates it with the specified
      * location and set of certificates.
      *
-     * @param url the location (URL).
-     *
+     * @param url   the location (URL).
      * @param certs the certificate(s). It may be null. The contents of the
-     * array are copied to protect against subsequent modification.
+     *              array are copied to protect against subsequent modification.
      */
     public CodeSource(URL url, java.security.cert.Certificate certs[]) {
         this.location = url;
@@ -94,10 +92,9 @@ public class CodeSource implements java.io.Serializable {
      * Constructs a CodeSource and associates it with the specified
      * location and set of code signers.
      *
-     * @param url the location (URL).
+     * @param url     the location (URL).
      * @param signers the code signers. It may be null. The contents of the
-     * array are copied to protect against subsequent modification.
-     *
+     *                array are copied to protect against subsequent modification.
      * @since 1.5
      */
     public CodeSource(URL url, CodeSigner[] signers) {
@@ -116,10 +113,7 @@ public class CodeSource implements java.io.Serializable {
      */
 
     public int hashCode() {
-        if (location != null)
-            return location.hashCode();
-        else
-            return 0;
+        if (location != null) { return location.hashCode(); } else { return 0; }
     }
 
     /**
@@ -130,26 +124,23 @@ public class CodeSource implements java.io.Serializable {
      * the certificate chains be in the same order.
      *
      * @param obj the object to test for equality with this object.
-     *
      * @return true if the objects are considered equal, false otherwise.
      */
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
+        if (obj == this) { return true; }
 
         // objects types must be equal
-        if (!(obj instanceof CodeSource))
-            return false;
+        if (!(obj instanceof CodeSource)) { return false; }
 
         CodeSource cs = (CodeSource) obj;
 
         // URLs must match
         if (location == null) {
             // if location is null, then cs.location must be null as well
-            if (cs.location != null) return false;
+            if (cs.location != null) { return false; }
         } else {
             // if location is not null, then it must equal cs.location
-            if (!location.equals(cs.location)) return false;
+            if (!location.equals(cs.location)) { return false; }
         }
 
         // certs must match
@@ -187,14 +178,11 @@ public class CodeSource implements java.io.Serializable {
 
         } else if (signers != null) {
             // Convert the code signers to certs
-            ArrayList<java.security.cert.Certificate> certChains =
-                        new ArrayList<>();
+            ArrayList<java.security.cert.Certificate> certChains = new ArrayList<>();
             for (int i = 0; i < signers.length; i++) {
-                certChains.addAll(
-                    signers[i].getSignerCertPath().getCertificates());
+                certChains.addAll(signers[i].getSignerCertPath().getCertificates());
             }
-            certs = certChains.toArray(
-                        new java.security.cert.Certificate[certChains.size()]);
+            certs = certChains.toArray(new java.security.cert.Certificate[certChains.size()]);
             return certs.clone();
 
         } else {
@@ -212,7 +200,6 @@ public class CodeSource implements java.io.Serializable {
      * are examined - all other certificate types are ignored.
      *
      * @return A copy of the code signer array, or null if there is none.
-     *
      * @since 1.5
      */
     public final CodeSigner[] getCodeSigners() {
@@ -231,7 +218,7 @@ public class CodeSource implements java.io.Serializable {
 
     /**
      * Returns true if this CodeSource object "implies" the specified CodeSource.
-     * <P>
+     * <p>
      * More specifically, this method makes the following checks, in order.
      * If any fail, it returns false. If they all succeed, it returns true.<p>
      * <ol>
@@ -288,20 +275,17 @@ public class CodeSource implements java.io.Serializable {
      *     http://java.sun.com/classes/-
      *     http://java.sun.com/classes/foo.jar
      * </pre>
-     *
+     * <p>
      * Note that if this CodeSource has a null location and a null
      * certificate chain, then it implies every other CodeSource.
      *
      * @param codesource CodeSource to compare against.
-     *
      * @return true if the specified codesource is implied by this codesource,
      * false if not.
      */
 
-    public boolean implies(CodeSource codesource)
-    {
-        if (codesource == null)
-            return false;
+    public boolean implies(CodeSource codesource) {
+        if (codesource == null) { return false; }
 
         return matchCerts(codesource, false) && matchLocation(codesource);
     }
@@ -310,12 +294,11 @@ public class CodeSource implements java.io.Serializable {
      * Returns true if all the certs in this
      * CodeSource are also in <i>that</i>.
      *
-     * @param that the CodeSource to check against.
+     * @param that   the CodeSource to check against.
      * @param strict If true then a strict equality match is performed.
      *               Otherwise a subset match is performed.
      */
-    private boolean matchCerts(CodeSource that, boolean strict)
-    {
+    private boolean matchCerts(CodeSource that, boolean strict) {
         boolean match;
 
         // match any key
@@ -325,7 +308,7 @@ public class CodeSource implements java.io.Serializable {
             } else {
                 return true;
             }
-        // both have signers
+            // both have signers
         } else if (signers != null && that.signers != null) {
             if (strict && signers.length != that.signers.length) {
                 return false;
@@ -338,11 +321,11 @@ public class CodeSource implements java.io.Serializable {
                         break;
                     }
                 }
-                if (!match) return false;
+                if (!match) { return false; }
             }
             return true;
 
-        // both have certs
+            // both have certs
         } else if (certs != null && that.certs != null) {
             if (strict && certs.length != that.certs.length) {
                 return false;
@@ -355,7 +338,7 @@ public class CodeSource implements java.io.Serializable {
                         break;
                     }
                 }
-                if (!match) return false;
+                if (!match) { return false; }
             }
             return true;
         }
@@ -369,85 +352,74 @@ public class CodeSource implements java.io.Serializable {
      *
      * @param that CodeSource to compare against
      */
-    private boolean matchLocation(CodeSource that)
-        {
-            if (location == null) {
-                return true;
-            }
-
-            if ((that == null) || (that.location == null))
-                return false;
-
-            if (location.equals(that.location))
-                return true;
-
-            if (!location.getProtocol().equals(that.location.getProtocol()))
-                return false;
-
-            String thisHost = location.getHost();
-            String thatHost = that.location.getHost();
-
-            if (thisHost != null) {
-                if (("".equals(thisHost) || "localhost".equals(thisHost)) &&
-                    ("".equals(thatHost) || "localhost".equals(thatHost))) {
-                    // ok
-                } else if (!thisHost.equals(thatHost)) {
-                    if (thatHost == null) {
-                        return false;
-                    }
-                    if (this.sp == null) {
-                        this.sp = new SocketPermission(thisHost, "resolve");
-                    }
-                    if (that.sp == null) {
-                        that.sp = new SocketPermission(thatHost, "resolve");
-                    }
-                    if (!this.sp.implies(that.sp)) {
-                        return false;
-                    }
-                }
-            }
-
-            if (location.getPort() != -1) {
-                if (location.getPort() != that.location.getPort())
-                    return false;
-            }
-
-            if (location.getFile().endsWith("/-")) {
-                // Matches the directory and (recursively) all files
-                // and subdirectories contained in that directory.
-                // For example, "/a/b/-" implies anything that starts with
-                // "/a/b/"
-                String thisPath = location.getFile().substring(0,
-                                                location.getFile().length()-1);
-                if (!that.location.getFile().startsWith(thisPath))
-                    return false;
-            } else if (location.getFile().endsWith("/*")) {
-                // Matches the directory and all the files contained in that
-                // directory.
-                // For example, "/a/b/*" implies anything that starts with
-                // "/a/b/" but has no further slashes
-                int last = that.location.getFile().lastIndexOf('/');
-                if (last == -1)
-                    return false;
-                String thisPath = location.getFile().substring(0,
-                                                location.getFile().length()-1);
-                String thatPath = that.location.getFile().substring(0, last+1);
-                if (!thatPath.equals(thisPath))
-                    return false;
-            } else {
-                // Exact matches only.
-                // For example, "/a/b" and "/a/b/" both imply "/a/b/"
-                if ((!that.location.getFile().equals(location.getFile()))
-                && (!that.location.getFile().equals(location.getFile()+"/"))) {
-                    return false;
-                }
-            }
-
-            if (location.getRef() == null)
-                return true;
-            else
-                return location.getRef().equals(that.location.getRef());
+    private boolean matchLocation(CodeSource that) {
+        if (location == null) {
+            return true;
         }
+
+        if ((that == null) || (that.location == null)) { return false; }
+
+        if (location.equals(that.location)) { return true; }
+
+        if (!location.getProtocol().equals(that.location.getProtocol())) { return false; }
+
+        String thisHost = location.getHost();
+        String thatHost = that.location.getHost();
+
+        if (thisHost != null) {
+            if (("".equals(thisHost) || "localhost".equals(thisHost)) &&
+                ("".equals(thatHost) || "localhost".equals(thatHost))) {
+                // ok
+            } else if (!thisHost.equals(thatHost)) {
+                if (thatHost == null) {
+                    return false;
+                }
+                if (this.sp == null) {
+                    this.sp = new SocketPermission(thisHost, "resolve");
+                }
+                if (that.sp == null) {
+                    that.sp = new SocketPermission(thatHost, "resolve");
+                }
+                if (!this.sp.implies(that.sp)) {
+                    return false;
+                }
+            }
+        }
+
+        if (location.getPort() != -1) {
+            if (location.getPort() != that.location.getPort()) { return false; }
+        }
+
+        if (location.getFile().endsWith("/-")) {
+            // Matches the directory and (recursively) all files
+            // and subdirectories contained in that directory.
+            // For example, "/a/b/-" implies anything that starts with
+            // "/a/b/"
+            String thisPath = location.getFile().substring(0, location.getFile().length() - 1);
+            if (!that.location.getFile().startsWith(thisPath)) { return false; }
+        } else if (location.getFile().endsWith("/*")) {
+            // Matches the directory and all the files contained in that
+            // directory.
+            // For example, "/a/b/*" implies anything that starts with
+            // "/a/b/" but has no further slashes
+            int last = that.location.getFile().lastIndexOf('/');
+            if (last == -1) { return false; }
+            String thisPath = location.getFile().substring(0, location.getFile().length() - 1);
+            String thatPath = that.location.getFile().substring(0, last + 1);
+            if (!thatPath.equals(thisPath)) { return false; }
+        } else {
+            // Exact matches only.
+            // For example, "/a/b" and "/a/b/" both imply "/a/b/"
+            if ((!that.location.getFile().equals(location.getFile())) &&
+                (!that.location.getFile().equals(location.getFile() + "/"))) {
+                return false;
+            }
+        }
+
+        if (location.getRef() == null) { return true; } else {
+            return location.getRef().equals(that.location.getRef());
+        }
+    }
 
     /**
      * Returns a string describing this CodeSource, telling its
@@ -462,12 +434,12 @@ public class CodeSource implements java.io.Serializable {
 
         if (this.certs != null && this.certs.length > 0) {
             for (int i = 0; i < this.certs.length; i++) {
-                sb.append( " " + this.certs[i]);
+                sb.append(" " + this.certs[i]);
             }
 
         } else if (this.signers != null && this.signers.length > 0) {
             for (int i = 0; i < this.signers.length; i++) {
-                sb.append( " " + this.signers[i]);
+                sb.append(" " + this.signers[i]);
             }
         } else {
             sb.append(" <no signer certificates>");
@@ -490,9 +462,7 @@ public class CodeSource implements java.io.Serializable {
      * array of bytes. Finally, if any code signers are present then the array
      * of code signers is serialized and written out too.
      */
-    private void writeObject(java.io.ObjectOutputStream oos)
-        throws IOException
-    {
+    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.defaultWriteObject(); // location
 
         // Serialize the array of certs
@@ -524,9 +494,7 @@ public class CodeSource implements java.io.Serializable {
     /**
      * Restores this object from a stream (i.e., deserializes it).
      */
-    private void readObject(java.io.ObjectInputStream ois)
-        throws IOException, ClassNotFoundException
-    {
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
         CertificateFactory cf;
         Hashtable<String, CertificateFactory> cfs = null;
 
@@ -553,8 +521,7 @@ public class CodeSource implements java.io.Serializable {
                 try {
                     cf = CertificateFactory.getInstance(certType);
                 } catch (CertificateException ce) {
-                    throw new ClassNotFoundException
-                        ("Certificate factory for " + certType + " not found");
+                    throw new ClassNotFoundException("Certificate factory for " + certType + " not found");
                 }
                 // store the certificate factory so we can reuse it later
                 cfs.put(certType, cf);
@@ -578,7 +545,7 @@ public class CodeSource implements java.io.Serializable {
 
         // Deserialize array of code signers (if any)
         try {
-            this.signers = ((CodeSigner[])ois.readObject()).clone();
+            this.signers = ((CodeSigner[]) ois.readObject()).clone();
         } catch (IOException ioe) {
             // no signers present
         }
@@ -591,8 +558,7 @@ public class CodeSource implements java.io.Serializable {
      *
      * @return An array of code signers or null if none are generated.
      */
-    private CodeSigner[] convertCertArrayToSignerArray(
-        java.security.cert.Certificate[] certs) {
+    private CodeSigner[] convertCertArrayToSignerArray(java.security.cert.Certificate[] certs) {
 
         if (certs == null) {
             return null;
@@ -608,16 +574,14 @@ public class CodeSource implements java.io.Serializable {
             int i = 0;
             List<CodeSigner> signers = new ArrayList<>();
             while (i < certs.length) {
-                List<java.security.cert.Certificate> certChain =
-                        new ArrayList<>();
+                List<java.security.cert.Certificate> certChain = new ArrayList<>();
                 certChain.add(certs[i++]); // first cert is an end-entity cert
                 int j = i;
 
                 // Extract chain of certificates
                 // (loop while certs are not end-entity certs)
-                while (j < certs.length &&
-                    certs[j] instanceof X509Certificate &&
-                    ((X509Certificate)certs[j]).getBasicConstraints() != -1) {
+                while (j < certs.length && certs[j] instanceof X509Certificate &&
+                    ((X509Certificate) certs[j]).getBasicConstraints() != -1) {
                     certChain.add(certs[j]);
                     j++;
                 }

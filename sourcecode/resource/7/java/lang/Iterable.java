@@ -32,7 +32,6 @@ import java.util.Iterator;
  * the "foreach" statement.
  *
  * @param <T> the type of elements returned by the iterator
- *
  * @since 1.5
  */
 public interface Iterable<T> {

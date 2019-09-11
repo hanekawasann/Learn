@@ -44,11 +44,9 @@ import java.util.EventListener;
  * and the <code>WindowEvent</code> is passed to it.
  *
  * @author David Mendenhall
- *
  * @see WindowAdapter
  * @see WindowEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/windowlistener.html">Tutorial: Writing a Window Listener</a>
- *
  * @since 1.4
  */
 public interface WindowFocusListener extends EventListener {

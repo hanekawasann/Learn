@@ -29,12 +29,11 @@ package java.security.interfaces;
  * The interface to a DSA public or private key. DSA (Digital Signature
  * Algorithm) is defined in NIST's FIPS-186.
  *
+ * @author Benjamin Renaud
+ * @author Josh Bloch
  * @see DSAParams
  * @see java.security.Key
  * @see java.security.Signature
- *
- * @author Benjamin Renaud
- * @author Josh Bloch
  */
 public interface DSAKey {
 
@@ -43,7 +42,6 @@ public interface DSAKey {
      * never secret.
      *
      * @return the DSA-specific key parameters.
-     *
      * @see DSAParams
      */
     public DSAParams getParams();

@@ -36,13 +36,12 @@ import java.io.*;
  * <code>Manifest</code> can be used to specify meta-information about
  * the JAR file and its entries.
  *
- * @author  David Connelly
- * @see     Manifest
- * @see     java.util.zip.ZipOutputStream
- * @since   1.2
+ * @author David Connelly
+ * @see Manifest
+ * @see java.util.zip.ZipOutputStream
+ * @since 1.2
  */
-public
-class JarOutputStream extends ZipOutputStream {
+public class JarOutputStream extends ZipOutputStream {
     private static final int JAR_MAGIC = 0xCAFE;
 
     /**
@@ -52,7 +51,7 @@ class JarOutputStream extends ZipOutputStream {
      *
      * @param out the actual output stream
      * @param man the optional <code>Manifest</code>
-     * @exception IOException if an I/O error has occurred
+     * @throws IOException if an I/O error has occurred
      */
     public JarOutputStream(OutputStream out, Manifest man) throws IOException {
         super(out);
@@ -67,8 +66,9 @@ class JarOutputStream extends ZipOutputStream {
 
     /**
      * Creates a new <code>JarOutputStream</code> with no manifest.
+     *
      * @param out the actual output stream
-     * @exception IOException if an I/O error has occurred
+     * @throws IOException if an I/O error has occurred
      */
     public JarOutputStream(OutputStream out) throws IOException {
         super(out);
@@ -83,8 +83,8 @@ class JarOutputStream extends ZipOutputStream {
      * time.
      *
      * @param ze the ZIP/JAR entry to be written
-     * @exception ZipException if a ZIP error has occurred
-     * @exception IOException if an I/O error has occurred
+     * @throws ZipException if a ZIP error has occurred
+     * @throws IOException  if an I/O error has occurred
      */
     public void putNextEntry(ZipEntry ze) throws IOException {
         if (firstEntry) {
@@ -135,7 +135,7 @@ class JarOutputStream extends ZipOutputStream {
      * The bytes are assumed to be in Intel (little-endian) byte order.
      */
     private static int get16(byte[] b, int off) {
-        return (b[off] & 0xff) | ((b[off+1] & 0xff) << 8);
+        return (b[off] & 0xff) | ((b[off + 1] & 0xff) << 8);
     }
 
     /*
@@ -143,7 +143,7 @@ class JarOutputStream extends ZipOutputStream {
      * be in Intel (little-endian) byte order.
      */
     private static void set16(byte[] b, int off, int value) {
-        b[off+0] = (byte)value;
-        b[off+1] = (byte)(value >> 8);
+        b[off + 0] = (byte) value;
+        b[off + 1] = (byte) (value >> 8);
     }
 }

@@ -54,12 +54,10 @@ package java.security;
  * provide methods that can change the state of a permission
  * once it has been created.
  *
- * @see Permissions
- * @see PermissionCollection
- *
- *
  * @author Marianne Mueller
  * @author Roland Schemers
+ * @see Permissions
+ * @see PermissionCollection
  */
 
 public abstract class Permission implements Guard, java.io.Serializable {
@@ -72,7 +70,6 @@ public abstract class Permission implements Guard, java.io.Serializable {
      * Constructs a permission with the specified name.
      *
      * @param name name of the Permission object being created.
-     *
      */
 
     public Permission(String name) {
@@ -87,25 +84,21 @@ public abstract class Permission implements Guard, java.io.Serializable {
      * a SecurityException.
      *
      * @param object the object being guarded (currently ignored).
-     *
-     * @throws SecurityException
-     *        if a security manager exists and its
-     *        <code>checkPermission</code> method doesn't allow access.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPermission</code> method doesn't allow access.
      * @see Guard
      * @see GuardedObject
      * @see SecurityManager#checkPermission
-     *
      */
     public void checkGuard(Object object) throws SecurityException {
         SecurityManager sm = System.getSecurityManager();
-        if (sm != null) sm.checkPermission(this);
+        if (sm != null) { sm.checkPermission(this); }
     }
 
     /**
      * Checks if the specified permission's actions are "implied by"
      * this object's actions.
-     * <P>
+     * <p>
      * This must be implemented by subclasses of Permission, as they are the
      * only ones that can impose semantics on a Permission object.
      *
@@ -114,7 +107,6 @@ public abstract class Permission implements Guard, java.io.Serializable {
      * is known to be valid in the current execution context.
      *
      * @param permission the permission to check against.
-     *
      * @return true if the specified permission is implied by this object,
      * false if not.
      */
@@ -123,12 +115,11 @@ public abstract class Permission implements Guard, java.io.Serializable {
 
     /**
      * Checks two Permission objects for equality.
-     * <P>
+     * <p>
      * Do not use the <code>equals</code> method for making access control
      * decisions; use the <code>implies</code> method.
      *
      * @param obj the object we are testing for equality with this object.
-     *
      * @return true if both Permission objects are equivalent.
      */
 
@@ -136,7 +127,7 @@ public abstract class Permission implements Guard, java.io.Serializable {
 
     /**
      * Returns the hash code value for this Permission object.
-     * <P>
+     * <p>
      * The required <code>hashCode</code> behavior for Permission Objects is
      * the following: <p>
      * <ul>
@@ -163,7 +154,6 @@ public abstract class Permission implements Guard, java.io.Serializable {
      * the name will be a pathname.
      *
      * @return the name of this Permission.
-     *
      */
 
     public final String getName() {
@@ -182,12 +172,11 @@ public abstract class Permission implements Guard, java.io.Serializable {
      *   perm1 = new FilePermission(p1,"read,write");
      *   perm2 = new FilePermission(p2,"write,read");
      * </pre>
-     *
+     * <p>
      * both return
      * "read,write" when the <code>getActions</code> method is invoked.
      *
      * @return the actions of this Permission.
-     *
      */
 
     public abstract String getActions();
@@ -224,8 +213,7 @@ public abstract class Permission implements Guard, java.io.Serializable {
         if ((actions == null) || (actions.length() == 0)) { // OPTIONAL
             return "(\"" + getClass().getName() + "\" \"" + name + "\")";
         } else {
-            return "(\"" + getClass().getName() + "\" \"" + name +
-                 "\" \"" + actions + "\")";
+            return "(\"" + getClass().getName() + "\" \"" + name + "\" \"" + actions + "\")";
         }
     }
 }

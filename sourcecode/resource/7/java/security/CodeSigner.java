@@ -32,8 +32,8 @@ import java.security.cert.CertPath;
  * This class encapsulates information about a code signer.
  * It is immutable.
  *
- * @since 1.5
  * @author Vincent Ryan
+ * @since 1.5
  */
 
 public final class CodeSigner implements Serializable {
@@ -64,9 +64,9 @@ public final class CodeSigner implements Serializable {
      *
      * @param signerCertPath The signer's certificate path.
      *                       It must not be <code>null</code>.
-     * @param timestamp A signature timestamp.
-     *                  If <code>null</code> then no timestamp was generated
-     *                  for the signature.
+     * @param timestamp      A signature timestamp.
+     *                       If <code>null</code> then no timestamp was generated
+     *                       for the signature.
      * @throws NullPointerException if <code>signerCertPath</code> is
      *                              <code>null</code>.
      */
@@ -121,14 +121,13 @@ public final class CodeSigner implements Serializable {
      * if present in both.
      *
      * @param obj the object to test for equality with this object.
-     *
      * @return true if the objects are considered equal, false otherwise.
      */
     public boolean equals(Object obj) {
         if (obj == null || (!(obj instanceof CodeSigner))) {
             return false;
         }
-        CodeSigner that = (CodeSigner)obj;
+        CodeSigner that = (CodeSigner) obj;
 
         if (this == that) {
             return true;
@@ -139,8 +138,7 @@ public final class CodeSigner implements Serializable {
                 return false;
             }
         } else {
-            if (thatTimestamp == null ||
-                (! timestamp.equals(thatTimestamp))) {
+            if (thatTimestamp == null || (!timestamp.equals(thatTimestamp))) {
                 return false;
             }
         }
@@ -151,7 +149,7 @@ public final class CodeSigner implements Serializable {
      * Returns a string describing this code signer.
      *
      * @return A string comprising the signer's certificate and a timestamp,
-     *         if present.
+     * if present.
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -165,9 +163,8 @@ public final class CodeSigner implements Serializable {
     }
 
     // Explicitly reset hash code value to -1
-    private void readObject(ObjectInputStream ois)
-        throws IOException, ClassNotFoundException {
-     ois.defaultReadObject();
-     myhash = -1;
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        myhash = -1;
     }
 }

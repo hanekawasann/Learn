@@ -35,10 +35,8 @@ import java.io.*;
  * sensitive issue that should be handled by subclasses as appropriate
  * to their intended use.
  *
- * @see Identity
- *
  * @author Benjamin Renaud
- *
+ * @see Identity
  * @deprecated This class is no longer used. Its functionality has been
  * replaced by <code>java.security.KeyStore</code>, the
  * <code>java.security.cert</code> package, and
@@ -77,15 +75,12 @@ public abstract class Signer extends Identity {
     /**
      * Creates a signer with the specified identity name and scope.
      *
-     * @param name the identity name.
-     *
+     * @param name  the identity name.
      * @param scope the scope of the identity.
-     *
-     * @exception KeyManagementException if there is already an identity
-     * with the same name in the scope.
+     * @throws KeyManagementException if there is already an identity
+     *                                with the same name in the scope.
      */
-    public Signer(String name, IdentityScope scope)
-    throws KeyManagementException {
+    public Signer(String name, IdentityScope scope) throws KeyManagementException {
         super(name, scope);
     }
 
@@ -98,11 +93,9 @@ public abstract class Signer extends Identity {
      *
      * @return this signer's private key, or null if the private key has
      * not yet been set.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     * <code>checkSecurityAccess</code> method doesn't allow
-     * returning the private key.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkSecurityAccess</code> method doesn't allow
+     *                           returning the private key.
      * @see SecurityManager#checkSecurityAccess
      */
     public PrivateKey getPrivateKey() {
@@ -110,7 +103,7 @@ public abstract class Signer extends Identity {
         return privateKey;
     }
 
-   /**
+    /**
      * Sets the key pair (public key and private key) for this signer.
      *
      * <p>First, if there is a security manager, its <code>checkSecurityAccess</code>
@@ -118,19 +111,16 @@ public abstract class Signer extends Identity {
      * as its argument to see if it's ok to set the key pair.
      *
      * @param pair an initialized key pair.
-     *
-     * @exception InvalidParameterException if the key pair is not
-     * properly initialized.
-     * @exception KeyException if the key pair cannot be set for any
-     * other reason.
-     * @exception  SecurityException  if a security manager exists and its
-     * <code>checkSecurityAccess</code> method doesn't allow
-     * setting the key pair.
-     *
+     * @throws InvalidParameterException if the key pair is not
+     *                                   properly initialized.
+     * @throws KeyException              if the key pair cannot be set for any
+     *                                   other reason.
+     * @throws SecurityException         if a security manager exists and its
+     *                                   <code>checkSecurityAccess</code> method doesn't allow
+     *                                   setting the key pair.
      * @see SecurityManager#checkSecurityAccess
      */
-    public final void setKeyPair(KeyPair pair)
-    throws InvalidParameterException, KeyException {
+    public final void setKeyPair(KeyPair pair) throws InvalidParameterException, KeyException {
         check("setSignerKeyPair");
         final PublicKey pub = pair.getPublic();
         PrivateKey priv = pair.getPrivate();
@@ -139,8 +129,7 @@ public abstract class Signer extends Identity {
             throw new InvalidParameterException();
         }
         try {
-            AccessController.doPrivileged(
-                new PrivilegedExceptionAction<Void>() {
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
                 public Void run() throws KeyManagementException {
                     setPublicKey(pub);
                     return null;

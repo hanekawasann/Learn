@@ -34,11 +34,10 @@ package java.awt;
  * children to overlap, the <code>JComponent</code> must override
  * <code>isOptimizedDrawingEnabled</code> to return false.
  *
+ * @author Sami Shaio
+ * @author Arthur van Hoff
  * @see Container
  * @see javax.swing.JComponent#isOptimizedDrawingEnabled
- *
- * @author      Sami Shaio
- * @author      Arthur van Hoff
  */
 public interface LayoutManager {
     /**
@@ -54,6 +53,7 @@ public interface LayoutManager {
 
     /**
      * Removes the specified component from the layout.
+     *
      * @param comp the component to be removed
      */
     void removeLayoutComponent(Component comp);
@@ -61,8 +61,8 @@ public interface LayoutManager {
     /**
      * Calculates the preferred size dimensions for the specified
      * container, given the components it contains.
-     * @param parent the container to be laid out
      *
+     * @param parent the container to be laid out
      * @see #minimumLayoutSize
      */
     Dimension preferredLayoutSize(Container parent);
@@ -70,6 +70,7 @@ public interface LayoutManager {
     /**
      * Calculates the minimum size dimensions for the specified
      * container, given the components it contains.
+     *
      * @param parent the component to be laid out
      * @see #preferredLayoutSize
      */
@@ -77,6 +78,7 @@ public interface LayoutManager {
 
     /**
      * Lays out the specified container.
+     *
      * @param parent the container to be laid out
      */
     void layoutContainer(Container parent);

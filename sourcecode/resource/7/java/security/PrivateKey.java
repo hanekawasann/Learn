@@ -29,11 +29,13 @@ package java.security;
  * <p>A private key. This interface contains no methods or constants.
  * It merely serves to group (and provide type safety for) all private key
  * interfaces.
- *
+ * <p>
  * Note: The specialized private key interfaces extend this interface.
  * See, for example, the DSAPrivateKey interface in
  * <code>java.security.interfaces</code>.
  *
+ * @author Benjamin Renaud
+ * @author Josh Bloch
  * @see Key
  * @see PublicKey
  * @see Certificate
@@ -41,9 +43,6 @@ package java.security;
  * @see java.security.interfaces.DSAPrivateKey
  * @see java.security.interfaces.RSAPrivateKey
  * @see java.security.interfaces.RSAPrivateCrtKey
- *
- * @author Benjamin Renaud
- * @author Josh Bloch
  */
 
 public interface PrivateKey extends Key {

@@ -31,8 +31,7 @@ package java.beans;
  * property represents an unacceptable value.
  */
 
-public
-class PropertyVetoException extends Exception {
+public class PropertyVetoException extends Exception {
     private static final long serialVersionUID = 129596057694162164L;
 
     /**
@@ -40,14 +39,14 @@ class PropertyVetoException extends Exception {
      * detailed message.
      *
      * @param mess Descriptive message
-     * @param evt A PropertyChangeEvent describing the vetoed change.
+     * @param evt  A PropertyChangeEvent describing the vetoed change.
      */
     public PropertyVetoException(String mess, PropertyChangeEvent evt) {
         super(mess);
         this.evt = evt;
     }
 
-     /**
+    /**
      * Gets the vetoed <code>PropertyChangeEvent</code>.
      *
      * @return A PropertyChangeEvent describing the vetoed change.
@@ -58,6 +57,7 @@ class PropertyVetoException extends Exception {
 
     /**
      * A PropertyChangeEvent describing the vetoed change.
+     *
      * @serial
      */
     private PropertyChangeEvent evt;

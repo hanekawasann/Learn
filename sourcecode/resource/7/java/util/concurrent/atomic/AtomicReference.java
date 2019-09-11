@@ -34,27 +34,28 @@
  */
 
 package java.util.concurrent.atomic;
+
 import sun.misc.Unsafe;
 
 /**
  * An object reference that may be updated atomically. See the {@link
  * java.util.concurrent.atomic} package specification for description
  * of the properties of atomic variables.
- * @since 1.5
- * @author Doug Lea
+ *
  * @param <V> The type of object referred to by this reference
+ * @author Doug Lea
+ * @since 1.5
  */
-public class AtomicReference<V>  implements java.io.Serializable {
+public class AtomicReference<V> implements java.io.Serializable {
     private static final long serialVersionUID = -1848883965231344442L;
 
     private static final Unsafe unsafe = Unsafe.getUnsafe();
     private static final long valueOffset;
 
     static {
-      try {
-        valueOffset = unsafe.objectFieldOffset
-            (AtomicReference.class.getDeclaredField("value"));
-      } catch (Exception ex) { throw new Error(ex); }
+        try {
+            valueOffset = unsafe.objectFieldOffset(AtomicReference.class.getDeclaredField("value"));
+        } catch (Exception ex) { throw new Error(ex); }
     }
 
     private volatile V value;
@@ -105,6 +106,7 @@ public class AtomicReference<V>  implements java.io.Serializable {
     /**
      * Atomically sets the value to the given updated value
      * if the current value {@code ==} the expected value.
+     *
      * @param expect the expected value
      * @param update the new value
      * @return true if successful. False return indicates that
@@ -139,13 +141,13 @@ public class AtomicReference<V>  implements java.io.Serializable {
     public final V getAndSet(V newValue) {
         while (true) {
             V x = get();
-            if (compareAndSet(x, newValue))
-                return x;
+            if (compareAndSet(x, newValue)) { return x; }
         }
     }
 
     /**
      * Returns the String representation of the current value.
+     *
      * @return the String representation of the current value.
      */
     public String toString() {

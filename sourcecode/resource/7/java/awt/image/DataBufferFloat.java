@@ -75,15 +75,15 @@ public final class DataBufferFloat extends DataBuffer {
      * with a specified number of banks, all of which are of a
      * specified size.
      *
-     * @param size The number of elements in each bank of the
-     * <code>DataBuffer</code>.
+     * @param size     The number of elements in each bank of the
+     *                 <code>DataBuffer</code>.
      * @param numBanks The number of banks in the
-     *        <code>DataBuffer</code>.
+     *                 <code>DataBuffer</code>.
      */
     public DataBufferFloat(int size, int numBanks) {
         super(STABLE, TYPE_FLOAT, size, numBanks);
         bankdata = new float[numBanks][];
-        for (int i= 0; i < numBanks; i++) {
+        for (int i = 0; i < numBanks; i++) {
             bankdata[i] = new float[size];
         }
         data = bankdata[0];
@@ -103,7 +103,7 @@ public final class DataBufferFloat extends DataBuffer {
      *
      * @param dataArray An array of <code>float</code>s to be used as the
      *                  first and only bank of this <code>DataBuffer</code>.
-     * @param size The number of elements of the array to be used.
+     * @param size      The number of elements of the array to be used.
      */
     public DataBufferFloat(float dataArray[], int size) {
         super(UNTRACKABLE, TYPE_FLOAT, size);
@@ -127,9 +127,9 @@ public final class DataBufferFloat extends DataBuffer {
      *
      * @param dataArray An array of <code>float</code>s to be used as the
      *                  first and only bank of this <code>DataBuffer</code>.
-     * @param size The number of elements of the array to be used.
-     * @param offset The offset of the first element of the array
-     *               that will be used.
+     * @param size      The number of elements of the array to be used.
+     * @param offset    The offset of the first element of the array
+     *                  that will be used.
      */
     public DataBufferFloat(float dataArray[], int size, int offset) {
         super(UNTRACKABLE, TYPE_FLOAT, size, 1, offset);
@@ -152,7 +152,7 @@ public final class DataBufferFloat extends DataBuffer {
      *
      * @param dataArray An array of arrays of <code>float</code>s to be
      *                  used as the banks of this <code>DataBuffer</code>.
-     * @param size The number of elements of each array to be used.
+     * @param size      The number of elements of each array to be used.
      */
     public DataBufferFloat(float dataArray[][], int size) {
         super(UNTRACKABLE, TYPE_FLOAT, size, dataArray.length);
@@ -175,11 +175,11 @@ public final class DataBufferFloat extends DataBuffer {
      *
      * @param dataArray An array of arrays of <code>float</code>s to be
      *                  used as the banks of this <code>DataBuffer</code>.
-     * @param size The number of elements of each array to be used.
-     * @param offsets An array of integer offsets, one for each bank.
+     * @param size      The number of elements of each array to be used.
+     * @param offsets   An array of integer offsets, one for each bank.
      */
     public DataBufferFloat(float dataArray[][], int size, int offsets[]) {
-        super(UNTRACKABLE, TYPE_FLOAT, size,dataArray.length, offsets);
+        super(UNTRACKABLE, TYPE_FLOAT, size, dataArray.length, offsets);
         bankdata = (float[][]) dataArray.clone();
         data = bankdata[0];
     }
@@ -235,13 +235,12 @@ public final class DataBufferFloat extends DataBuffer {
      * (default) bank as an <code>int</code>.
      *
      * @param i The desired data array element.
-     *
      * @return The data entry as an <code>int</code>.
      * @see #setElem(int, int)
      * @see #setElem(int, int, int)
      */
     public int getElem(int i) {
-        return (int)(data[i+offset]);
+        return (int) (data[i + offset]);
     }
 
     /**
@@ -249,27 +248,26 @@ public final class DataBufferFloat extends DataBuffer {
      * bank as an <code>int</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     *
+     * @param i    The desired data array element.
      * @return The data entry as an <code>int</code>.
      * @see #setElem(int, int)
      * @see #setElem(int, int, int)
      */
     public int getElem(int bank, int i) {
-        return (int)(bankdata[bank][i+offsets[bank]]);
+        return (int) (bankdata[bank][i + offsets[bank]]);
     }
 
     /**
      * Sets the requested data array element in the first (default)
      * bank to the given <code>int</code>.
      *
-     * @param i The desired data array element.
+     * @param i   The desired data array element.
      * @param val The value to be set.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int i, int val) {
-        data[i+offset] = (float)val;
+        data[i + offset] = (float) val;
         theTrackable.markDirty();
     }
 
@@ -278,13 +276,13 @@ public final class DataBufferFloat extends DataBuffer {
      * the given <code>int</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     * @param val The value to be set.
+     * @param i    The desired data array element.
+     * @param val  The value to be set.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int bank, int i, int val) {
-        bankdata[bank][i+offsets[bank]] = (float)val;
+        bankdata[bank][i + offsets[bank]] = (float) val;
         theTrackable.markDirty();
     }
 
@@ -293,13 +291,12 @@ public final class DataBufferFloat extends DataBuffer {
      * (default) bank as a <code>float</code>.
      *
      * @param i The desired data array element.
-     *
      * @return The data entry as a <code>float</code>.
      * @see #setElemFloat(int, float)
      * @see #setElemFloat(int, int, float)
      */
     public float getElemFloat(int i) {
-        return data[i+offset];
+        return data[i + offset];
     }
 
     /**
@@ -307,27 +304,26 @@ public final class DataBufferFloat extends DataBuffer {
      * bank as a <code>float</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     *
+     * @param i    The desired data array element.
      * @return The data entry as a <code>float</code>.
      * @see #setElemFloat(int, float)
      * @see #setElemFloat(int, int, float)
      */
     public float getElemFloat(int bank, int i) {
-        return bankdata[bank][i+offsets[bank]];
+        return bankdata[bank][i + offsets[bank]];
     }
 
     /**
      * Sets the requested data array element in the first (default)
      * bank to the given <code>float</code>.
      *
-     * @param i The desired data array element.
+     * @param i   The desired data array element.
      * @param val The value to be set.
      * @see #getElemFloat(int)
      * @see #getElemFloat(int, int)
      */
     public void setElemFloat(int i, float val) {
-        data[i+offset] = val;
+        data[i + offset] = val;
         theTrackable.markDirty();
     }
 
@@ -336,13 +332,13 @@ public final class DataBufferFloat extends DataBuffer {
      * the given <code>float</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     * @param val The value to be set.
+     * @param i    The desired data array element.
+     * @param val  The value to be set.
      * @see #getElemFloat(int)
      * @see #getElemFloat(int, int)
      */
     public void setElemFloat(int bank, int i, float val) {
-        bankdata[bank][i+offsets[bank]] = val;
+        bankdata[bank][i + offsets[bank]] = val;
         theTrackable.markDirty();
     }
 
@@ -351,13 +347,12 @@ public final class DataBufferFloat extends DataBuffer {
      * (default) bank as a <code>double</code>.
      *
      * @param i The desired data array element.
-     *
      * @return The data entry as a <code>double</code>.
      * @see #setElemDouble(int, double)
      * @see #setElemDouble(int, int, double)
      */
     public double getElemDouble(int i) {
-        return (double)data[i+offset];
+        return (double) data[i + offset];
     }
 
     /**
@@ -365,27 +360,26 @@ public final class DataBufferFloat extends DataBuffer {
      * bank as a <code>double</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     *
+     * @param i    The desired data array element.
      * @return The data entry as a <code>double</code>.
      * @see #setElemDouble(int, double)
      * @see #setElemDouble(int, int, double)
      */
     public double getElemDouble(int bank, int i) {
-        return (double)bankdata[bank][i+offsets[bank]];
+        return (double) bankdata[bank][i + offsets[bank]];
     }
 
     /**
      * Sets the requested data array element in the first (default)
      * bank to the given <code>double</code>.
      *
-     * @param i The desired data array element.
+     * @param i   The desired data array element.
      * @param val The value to be set.
      * @see #getElemDouble(int)
      * @see #getElemDouble(int, int)
      */
     public void setElemDouble(int i, double val) {
-        data[i+offset] = (float)val;
+        data[i + offset] = (float) val;
         theTrackable.markDirty();
     }
 
@@ -394,13 +388,13 @@ public final class DataBufferFloat extends DataBuffer {
      * the given <code>double</code>.
      *
      * @param bank The bank number.
-     * @param i The desired data array element.
-     * @param val The value to be set.
+     * @param i    The desired data array element.
+     * @param val  The value to be set.
      * @see #getElemDouble(int)
      * @see #getElemDouble(int, int)
      */
     public void setElemDouble(int bank, int i, double val) {
-        bankdata[bank][i+offsets[bank]] = (float)val;
+        bankdata[bank][i + offsets[bank]] = (float) val;
         theTrackable.markDirty();
     }
 }

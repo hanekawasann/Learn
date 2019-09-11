@@ -42,8 +42,6 @@ import java.util.Locale;
  * </p>
  *
  * @author Laurence P. G. Cable
- * @since 1.2
- *
  * @see java.beans.Beans
  * @see java.beans.beancontext.BeanContextChild
  * @see java.beans.beancontext.BeanContextMembershipListener
@@ -51,6 +49,7 @@ import java.util.Locale;
  * @see java.beans.DesignMode
  * @see java.beans.Visibility
  * @see java.util.Collection
+ * @since 1.2
  */
 
 public interface BeanContext extends BeanContextChild, Collection, DesignMode, Visibility {
@@ -64,10 +63,10 @@ public interface BeanContext extends BeanContextChild, Collection, DesignMode, V
      * <code>java.beans.Beans.instantiate()</code> method.
      *
      * @param beanName The name of the JavaBean to instantiate
-     * as a child of this <code>BeanContext</code>
+     *                 as a child of this <code>BeanContext</code>
      * @throws <code>IOException</code>
      * @throws <code>ClassNotFoundException</code> if the class identified
-     * by the beanName parameter is not found
+     *                                             by the beanName parameter is not found
      */
     Object instantiateChild(String beanName) throws IOException, ClassNotFoundException;
 
@@ -78,12 +77,12 @@ public interface BeanContext extends BeanContextChild, Collection, DesignMode, V
      * and underlying <code>ClassLoader</code>.
      *
      * @param name the resource name
-     * @param bcc the specified child
+     * @param bcc  the specified child
      * @return an <code>InputStream</code> for reading the resource,
      * or <code>null</code> if the resource could not
      * be found.
      * @throws <code>IllegalArgumentException</code> if
-     * the resource is not valid
+     *                                               the resource is not valid
      */
     InputStream getResourceAsStream(String name, BeanContextChild bcc) throws IllegalArgumentException;
 
@@ -94,32 +93,31 @@ public interface BeanContext extends BeanContextChild, Collection, DesignMode, V
      * and underlying <code>ClassLoader</code>.
      *
      * @param name the resource name
-     * @param bcc the specified child
+     * @param bcc  the specified child
      * @return a <code>URL</code> for the named
      * resource for the specified child
-     * @throws <code>IllegalArgumentException</code>
-     * if the resource is not valid
+     * @throws <code>IllegalArgumentException</code> if the resource is not valid
      */
     URL getResource(String name, BeanContextChild bcc) throws IllegalArgumentException;
 
-     /**
-      * Adds the specified <code>BeanContextMembershipListener</code>
-      * to receive <code>BeanContextMembershipEvents</code> from
-      * this <code>BeanContext</code> whenever it adds
-      * or removes a child <code>Component</code>(s).
-      *
-      * @param bcml the <code>BeanContextMembershipListener</code> to be added
-      */
+    /**
+     * Adds the specified <code>BeanContextMembershipListener</code>
+     * to receive <code>BeanContextMembershipEvents</code> from
+     * this <code>BeanContext</code> whenever it adds
+     * or removes a child <code>Component</code>(s).
+     *
+     * @param bcml the <code>BeanContextMembershipListener</code> to be added
+     */
     void addBeanContextMembershipListener(BeanContextMembershipListener bcml);
 
-     /**
-      * Removes the specified <code>BeanContextMembershipListener</code>
-      * so that it no longer receives <code>BeanContextMembershipEvent</code>s
-      * when the child <code>Component</code>(s) are added or removed.
-      *
-      * @param bcml the <code>BeanContextMembershipListener</code>
-      * to be removed
-      */
+    /**
+     * Removes the specified <code>BeanContextMembershipListener</code>
+     * so that it no longer receives <code>BeanContextMembershipEvent</code>s
+     * when the child <code>Component</code>(s) are added or removed.
+     *
+     * @param bcml the <code>BeanContextMembershipListener</code>
+     *             to be removed
+     */
     void removeBeanContextMembershipListener(BeanContextMembershipListener bcml);
 
     /**

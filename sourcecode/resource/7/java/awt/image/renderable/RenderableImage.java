@@ -34,6 +34,7 @@
  **********************************************************************/
 
 package java.awt.image.renderable;
+
 import java.util.Vector;
 import java.awt.RenderingHints;
 import java.awt.image.*;
@@ -68,7 +69,7 @@ public interface RenderableImage {
      * the value of the propoery will be a RenderingHints object
      * specifying which hints were observed in creating the rendering.
      */
-     static final String HINTS_OBSERVED = "HINTS_OBSERVED";
+    static final String HINTS_OBSERVED = "HINTS_OBSERVED";
 
     /**
      * Returns a vector of RenderableImages that are the sources of
@@ -87,12 +88,13 @@ public interface RenderableImage {
      *
      * @param name the name of the property to get, as a String.
      * @return a reference to the property Object, or the value
-     *         java.awt.Image.UndefinedProperty.
+     * java.awt.Image.UndefinedProperty.
      */
     Object getProperty(String name);
 
     /**
      * Returns a list of names recognized by getProperty.
+     *
      * @return a list of property names.
      */
     String[] getPropertyNames();
@@ -103,9 +105,10 @@ public interface RenderableImage {
      * may produce different results.  This method may be used to
      * determine whether an existing rendering may be cached and
      * reused.  It is always safe to return true.
+     *
      * @return <code>true</code> if successive renderings with the
-     *         same arguments might produce different results;
-     *         <code>false</code> otherwise.
+     * same arguments might produce different results;
+     * <code>false</code> otherwise.
      */
     boolean isDynamic();
 
@@ -128,6 +131,7 @@ public interface RenderableImage {
 
     /**
      * Gets the minimum X coordinate of the rendering-independent image data.
+     *
      * @return the minimum X coordinate of the rendering-independent image
      * data.
      */
@@ -135,6 +139,7 @@ public interface RenderableImage {
 
     /**
      * Gets the minimum Y coordinate of the rendering-independent image data.
+     *
      * @return the minimum Y coordinate of the rendering-independent image
      * data.
      */
@@ -160,8 +165,8 @@ public interface RenderableImage {
      * that are obtained via the getSources() method on the created
      * RenderedImage may have such a property.
      *
-     * @param w the width of rendered image in pixels, or 0.
-     * @param h the height of rendered image in pixels, or 0.
+     * @param w     the width of rendered image in pixels, or 0.
+     * @param h     the height of rendered image in pixels, or 0.
      * @param hints a RenderingHints object containg hints.
      * @return a RenderedImage containing the rendered data.
      */

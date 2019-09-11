@@ -36,7 +36,6 @@ import java.awt.dnd.DropTarget;
  * </p>
  *
  * @since 1.2
- *
  */
 
 public interface DropTargetPeer {

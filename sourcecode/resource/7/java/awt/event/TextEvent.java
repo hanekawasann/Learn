@@ -33,7 +33,7 @@ import java.awt.AWTEvent;
  * when its text changes. The event is passed to
  * every <code>TextListener</code> object which registered to receive such
  * events using the component's <code>addTextListener</code> method.
- * <P>
+ * <p>
  * The object that implements the <code>TextListener</code> interface gets
  * this <code>TextEvent</code> when the event occurs. The listener is
  * spared the details of processing individual mouse movements and key strokes
@@ -44,10 +44,8 @@ import java.awt.AWTEvent;
  * in the range from {@code TEXT_FIRST} to {@code TEXT_LAST}.
  *
  * @author Georges Saab
- *
  * @see java.awt.TextComponent
  * @see TextListener
- *
  * @since 1.1
  */
 
@@ -56,17 +54,17 @@ public class TextEvent extends AWTEvent {
     /**
      * The first number in the range of ids used for text events.
      */
-    public static final int TEXT_FIRST  = 900;
+    public static final int TEXT_FIRST = 900;
 
     /**
      * The last number in the range of ids used for text events.
      */
-    public static final int TEXT_LAST   = 900;
+    public static final int TEXT_LAST = 900;
 
     /**
      * This event id indicates that object's text changed.
      */
-    public static final int TEXT_VALUE_CHANGED  = TEXT_FIRST;
+    public static final int TEXT_VALUE_CHANGED = TEXT_FIRST;
 
     /*
      * JDK 1.1 serialVersionUID
@@ -82,8 +80,8 @@ public class TextEvent extends AWTEvent {
      * @param source The (<code>TextComponent</code>) object that
      *               originated the event
      * @param id     An integer that identifies the event type.
-     *                     For information on allowable values, see
-     *                     the class description for {@link TextEvent}
+     *               For information on allowable values, see
+     *               the class description for {@link TextEvent}
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getSource()
      * @see #getID()
@@ -101,12 +99,12 @@ public class TextEvent extends AWTEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case TEXT_VALUE_CHANGED:
-              typeStr = "TEXT_VALUE_CHANGED";
-              break;
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case TEXT_VALUE_CHANGED:
+                typeStr = "TEXT_VALUE_CHANGED";
+                break;
+            default:
+                typeStr = "unknown type";
         }
         return typeStr;
     }

@@ -111,7 +111,7 @@ import java.util.NoSuchElementException;
  * <blockquote><pre>
  * public abstract Encoder getEncoder(String encodingName);
  * public abstract Decoder getDecoder(String encodingName);</pre></blockquote>
- *
+ * <p>
  * Each method returns an appropriate object or <tt>null</tt> if the provider
  * does not support the given encoding.  Typical providers support more than
  * one encoding.
@@ -171,16 +171,12 @@ import java.util.NoSuchElementException;
  * problem is to fix the misconfigured web server to return the correct
  * response code (HTTP 404) along with the HTML error page.
  *
- * @param  <S>
- *         The type of the service to be loaded by this loader
- *
+ * @param <S> The type of the service to be loaded by this loader
  * @author Mark Reinhold
  * @since 1.6
  */
 
-public final class ServiceLoader<S>
-    implements Iterable<S>
-{
+public final class ServiceLoader<S> implements Iterable<S> {
 
     private static final String PREFIX = "META-INF/services/";
 
@@ -191,7 +187,7 @@ public final class ServiceLoader<S>
     private ClassLoader loader;
 
     // Cached providers, in instantiation order
-    private LinkedHashMap<String,S> providers = new LinkedHashMap<>();
+    private LinkedHashMap<String, S> providers = new LinkedHashMap<>();
 
     // The current lazy-lookup iterator
     private LazyIterator lookupIterator;
@@ -218,53 +214,44 @@ public final class ServiceLoader<S>
         reload();
     }
 
-    private static void fail(Class service, String msg, Throwable cause)
-        throws ServiceConfigurationError
-    {
-        throw new ServiceConfigurationError(service.getName() + ": " + msg,
-                                            cause);
+    private static void fail(Class service, String msg, Throwable cause) throws ServiceConfigurationError {
+        throw new ServiceConfigurationError(service.getName() + ": " + msg, cause);
     }
 
-    private static void fail(Class service, String msg)
-        throws ServiceConfigurationError
-    {
+    private static void fail(Class service, String msg) throws ServiceConfigurationError {
         throw new ServiceConfigurationError(service.getName() + ": " + msg);
     }
 
-    private static void fail(Class service, URL u, int line, String msg)
-        throws ServiceConfigurationError
-    {
+    private static void fail(Class service, URL u, int line, String msg) throws ServiceConfigurationError {
         fail(service, u + ":" + line + ": " + msg);
     }
 
     // Parse a single line from the given configuration file, adding the name
     // on the line to the names list.
     //
-    private int parseLine(Class service, URL u, BufferedReader r, int lc,
-                          List<String> names)
-        throws IOException, ServiceConfigurationError
-    {
+    private int parseLine(Class service, URL u, BufferedReader r, int lc, List<String> names)
+        throws IOException, ServiceConfigurationError {
         String ln = r.readLine();
         if (ln == null) {
             return -1;
         }
         int ci = ln.indexOf('#');
-        if (ci >= 0) ln = ln.substring(0, ci);
+        if (ci >= 0) { ln = ln.substring(0, ci); }
         ln = ln.trim();
         int n = ln.length();
         if (n != 0) {
-            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0))
+            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0)) {
                 fail(service, u, lc, "Illegal configuration-file syntax");
+            }
             int cp = ln.codePointAt(0);
-            if (!Character.isJavaIdentifierStart(cp))
-                fail(service, u, lc, "Illegal provider-class name: " + ln);
+            if (!Character.isJavaIdentifierStart(cp)) { fail(service, u, lc, "Illegal provider-class name: " + ln); }
             for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
                 cp = ln.codePointAt(i);
-                if (!Character.isJavaIdentifierPart(cp) && (cp != '.'))
+                if (!Character.isJavaIdentifierPart(cp) && (cp != '.')) {
                     fail(service, u, lc, "Illegal provider-class name: " + ln);
+                }
             }
-            if (!providers.containsKey(ln) && !names.contains(ln))
-                names.add(ln);
+            if (!providers.containsKey(ln) && !names.contains(ln)) { names.add(ln); }
         }
         return lc + 1;
     }
@@ -286,9 +273,7 @@ public final class ServiceLoader<S>
     //         If an I/O error occurs while reading from the given URL, or
     //         if a configuration-file format error is detected
     //
-    private Iterator<String> parse(Class service, URL u)
-        throws ServiceConfigurationError
-    {
+    private Iterator<String> parse(Class service, URL u) throws ServiceConfigurationError {
         InputStream in = null;
         BufferedReader r = null;
         ArrayList<String> names = new ArrayList<>();
@@ -296,13 +281,13 @@ public final class ServiceLoader<S>
             in = u.openStream();
             r = new BufferedReader(new InputStreamReader(in, "utf-8"));
             int lc = 1;
-            while ((lc = parseLine(service, u, r, lc, names)) >= 0);
+            while ((lc = parseLine(service, u, r, lc, names)) >= 0) { ; }
         } catch (IOException x) {
             fail(service, "Error reading configuration file", x);
         } finally {
             try {
-                if (r != null) r.close();
-                if (in != null) in.close();
+                if (r != null) { r.close(); }
+                if (in != null) { in.close(); }
             } catch (IOException y) {
                 fail(service, "Error closing configuration file", y);
             }
@@ -312,9 +297,7 @@ public final class ServiceLoader<S>
 
     // Private inner class implementing fully-lazy provider lookup
     //
-    private class LazyIterator
-        implements Iterator<S>
-    {
+    private class LazyIterator implements Iterator<S> {
 
         Class<S> service;
         ClassLoader loader;
@@ -334,10 +317,9 @@ public final class ServiceLoader<S>
             if (configs == null) {
                 try {
                     String fullName = PREFIX + service.getName();
-                    if (loader == null)
-                        configs = ClassLoader.getSystemResources(fullName);
-                    else
+                    if (loader == null) { configs = ClassLoader.getSystemResources(fullName); } else {
                         configs = loader.getResources(fullName);
+                    }
                 } catch (IOException x) {
                     fail(service, "Error locating configuration files", x);
                 }
@@ -359,17 +341,13 @@ public final class ServiceLoader<S>
             String cn = nextName;
             nextName = null;
             try {
-                S p = service.cast(Class.forName(cn, true, loader)
-                                   .newInstance());
+                S p = service.cast(Class.forName(cn, true, loader).newInstance());
                 providers.put(cn, p);
                 return p;
             } catch (ClassNotFoundException x) {
-                fail(service,
-                     "Provider " + cn + " not found");
+                fail(service, "Provider " + cn + " not found");
             } catch (Throwable x) {
-                fail(service,
-                     "Provider " + cn + " could not be instantiated: " + x,
-                     x);
+                fail(service, "Provider " + cn + " could not be instantiated: " + x, x);
             }
             throw new Error();          // This cannot happen
         }
@@ -417,24 +395,21 @@ public final class ServiceLoader<S>
      * Invoking its {@link java.util.Iterator#remove() remove} method will
      * cause an {@link UnsupportedOperationException} to be thrown.
      *
-     * @return  An iterator that lazily loads providers for this loader's
-     *          service
+     * @return An iterator that lazily loads providers for this loader's
+     * service
      */
     public Iterator<S> iterator() {
         return new Iterator<S>() {
 
-            Iterator<Map.Entry<String,S>> knownProviders
-                = providers.entrySet().iterator();
+            Iterator<Map.Entry<String, S>> knownProviders = providers.entrySet().iterator();
 
             public boolean hasNext() {
-                if (knownProviders.hasNext())
-                    return true;
+                if (knownProviders.hasNext()) { return true; }
                 return lookupIterator.hasNext();
             }
 
             public S next() {
-                if (knownProviders.hasNext())
-                    return knownProviders.next().getValue();
+                if (knownProviders.hasNext()) { return knownProviders.next().getValue(); }
                 return lookupIterator.next();
             }
 
@@ -449,20 +424,14 @@ public final class ServiceLoader<S>
      * Creates a new service loader for the given service type and class
      * loader.
      *
-     * @param  service
-     *         The interface or abstract class representing the service
-     *
-     * @param  loader
-     *         The class loader to be used to load provider-configuration files
-     *         and provider classes, or <tt>null</tt> if the system class
-     *         loader (or, failing that, the bootstrap class loader) is to be
-     *         used
-     *
+     * @param service The interface or abstract class representing the service
+     * @param loader  The class loader to be used to load provider-configuration files
+     *                and provider classes, or <tt>null</tt> if the system class
+     *                loader (or, failing that, the bootstrap class loader) is to be
+     *                used
      * @return A new service loader
      */
-    public static <S> ServiceLoader<S> load(Class<S> service,
-                                            ClassLoader loader)
-    {
+    public static <S> ServiceLoader<S> load(Class<S> service, ClassLoader loader) {
         return new ServiceLoader<>(service, loader);
     }
 
@@ -475,16 +444,14 @@ public final class ServiceLoader<S>
      *
      * <blockquote><pre>
      * ServiceLoader.load(<i>service</i>)</pre></blockquote>
-     *
+     * <p>
      * is equivalent to
      *
      * <blockquote><pre>
      * ServiceLoader.load(<i>service</i>,
      *                    Thread.currentThread().getContextClassLoader())</pre></blockquote>
      *
-     * @param  service
-     *         The interface or abstract class representing the service
-     *
+     * @param service The interface or abstract class representing the service
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service) {
@@ -511,9 +478,7 @@ public final class ServiceLoader<S>
      * have been installed into the current Java virtual machine; providers on
      * the application's class path will be ignored.
      *
-     * @param  service
-     *         The interface or abstract class representing the service
-     *
+     * @param service The interface or abstract class representing the service
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> loadInstalled(Class<S> service) {
@@ -529,7 +494,7 @@ public final class ServiceLoader<S>
     /**
      * Returns a string describing this service.
      *
-     * @return  A descriptive string
+     * @return A descriptive string
      */
     public String toString() {
         return "java.util.ServiceLoader[" + service.getName() + "]";

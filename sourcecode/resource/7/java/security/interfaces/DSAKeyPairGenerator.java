@@ -73,15 +73,12 @@ public interface DSAKeyPairGenerator {
      * default SecureRandom instance will be used.
      *
      * @param params the parameters to use to generate the keys.
-     *
      * @param random the random bit source to use to generate key bits;
-     * can be null.
-     *
-     * @exception InvalidParameterException if the <code>params</code>
-     * value is invalid or null.
+     *               can be null.
+     * @throws InvalidParameterException if the <code>params</code>
+     *                                   value is invalid or null.
      */
-   public void initialize(DSAParams params, SecureRandom random)
-   throws InvalidParameterException;
+    public void initialize(DSAParams params, SecureRandom random) throws InvalidParameterException;
 
     /**
      * Initializes the key pair generator for a given modulus length
@@ -96,20 +93,16 @@ public interface DSAKeyPairGenerator {
      * thrown. It is guaranteed that there will always be
      * default parameters for modulus lengths of 512 and 1024 bits.
      *
-     * @param modlen the modulus length in bits. Valid values are any
-     * multiple of 8 between 512 and 1024, inclusive.
-     *
-     * @param random the random bit source to use to generate key bits;
-     * can be null.
-     *
+     * @param modlen    the modulus length in bits. Valid values are any
+     *                  multiple of 8 between 512 and 1024, inclusive.
+     * @param random    the random bit source to use to generate key bits;
+     *                  can be null.
      * @param genParams whether or not to generate new parameters for
-     * the modulus length requested.
-     *
-     * @exception InvalidParameterException if <code>modlen</code> is not
-     * between 512 and 1024, or if <code>genParams</code> is false and
-     * there are no precomputed parameters for the requested modulus
-     * length.
+     *                  the modulus length requested.
+     * @throws InvalidParameterException if <code>modlen</code> is not
+     *                                   between 512 and 1024, or if <code>genParams</code> is false and
+     *                                   there are no precomputed parameters for the requested modulus
+     *                                   length.
      */
-    public void initialize(int modlen, boolean genParams, SecureRandom random)
-    throws InvalidParameterException;
+    public void initialize(int modlen, boolean genParams, SecureRandom random) throws InvalidParameterException;
 }

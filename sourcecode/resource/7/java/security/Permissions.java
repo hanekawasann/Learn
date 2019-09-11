@@ -68,20 +68,15 @@ import java.io.IOException;
  * not <em>fail-fast</em>.  Modifications to a collection should not be
  * performed while enumerating over that collection.
  *
+ * @author Marianne Mueller
+ * @author Roland Schemers
+ * @serial exclude
  * @see Permission
  * @see PermissionCollection
  * @see AllPermission
- *
- *
- * @author Marianne Mueller
- * @author Roland Schemers
- *
- * @serial exclude
  */
 
-public final class Permissions extends PermissionCollection
-implements Serializable
-{
+public final class Permissions extends PermissionCollection implements Serializable {
     /**
      * Key is permissions Class, value is PermissionCollection for that class.
      * Not serialized; see serialization section at end of class.
@@ -109,23 +104,21 @@ implements Serializable
      * permission belongs to. For example, if <i>permission</i> is a
      * FilePermission, it is added to the FilePermissionCollection stored
      * in this Permissions object.
-     *
+     * <p>
      * This method creates
      * a new PermissionCollection object (and adds the permission to it)
      * if an appropriate collection does not yet exist. <p>
      *
      * @param permission the Permission object to add.
-     *
-     * @exception SecurityException if this Permissions object is
-     * marked as readonly.
-     *
+     * @throws SecurityException if this Permissions object is
+     *                           marked as readonly.
      * @see PermissionCollection#isReadOnly()
      */
 
     public void add(Permission permission) {
-        if (isReadOnly())
-            throw new SecurityException(
-              "attempt to add a Permission to a readonly Permissions object");
+        if (isReadOnly()) {
+            throw new SecurityException("attempt to add a Permission to a readonly Permissions object");
+        }
 
         PermissionCollection pc;
 
@@ -164,8 +157,8 @@ implements Serializable
      * <p>Additionally, if this PermissionCollection contains the
      * AllPermission, this method will always return true.
      * <p>
-     * @param permission the Permission object to check.
      *
+     * @param permission the Permission object to check.
      * @return true if "permission" is implied by the permissions in the
      * PermissionCollection it
      * belongs to, false if not.
@@ -177,8 +170,7 @@ implements Serializable
             return true; // AllPermission has already been added
         } else {
             synchronized (this) {
-                PermissionCollection pc = getPermissionCollection(permission,
-                    false);
+                PermissionCollection pc = getPermissionCollection(permission, false);
                 if (pc != null) {
                     return pc.implies(permission);
                 } else {
@@ -211,7 +203,7 @@ implements Serializable
      * For example, if <i>p</i> is a FilePermission,
      * the FilePermissionCollection
      * stored in this Permissions object will be returned.
-     *
+     * <p>
      * If createEmpty is true,
      * this method creates a new PermissionCollection object for the specified
      * type of permission objects if one does not yet exist.
@@ -226,18 +218,17 @@ implements Serializable
      * is true, then
      * this method instantiates and stores a default PermissionCollection
      * that uses a hashtable to store its permission objects.
-     *
+     * <p>
      * createEmpty is ignored when creating empty PermissionCollection
      * for unresolved permissions because of the overhead of determining the
      * PermissionCollection to use.
-     *
+     * <p>
      * createEmpty should be set to false when this method is invoked from
      * implies() because it incurs the additional overhead of creating and
      * adding an empty PermissionCollection that will just return false.
      * It should be set to true when invoked from add().
      */
-    private PermissionCollection getPermissionCollection(Permission p,
-        boolean createEmpty) {
+    private PermissionCollection getPermissionCollection(Permission p, boolean createEmpty) {
         Class c = p.getClass();
 
         PermissionCollection pc = permsMap.get(c);
@@ -256,8 +247,7 @@ implements Serializable
 
                 // still no PermissionCollection?
                 // We'll give them a PermissionsHash.
-                if (pc == null)
-                    pc = new PermissionsHash();
+                if (pc == null) { pc = new PermissionsHash(); }
             }
 
             if (pc != null) {
@@ -271,28 +261,21 @@ implements Serializable
      * Resolves any unresolved permissions of type p.
      *
      * @param p the type of unresolved permission to resolve
-     *
      * @return PermissionCollection containing the unresolved permissions,
-     *  or null if there were no unresolved permissions of type p.
-     *
+     * or null if there were no unresolved permissions of type p.
      */
-    private PermissionCollection getUnresolvedPermissions(Permission p)
-    {
+    private PermissionCollection getUnresolvedPermissions(Permission p) {
         // Called from within synchronized method so permsMap doesn't need lock
 
-        UnresolvedPermissionCollection uc =
-        (UnresolvedPermissionCollection) permsMap.get(UnresolvedPermission.class);
+        UnresolvedPermissionCollection uc = (UnresolvedPermissionCollection) permsMap.get(UnresolvedPermission.class);
 
         // we have no unresolved permissions if uc is null
-        if (uc == null)
-            return null;
+        if (uc == null) { return null; }
 
-        List<UnresolvedPermission> unresolvedPerms =
-                                        uc.getUnresolvedPermissions(p);
+        List<UnresolvedPermission> unresolvedPerms = uc.getUnresolvedPermissions(p);
 
         // we have no unresolved permissions of this type if unresolvedPerms is null
-        if (unresolvedPerms == null)
-            return null;
+        if (unresolvedPerms == null) { return null; }
 
         java.security.cert.Certificate certs[] = null;
 
@@ -300,16 +283,16 @@ implements Serializable
 
         int n = 0;
         if (signers != null) {
-            for (int j=0; j < signers.length; j++) {
+            for (int j = 0; j < signers.length; j++) {
                 if (signers[j] instanceof java.security.cert.Certificate) {
                     n++;
                 }
             }
             certs = new java.security.cert.Certificate[n];
             n = 0;
-            for (int j=0; j < signers.length; j++) {
+            for (int j = 0; j < signers.length; j++) {
                 if (signers[j] instanceof java.security.cert.Certificate) {
-                    certs[n++] = (java.security.cert.Certificate)signers[j];
+                    certs[n++] = (java.security.cert.Certificate) signers[j];
                 }
             }
         }
@@ -323,8 +306,7 @@ implements Serializable
                 if (perm != null) {
                     if (pc == null) {
                         pc = p.newPermissionCollection();
-                        if (pc == null)
-                            pc = new PermissionsHash();
+                        if (pc == null) { pc = new PermissionsHash(); }
                     }
                     pc.add(perm);
                 }
@@ -341,13 +323,11 @@ implements Serializable
 
     /**
      * @serialField perms java.util.Hashtable
-     *     A table of the Permission classes and PermissionCollections.
+     * A table of the Permission classes and PermissionCollections.
      * @serialField allPermission java.security.PermissionCollection
      */
-    private static final ObjectStreamField[] serialPersistentFields = {
-        new ObjectStreamField("perms", Hashtable.class),
-        new ObjectStreamField("allPermission", PermissionCollection.class),
-    };
+    private static final ObjectStreamField[] serialPersistentFields = { new ObjectStreamField("perms", Hashtable.class),
+        new ObjectStreamField("allPermission", PermissionCollection.class), };
 
     /**
      * @serialData Default fields.
@@ -361,8 +341,7 @@ implements Serializable
         // Don't call out.defaultWriteObject()
 
         // Copy perms into a Hashtable
-        Hashtable<Class<?>, PermissionCollection> perms =
-            new Hashtable<>(permsMap.size()*2); // no sync; estimate
+        Hashtable<Class<?>, PermissionCollection> perms = new Hashtable<>(permsMap.size() * 2); // no sync; estimate
         synchronized (this) {
             perms.putAll(permsMap);
         }
@@ -379,8 +358,7 @@ implements Serializable
      * Reads in a Hashtable of Class/PermissionCollections and saves them in the
      * permsMap field. Reads in allPermission.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Don't call defaultReadObject()
 
         // Read in serialized fields
@@ -390,14 +368,13 @@ implements Serializable
         allPermission = (PermissionCollection) gfields.get("allPermission", null);
 
         // Get permissions
-        Hashtable<Class<?>, PermissionCollection> perms =
-            (Hashtable<Class<?>, PermissionCollection>)gfields.get("perms", null);
-        permsMap = new HashMap<Class<?>, PermissionCollection>(perms.size()*2);
+        Hashtable<Class<?>, PermissionCollection> perms = (Hashtable<Class<?>, PermissionCollection>) gfields
+            .get("perms", null);
+        permsMap = new HashMap<Class<?>, PermissionCollection>(perms.size() * 2);
         permsMap.putAll(perms);
 
         // Set hasUnresolved
-        UnresolvedPermissionCollection uc =
-        (UnresolvedPermissionCollection) permsMap.get(UnresolvedPermission.class);
+        UnresolvedPermissionCollection uc = (UnresolvedPermissionCollection) permsMap.get(UnresolvedPermission.class);
         hasUnresolved = (uc != null && uc.elements().hasMoreElements());
     }
 }
@@ -419,13 +396,11 @@ final class PermissionsEnumerator implements Enumeration<Permission> {
         // if we enter with permissionimpl null, we know
         // there are no more left.
 
-        if (permset == null)
-            return  false;
+        if (permset == null) { return false; }
 
         // try to see if there are any left in the current one
 
-        if (permset.hasMoreElements())
-            return true;
+        if (permset.hasMoreElements()) { return true; }
 
         // get the next one that has something in it...
         permset = getNextEnumWithMore();
@@ -451,9 +426,8 @@ final class PermissionsEnumerator implements Enumeration<Permission> {
     private Enumeration<Permission> getNextEnumWithMore() {
         while (perms.hasNext()) {
             PermissionCollection pc = perms.next();
-            Enumeration<Permission> next =pc.elements();
-            if (next.hasMoreElements())
-                return next;
+            Enumeration<Permission> next = pc.elements();
+            if (next.hasMoreElements()) { return next; }
         }
         return null;
 
@@ -463,18 +437,13 @@ final class PermissionsEnumerator implements Enumeration<Permission> {
 /**
  * A PermissionsHash stores a homogeneous set of permissions in a hashtable.
  *
+ * @author Roland Schemers
+ * @serial include
  * @see Permission
  * @see Permissions
- *
- *
- * @author Roland Schemers
- *
- * @serial include
  */
 
-final class PermissionsHash extends PermissionCollection
-implements Serializable
-{
+final class PermissionsHash extends PermissionCollection implements Serializable {
     /**
      * Key and value are (same) permissions objects.
      * Not serialized; see serialization section at end of class.
@@ -506,7 +475,6 @@ implements Serializable
      * expressed in "permission".
      *
      * @param permission the Permission object to compare
-     *
      * @return true if "permission" is a proper subset of a permission in
      * the set, false if not.
      */
@@ -520,8 +488,7 @@ implements Serializable
             // If permission is found, then p.equals(permission)
             if (p == null) {
                 for (Permission p_ : permsMap.values()) {
-                    if (p_.implies(permission))
-                        return true;
+                    if (p_.implies(permission)) { return true; }
                 }
                 return false;
             } else {
@@ -549,11 +516,10 @@ implements Serializable
     // private Hashtable perms;
     /**
      * @serialField perms java.util.Hashtable
-     *     A table of the Permissions (both key and value are same).
+     * A table of the Permissions (both key and value are same).
      */
     private static final ObjectStreamField[] serialPersistentFields = {
-        new ObjectStreamField("perms", Hashtable.class),
-    };
+        new ObjectStreamField("perms", Hashtable.class), };
 
     /**
      * @serialData Default fields.
@@ -566,8 +532,7 @@ implements Serializable
         // Don't call out.defaultWriteObject()
 
         // Copy perms into a Hashtable
-        Hashtable<Permission, Permission> perms =
-                new Hashtable<>(permsMap.size()*2);
+        Hashtable<Permission, Permission> perms = new Hashtable<>(permsMap.size() * 2);
         synchronized (this) {
             perms.putAll(permsMap);
         }
@@ -582,17 +547,15 @@ implements Serializable
      * Reads in a Hashtable of Permission/Permission and saves them in the
      * permsMap field.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Don't call defaultReadObject()
 
         // Read in serialized fields
         ObjectInputStream.GetField gfields = in.readFields();
 
         // Get permissions
-        Hashtable<Permission, Permission> perms =
-                (Hashtable<Permission, Permission>)gfields.get("perms", null);
-        permsMap = new HashMap<Permission, Permission>(perms.size()*2);
+        Hashtable<Permission, Permission> perms = (Hashtable<Permission, Permission>) gfields.get("perms", null);
+        permsMap = new HashMap<Permission, Permission>(perms.size() * 2);
         permsMap.putAll(perms);
     }
 }

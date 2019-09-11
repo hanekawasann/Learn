@@ -33,12 +33,11 @@ import java.io.OutputStream;
  * Implements an output stream filter for uncompressing data stored in the
  * "deflate" compression format.
  *
- * @since       1.6
- * @author      David R Tribble (david@tribble.com)
- *
+ * @author David R Tribble (david@tribble.com)
  * @see InflaterInputStream
  * @see DeflaterInputStream
  * @see DeflaterOutputStream
+ * @since 1.6
  */
 
 public class InflaterOutputStream extends FilterOutputStream {
@@ -82,7 +81,7 @@ public class InflaterOutputStream extends FilterOutputStream {
      * Creates a new output stream with the specified decompressor and a
      * default buffer size.
      *
-     * @param out output stream to write the uncompressed data to
+     * @param out  output stream to write the uncompressed data to
      * @param infl decompressor ("inflater") for this stream
      * @throws NullPointerException if {@code out} or {@code infl} is null
      */
@@ -94,22 +93,19 @@ public class InflaterOutputStream extends FilterOutputStream {
      * Creates a new output stream with the specified decompressor and
      * buffer size.
      *
-     * @param out output stream to write the uncompressed data to
-     * @param infl decompressor ("inflater") for this stream
+     * @param out    output stream to write the uncompressed data to
+     * @param infl   decompressor ("inflater") for this stream
      * @param bufLen decompression buffer size
      * @throws IllegalArgumentException if {@code bufLen} is <= 0
-     * @throws NullPointerException if {@code out} or {@code infl} is null
+     * @throws NullPointerException     if {@code out} or {@code infl} is null
      */
     public InflaterOutputStream(OutputStream out, Inflater infl, int bufLen) {
         super(out);
 
         // Sanity checks
-        if (out == null)
-            throw new NullPointerException("Null output");
-        if (infl == null)
-            throw new NullPointerException("Null inflater");
-        if (bufLen <= 0)
-            throw new IllegalArgumentException("Buffer size < 1");
+        if (out == null) { throw new NullPointerException("Null output"); }
+        if (infl == null) { throw new NullPointerException("Null inflater"); }
+        if (bufLen <= 0) { throw new IllegalArgumentException("Buffer size < 1"); }
 
         // Initialize
         inf = infl;
@@ -139,7 +135,7 @@ public class InflaterOutputStream extends FilterOutputStream {
      * written.
      *
      * @throws IOException if an I/O error occurs or this stream is already
-     * closed
+     *                     closed
      */
     public void flush() throws IOException {
         ensureOpen();
@@ -147,7 +143,7 @@ public class InflaterOutputStream extends FilterOutputStream {
         // Finish decompressing and writing pending output data
         if (!inf.finished()) {
             try {
-                while (!inf.finished()  &&  !inf.needsInput()) {
+                while (!inf.finished() && !inf.needsInput()) {
                     int n;
 
                     // Decompress pending output data
@@ -177,7 +173,7 @@ public class InflaterOutputStream extends FilterOutputStream {
      * succession to the same output stream.
      *
      * @throws IOException if an I/O error occurs or this stream is already
-     * closed
+     *                     closed
      */
     public void finish() throws IOException {
         ensureOpen();
@@ -193,9 +189,9 @@ public class InflaterOutputStream extends FilterOutputStream {
      * Writes a byte to the uncompressed output stream.
      *
      * @param b a single byte of compressed data to decompress and write to
-     * the output stream
-     * @throws IOException if an I/O error occurs or this stream is already
-     * closed
+     *          the output stream
+     * @throws IOException  if an I/O error occurs or this stream is already
+     *                      closed
      * @throws ZipException if a compression (ZIP) format error occurs
      */
     public void write(int b) throws IOException {
@@ -207,16 +203,16 @@ public class InflaterOutputStream extends FilterOutputStream {
     /**
      * Writes an array of bytes to the uncompressed output stream.
      *
-     * @param b buffer containing compressed data to decompress and write to
-     * the output stream
+     * @param b   buffer containing compressed data to decompress and write to
+     *            the output stream
      * @param off starting offset of the compressed data within {@code b}
      * @param len number of bytes to decompress from {@code b}
      * @throws IndexOutOfBoundsException if {@code off} < 0, or if
-     * {@code len} < 0, or if {@code len} > {@code b.length - off}
-     * @throws IOException if an I/O error occurs or this stream is already
-     * closed
-     * @throws NullPointerException if {@code b} is null
-     * @throws ZipException if a compression (ZIP) format error occurs
+     *                                   {@code len} < 0, or if {@code len} > {@code b.length - off}
+     * @throws IOException               if an I/O error occurs or this stream is already
+     *                                   closed
+     * @throws NullPointerException      if {@code b} is null
+     * @throws ZipException              if a compression (ZIP) format error occurs
      */
     public void write(byte[] b, int off, int len) throws IOException {
         // Sanity checks
@@ -231,7 +227,7 @@ public class InflaterOutputStream extends FilterOutputStream {
 
         // Write uncompressed data to the output stream
         try {
-            for (;;) {
+            for (; ; ) {
                 int n;
 
                 // Fill the decompressor buffer with output data

@@ -144,9 +144,9 @@ import java.beans.ConstructorProperties;
  * <img src = "doc-files/RadialGradientPaint-2.png">
  * </center>
  *
+ * @author Nicholas Talian, Vincent Hardy, Jim Graham, Jerry Evans
  * @see java.awt.Paint
  * @see java.awt.Graphics2D#setPaint
- * @author Nicholas Talian, Vincent Hardy, Jim Graham, Jerry Evans
  * @since 1.6
  */
 public final class RadialGradientPaint extends MultipleGradientPaint {
@@ -165,39 +165,29 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
      * {@code NO_CYCLE} repeating method and {@code SRGB} color space,
      * using the center as the focus point.
      *
-     * @param cx the X coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param cy the Y coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
+     * @param cx        the X coordinate in user space of the center point of the
+     *                  circle defining the gradient.  The last color of the
+     *                  gradient is mapped to the perimeter of this circle.
+     * @param cy        the Y coordinate in user space of the center point of the
+     *                  circle defining the gradient.  The last color of the
+     *                  gradient is mapped to the perimeter of this circle.
+     * @param radius    the radius of the circle defining the extents of the
+     *                  color gradient
      * @param fractions numbers ranging from 0.0 to 1.0 specifying the
      *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
-     *
-     * @throws NullPointerException
-     * if {@code fractions} array is null,
-     * or {@code colors} array is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @param colors    array of colors to use in the gradient.  The first color
+     *                  is used at the focus point, the last color around the
+     *                  perimeter of the circle.
+     * @throws NullPointerException     if {@code fractions} array is null,
+     *                                  or {@code colors} array is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(float cx, float cy, float radius,
-                               float[] fractions, Color[] colors)
-    {
-        this(cx, cy,
-             radius,
-             cx, cy,
-             fractions,
-             colors,
-             CycleMethod.NO_CYCLE);
+    public RadialGradientPaint(float cx, float cy, float radius, float[] fractions, Color[] colors) {
+        this(cx, cy, radius, cx, cy, fractions, colors, CycleMethod.NO_CYCLE);
     }
 
     /**
@@ -205,257 +195,195 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
      * {@code NO_CYCLE} repeating method and {@code SRGB} color space,
      * using the center as the focus point.
      *
-     * @param center the center point, in user space, of the circle defining
-     *               the gradient
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
+     * @param center    the center point, in user space, of the circle defining
+     *                  the gradient
+     * @param radius    the radius of the circle defining the extents of the
+     *                  color gradient
      * @param fractions numbers ranging from 0.0 to 1.0 specifying the
      *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
-     *
-     * @throws NullPointerException
-     * if {@code center} point is null,
-     * or {@code fractions} array is null,
-     * or {@code colors} array is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @param colors    array of colors to use in the gradient.  The first color
+     *                  is used at the focus point, the last color around the
+     *                  perimeter of the circle.
+     * @throws NullPointerException     if {@code center} point is null,
+     *                                  or {@code fractions} array is null,
+     *                                  or {@code colors} array is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(Point2D center, float radius,
-                               float[] fractions, Color[] colors)
-    {
-        this(center,
-             radius,
-             center,
-             fractions,
-             colors,
-             CycleMethod.NO_CYCLE);
+    public RadialGradientPaint(Point2D center, float radius, float[] fractions, Color[] colors) {
+        this(center, radius, center, fractions, colors, CycleMethod.NO_CYCLE);
     }
 
     /**
      * Constructs a {@code RadialGradientPaint} with a default
      * {@code SRGB} color space, using the center as the focus point.
      *
-     * @param cx the X coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param cy the Y coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
+     * @param cx          the X coordinate in user space of the center point of the
+     *                    circle defining the gradient.  The last color of the
+     *                    gradient is mapped to the perimeter of this circle.
+     * @param cy          the Y coordinate in user space of the center point of the
+     *                    circle defining the gradient.  The last color of the
+     *                    gradient is mapped to the perimeter of this circle.
+     * @param radius      the radius of the circle defining the extents of the
+     *                    color gradient
+     * @param fractions   numbers ranging from 0.0 to 1.0 specifying the
+     *                    distribution of colors along the gradient
+     * @param colors      array of colors to use in the gradient.  The first color
+     *                    is used at the focus point, the last color around the
+     *                    perimeter of the circle.
      * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
      *                    or {@code REPEAT}
-     *
-     * @throws NullPointerException
-     * if {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(float cx, float cy, float radius,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod)
-    {
-        this(cx, cy,
-             radius,
-             cx, cy,
-             fractions,
-             colors,
-             cycleMethod);
+    public RadialGradientPaint(float cx, float cy, float radius, float[] fractions, Color[] colors,
+        CycleMethod cycleMethod) {
+        this(cx, cy, radius, cx, cy, fractions, colors, cycleMethod);
     }
 
     /**
      * Constructs a {@code RadialGradientPaint} with a default
      * {@code SRGB} color space, using the center as the focus point.
      *
-     * @param center the center point, in user space, of the circle defining
-     *               the gradient
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
+     * @param center      the center point, in user space, of the circle defining
+     *                    the gradient
+     * @param radius      the radius of the circle defining the extents of the
+     *                    color gradient
+     * @param fractions   numbers ranging from 0.0 to 1.0 specifying the
+     *                    distribution of colors along the gradient
+     * @param colors      array of colors to use in the gradient.  The first color
+     *                    is used at the focus point, the last color around the
+     *                    perimeter of the circle.
      * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
      *                    or {@code REPEAT}
-     *
-     * @throws NullPointerException
-     * if {@code center} point is null,
-     * or {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if {@code center} point is null,
+     *                                  or {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(Point2D center, float radius,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod)
-    {
-        this(center,
-             radius,
-             center,
-             fractions,
-             colors,
-             cycleMethod);
+    public RadialGradientPaint(Point2D center, float radius, float[] fractions, Color[] colors,
+        CycleMethod cycleMethod) {
+        this(center, radius, center, fractions, colors, cycleMethod);
     }
 
     /**
      * Constructs a {@code RadialGradientPaint} with a default
      * {@code SRGB} color space.
      *
-     * @param cx the X coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param cy the Y coordinate in user space of the center point of the
-     *           circle defining the gradient.  The last color of the
-     *           gradient is mapped to the perimeter of this circle.
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
-     * @param fx the X coordinate of the point in user space to which the
-     *           first color is mapped
-     * @param fy the Y coordinate of the point in user space to which the
-     *           first color is mapped
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
+     * @param cx          the X coordinate in user space of the center point of the
+     *                    circle defining the gradient.  The last color of the
+     *                    gradient is mapped to the perimeter of this circle.
+     * @param cy          the Y coordinate in user space of the center point of the
+     *                    circle defining the gradient.  The last color of the
+     *                    gradient is mapped to the perimeter of this circle.
+     * @param radius      the radius of the circle defining the extents of the
+     *                    color gradient
+     * @param fx          the X coordinate of the point in user space to which the
+     *                    first color is mapped
+     * @param fy          the Y coordinate of the point in user space to which the
+     *                    first color is mapped
+     * @param fractions   numbers ranging from 0.0 to 1.0 specifying the
+     *                    distribution of colors along the gradient
+     * @param colors      array of colors to use in the gradient.  The first color
+     *                    is used at the focus point, the last color around the
+     *                    perimeter of the circle.
      * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
      *                    or {@code REPEAT}
-     *
-     * @throws NullPointerException
-     * if {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(float cx, float cy, float radius,
-                               float fx, float fy,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod)
-    {
-        this(new Point2D.Float(cx, cy),
-             radius,
-             new Point2D.Float(fx, fy),
-             fractions,
-             colors,
-             cycleMethod);
+    public RadialGradientPaint(float cx, float cy, float radius, float fx, float fy, float[] fractions, Color[] colors,
+        CycleMethod cycleMethod) {
+        this(new Point2D.Float(cx, cy), radius, new Point2D.Float(fx, fy), fractions, colors, cycleMethod);
     }
 
     /**
      * Constructs a {@code RadialGradientPaint} with a default
      * {@code SRGB} color space.
      *
-     * @param center the center point, in user space, of the circle defining
-     *               the gradient.  The last color of the gradient is mapped
-     *               to the perimeter of this circle.
-     * @param radius the radius of the circle defining the extents of the color
-     *               gradient
-     * @param focus the point in user space to which the first color is mapped
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient. The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
+     * @param center      the center point, in user space, of the circle defining
+     *                    the gradient.  The last color of the gradient is mapped
+     *                    to the perimeter of this circle.
+     * @param radius      the radius of the circle defining the extents of the color
+     *                    gradient
+     * @param focus       the point in user space to which the first color is mapped
+     * @param fractions   numbers ranging from 0.0 to 1.0 specifying the
+     *                    distribution of colors along the gradient
+     * @param colors      array of colors to use in the gradient. The first color
+     *                    is used at the focus point, the last color around the
+     *                    perimeter of the circle.
      * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
      *                    or {@code REPEAT}
-     *
-     * @throws NullPointerException
-     * if one of the points is null,
-     * or {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if one of the points is null,
+     *                                  or {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(Point2D center, float radius,
-                               Point2D focus,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod)
-    {
-        this(center,
-             radius,
-             focus,
-             fractions,
-             colors,
-             cycleMethod,
-             ColorSpaceType.SRGB,
-             new AffineTransform());
+    public RadialGradientPaint(Point2D center, float radius, Point2D focus, float[] fractions, Color[] colors,
+        CycleMethod cycleMethod) {
+        this(center, radius, focus, fractions, colors, cycleMethod, ColorSpaceType.SRGB, new AffineTransform());
     }
 
     /**
      * Constructs a {@code RadialGradientPaint}.
      *
-     * @param center the center point in user space of the circle defining the
-     *               gradient.  The last color of the gradient is mapped to
-     *               the perimeter of this circle.
-     * @param radius the radius of the circle defining the extents of the
-     *               color gradient
-     * @param focus the point in user space to which the first color is mapped
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
-     * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
-     *                    or {@code REPEAT}
-     * @param colorSpace which color space to use for interpolation,
-     *                   either {@code SRGB} or {@code LINEAR_RGB}
+     * @param center            the center point in user space of the circle defining the
+     *                          gradient.  The last color of the gradient is mapped to
+     *                          the perimeter of this circle.
+     * @param radius            the radius of the circle defining the extents of the
+     *                          color gradient
+     * @param focus             the point in user space to which the first color is mapped
+     * @param fractions         numbers ranging from 0.0 to 1.0 specifying the
+     *                          distribution of colors along the gradient
+     * @param colors            array of colors to use in the gradient.  The first color
+     *                          is used at the focus point, the last color around the
+     *                          perimeter of the circle.
+     * @param cycleMethod       either {@code NO_CYCLE}, {@code REFLECT},
+     *                          or {@code REPEAT}
+     * @param colorSpace        which color space to use for interpolation,
+     *                          either {@code SRGB} or {@code LINEAR_RGB}
      * @param gradientTransform transform to apply to the gradient
-     *
-     * @throws NullPointerException
-     * if one of the points is null,
-     * or {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null,
-     * or {@code colorSpace} is null,
-     * or {@code gradientTransform} is null
-     * @throws IllegalArgumentException
-     * if {@code radius} is non-positive,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if one of the points is null,
+     *                                  or {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null,
+     *                                  or {@code colorSpace} is null,
+     *                                  or {@code gradientTransform} is null
+     * @throws IllegalArgumentException if {@code radius} is non-positive,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    @ConstructorProperties({ "centerPoint", "radius", "focusPoint", "fractions", "colors", "cycleMethod", "colorSpace", "transform" })
-    public RadialGradientPaint(Point2D center,
-                               float radius,
-                               Point2D focus,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod,
-                               ColorSpaceType colorSpace,
-                               AffineTransform gradientTransform)
-    {
+    @ConstructorProperties(
+        { "centerPoint", "radius", "focusPoint", "fractions", "colors", "cycleMethod", "colorSpace", "transform" })
+    public RadialGradientPaint(Point2D center, float radius, Point2D focus, float[] fractions, Color[] colors,
+        CycleMethod cycleMethod, ColorSpaceType colorSpace, AffineTransform gradientTransform) {
         super(fractions, colors, cycleMethod, colorSpace, gradientTransform);
 
         // check input arguments
@@ -468,8 +396,7 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
         }
 
         if (radius <= 0) {
-            throw new IllegalArgumentException("Radius must be greater " +
-                                               "than zero");
+            throw new IllegalArgumentException("Radius must be greater " + "than zero");
         }
 
         // copy parameters
@@ -509,47 +436,33 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
      *
      * @param gradientBounds the bounding box, in user space, of the circle
      *                       defining the outermost extent of the gradient
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors to use in the gradient.  The first color
-     *               is used at the focus point, the last color around the
-     *               perimeter of the circle.
-     * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
-     *                    or {@code REPEAT}
-     *
-     * @throws NullPointerException
-     * if {@code gradientBounds} is null,
-     * or {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code cycleMethod} is null
-     * @throws IllegalArgumentException
-     * if {@code gradientBounds} is empty,
-     * or {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @param fractions      numbers ranging from 0.0 to 1.0 specifying the
+     *                       distribution of colors along the gradient
+     * @param colors         array of colors to use in the gradient.  The first color
+     *                       is used at the focus point, the last color around the
+     *                       perimeter of the circle.
+     * @param cycleMethod    either {@code NO_CYCLE}, {@code REFLECT},
+     *                       or {@code REPEAT}
+     * @throws NullPointerException     if {@code gradientBounds} is null,
+     *                                  or {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code cycleMethod} is null
+     * @throws IllegalArgumentException if {@code gradientBounds} is empty,
+     *                                  or {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    public RadialGradientPaint(Rectangle2D gradientBounds,
-                               float[] fractions, Color[] colors,
-                               CycleMethod cycleMethod)
-    {
+    public RadialGradientPaint(Rectangle2D gradientBounds, float[] fractions, Color[] colors, CycleMethod cycleMethod) {
         // gradient center/focal point is the center of the bounding box,
         // radius is set to 1.0, and then we set a scale transform
         // to achieve an elliptical gradient defined by the bounding box
-        this(new Point2D.Double(gradientBounds.getCenterX(),
-                                gradientBounds.getCenterY()),
-             1.0f,
-             new Point2D.Double(gradientBounds.getCenterX(),
-                                gradientBounds.getCenterY()),
-             fractions,
-             colors,
-             cycleMethod,
-             ColorSpaceType.SRGB,
-             createGradientTransform(gradientBounds));
+        this(new Point2D.Double(gradientBounds.getCenterX(), gradientBounds.getCenterY()), 1.0f,
+            new Point2D.Double(gradientBounds.getCenterX(), gradientBounds.getCenterY()), fractions, colors,
+            cycleMethod, ColorSpaceType.SRGB, createGradientTransform(gradientBounds));
 
         if (gradientBounds.isEmpty()) {
-            throw new IllegalArgumentException("Gradient bounds must be " +
-                                               "non-empty");
+            throw new IllegalArgumentException("Gradient bounds must be " + "non-empty");
         }
     }
 
@@ -557,7 +470,7 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
         double cx = r.getCenterX();
         double cy = r.getCenterY();
         AffineTransform xform = AffineTransform.getTranslateInstance(cx, cy);
-        xform.scale(r.getWidth()/2, r.getHeight()/2);
+        xform.scale(r.getWidth() / 2, r.getHeight() / 2);
         xform.translate(-cx, -cy);
         return xform;
     }
@@ -568,19 +481,19 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
      * See the description of the {@link Paint#createContext createContext} method
      * for information on null parameter handling.
      *
-     * @param cm the preferred {@link ColorModel} which represents the most convenient
-     *           format for the caller to receive the pixel data, or {@code null}
-     *           if there is no preference.
+     * @param cm           the preferred {@link ColorModel} which represents the most convenient
+     *                     format for the caller to receive the pixel data, or {@code null}
+     *                     if there is no preference.
      * @param deviceBounds the device space bounding box
      *                     of the graphics primitive being rendered.
-     * @param userBounds the user space bounding box
-     *                   of the graphics primitive being rendered.
-     * @param transform the {@link AffineTransform} from user
-     *              space into device space.
-     * @param hints the set of hints that the context object can use to
-     *              choose between rendering alternatives.
+     * @param userBounds   the user space bounding box
+     *                     of the graphics primitive being rendered.
+     * @param transform    the {@link AffineTransform} from user
+     *                     space into device space.
+     * @param hints        the set of hints that the context object can use to
+     *                     choose between rendering alternatives.
      * @return the {@code PaintContext} for
-     *         generating color patterns.
+     * generating color patterns.
      * @see Paint
      * @see PaintContext
      * @see ColorModel
@@ -589,27 +502,16 @@ public final class RadialGradientPaint extends MultipleGradientPaint {
      * @see AffineTransform
      * @see RenderingHints
      */
-    public PaintContext createContext(ColorModel cm,
-                                      Rectangle deviceBounds,
-                                      Rectangle2D userBounds,
-                                      AffineTransform transform,
-                                      RenderingHints hints)
-    {
+    public PaintContext createContext(ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds,
+        AffineTransform transform, RenderingHints hints) {
         // avoid modifying the user's transform...
         transform = new AffineTransform(transform);
         // incorporate the gradient transform
         transform.concatenate(gradientTransform);
 
-        return new RadialGradientPaintContext(this, cm,
-                                              deviceBounds, userBounds,
-                                              transform, hints,
-                                              (float)center.getX(),
-                                              (float)center.getY(),
-                                              radius,
-                                              (float)focus.getX(),
-                                              (float)focus.getY(),
-                                              fractions, colors,
-                                              cycleMethod, colorSpace);
+        return new RadialGradientPaintContext(this, cm, deviceBounds, userBounds, transform, hints,
+            (float) center.getX(), (float) center.getY(), radius, (float) focus.getX(), (float) focus.getY(), fractions,
+            colors, cycleMethod, colorSpace);
     }
 
     /**

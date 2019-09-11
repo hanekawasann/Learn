@@ -45,9 +45,9 @@ public abstract class AuthProvider extends Provider {
      * Constructs a provider with the specified name, version number,
      * and information.
      *
-     * @param name the provider name.
+     * @param name    the provider name.
      * @param version the provider version number.
-     * @param info a description of the provider and its services.
+     * @param info    a description of the provider and its services.
      */
     protected AuthProvider(String name, double version, String info) {
         super(name, version, info);
@@ -69,33 +69,31 @@ public abstract class AuthProvider extends Provider {
      * for obtaining authentication information.
      *
      * @param subject the <code>Subject</code> which may contain
-     *          principals/credentials used for authentication,
-     *          or may be populated with additional principals/credentials
-     *          after successful authentication has completed.
-     *          This parameter may be <code>null</code>.
+     *                principals/credentials used for authentication,
+     *                or may be populated with additional principals/credentials
+     *                after successful authentication has completed.
+     *                This parameter may be <code>null</code>.
      * @param handler the <code>CallbackHandler</code> used by
-     *          this provider to obtain authentication information
-     *          from the caller, which may be <code>null</code>
-     *
-     * @exception LoginException if the login operation fails
-     * @exception SecurityException if the caller does not pass a
-     *  security check for
-     *  <code>SecurityPermission("authProvider.<i>name</i>")</code>,
-     *  where <i>name</i> is the value returned by
-     *  this provider's <code>getName</code> method
+     *                this provider to obtain authentication information
+     *                from the caller, which may be <code>null</code>
+     * @throws LoginException    if the login operation fails
+     * @throws SecurityException if the caller does not pass a
+     *                           security check for
+     *                           <code>SecurityPermission("authProvider.<i>name</i>")</code>,
+     *                           where <i>name</i> is the value returned by
+     *                           this provider's <code>getName</code> method
      */
-    public abstract void login(Subject subject, CallbackHandler handler)
-        throws LoginException;
+    public abstract void login(Subject subject, CallbackHandler handler) throws LoginException;
 
     /**
      * Log out from this provider.
      *
-     * @exception LoginException if the logout operation fails
-     * @exception SecurityException if the caller does not pass a
-     *  security check for
-     *  <code>SecurityPermission("authProvider.<i>name</i>")</code>,
-     *  where <i>name</i> is the value returned by
-     *  this provider's <code>getName</code> method
+     * @throws LoginException    if the logout operation fails
+     * @throws SecurityException if the caller does not pass a
+     *                           security check for
+     *                           <code>SecurityPermission("authProvider.<i>name</i>")</code>,
+     *                           where <i>name</i> is the value returned by
+     *                           this provider's <code>getName</code> method
      */
     public abstract void logout() throws LoginException;
 
@@ -114,13 +112,12 @@ public abstract class AuthProvider extends Provider {
      * for obtaining authentication information.
      *
      * @param handler a <code>CallbackHandler</code> for obtaining
-     *          authentication information, which may be <code>null</code>
-     *
-     * @exception SecurityException if the caller does not pass a
-     *  security check for
-     *  <code>SecurityPermission("authProvider.<i>name</i>")</code>,
-     *  where <i>name</i> is the value returned by
-     *  this provider's <code>getName</code> method
+     *                authentication information, which may be <code>null</code>
+     * @throws SecurityException if the caller does not pass a
+     *                           security check for
+     *                           <code>SecurityPermission("authProvider.<i>name</i>")</code>,
+     *                           where <i>name</i> is the value returned by
+     *                           this provider's <code>getName</code> method
      */
     public abstract void setCallbackHandler(CallbackHandler handler);
 }

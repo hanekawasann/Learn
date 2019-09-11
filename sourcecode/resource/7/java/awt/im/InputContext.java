@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.awt.AWTEvent;
 import java.beans.Transient;
 import java.lang.Character.Subset;
+
 import sun.awt.im.InputMethodContext;
 
 /**
@@ -67,9 +68,9 @@ import sun.awt.im.InputMethodContext;
  * input contexts can still be created and used; their behavior is specified with
  * the individual methods below.
  *
+ * @author JavaSoft Asia/Pacific
  * @see java.awt.Component#getInputContext
  * @see java.awt.Component#enableInputMethods
- * @author JavaSoft Asia/Pacific
  * @since 1.2
  */
 
@@ -140,8 +141,8 @@ public class InputContext {
      *
      * @param locale The desired new locale.
      * @return true if the input method or keyboard layout that's active after
-     *         this call supports the desired locale.
-     * @exception NullPointerException if <code>locale</code> is null
+     * this call supports the desired locale.
+     * @throws NullPointerException if <code>locale</code> is null
      */
     public boolean selectInputMethod(Locale locale) {
         // real implementation is in sun.awt.im.InputContext
@@ -209,8 +210,8 @@ public class InputContext {
      *
      * @param enable whether to enable the current input method for composition
      * @throws UnsupportedOperationException if there is no current input
-     * method available or the current input method does not support
-     * the enabling/disabling operation
+     *                                       method available or the current input method does not support
+     *                                       the enabling/disabling operation
      * @see #isCompositionEnabled
      * @since 1.3
      */
@@ -227,8 +228,8 @@ public class InputContext {
      * @return <code>true</code> if the current input method is enabled for
      * composition; <code>false</code> otherwise
      * @throws UnsupportedOperationException if there is no current input
-     * method available or the current input method does not support
-     * checking whether it is enabled for composition
+     *                                       method available or the current input method does not support
+     *                                       checking whether it is enabled for composition
      * @see #setCompositionEnabled
      * @since 1.3
      */
@@ -252,9 +253,8 @@ public class InputContext {
      * text in an <code>InputMethodEvent</code>.
      *
      * @throws UnsupportedOperationException if there is no current input
-     * method available or the current input method does not support
-     * the reconversion operation.
-     *
+     *                                       method available or the current input method does not support
+     *                                       the reconversion operation.
      * @since 1.3
      */
     public void reconvert() {
@@ -266,7 +266,7 @@ public class InputContext {
      * If no input method is available, then the event will never be consumed.
      *
      * @param event The event
-     * @exception NullPointerException if <code>event</code> is null
+     * @throws NullPointerException if <code>event</code> is null
      */
     public void dispatchEvent(AWTEvent event) {
         // real implementation is in sun.awt.im.InputContext
@@ -283,7 +283,7 @@ public class InputContext {
      * If no input methods are available, then this method has no effect.
      *
      * @param client Client component
-     * @exception NullPointerException if <code>client</code> is null
+     * @throws NullPointerException if <code>client</code> is null
      */
     public void removeNotify(Component client) {
         // real implementation is in sun.awt.im.InputContext
@@ -301,7 +301,6 @@ public class InputContext {
      * for example, when the user moves the insertion point within the text
      * (but outside the composed text), or when the component's text is
      * saved to a file or copied to the clipboard.
-     *
      */
     public void endComposition() {
         // real implementation is in sun.awt.im.InputContext

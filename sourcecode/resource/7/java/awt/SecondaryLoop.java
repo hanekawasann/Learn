@@ -86,12 +86,10 @@ package java.awt;
  *   }
  * </pre>
  *
+ * @author Anton Tarasov, Artem Ananiev
  * @see Dialog#show
  * @see EventQueue#createSecondaryLoop
  * @see Toolkit#getSystemEventQueue
- *
- * @author Anton Tarasov, Artem Ananiev
- *
  * @since 1.7
  */
 public interface SecondaryLoop {
@@ -116,8 +114,8 @@ public interface SecondaryLoop {
      * again be used to start another new event loop.
      *
      * @return {@code true} after termination of the secondary loop,
-     *         if the secondary loop was started by this call,
-     *         {@code false} otherwise
+     * if the secondary loop was started by this call,
+     * {@code false} otherwise
      */
     public boolean enter();
 
@@ -139,8 +137,8 @@ public interface SecondaryLoop {
      * false}, otherwise {@code true} is returned.
      *
      * @return {@code true} if this loop was previously started and
-     *         has not yet been finished with the {@link #exit} method,
-     *         {@code false} otherwise
+     * has not yet been finished with the {@link #exit} method,
+     * {@code false} otherwise
      */
     public boolean exit();
 

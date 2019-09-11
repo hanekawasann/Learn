@@ -29,8 +29,8 @@ package java.sql;
 /**
  * Enumeration for pseudo/hidden column usage.
  *
- * @since 1.7
  * @see DatabaseMetaData#getPseudoColumns
+ * @since 1.7
  */
 public enum PseudoColumnUsage {
 

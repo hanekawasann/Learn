@@ -32,8 +32,8 @@ import java.io.NotSerializableException;
  * of a failure in the backing store, or a failure to contact the backing
  * store.
  *
- * @author  Josh Bloch
- * @since   1.4
+ * @author Josh Bloch
+ * @since 1.4
  */
 public class BackingStoreException extends Exception {
     /**

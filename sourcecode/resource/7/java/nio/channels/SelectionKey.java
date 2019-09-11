@@ -98,13 +98,11 @@ import java.io.IOException;
  * all.  In any case, a selection operation will always use the interest-set
  * value that was current at the moment that the operation began.  </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
- * @since 1.4
- *
  * @see SelectableChannel
  * @see Selector
+ * @since 1.4
  */
 
 public abstract class SelectionKey {
@@ -121,7 +119,7 @@ public abstract class SelectionKey {
      * Returns the channel for which this key was created.  This method will
      * continue to return the channel even after the key is cancelled.  </p>
      *
-     * @return  This key's channel
+     * @return This key's channel
      */
     public abstract SelectableChannel channel();
 
@@ -129,7 +127,7 @@ public abstract class SelectionKey {
      * Returns the selector for which this key was created.  This method will
      * continue to return the selector even after the key is cancelled.  </p>
      *
-     * @return  This key's selector
+     * @return This key's selector
      */
     public abstract Selector selector();
 
@@ -139,7 +137,7 @@ public abstract class SelectionKey {
      * <p> A key is valid upon creation and remains so until it is cancelled,
      * its channel is closed, or its selector is closed.  </p>
      *
-     * @return  <tt>true</tt> if, and only if, this key is valid
+     * @return <tt>true</tt> if, and only if, this key is valid
      */
     public abstract boolean isValid();
 
@@ -171,10 +169,8 @@ public abstract class SelectionKey {
      * <p> This method may be invoked at any time.  Whether or not it blocks,
      * and for how long, is implementation-dependent.  </p>
      *
-     * @return  This key's interest set
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return This key's interest set
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public abstract int interestOps();
 
@@ -184,17 +180,12 @@ public abstract class SelectionKey {
      * <p> This method may be invoked at any time.  Whether or not it blocks,
      * and for how long, is implementation-dependent.  </p>
      *
-     * @param  ops  The new interest set
-     *
-     * @return  This selection key
-     *
-     * @throws  IllegalArgumentException
-     *          If a bit in the set does not correspond to an operation that
-     *          is supported by this key's channel, that is, if
-     *          <tt>(ops & ~channel().validOps()) != 0</tt>
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @param ops The new interest set
+     * @return This selection key
+     * @throws IllegalArgumentException If a bit in the set does not correspond to an operation that
+     *                                  is supported by this key's channel, that is, if
+     *                                  <tt>(ops & ~channel().validOps()) != 0</tt>
+     * @throws CancelledKeyException    If this key has been cancelled
      */
     public abstract SelectionKey interestOps(int ops);
 
@@ -204,10 +195,8 @@ public abstract class SelectionKey {
      * <p> It is guaranteed that the returned set will only contain operation
      * bits that are valid for this key's channel.  </p>
      *
-     * @return  This key's ready-operation set
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return This key's ready-operation set
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public abstract int readyOps();
 
@@ -278,12 +267,10 @@ public abstract class SelectionKey {
      * <p> If this key's channel does not support read operations then this
      * method always returns <tt>false</tt>.  </p>
      *
-     * @return  <tt>true</tt> if, and only if,
-     *          <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_READ</tt> is
-     *          nonzero
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return <tt>true</tt> if, and only if,
+     * <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_READ</tt> is
+     * nonzero
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public final boolean isReadable() {
         return (readyOps() & OP_READ) != 0;
@@ -301,12 +288,10 @@ public abstract class SelectionKey {
      * <p> If this key's channel does not support write operations then this
      * method always returns <tt>false</tt>.  </p>
      *
-     * @return  <tt>true</tt> if, and only if,
-     *          <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_WRITE</tt>
-     *          is nonzero
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return <tt>true</tt> if, and only if,
+     * <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_WRITE</tt>
+     * is nonzero
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public final boolean isWritable() {
         return (readyOps() & OP_WRITE) != 0;
@@ -325,12 +310,10 @@ public abstract class SelectionKey {
      * <p> If this key's channel does not support socket-connect operations
      * then this method always returns <tt>false</tt>.  </p>
      *
-     * @return  <tt>true</tt> if, and only if,
-     *          <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_CONNECT</tt>
-     *          is nonzero
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return <tt>true</tt> if, and only if,
+     * <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_CONNECT</tt>
+     * is nonzero
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public final boolean isConnectable() {
         return (readyOps() & OP_CONNECT) != 0;
@@ -349,12 +332,10 @@ public abstract class SelectionKey {
      * <p> If this key's channel does not support socket-accept operations then
      * this method always returns <tt>false</tt>.  </p>
      *
-     * @return  <tt>true</tt> if, and only if,
-     *          <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_ACCEPT</tt>
-     *          is nonzero
-     *
-     * @throws  CancelledKeyException
-     *          If this key has been cancelled
+     * @return <tt>true</tt> if, and only if,
+     * <tt>readyOps()</tt>&nbsp;<tt>&</tt>&nbsp;<tt>OP_ACCEPT</tt>
+     * is nonzero
+     * @throws CancelledKeyException If this key has been cancelled
      */
     public final boolean isAcceptable() {
         return (readyOps() & OP_ACCEPT) != 0;
@@ -365,10 +346,8 @@ public abstract class SelectionKey {
 
     private volatile Object attachment = null;
 
-    private static final AtomicReferenceFieldUpdater<SelectionKey,Object>
-        attachmentUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            SelectionKey.class, Object.class, "attachment"
-        );
+    private static final AtomicReferenceFieldUpdater<SelectionKey, Object> attachmentUpdater
+        = AtomicReferenceFieldUpdater.newUpdater(SelectionKey.class, Object.class, "attachment");
 
     /**
      * Attaches the given object to this key.
@@ -378,11 +357,9 @@ public abstract class SelectionKey {
      * this method causes any previous attachment to be discarded.  The current
      * attachment may be discarded by attaching <tt>null</tt>.  </p>
      *
-     * @param  ob
-     *         The object to be attached; may be <tt>null</tt>
-     *
-     * @return  The previously-attached object, if any,
-     *          otherwise <tt>null</tt>
+     * @param ob The object to be attached; may be <tt>null</tt>
+     * @return The previously-attached object, if any,
+     * otherwise <tt>null</tt>
      */
     public final Object attach(Object ob) {
         return attachmentUpdater.getAndSet(this, ob);
@@ -391,8 +368,8 @@ public abstract class SelectionKey {
     /**
      * Retrieves the current attachment.  </p>
      *
-     * @return  The object currently attached to this key,
-     *          or <tt>null</tt> if there is no attachment
+     * @return The object currently attached to this key,
+     * or <tt>null</tt> if there is no attachment
      */
     public final Object attachment() {
         return attachment;

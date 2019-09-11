@@ -54,11 +54,12 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
     /**
      * Constructs a <code>BufferedImageFilter</code> with the
      * specified single-source/single-destination operator.
+     *
      * @param op the specified <code>BufferedImageOp</code> to
      *           use to filter a <code>BufferedImage</code>
      * @throws NullPointerException if op is null
      */
-    public BufferedImageFilter (BufferedImageOp op) {
+    public BufferedImageFilter(BufferedImageOp op) {
         super();
         if (op == null) {
             throw new NullPointerException("Operation cannot be null");
@@ -68,6 +69,7 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
 
     /**
      * Returns the <code>BufferedImageOp</code>.
+     *
      * @return the operator of this <code>BufferedImageFilter</code>.
      */
     public BufferedImageOp getBufferedImageOp() {
@@ -86,10 +88,11 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
      * operation could result in problems with retrieving the requested
      * pixels.
      * <p>
-     * @param width the width to which to set the width of this
-     *        <code>BufferedImageFilter</code>
+     *
+     * @param width  the width to which to set the width of this
+     *               <code>BufferedImageFilter</code>
      * @param height the height to which to set the height of this
-     *        <code>BufferedImageFilter</code>
+     *               <code>BufferedImageFilter</code>
      * @see ImageConsumer#setDimensions
      */
     public void setDimensions(int width, int height) {
@@ -97,7 +100,7 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
             imageComplete(STATICIMAGEDONE);
             return;
         }
-        this.width  = width;
+        this.width = width;
         this.height = height;
     }
 
@@ -117,8 +120,9 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
      * should avoid calling this method directly since that
      * operation could result in problems with retrieving the
      * requested pixels.
+     *
      * @param model the {@link ColorModel} to which to set the
-     *        <code>ColorModel</code> of this <code>BufferedImageFilter</code>
+     *              <code>ColorModel</code> of this <code>BufferedImageFilter</code>
      * @see ImageConsumer#setColorModel
      */
     public void setColorModel(ColorModel model) {
@@ -153,19 +157,16 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
      * this class to retrieve pixels from an image should avoid calling
      * this method directly since that operation could result in problems
      * with retrieving the requested pixels.
+     *
      * @throws IllegalArgumentException if width or height are less than
-     * zero.
+     *                                  zero.
      * @see ImageConsumer#setPixels(int, int, int, int, ColorModel, byte[],
-                                    int, int)
+     * int, int)
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, byte pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, byte pixels[], int off, int scansize) {
         // Fix 4184230
         if (w < 0 || h < 0) {
-            throw new IllegalArgumentException("Width ("+w+
-                                                ") and height ("+h+
-                                                ") must be > 0");
+            throw new IllegalArgumentException("Width (" + w + ") and height (" + h + ") must be > 0");
         }
         // Nothing to do
         if (w == 0 || h == 0) {
@@ -201,10 +202,10 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
                 return;
             }
         }
-        int dstPtr = y*width + x;
+        int dstPtr = y * width + x;
         if (intPixels == null) {
             if (bytePixels == null) {
-                bytePixels = new byte[width*height];
+                bytePixels = new byte[width * height];
                 this.model = model;
             } else if (this.model != model) {
                 convertToRGB();
@@ -222,13 +223,14 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
             int srcRem = scansize - w;
             for (int sh = h; sh > 0; sh--) {
                 for (int sw = w; sw > 0; sw--) {
-                    intPixels[dstPtr++] = model.getRGB(pixels[off++]&0xff);
+                    intPixels[dstPtr++] = model.getRGB(pixels[off++] & 0xff);
                 }
-                off    += srcRem;
+                off += srcRem;
                 dstPtr += dstRem;
             }
         }
     }
+
     /**
      * Filters the information provided in the <code>setPixels</code>
      * method of the <code>ImageConsumer</code> interface which takes
@@ -240,19 +242,16 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
      * retrieve pixels from an image should avoid calling this method
      * directly since that operation could result in problems
      * with retrieving the requested pixels.
+     *
      * @throws IllegalArgumentException if width or height are less than
-     * zero.
+     *                                  zero.
      * @see ImageConsumer#setPixels(int, int, int, int, ColorModel, int[],
-                                    int, int)
+     * int, int)
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, int pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, int pixels[], int off, int scansize) {
         // Fix 4184230
         if (w < 0 || h < 0) {
-            throw new IllegalArgumentException("Width ("+w+
-                                                ") and height ("+h+
-                                                ") must be > 0");
+            throw new IllegalArgumentException("Width (" + w + ") and height (" + h + ") must be > 0");
         }
         // Nothing to do
         if (w == 0 || h == 0) {
@@ -297,7 +296,7 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
                 convertToRGB();
             }
         }
-        int dstPtr = y*width + x;
+        int dstPtr = y * width + x;
         if (this.model == model) {
             for (int sh = h; sh > 0; sh--) {
                 System.arraycopy(pixels, off, intPixels, dstPtr, w);
@@ -330,69 +329,60 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
      * this class to retrieve pixels from an image should avoid calling
      * this method directly since that operation could result in problems
      * with retrieving the requested pixels.
+     *
      * @param status the status of image loading
      * @throws ImagingOpException if there was a problem calling the filter
-     * method of the <code>BufferedImageOp</code> associated with this
-     * instance.
+     *                            method of the <code>BufferedImageOp</code> associated with this
+     *                            instance.
      * @see ImageConsumer#imageComplete
      */
     public void imageComplete(int status) {
         WritableRaster wr;
-        switch(status) {
-        case IMAGEERROR:
-        case IMAGEABORTED:
-            // reinitialize the params
-            model  = null;
-            width  = -1;
-            height = -1;
-            intPixels  = null;
-            bytePixels = null;
-            break;
+        switch (status) {
+            case IMAGEERROR:
+            case IMAGEABORTED:
+                // reinitialize the params
+                model = null;
+                width = -1;
+                height = -1;
+                intPixels = null;
+                bytePixels = null;
+                break;
 
-        case SINGLEFRAMEDONE:
-        case STATICIMAGEDONE:
-            if (width <= 0 || height <= 0) break;
-            if (model instanceof DirectColorModel) {
-                if (intPixels == null) break;
-                wr = createDCMraster();
-            }
-            else if (model instanceof IndexColorModel) {
-                int[] bandOffsets = {0};
-                if (bytePixels == null) break;
-                DataBufferByte db = new DataBufferByte(bytePixels,
-                                                       width*height);
-                wr = Raster.createInterleavedRaster(db, width, height, width,
-                                                    1, bandOffsets, null);
-            }
-            else {
-                convertToRGB();
-                if (intPixels == null) break;
-                wr = createDCMraster();
-            }
-            BufferedImage bi = new BufferedImage(model, wr,
-                                                 model.isAlphaPremultiplied(),
-                                                 null);
-            bi = bufferedImageOp.filter(bi, null);
-            WritableRaster r = bi.getRaster();
-            ColorModel cm = bi.getColorModel();
-            int w = r.getWidth();
-            int h = r.getHeight();
-            consumer.setDimensions(w, h);
-            consumer.setColorModel(cm);
-            if (cm instanceof DirectColorModel) {
-                DataBufferInt db = (DataBufferInt) r.getDataBuffer();
-                consumer.setPixels(0, 0, w, h,
-                                   cm, db.getData(), 0, w);
-            }
-            else if (cm instanceof IndexColorModel) {
-                DataBufferByte db = (DataBufferByte) r.getDataBuffer();
-                consumer.setPixels(0, 0, w, h,
-                                   cm, db.getData(), 0, w);
-            }
-            else {
-                throw new InternalError("Unknown color model "+cm);
-            }
-            break;
+            case SINGLEFRAMEDONE:
+            case STATICIMAGEDONE:
+                if (width <= 0 || height <= 0) { break; }
+                if (model instanceof DirectColorModel) {
+                    if (intPixels == null) { break; }
+                    wr = createDCMraster();
+                } else if (model instanceof IndexColorModel) {
+                    int[] bandOffsets = { 0 };
+                    if (bytePixels == null) { break; }
+                    DataBufferByte db = new DataBufferByte(bytePixels, width * height);
+                    wr = Raster.createInterleavedRaster(db, width, height, width, 1, bandOffsets, null);
+                } else {
+                    convertToRGB();
+                    if (intPixels == null) { break; }
+                    wr = createDCMraster();
+                }
+                BufferedImage bi = new BufferedImage(model, wr, model.isAlphaPremultiplied(), null);
+                bi = bufferedImageOp.filter(bi, null);
+                WritableRaster r = bi.getRaster();
+                ColorModel cm = bi.getColorModel();
+                int w = r.getWidth();
+                int h = r.getHeight();
+                consumer.setDimensions(w, h);
+                consumer.setColorModel(cm);
+                if (cm instanceof DirectColorModel) {
+                    DataBufferInt db = (DataBufferInt) r.getDataBuffer();
+                    consumer.setPixels(0, 0, w, h, cm, db.getData(), 0, w);
+                } else if (cm instanceof IndexColorModel) {
+                    DataBufferByte db = (DataBufferByte) r.getDataBuffer();
+                    consumer.setPixels(0, 0, w, h, cm, db.getData(), 0, w);
+                } else {
+                    throw new InternalError("Unknown color model " + cm);
+                }
+                break;
         }
         consumer.imageComplete(status);
     }
@@ -401,16 +391,15 @@ public class BufferedImageFilter extends ImageFilter implements Cloneable {
         WritableRaster wr;
         DirectColorModel dcm = (DirectColorModel) model;
         boolean hasAlpha = model.hasAlpha();
-        int[] bandMasks = new int[3+(hasAlpha ? 1 : 0)];
+        int[] bandMasks = new int[3 + (hasAlpha ? 1 : 0)];
         bandMasks[0] = dcm.getRedMask();
         bandMasks[1] = dcm.getGreenMask();
         bandMasks[2] = dcm.getBlueMask();
         if (hasAlpha) {
             bandMasks[3] = dcm.getAlphaMask();
         }
-        DataBufferInt db = new DataBufferInt(intPixels, width*height);
-        wr = Raster.createPackedRaster(db, width, height, width,
-                                       bandMasks, null);
+        DataBufferInt db = new DataBufferInt(intPixels, width * height);
+        wr = Raster.createPackedRaster(db, width, height, width, bandMasks, null);
         return wr;
     }
 

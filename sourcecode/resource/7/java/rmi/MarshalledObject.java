@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamConstants;
 import java.io.OutputStream;
 import java.io.Serializable;
+
 import sun.rmi.server.MarshalInputStream;
 import sun.rmi.server.MarshalOutputStream;
 
@@ -62,11 +63,10 @@ import sun.rmi.server.MarshalOutputStream;
  * that are not automatically deserialized immediately by the remote peer.
  *
  * @param <T> the type of the object contained in this
- * <code>MarshalledObject</code>
- *
- * @author  Ann Wollrath
- * @author  Peter Jones
- * @since   1.2
+ *            <code>MarshalledObject</code>
+ * @author Ann Wollrath
+ * @author Peter Jones
+ * @since 1.2
  */
 public final class MarshalledObject<T> implements Serializable {
     /**
@@ -85,7 +85,6 @@ public final class MarshalledObject<T> implements Serializable {
 
     /**
      * @serial Stored hash code of contained object.
-     *
      * @see #hashCode
      */
     private int hash;
@@ -100,9 +99,9 @@ public final class MarshalledObject<T> implements Serializable {
      * parameters for RMI calls.
      *
      * @param obj the object to be serialized (must be serializable)
-     * @exception IOException if an <code>IOException</code> occurs; an
-     * <code>IOException</code> may occur if <code>obj</code> is not
-     * serializable.
+     * @throws IOException if an <code>IOException</code> occurs; an
+     *                     <code>IOException</code> may occur if <code>obj</code> is not
+     *                     serializable.
      * @since 1.2
      */
     public MarshalledObject(T obj) throws IOException {
@@ -113,8 +112,7 @@ public final class MarshalledObject<T> implements Serializable {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         ByteArrayOutputStream lout = new ByteArrayOutputStream();
-        MarshalledObjectOutputStream out =
-            new MarshalledObjectOutputStream(bout, lout);
+        MarshalledObjectOutputStream out = new MarshalledObjectOutputStream(bout, lout);
         out.writeObject(obj);
         out.flush();
         objBytes = bout.toByteArray();
@@ -138,24 +136,22 @@ public final class MarshalledObject<T> implements Serializable {
      * unmarshaling paramters for RMI calls.
      *
      * @return a copy of the contained object
-     * @exception IOException if an <code>IOException</code> occurs while
-     * deserializing the object from its internal representation.
-     * @exception ClassNotFoundException if a
-     * <code>ClassNotFoundException</code> occurs while deserializing the
-     * object from its internal representation.
-     * could not be found
+     * @throws IOException            if an <code>IOException</code> occurs while
+     *                                deserializing the object from its internal representation.
+     * @throws ClassNotFoundException if a
+     *                                <code>ClassNotFoundException</code> occurs while deserializing the
+     *                                object from its internal representation.
+     *                                could not be found
      * @since 1.2
      */
     public T get() throws IOException, ClassNotFoundException {
         if (objBytes == null)   // must have been a null object
-            return null;
+        { return null; }
 
         ByteArrayInputStream bin = new ByteArrayInputStream(objBytes);
         // locBytes is null if no annotations
-        ByteArrayInputStream lin =
-            (locBytes == null ? null : new ByteArrayInputStream(locBytes));
-        MarshalledObjectInputStream in =
-            new MarshalledObjectInputStream(bin, lin);
+        ByteArrayInputStream lin = (locBytes == null ? null : new ByteArrayInputStream(locBytes));
+        MarshalledObjectInputStream in = new MarshalledObjectInputStream(bin, lin);
         T obj = (T) in.readObject();
         in.close();
         return obj;
@@ -186,25 +182,21 @@ public final class MarshalledObject<T> implements Serializable {
      * @since 1.2
      */
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
+        if (obj == this) { return true; }
 
         if (obj != null && obj instanceof MarshalledObject) {
             MarshalledObject other = (MarshalledObject) obj;
 
             // if either is a ref to null, both must be
-            if (objBytes == null || other.objBytes == null)
-                return objBytes == other.objBytes;
+            if (objBytes == null || other.objBytes == null) { return objBytes == other.objBytes; }
 
             // quick, easy test
-            if (objBytes.length != other.objBytes.length)
-                return false;
+            if (objBytes.length != other.objBytes.length) { return false; }
 
             //!! There is talk about adding an array comparision method
             //!! at 1.2 -- if so, this should be rewritten.  -arnold
             for (int i = 0; i < objBytes.length; ++i) {
-                if (objBytes[i] != other.objBytes[i])
-                    return false;
+                if (objBytes[i] != other.objBytes[i]) { return false; }
             }
             return true;
         } else {
@@ -223,14 +215,13 @@ public final class MarshalledObject<T> implements Serializable {
      * @see java.rmi.MarshalledObject
      * @see MarshalledObjectInputStream
      */
-    private static class MarshalledObjectOutputStream
-        extends MarshalOutputStream
-    {
+    private static class MarshalledObjectOutputStream extends MarshalOutputStream {
         /** The stream on which location objects are written. */
         private ObjectOutputStream locOut;
 
-        /** <code>true</code> if non-<code>null</code> annotations are
-         *  written.
+        /**
+         * <code>true</code> if non-<code>null</code> annotations are
+         * written.
          */
         private boolean hadAnnotations;
 
@@ -240,9 +231,7 @@ public final class MarshalledObject<T> implements Serializable {
          * location annotations (if any) will be written to
          * <code>locOut</code>.
          */
-        MarshalledObjectOutputStream(OutputStream objOut, OutputStream locOut)
-            throws IOException
-        {
+        MarshalledObjectOutputStream(OutputStream objOut, OutputStream locOut) throws IOException {
             super(objOut);
             this.useProtocolVersion(ObjectStreamConstants.PROTOCOL_VERSION_2);
             this.locOut = new ObjectOutputStream(locOut);
@@ -278,9 +267,7 @@ public final class MarshalledObject<T> implements Serializable {
      *
      * @see MarshalledObjectOutputStream
      */
-    private static class MarshalledObjectInputStream
-        extends MarshalInputStream
-    {
+    private static class MarshalledObjectInputStream extends MarshalInputStream {
         /**
          * The stream from which annotations will be read.  If this is
          * <code>null</code>, then all annotations were <code>null</code>.
@@ -294,9 +281,7 @@ public final class MarshalledObject<T> implements Serializable {
          * <code>null</code>, then all annotations will be
          * <code>null</code>.
          */
-        MarshalledObjectInputStream(InputStream objIn, InputStream locIn)
-            throws IOException
-        {
+        MarshalledObjectInputStream(InputStream objIn, InputStream locIn) throws IOException {
             super(objIn);
             this.locIn = (locIn == null ? null : new ObjectInputStream(locIn));
         }
@@ -306,9 +291,7 @@ public final class MarshalledObject<T> implements Serializable {
          * the stream we were given, or <code>null</code> if we were given a
          * <code>null</code> location stream.
          */
-        protected Object readLocation()
-            throws IOException, ClassNotFoundException
-        {
+        protected Object readLocation() throws IOException, ClassNotFoundException {
             return (locIn == null ? null : locIn.readObject());
         }
     }

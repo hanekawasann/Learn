@@ -27,7 +27,7 @@ package java.awt.datatransfer;
 
 
 /**
- *    A class to encapsulate MimeType parsing related exceptions
+ * A class to encapsulate MimeType parsing related exceptions
  *
  * @serial exclude
  * @since 1.3
@@ -47,7 +47,7 @@ public class MimeTypeParseException extends Exception {
     /**
      * Constructs a MimeTypeParseException with the specified detail message.
      *
-     * @param   s   the detail message.
+     * @param s the detail message.
      */
     public MimeTypeParseException(String s) {
         super(s);

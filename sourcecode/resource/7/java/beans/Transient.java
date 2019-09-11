@@ -61,7 +61,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @since 1.7
  */
-@Target({METHOD})
+@Target( { METHOD })
 @Retention(RUNTIME)
 public @interface Transient {
     boolean value() default true;

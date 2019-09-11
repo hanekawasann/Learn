@@ -35,6 +35,7 @@
  */
 
 package java.util.concurrent;
+
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.LockSupport;
 
@@ -98,9 +99,9 @@ import java.util.concurrent.locks.LockSupport;
  * those subsequent to a return from the corresponding {@code exchange()}
  * in the other thread.
  *
- * @since 1.5
- * @author Doug Lea and Bill Scherer and Michael Scott
  * @param <V> The type of objects that may be exchanged
+ * @author Doug Lea and Bill Scherer and Michael Scott
+ * @since 1.5
  */
 public class Exchanger<V> {
     /*
@@ -230,8 +231,7 @@ public class Exchanger<V> {
      * contention.  When this value is less than CAPACITY, some
      * otherwise wasted expansion can be avoided.
      */
-    private static final int FULL =
-        Math.max(0, Math.min(CAPACITY, NCPU / 2) - 1);
+    private static final int FULL = Math.max(0, Math.min(CAPACITY, NCPU / 2) - 1);
 
     /**
      * The number of times to spin (doing nothing except polling a
@@ -288,6 +288,7 @@ public class Exchanger<V> {
 
         /**
          * Creates node with given item and empty hole.
+         *
          * @param item the item
          */
         public Node(Object item) {
@@ -329,7 +330,7 @@ public class Exchanger<V> {
      * handling of sentinel values.  Callers from public methods decode
      * and cast accordingly.
      *
-     * @param item the (non-null) item to exchange
+     * @param item  the (non-null) item to exchange
      * @param timed true if the wait is timed
      * @param nanos if timed, the maximum wait time
      * @return the other thread's item, or CANCEL if interrupted or timed out
@@ -339,39 +340,38 @@ public class Exchanger<V> {
         int index = hashIndex();                  // Index of current slot
         int fails = 0;                            // Number of CAS failures
 
-        for (;;) {
+        for (; ; ) {
             Object y;                             // Contents of current slot
             Slot slot = arena[index];
             if (slot == null)                     // Lazily initialize slots
+            {
                 createSlot(index);                // Continue loop to reread
-            else if ((y = slot.get()) != null &&  // Try to fulfill
-                     slot.compareAndSet(y, null)) {
-                Node you = (Node)y;               // Transfer item
+            } else if ((y = slot.get()) != null &&  // Try to fulfill
+                slot.compareAndSet(y, null)) {
+                Node you = (Node) y;               // Transfer item
                 if (you.compareAndSet(null, item)) {
                     LockSupport.unpark(you.waiter);
                     return you.item;
                 }                                 // Else cancelled; continue
-            }
-            else if (y == null &&                 // Try to occupy
-                     slot.compareAndSet(null, me)) {
+            } else if (y == null &&                 // Try to occupy
+                slot.compareAndSet(null, me)) {
                 if (index == 0)                   // Blocking wait for slot 0
-                    return timed ?
-                        awaitNanos(me, slot, nanos) :
-                        await(me, slot);
+                { return timed ? awaitNanos(me, slot, nanos) : await(me, slot); }
                 Object v = spinWait(me, slot);    // Spin wait for non-0
-                if (v != CANCEL)
-                    return v;
+                if (v != CANCEL) { return v; }
                 me = new Node(item);              // Throw away cancelled node
                 int m = max.get();
                 if (m > (index >>>= 1))           // Decrease index
+                {
                     max.compareAndSet(m, m - 1);  // Maybe shrink table
-            }
-            else if (++fails > 1) {               // Allow 2 fails on 1st slot
+                }
+            } else if (++fails > 1) {               // Allow 2 fails on 1st slot
                 int m = max.get();
-                if (fails > 3 && m < FULL && max.compareAndSet(m, m + 1))
+                if (fails > 3 && m < FULL && max.compareAndSet(m, m + 1)) {
                     index = m + 1;                // Grow on 3rd failed slot
-                else if (--index < 0)
+                } else if (--index < 0) {
                     index = m;                    // Circularly traverse
+                }
             }
         }
     }
@@ -400,15 +400,17 @@ public class Exchanger<V> {
      */
     private final int hashIndex() {
         long id = Thread.currentThread().getId();
-        int hash = (((int)(id ^ (id >>> 32))) ^ 0x811c9dc5) * 0x01000193;
+        int hash = (((int) (id ^ (id >>> 32))) ^ 0x811c9dc5) * 0x01000193;
 
         int m = max.get();
-        int nbits = (((0xfffffc00  >> m) & 4) | // Compute ceil(log2(m+1))
-                     ((0x000001f8 >>> m) & 2) | // The constants hold
-                     ((0xffff00f2 >>> m) & 1)); // a lookup table
+        int nbits = (((0xfffffc00 >> m) & 4) | // Compute ceil(log2(m+1))
+            ((0x000001f8 >>> m) & 2) | // The constants hold
+            ((0xffff00f2 >>> m) & 1)); // a lookup table
         int index;
         while ((index = hash & ((1 << nbits) - 1)) > m)       // May retry on
+        {
             hash = (hash >>> nbits) | (hash << (33 - nbits)); // non-power-2 m
+        }
         return index;
     }
 
@@ -425,8 +427,7 @@ public class Exchanger<V> {
         Slot newSlot = new Slot();
         Slot[] a = arena;
         synchronized (a) {
-            if (a[index] == null)
-                a[index] = newSlot;
+            if (a[index] == null) { a[index] = newSlot; }
         }
     }
 
@@ -436,14 +437,13 @@ public class Exchanger<V> {
      * garbage retention.
      *
      * @param node the waiting node
-     * @param the slot it is waiting in
+     * @param the  slot it is waiting in
      * @return true if successfully cancelled
      */
     private static boolean tryCancel(Node node, Slot slot) {
-        if (!node.compareAndSet(null, CANCEL))
-            return false;
+        if (!node.compareAndSet(null, CANCEL)) { return false; }
         if (slot.get() == node) // pre-check to minimize contention
-            slot.compareAndSet(node, null);
+        { slot.compareAndSet(node, null); }
         return true;
     }
 
@@ -460,14 +460,9 @@ public class Exchanger<V> {
      */
     private static Object spinWait(Node node, Slot slot) {
         int spins = SPINS;
-        for (;;) {
+        for (; ; ) {
             Object v = node.get();
-            if (v != null)
-                return v;
-            else if (spins > 0)
-                --spins;
-            else
-                tryCancel(node, slot);
+            if (v != null) { return v; } else if (spins > 0) { --spins; } else { tryCancel(node, slot); }
         }
     }
 
@@ -475,12 +470,12 @@ public class Exchanger<V> {
      * Waits for (by spinning and/or blocking) and gets the hole
      * filled in by another thread.  Fails if interrupted before
      * hole filled.
-     *
+     * <p>
      * When a node/thread is about to block, it sets its waiter field
      * and then rechecks state at least one more time before actually
      * parking, thus covering race vs fulfiller noticing that waiter
      * is non-null so should be woken.
-     *
+     * <p>
      * Thread interruption status is checked only surrounding calls to
      * park.  The caller is assumed to have checked interrupt status
      * on entry.
@@ -491,18 +486,13 @@ public class Exchanger<V> {
     private static Object await(Node node, Slot slot) {
         Thread w = Thread.currentThread();
         int spins = SPINS;
-        for (;;) {
+        for (; ; ) {
             Object v = node.get();
-            if (v != null)
-                return v;
-            else if (spins > 0)                 // Spin-wait phase
-                --spins;
-            else if (node.waiter == null)       // Set up to block next
-                node.waiter = w;
-            else if (w.isInterrupted())         // Abort on interrupt
-                tryCancel(node, slot);
-            else                                // Block
-                LockSupport.park(node);
+            if (v != null) { return v; } else if (spins > 0)                 // Spin-wait phase
+            { --spins; } else if (node.waiter == null)       // Set up to block next
+            { node.waiter = w; } else if (w.isInterrupted())         // Abort on interrupt
+            { tryCancel(node, slot); } else                                // Block
+            { LockSupport.park(node); }
         }
     }
 
@@ -511,7 +501,7 @@ public class Exchanger<V> {
      * thread.  Fails if timed out or interrupted before hole filled.
      * Same basic logic as untimed version, but a bit messier.
      *
-     * @param node the waiting node
+     * @param node  the waiting node
      * @param nanos the wait time
      * @return on success, the hole; on failure, CANCEL
      */
@@ -519,28 +509,18 @@ public class Exchanger<V> {
         int spins = TIMED_SPINS;
         long lastTime = 0;
         Thread w = null;
-        for (;;) {
+        for (; ; ) {
             Object v = node.get();
-            if (v != null)
-                return v;
+            if (v != null) { return v; }
             long now = System.nanoTime();
-            if (w == null)
-                w = Thread.currentThread();
-            else
-                nanos -= now - lastTime;
+            if (w == null) { w = Thread.currentThread(); } else { nanos -= now - lastTime; }
             lastTime = now;
             if (nanos > 0) {
-                if (spins > 0)
-                    --spins;
-                else if (node.waiter == null)
-                    node.waiter = w;
-                else if (w.isInterrupted())
+                if (spins > 0) { --spins; } else if (node.waiter == null) { node.waiter = w; } else if (w
+                    .isInterrupted()) {
                     tryCancel(node, slot);
-                else
-                    LockSupport.parkNanos(node, nanos);
-            }
-            else if (tryCancel(node, slot) && !w.isInterrupted())
-                return scanOnTimeout(node);
+                } else { LockSupport.parkNanos(node, nanos); }
+            } else if (tryCancel(node, slot) && !w.isInterrupted()) { return scanOnTimeout(node); }
         }
     }
 
@@ -565,7 +545,7 @@ public class Exchanger<V> {
             if (slot != null) {
                 while ((y = slot.get()) != null) {
                     if (slot.compareAndSet(y, null)) {
-                        Node you = (Node)y;
+                        Node you = (Node) y;
                         if (you.compareAndSet(null, node.item)) {
                             LockSupport.unpark(you.waiter);
                             return you.item;
@@ -614,15 +594,13 @@ public class Exchanger<V> {
      * @param x the object to exchange
      * @return the object provided by the other thread
      * @throws InterruptedException if the current thread was
-     *         interrupted while waiting
+     *                              interrupted while waiting
      */
     public V exchange(V x) throws InterruptedException {
         if (!Thread.interrupted()) {
             Object v = doExchange((x == null) ? NULL_ITEM : x, false, 0);
-            if (v == NULL_ITEM)
-                return null;
-            if (v != CANCEL)
-                return (V)v;
+            if (v == NULL_ITEM) { return null; }
+            if (v != CANCEL) { return (V) v; }
             Thread.interrupted(); // Clear interrupt status on IE throw
         }
         throw new InterruptedException();
@@ -661,26 +639,21 @@ public class Exchanger<V> {
      * TimeoutException} is thrown.  If the time is less than or equal
      * to zero, the method will not wait at all.
      *
-     * @param x the object to exchange
+     * @param x       the object to exchange
      * @param timeout the maximum time to wait
-     * @param unit the time unit of the <tt>timeout</tt> argument
+     * @param unit    the time unit of the <tt>timeout</tt> argument
      * @return the object provided by the other thread
      * @throws InterruptedException if the current thread was
-     *         interrupted while waiting
-     * @throws TimeoutException if the specified waiting time elapses
-     *         before another thread enters the exchange
+     *                              interrupted while waiting
+     * @throws TimeoutException     if the specified waiting time elapses
+     *                              before another thread enters the exchange
      */
-    public V exchange(V x, long timeout, TimeUnit unit)
-        throws InterruptedException, TimeoutException {
+    public V exchange(V x, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
         if (!Thread.interrupted()) {
-            Object v = doExchange((x == null) ? NULL_ITEM : x,
-                                  true, unit.toNanos(timeout));
-            if (v == NULL_ITEM)
-                return null;
-            if (v != CANCEL)
-                return (V)v;
-            if (!Thread.interrupted())
-                throw new TimeoutException();
+            Object v = doExchange((x == null) ? NULL_ITEM : x, true, unit.toNanos(timeout));
+            if (v == NULL_ITEM) { return null; }
+            if (v != CANCEL) { return (V) v; }
+            if (!Thread.interrupted()) { throw new TimeoutException(); }
         }
         throw new InterruptedException();
     }

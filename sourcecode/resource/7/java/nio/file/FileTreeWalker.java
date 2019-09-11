@@ -28,6 +28,7 @@ package java.nio.file;
 import java.nio.file.attribute.*;
 import java.io.IOException;
 import java.util.*;
+
 import sun.nio.fs.BasicFileAttributesHolder;
 
 /**
@@ -42,22 +43,20 @@ class FileTreeWalker {
     private final FileVisitor<? super Path> visitor;
     private final int maxDepth;
 
-    FileTreeWalker(Set<FileVisitOption> options,
-                   FileVisitor<? super Path> visitor,
-                   int maxDepth)
-    {
+    FileTreeWalker(Set<FileVisitOption> options, FileVisitor<? super Path> visitor, int maxDepth) {
         boolean fl = false;
-        for (FileVisitOption option: options) {
+        for (FileVisitOption option : options) {
             // will throw NPE if options contains null
             switch (option) {
-                case FOLLOW_LINKS : fl = true; break;
+                case FOLLOW_LINKS:
+                    fl = true;
+                    break;
                 default:
                     throw new AssertionError("Should not get here");
             }
         }
         this.followLinks = fl;
-        this.linkOptions = (fl) ? new LinkOption[0] :
-            new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+        this.linkOptions = (fl) ? new LinkOption[0] : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
         this.visitor = visitor;
         this.maxDepth = maxDepth;
     }
@@ -66,34 +65,21 @@ class FileTreeWalker {
      * Walk file tree starting at the given file
      */
     void walk(Path start) throws IOException {
-        FileVisitResult result = walk(start,
-                                      0,
-                                      new ArrayList<AncestorDirectory>());
+        FileVisitResult result = walk(start, 0, new ArrayList<AncestorDirectory>());
         Objects.requireNonNull(result, "FileVisitor returned null");
     }
 
     /**
-     * @param   file
-     *          the directory to visit
-     * @param   depth
-     *          depth remaining
-     * @param   ancestors
-     *          use when cycle detection is enabled
+     * @param file      the directory to visit
+     * @param depth     depth remaining
+     * @param ancestors use when cycle detection is enabled
      */
-    private FileVisitResult walk(Path file,
-                                 int depth,
-                                 List<AncestorDirectory> ancestors)
-        throws IOException
-    {
+    private FileVisitResult walk(Path file, int depth, List<AncestorDirectory> ancestors) throws IOException {
         // if attributes are cached then use them if possible
         BasicFileAttributes attrs = null;
-        if ((depth > 0) &&
-            (file instanceof BasicFileAttributesHolder) &&
-            (System.getSecurityManager() == null))
-        {
-            BasicFileAttributes cached = ((BasicFileAttributesHolder)file).get();
-            if (!followLinks || !cached.isSymbolicLink())
-                attrs = cached;
+        if ((depth > 0) && (file instanceof BasicFileAttributesHolder) && (System.getSecurityManager() == null)) {
+            BasicFileAttributes cached = ((BasicFileAttributesHolder) file).get();
+            if (!followLinks || !cached.isSymbolicLink()) { attrs = cached; }
         }
         IOException exc = null;
 
@@ -106,9 +92,7 @@ class FileTreeWalker {
                 } catch (IOException x1) {
                     if (followLinks) {
                         try {
-                            attrs = Files.readAttributes(file,
-                                                         BasicFileAttributes.class,
-                                                         LinkOption.NOFOLLOW_LINKS);
+                            attrs = Files.readAttributes(file, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
                         } catch (IOException x2) {
                             exc = x2;
                         }
@@ -119,8 +103,7 @@ class FileTreeWalker {
             } catch (SecurityException x) {
                 // If access to starting file is denied then SecurityException
                 // is thrown, otherwise the file is ignored.
-                if (depth == 0)
-                    throw x;
+                if (depth == 0) { throw x; }
                 return FileVisitResult.CONTINUE;
             }
         }
@@ -141,13 +124,12 @@ class FileTreeWalker {
 
             // if this directory and ancestor has a file key then we compare
             // them; otherwise we use less efficient isSameFile test.
-            for (AncestorDirectory ancestor: ancestors) {
+            for (AncestorDirectory ancestor : ancestors) {
                 Object ancestorKey = ancestor.fileKey();
                 if (key != null && ancestorKey != null) {
                     if (key.equals(ancestorKey)) {
                         // cycle detected
-                        return visitor.visitFileFailed(file,
-                            new FileSystemLoopException(file.toString()));
+                        return visitor.visitFileFailed(file, new FileSystemLoopException(file.toString()));
                     }
                 } else {
                     boolean isSameFile = false;
@@ -160,8 +142,7 @@ class FileTreeWalker {
                     }
                     if (isSameFile) {
                         // cycle detected
-                        return visitor.visitFileFailed(file,
-                            new FileSystemLoopException(file.toString()));
+                        return visitor.visitFileFailed(file, new FileSystemLoopException(file.toString()));
                     }
                 }
             }
@@ -195,16 +176,14 @@ class FileTreeWalker {
                 }
 
                 try {
-                    for (Path entry: stream) {
-                        result = walk(entry, depth+1, ancestors);
+                    for (Path entry : stream) {
+                        result = walk(entry, depth + 1, ancestors);
 
                         // returning null will cause NPE to be thrown
-                        if (result == null || result == FileVisitResult.TERMINATE)
-                            return result;
+                        if (result == null || result == FileVisitResult.TERMINATE) { return result; }
 
                         // skip remaining siblings in this directory
-                        if (result == FileVisitResult.SKIP_SIBLINGS)
-                            break;
+                        if (result == FileVisitResult.SKIP_SIBLINGS) { break; }
                     }
                 } catch (DirectoryIteratorException e) {
                     // IOException will be notified to postVisitDirectory
@@ -215,8 +194,7 @@ class FileTreeWalker {
                     stream.close();
                 } catch (IOException e) {
                     // IOException will be notified to postVisitDirectory
-                    if (ioe == null)
-                        ioe = e;
+                    if (ioe == null) { ioe = e; }
                 }
             }
 
@@ -226,7 +204,7 @@ class FileTreeWalker {
         } finally {
             // remove key from trail if doing cycle detection
             if (followLinks) {
-                ancestors.remove(ancestors.size()-1);
+                ancestors.remove(ancestors.size() - 1);
             }
         }
     }
@@ -234,13 +212,16 @@ class FileTreeWalker {
     private static class AncestorDirectory {
         private final Path dir;
         private final Object key;
+
         AncestorDirectory(Path dir, Object key) {
             this.dir = dir;
             this.key = key;
         }
+
         Path file() {
             return dir;
         }
+
         Object fileKey() {
             return key;
         }

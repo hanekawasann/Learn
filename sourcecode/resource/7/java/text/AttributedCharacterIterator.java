@@ -81,6 +81,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
     /**
      * Defines attribute keys that are used to identify text attributes. These
      * keys are used in {@code AttributedCharacterIterator} and {@code AttributedString}.
+     *
      * @see AttributedCharacterIterator
      * @see AttributedString
      * @since 1.2
@@ -92,6 +93,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
          * The name of this {@code Attribute}. The name is used primarily by {@code readResolve}
          * to look up the corresponding predefined instance when deserializing
          * an instance.
+         *
          * @serial
          */
         private String name;
@@ -161,6 +163,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
         /**
          * Attribute key for the language of some text.
          * <p> Values are instances of {@link java.util.Locale Locale}.
+         *
          * @see java.util.Locale
          */
         public static final Attribute LANGUAGE = new Attribute("language");
@@ -171,6 +174,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
          * it is often necessary to store the reading (pronunciation) along with the
          * written form.
          * <p>Values are instances of {@link Annotation} holding instances of {@link String}.
+         *
          * @see Annotation
          * @see java.lang.String
          */
@@ -180,6 +184,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
          * Attribute key for input method segments. Input methods often break
          * up text into segments, which usually correspond to words.
          * <p>Values are instances of {@link Annotation} holding a {@code null} reference.
+         *
          * @see Annotation
          */
         public static final Attribute INPUT_METHOD_SEGMENT = new Attribute("input_method_segment");
@@ -187,7 +192,9 @@ public interface AttributedCharacterIterator extends CharacterIterator {
         // make sure the serial version doesn't change between compiler versions
         private static final long serialVersionUID = -9142742483513960612L;
 
-    };
+    }
+
+    ;
 
     /**
      * Returns the index of the first character of the run
@@ -237,7 +244,7 @@ public interface AttributedCharacterIterator extends CharacterIterator {
      * Returns a map with the attributes defined on the current
      * character.
      */
-    public Map<Attribute,Object> getAttributes();
+    public Map<Attribute, Object> getAttributes();
 
     /**
      * Returns the value of the named {@code attribute} for the current character.

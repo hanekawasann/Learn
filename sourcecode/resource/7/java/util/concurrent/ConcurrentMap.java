@@ -34,6 +34,7 @@
  */
 
 package java.util.concurrent;
+
 import java.util.Map;
 
 /**
@@ -51,10 +52,10 @@ import java.util.Map;
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
- * @since 1.5
- * @author Doug Lea
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
+ * @author Doug Lea
+ * @since 1.5
  */
 public interface ConcurrentMap<K, V> extends Map<K, V> {
     /**
@@ -68,22 +69,21 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
      *       return map.get(key);</pre>
      * except that the action is performed atomically.
      *
-     * @param key key with which the specified value is to be associated
+     * @param key   key with which the specified value is to be associated
      * @param value value to be associated with the specified key
      * @return the previous value associated with the specified key, or
-     *         <tt>null</tt> if there was no mapping for the key.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with the key,
-     *         if the implementation supports null values.)
+     * <tt>null</tt> if there was no mapping for the key.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with the key,
+     * if the implementation supports null values.)
      * @throws UnsupportedOperationException if the <tt>put</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of the specified key or value
-     *         prevents it from being stored in this map
-     * @throws NullPointerException if the specified key or value is null,
-     *         and this map does not permit null keys or values
-     * @throws IllegalArgumentException if some property of the specified key
-     *         or value prevents it from being stored in this map
-     *
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of the specified key or value
+     *                                       prevents it from being stored in this map
+     * @throws NullPointerException          if the specified key or value is null,
+     *                                       and this map does not permit null keys or values
+     * @throws IllegalArgumentException      if some property of the specified key
+     *                                       or value prevents it from being stored in this map
      */
     V putIfAbsent(K key, V value);
 
@@ -97,17 +97,17 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
      *   } else return false;</pre>
      * except that the action is performed atomically.
      *
-     * @param key key with which the specified value is associated
+     * @param key   key with which the specified value is associated
      * @param value value expected to be associated with the specified key
      * @return <tt>true</tt> if the value was removed
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the key or value is of an inappropriate
-     *         type for this map
-     *         (<a href="../Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key or value is null,
-     *         and this map does not permit null keys or values
-     *         (<a href="../Collection.html#optional-restrictions">optional</a>)
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the key or value is of an inappropriate
+     *                                       type for this map
+     *                                       (<a href="../Collection.html#optional-restrictions">optional</a>)
+     * @throws NullPointerException          if the specified key or value is null,
+     *                                       and this map does not permit null keys or values
+     *                                       (<a href="../Collection.html#optional-restrictions">optional</a>)
      */
     boolean remove(Object key, Object value);
 
@@ -121,18 +121,18 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
      *   } else return false;</pre>
      * except that the action is performed atomically.
      *
-     * @param key key with which the specified value is associated
+     * @param key      key with which the specified value is associated
      * @param oldValue value expected to be associated with the specified key
      * @param newValue value to be associated with the specified key
      * @return <tt>true</tt> if the value was replaced
      * @throws UnsupportedOperationException if the <tt>put</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of a specified key or value
-     *         prevents it from being stored in this map
-     * @throws NullPointerException if a specified key or value is null,
-     *         and this map does not permit null keys or values
-     * @throws IllegalArgumentException if some property of a specified key
-     *         or value prevents it from being stored in this map
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of a specified key or value
+     *                                       prevents it from being stored in this map
+     * @throws NullPointerException          if a specified key or value is null,
+     *                                       and this map does not permit null keys or values
+     * @throws IllegalArgumentException      if some property of a specified key
+     *                                       or value prevents it from being stored in this map
      */
     boolean replace(K key, V oldValue, V newValue);
 
@@ -145,21 +145,21 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
      *   } else return null;</pre>
      * except that the action is performed atomically.
      *
-     * @param key key with which the specified value is associated
+     * @param key   key with which the specified value is associated
      * @param value value to be associated with the specified key
      * @return the previous value associated with the specified key, or
-     *         <tt>null</tt> if there was no mapping for the key.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with the key,
-     *         if the implementation supports null values.)
+     * <tt>null</tt> if there was no mapping for the key.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with the key,
+     * if the implementation supports null values.)
      * @throws UnsupportedOperationException if the <tt>put</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of the specified key or value
-     *         prevents it from being stored in this map
-     * @throws NullPointerException if the specified key or value is null,
-     *         and this map does not permit null keys or values
-     * @throws IllegalArgumentException if some property of the specified key
-     *         or value prevents it from being stored in this map
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of the specified key or value
+     *                                       prevents it from being stored in this map
+     * @throws NullPointerException          if the specified key or value is null,
+     *                                       and this map does not permit null keys or values
+     * @throws IllegalArgumentException      if some property of the specified key
+     *                                       or value prevents it from being stored in this map
      */
     V replace(K key, V value);
 }

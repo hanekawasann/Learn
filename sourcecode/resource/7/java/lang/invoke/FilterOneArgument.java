@@ -34,6 +34,7 @@ import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
  * Internally, it first calls the {@code filter} method on the argument,
  * Making up the difference between the raw method type and the
  * final method type is the responsibility of a JVM-level adapter.
+ *
  * @author jrose
  */
 class FilterOneArgument extends BoundMethodHandle {
@@ -51,11 +52,10 @@ class FilterOneArgument extends BoundMethodHandle {
     }
 
     private static final MethodHandle INVOKE;
+
     static {
         try {
-            INVOKE =
-                IMPL_LOOKUP.findVirtual(FilterOneArgument.class, "invoke",
-                                        MethodType.genericMethodType(1));
+            INVOKE = IMPL_LOOKUP.findVirtual(FilterOneArgument.class, "invoke", MethodType.genericMethodType(1));
         } catch (ReflectiveOperationException ex) {
             throw uncaughtException(ex);
         }
@@ -68,17 +68,17 @@ class FilterOneArgument extends BoundMethodHandle {
     }
 
     static {
-        assert(MethodHandleNatives.workaroundWithoutRicochetFrames());  // this class is deprecated
+        assert (MethodHandleNatives.workaroundWithoutRicochetFrames());  // this class is deprecated
     }
 
     public static MethodHandle make(MethodHandle filter, MethodHandle target) {
-        if (filter == null)  return target;
-        if (target == null)  return filter;
+        if (filter == null) { return target; }
+        if (target == null) { return filter; }
         return new FilterOneArgument(filter, target);
     }
 
-//    MethodHandle make(MethodHandle filter1, MethodHandle filter2, MethodHandle target) {
-//        MethodHandle filter = make(filter1, filter2);
-//        return make(filter, target);
-//    }
+    //    MethodHandle make(MethodHandle filter1, MethodHandle filter2, MethodHandle target) {
+    //        MethodHandle filter = make(filter1, filter2);
+    //        return make(filter, target);
+    //    }
 }

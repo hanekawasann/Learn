@@ -31,8 +31,8 @@ package java.rmi;
  * exception that is not among the checked exception types declared in the
  * <code>throws</code> clause of the method in the remote interface.
  *
- * @author  Roger Riggs
- * @since   JDK1.1
+ * @author Roger Riggs
+ * @since JDK1.1
  */
 public class UnexpectedException extends RemoteException {
 
@@ -54,7 +54,7 @@ public class UnexpectedException extends RemoteException {
      * Constructs a <code>UnexpectedException</code> with the specified
      * detail message and nested exception.
      *
-     * @param s the detail message
+     * @param s  the detail message
      * @param ex the nested exception
      * @since JDK1.1
      */

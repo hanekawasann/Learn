@@ -49,7 +49,7 @@ public interface FlavorListener extends EventListener {
      * a significant notification. Ordinarily, those redundant
      * notifications should be occasional.
      *
-     * @param e  a <code>FlavorEvent</code> object
+     * @param e a <code>FlavorEvent</code> object
      */
     void flavorsChanged(FlavorEvent e);
 }

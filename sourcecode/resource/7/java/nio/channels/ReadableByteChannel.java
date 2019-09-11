@@ -39,7 +39,6 @@ import java.nio.ByteBuffer;
  * I/O operations may proceed concurrently with a read operation depends upon
  * the type of the channel. </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
  * @since 1.4
@@ -78,30 +77,18 @@ public interface ReadableByteChannel extends Channel {
      * invocation of this method will block until the first operation is
      * complete. </p>
      *
-     * @param  dst
-     *         The buffer into which bytes are to be transferred
-     *
-     * @return  The number of bytes read, possibly zero, or <tt>-1</tt> if the
-     *          channel has reached end-of-stream
-     *
-     * @throws  NonReadableChannelException
-     *          If this channel was not opened for reading
-     *
-     * @throws  ClosedChannelException
-     *          If this channel is closed
-     *
-     * @throws  AsynchronousCloseException
-     *          If another thread closes this channel
-     *          while the read operation is in progress
-     *
-     * @throws  ClosedByInterruptException
-     *          If another thread interrupts the current thread
-     *          while the read operation is in progress, thereby
-     *          closing the channel and setting the current thread's
-     *          interrupt status
-     *
-     * @throws  IOException
-     *          If some other I/O error occurs
+     * @param dst The buffer into which bytes are to be transferred
+     * @return The number of bytes read, possibly zero, or <tt>-1</tt> if the
+     * channel has reached end-of-stream
+     * @throws NonReadableChannelException If this channel was not opened for reading
+     * @throws ClosedChannelException      If this channel is closed
+     * @throws AsynchronousCloseException  If another thread closes this channel
+     *                                     while the read operation is in progress
+     * @throws ClosedByInterruptException  If another thread interrupts the current thread
+     *                                     while the read operation is in progress, thereby
+     *                                     closing the channel and setting the current thread's
+     *                                     interrupt status
+     * @throws IOException                 If some other I/O error occurs
      */
     public int read(ByteBuffer dst) throws IOException;
 

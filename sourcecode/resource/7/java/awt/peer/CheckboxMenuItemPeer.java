@@ -28,7 +28,7 @@ import java.awt.CheckboxMenuItem;
 
 /**
  * The peer interface for {@link CheckboxMenuItem}.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -42,7 +42,6 @@ public interface CheckboxMenuItemPeer extends MenuItemPeer {
      * unchecked ({@code false}).
      *
      * @param t the state to set on the checkbox
-     *
      * @see CheckboxMenuItemPeer#setState(boolean)
      */
     void setState(boolean t);

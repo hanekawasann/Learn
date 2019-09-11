@@ -38,9 +38,7 @@ import java.nio.channels.*;
  * @since 1.4
  */
 
-public abstract class AbstractSelectionKey
-    extends SelectionKey
-{
+public abstract class AbstractSelectionKey extends SelectionKey {
 
     /**
      * Initializes a new instance of this class.  </p>
@@ -70,7 +68,7 @@ public abstract class AbstractSelectionKey
         synchronized (this) {
             if (valid) {
                 valid = false;
-                ((AbstractSelector)selector()).cancel(this);
+                ((AbstractSelector) selector()).cancel(this);
             }
         }
     }

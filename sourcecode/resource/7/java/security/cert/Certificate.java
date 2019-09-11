@@ -40,7 +40,7 @@ import sun.security.x509.X509CertImpl;
  * An identity certificate is a binding of a principal to a public key which
  * is vouched for by another principal.  (A principal represents
  * an entity such as an individual user, a group, or a corporation.)
- *<p>
+ * <p>
  * This class is an abstraction for certificates that have different
  * formats but important common uses.  For example, different types of
  * certificates, such as X.509 and PGP, share general certificate
@@ -52,10 +52,9 @@ import sun.security.x509.X509CertImpl;
  * sets of information, and they store and retrieve the information in
  * different ways.
  *
+ * @author Hemma Prafullchandra
  * @see X509Certificate
  * @see CertificateFactory
- *
- * @author Hemma Prafullchandra
  */
 
 public abstract class Certificate implements java.io.Serializable {
@@ -69,10 +68,10 @@ public abstract class Certificate implements java.io.Serializable {
      * Creates a certificate of the specified type.
      *
      * @param type the standard name of the certificate type.
-     * See the CertificateFactory section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#CertificateFactory">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-     * for information about standard certificate types.
+     *             See the CertificateFactory section in the <a href=
+     *             "{@docRoot}/../technotes/guides/security/StandardNames.html#CertificateFactory">
+     *             Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     *             for information about standard certificate types.
      */
     protected Certificate(String type) {
         this.type = type;
@@ -107,7 +106,7 @@ public abstract class Certificate implements java.io.Serializable {
         }
         try {
             byte[] thisCert = X509CertImpl.getEncodedInternal(this);
-            byte[] otherCert = X509CertImpl.getEncodedInternal((Certificate)other);
+            byte[] otherCert = X509CertImpl.getEncodedInternal((Certificate) other);
 
             return Arrays.equals(thisCert, otherCert);
         } catch (CertificateException e) {
@@ -126,7 +125,7 @@ public abstract class Certificate implements java.io.Serializable {
         try {
             byte[] certData = X509CertImpl.getEncodedInternal(this);
             for (int i = 1; i < certData.length; i++) {
-                 retval += certData[i] * i;
+                retval += certData[i] * i;
             }
             return retval;
         } catch (CertificateException e) {
@@ -141,28 +140,24 @@ public abstract class Certificate implements java.io.Serializable {
      * be encoded as ASN.1 DER.
      *
      * @return the encoded form of this certificate
-     *
-     * @exception CertificateEncodingException if an encoding error occurs.
+     * @throws CertificateEncodingException if an encoding error occurs.
      */
-    public abstract byte[] getEncoded()
-        throws CertificateEncodingException;
+    public abstract byte[] getEncoded() throws CertificateEncodingException;
 
     /**
      * Verifies that this certificate was signed using the
      * private key that corresponds to the specified public key.
      *
      * @param key the PublicKey used to carry out the verification.
-     *
-     * @exception NoSuchAlgorithmException on unsupported signature
-     * algorithms.
-     * @exception InvalidKeyException on incorrect key.
-     * @exception NoSuchProviderException if there's no default provider.
-     * @exception SignatureException on signature errors.
-     * @exception CertificateException on encoding errors.
+     * @throws NoSuchAlgorithmException on unsupported signature
+     *                                  algorithms.
+     * @throws InvalidKeyException      on incorrect key.
+     * @throws NoSuchProviderException  if there's no default provider.
+     * @throws SignatureException       on signature errors.
+     * @throws CertificateException     on encoding errors.
      */
     public abstract void verify(PublicKey key)
-        throws CertificateException, NoSuchAlgorithmException,
-        InvalidKeyException, NoSuchProviderException,
+        throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
         SignatureException;
 
     /**
@@ -171,19 +166,17 @@ public abstract class Certificate implements java.io.Serializable {
      * This method uses the signature verification engine
      * supplied by the specified provider.
      *
-     * @param key the PublicKey used to carry out the verification.
+     * @param key         the PublicKey used to carry out the verification.
      * @param sigProvider the name of the signature provider.
-     *
-     * @exception NoSuchAlgorithmException on unsupported signature
-     * algorithms.
-     * @exception InvalidKeyException on incorrect key.
-     * @exception NoSuchProviderException on incorrect provider.
-     * @exception SignatureException on signature errors.
-     * @exception CertificateException on encoding errors.
+     * @throws NoSuchAlgorithmException on unsupported signature
+     *                                  algorithms.
+     * @throws InvalidKeyException      on incorrect key.
+     * @throws NoSuchProviderException  on incorrect provider.
+     * @throws SignatureException       on signature errors.
+     * @throws CertificateException     on encoding errors.
      */
     public abstract void verify(PublicKey key, String sigProvider)
-        throws CertificateException, NoSuchAlgorithmException,
-        InvalidKeyException, NoSuchProviderException,
+        throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
         SignatureException;
 
     /**
@@ -202,6 +195,7 @@ public abstract class Certificate implements java.io.Serializable {
 
     /**
      * Alternate Certificate class for serialization.
+     *
      * @since 1.3
      */
     protected static class CertificateRep implements java.io.Serializable {
@@ -218,7 +212,6 @@ public abstract class Certificate implements java.io.Serializable {
          * <p>
          *
          * @param type the standard name of the Certificate type. <p>
-         *
          * @param data the Certificate data.
          */
         protected CertificateRep(String type, byte[] data) {
@@ -232,21 +225,16 @@ public abstract class Certificate implements java.io.Serializable {
          * <p>
          *
          * @return the resolved Certificate Object
-         *
          * @throws java.io.ObjectStreamException if the Certificate
-         *      could not be resolved
+         *                                       could not be resolved
          */
         protected Object readResolve() throws java.io.ObjectStreamException {
             try {
                 CertificateFactory cf = CertificateFactory.getInstance(type);
-                return cf.generateCertificate
-                        (new java.io.ByteArrayInputStream(data));
+                return cf.generateCertificate(new java.io.ByteArrayInputStream(data));
             } catch (CertificateException e) {
-                throw new java.io.NotSerializableException
-                                ("java.security.cert.Certificate: " +
-                                type +
-                                ": " +
-                                e.getMessage());
+                throw new java.io.NotSerializableException(
+                    "java.security.cert.Certificate: " + type + ": " + e.getMessage());
             }
         }
     }
@@ -255,20 +243,16 @@ public abstract class Certificate implements java.io.Serializable {
      * Replace the Certificate to be serialized.
      *
      * @return the alternate Certificate object to be serialized
-     *
      * @throws java.io.ObjectStreamException if a new object representing
-     * this Certificate could not be created
+     *                                       this Certificate could not be created
      * @since 1.3
      */
     protected Object writeReplace() throws java.io.ObjectStreamException {
         try {
             return new CertificateRep(type, getEncoded());
         } catch (CertificateException e) {
-            throw new java.io.NotSerializableException
-                                ("java.security.cert.Certificate: " +
-                                type +
-                                ": " +
-                                e.getMessage());
+            throw new java.io.NotSerializableException(
+                "java.security.cert.Certificate: " + type + ": " + e.getMessage());
         }
     }
 }

@@ -32,7 +32,7 @@ import java.sql.Clob;
  * for the SQL <code>NCLOB</code> type.
  * An SQL <code>NCLOB</code> is a built-in type
  * that stores a Character Large Object using the National Character Set
- *  as a column value in a row of  a database table.
+ * as a column value in a row of  a database table.
  * <P>The <code>NClob</code> interface extends the <code>Clob</code> interface
  * which provides provides methods for getting the
  * length of an SQL <code>NCLOB</code> value,

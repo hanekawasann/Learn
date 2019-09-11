@@ -41,10 +41,11 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * column or row (<code>gridwidth</code>, <code>gridheight</code>),
      * or that this component be placed next to the previously added
      * component (<code>gridx</code>, <code>gridy</code>).
-     * @see      java.awt.GridBagConstraints#gridwidth
-     * @see      java.awt.GridBagConstraints#gridheight
-     * @see      java.awt.GridBagConstraints#gridx
-     * @see      java.awt.GridBagConstraints#gridy
+     *
+     * @see java.awt.GridBagConstraints#gridwidth
+     * @see java.awt.GridBagConstraints#gridheight
+     * @see java.awt.GridBagConstraints#gridx
+     * @see java.awt.GridBagConstraints#gridy
      */
     public static final int RELATIVE = -1;
 
@@ -317,6 +318,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * The default value is <code>RELATIVE</code>.
      * <code>gridx</code> should be a non-negative value.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#gridy
@@ -333,6 +335,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * The default value is <code>RELATIVE</code>.
      * <code>gridy</code> should be a non-negative value.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#gridx
@@ -352,6 +355,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * <code>gridwidth</code> should be non-negative and the default
      * value is 1.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#gridheight
@@ -371,6 +375,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * <code>gridheight</code> should be a non-negative value and the
      * default value is 1.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#gridwidth
@@ -392,6 +397,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * The default value of this field is <code>0</code>.
      * <code>weightx</code> should be a non-negative value.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#weighty
@@ -413,6 +419,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <p>
      * The default value of this field is <code>0</code>.
      * <code>weighty</code> should be a non-negative value.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#weightx
@@ -445,6 +452,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <code>BELOW_BASELINE</code>, <code>BELOW_BASELINE_LEADING</code>,
      * and <code>BELOW_BASELINE_TRAILING</code>.
      * The default value is <code>CENTER</code>.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.ComponentOrientation
@@ -473,6 +481,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * </ul>
      * <p>
      * The default value is <code>NONE</code>.
+     *
      * @serial
      * @see #clone()
      */
@@ -484,6 +493,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * display area.
      * <p>
      * The default value is <code>new Insets(0, 0, 0, 0)</code>.
+     *
      * @serial
      * @see #clone()
      */
@@ -496,6 +506,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <code>ipadx</code> pixels.
      * <p>
      * The default value is <code>0</code>.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#ipady
@@ -509,6 +520,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * <code>ipady</code> pixels.
      * <p>
      * The default value is 0.
+     *
      * @serial
      * @see #clone()
      * @see java.awt.GridBagConstraints#ipadx
@@ -517,27 +529,32 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
 
     /**
      * Temporary place holder for the x coordinate.
+     *
      * @serial
      */
     int tempX;
     /**
      * Temporary place holder for the y coordinate.
+     *
      * @serial
      */
     int tempY;
     /**
      * Temporary place holder for the Width of the component.
+     *
      * @serial
      */
     int tempWidth;
     /**
      * Temporary place holder for the Height of the component.
+     *
      * @serial
      */
     int tempHeight;
     /**
      * The minimum width of the component.  It is used to calculate
      * <code>ipady</code>, where the default will be 0.
+     *
      * @serial
      * @see #ipady
      */
@@ -545,6 +562,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
     /**
      * The minimum height of the component. It is used to calculate
      * <code>ipadx</code>, where the default will be 0.
+     *
      * @serial
      * @see #ipadx
      */
@@ -574,7 +592,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * Creates a <code>GridBagConstraint</code> object with
      * all of its fields set to their default value.
      */
-    public GridBagConstraints () {
+    public GridBagConstraints() {
         gridx = RELATIVE;
         gridy = RELATIVE;
         gridwidth = 1;
@@ -593,23 +611,22 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
     /**
      * Creates a <code>GridBagConstraints</code> object with
      * all of its fields set to the passed-in arguments.
-     *
+     * <p>
      * Note: Because the use of this constructor hinders readability
      * of source code, this constructor should only be used by
      * automatic source code generation tools.
      *
-     * @param gridx     The initial gridx value.
-     * @param gridy     The initial gridy value.
-     * @param gridwidth The initial gridwidth value.
-     * @param gridheight        The initial gridheight value.
-     * @param weightx   The initial weightx value.
-     * @param weighty   The initial weighty value.
-     * @param anchor    The initial anchor value.
-     * @param fill      The initial fill value.
-     * @param insets    The initial insets value.
-     * @param ipadx     The initial ipadx value.
-     * @param ipady     The initial ipady value.
-     *
+     * @param gridx      The initial gridx value.
+     * @param gridy      The initial gridy value.
+     * @param gridwidth  The initial gridwidth value.
+     * @param gridheight The initial gridheight value.
+     * @param weightx    The initial weightx value.
+     * @param weighty    The initial weighty value.
+     * @param anchor     The initial anchor value.
+     * @param fill       The initial fill value.
+     * @param insets     The initial insets value.
+     * @param ipadx      The initial ipadx value.
+     * @param ipady      The initial ipady value.
      * @see java.awt.GridBagConstraints#gridx
      * @see java.awt.GridBagConstraints#gridy
      * @see java.awt.GridBagConstraints#gridwidth
@@ -621,14 +638,10 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * @see java.awt.GridBagConstraints#insets
      * @see java.awt.GridBagConstraints#ipadx
      * @see java.awt.GridBagConstraints#ipady
-     *
      * @since 1.2
      */
-    public GridBagConstraints(int gridx, int gridy,
-                              int gridwidth, int gridheight,
-                              double weightx, double weighty,
-                              int anchor, int fill,
-                              Insets insets, int ipadx, int ipady) {
+    public GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty,
+        int anchor, int fill, Insets insets, int ipadx, int ipady) {
         this.gridx = gridx;
         this.gridy = gridy;
         this.gridwidth = gridwidth;
@@ -637,19 +650,20 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
         this.ipadx = ipadx;
         this.ipady = ipady;
         this.insets = insets;
-        this.anchor  = anchor;
+        this.anchor = anchor;
         this.weightx = weightx;
         this.weighty = weighty;
     }
 
     /**
      * Creates a copy of this grid bag constraint.
-     * @return     a copy of this grid bag constraint
+     *
+     * @return a copy of this grid bag constraint
      */
-    public Object clone () {
+    public Object clone() {
         try {
-            GridBagConstraints c = (GridBagConstraints)super.clone();
-            c.insets = (Insets)insets.clone();
+            GridBagConstraints c = (GridBagConstraints) super.clone();
+            c.insets = (Insets) insets.clone();
             return c;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable

@@ -67,8 +67,8 @@ package java.text;
  * formatted string use the <code>Format</code> method
  * <code>formatToCharacterIterator</code>.
  *
- * @author      Mark Davis
- * @see         java.text.Format
+ * @author Mark Davis
+ * @see java.text.Format
  */
 public class FieldPosition {
 
@@ -135,7 +135,7 @@ public class FieldPosition {
      * constant, <code>fieldID</code> should be -1.
      *
      * @param attribute Format.Field constant identifying a field
-     * @param fieldID integer constantce identifying a field
+     * @param fieldID   integer constantce identifying a field
      * @since 1.4
      */
     public FieldPosition(Format.Field attribute, int fieldID) {
@@ -179,6 +179,7 @@ public class FieldPosition {
 
     /**
      * Sets the begin index.  For use by subclasses of Format.
+     *
      * @since 1.2
      */
     public void setBeginIndex(int bi) {
@@ -187,6 +188,7 @@ public class FieldPosition {
 
     /**
      * Sets the end index.  For use by subclasses of Format.
+     *
      * @since 1.2
      */
     public void setEndIndex(int ei) {
@@ -206,27 +208,23 @@ public class FieldPosition {
     /**
      * Overrides equals
      */
-    public boolean equals(Object obj)
-    {
-        if (obj == null) return false;
-        if (!(obj instanceof FieldPosition))
-            return false;
+    public boolean equals(Object obj) {
+        if (obj == null) { return false; }
+        if (!(obj instanceof FieldPosition)) { return false; }
         FieldPosition other = (FieldPosition) obj;
         if (attribute == null) {
             if (other.attribute != null) {
                 return false;
             }
-        }
-        else if (!attribute.equals(other.attribute)) {
+        } else if (!attribute.equals(other.attribute)) {
             return false;
         }
-        return (beginIndex == other.beginIndex
-            && endIndex == other.endIndex
-            && field == other.field);
+        return (beginIndex == other.beginIndex && endIndex == other.endIndex && field == other.field);
     }
 
     /**
      * Returns a hash code for this FieldPosition.
+     *
      * @return a hash code value for this object
      */
     public int hashCode() {
@@ -235,12 +233,11 @@ public class FieldPosition {
 
     /**
      * Return a string representation of this FieldPosition.
-     * @return  a string representation of this object
+     *
+     * @return a string representation of this object
      */
     public String toString() {
-        return getClass().getName() +
-            "[field=" + field + ",attribute=" + attribute +
-            ",beginIndex=" + beginIndex +
+        return getClass().getName() + "[field=" + field + ",attribute=" + attribute + ",beginIndex=" + beginIndex +
             ",endIndex=" + endIndex + ']';
     }
 
@@ -282,8 +279,7 @@ public class FieldPosition {
          */
         private boolean encounteredField;
 
-        public void formatted(Format.Field attr, Object value, int start,
-                              int end, StringBuffer buffer) {
+        public void formatted(Format.Field attr, Object value, int start, int end, StringBuffer buffer) {
             if (!encounteredField && matchesField(attr)) {
                 setBeginIndex(start);
                 setEndIndex(end);
@@ -291,8 +287,7 @@ public class FieldPosition {
             }
         }
 
-        public void formatted(int fieldID, Format.Field attr, Object value,
-                              int start, int end, StringBuffer buffer) {
+        public void formatted(int fieldID, Format.Field attr, Object value, int start, int end, StringBuffer buffer) {
             if (!encounteredField && matchesField(attr, fieldID)) {
                 setBeginIndex(start);
                 setEndIndex(end);

@@ -102,6 +102,7 @@ import java.awt.geom.Rectangle2D;
  * int isStandard = metrics.isStandard();
  * float glyphAdvance = metrics.getAdvance();
  * </pre></blockquote>
+ *
  * @see java.awt.Font
  * @see GlyphVector
  */
@@ -172,8 +173,9 @@ public final class GlyphMetrics {
 
     /**
      * Constructs a <code>GlyphMetrics</code> object.
-     * @param advance the advance width of the glyph
-     * @param bounds the black box bounds of the glyph
+     *
+     * @param advance   the advance width of the glyph
+     * @param bounds    the black box bounds of the glyph
      * @param glyphType the type of the glyph
      */
     public GlyphMetrics(float advance, Rectangle2D bounds, byte glyphType) {
@@ -187,16 +189,16 @@ public final class GlyphMetrics {
 
     /**
      * Constructs a <code>GlyphMetrics</code> object.
+     *
      * @param horizontal if true, metrics are for a horizontal baseline,
-     *   otherwise they are for a vertical baseline
-     * @param advanceX the X-component of the glyph's advance
-     * @param advanceY the Y-component of the glyph's advance
-     * @param bounds the visual bounds of the glyph
-     * @param glyphType the type of the glyph
+     *                   otherwise they are for a vertical baseline
+     * @param advanceX   the X-component of the glyph's advance
+     * @param advanceY   the Y-component of the glyph's advance
+     * @param bounds     the visual bounds of the glyph
+     * @param glyphType  the type of the glyph
      * @since 1.4
      */
-    public GlyphMetrics(boolean horizontal, float advanceX, float advanceY,
-                        Rectangle2D bounds, byte glyphType) {
+    public GlyphMetrics(boolean horizontal, float advanceX, float advanceY, Rectangle2D bounds, byte glyphType) {
 
         this.horizontal = horizontal;
         this.advanceX = advanceX;
@@ -209,6 +211,7 @@ public final class GlyphMetrics {
     /**
      * Returns the advance of the glyph along the baseline (either
      * horizontal or vertical).
+     *
      * @return the advance of the glyph
      */
     public float getAdvance() {
@@ -217,6 +220,7 @@ public final class GlyphMetrics {
 
     /**
      * Returns the x-component of the advance of the glyph.
+     *
      * @return the x-component of the advance of the glyph
      * @since 1.4
      */
@@ -226,6 +230,7 @@ public final class GlyphMetrics {
 
     /**
      * Returns the y-component of the advance of the glyph.
+     *
      * @return the y-component of the advance of the glyph
      * @since 1.4
      */
@@ -237,6 +242,7 @@ public final class GlyphMetrics {
      * Returns the bounds of the glyph. This is the bounding box of the glyph outline.
      * Because of rasterization and pixel alignment effects, it does not necessarily
      * enclose the pixels that are affected when rendering the glyph.
+     *
      * @return a {@link Rectangle2D} that is the bounds of the glyph.
      */
     public Rectangle2D getBounds2D() {
@@ -249,6 +255,7 @@ public final class GlyphMetrics {
      * This is the distance from 0,&nbsp;0 to the left (top) of the glyph
      * bounds.  If the bounds of the glyph is to the left of (above) the
      * origin, the LSB is negative.
+     *
      * @return the left side bearing of the glyph.
      */
     public float getLSB() {
@@ -261,16 +268,16 @@ public final class GlyphMetrics {
      * This is the distance from the right (bottom) of the glyph bounds to
      * the advance. If the bounds of the glyph is to the right of (below)
      * the advance, the RSB is negative.
+     *
      * @return the right side bearing of the glyph.
      */
     public float getRSB() {
-        return horizontal ?
-            advanceX - bounds.x - bounds.width :
-            advanceY - bounds.y - bounds.height;
+        return horizontal ? advanceX - bounds.x - bounds.width : advanceY - bounds.y - bounds.height;
     }
 
     /**
      * Returns the raw glyph type code.
+     *
      * @return the raw glyph type code.
      */
     public int getType() {
@@ -279,8 +286,9 @@ public final class GlyphMetrics {
 
     /**
      * Returns <code>true</code> if this is a standard glyph.
+     *
      * @return <code>true</code> if this is a standard glyph;
-     *          <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean isStandard() {
         return (glyphType & 0x3) == STANDARD;
@@ -288,8 +296,9 @@ public final class GlyphMetrics {
 
     /**
      * Returns <code>true</code> if this is a ligature glyph.
+     *
      * @return <code>true</code> if this is a ligature glyph;
-     *          <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean isLigature() {
         return (glyphType & 0x3) == LIGATURE;
@@ -297,8 +306,9 @@ public final class GlyphMetrics {
 
     /**
      * Returns <code>true</code> if this is a combining glyph.
+     *
      * @return <code>true</code> if this is a combining glyph;
-     *          <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean isCombining() {
         return (glyphType & 0x3) == COMBINING;
@@ -306,8 +316,9 @@ public final class GlyphMetrics {
 
     /**
      * Returns <code>true</code> if this is a component glyph.
+     *
      * @return <code>true</code> if this is a component glyph;
-     *          <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean isComponent() {
         return (glyphType & 0x3) == COMPONENT;
@@ -315,8 +326,9 @@ public final class GlyphMetrics {
 
     /**
      * Returns <code>true</code> if this is a whitespace glyph.
+     *
      * @return <code>true</code> if this is a whitespace glyph;
-     *          <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean isWhitespace() {
         return (glyphType & 0x4) == WHITESPACE;

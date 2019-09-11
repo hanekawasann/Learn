@@ -26,11 +26,14 @@
 package java.lang.invoke;
 
 import sun.invoke.util.Wrapper;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
 import sun.invoke.util.BytecodeDescriptor;
+
 import static java.lang.invoke.MethodHandleStatics.*;
 
 /**
@@ -78,14 +81,14 @@ import static java.lang.invoke.MethodHandleStatics.*;
  * all classes named in the descriptor must be accessible, and will be loaded.
  * (But the classes need not be initialized, as is the case with a {@code CONSTANT_Class}.)
  * This loading may occur at any time before the {@code MethodType} object is first derived.
+ *
  * @author John Rose, JSR 292 EG
  */
-public final
-class MethodType implements java.io.Serializable {
+public final class MethodType implements java.io.Serializable {
     private static final long serialVersionUID = 292L;  // {rtype, {ptype...}}
 
     // The rtype and ptypes fields define the structural identity of the method type:
-    private final Class<?>   rtype;
+    private final Class<?> rtype;
     private final Class<?>[] ptypes;
 
     // The remaining fields are caches of various sorts:
@@ -104,19 +107,22 @@ class MethodType implements java.io.Serializable {
     }
 
     /*trusted*/ MethodTypeForm form() { return form; }
+
     /*trusted*/ Class<?> rtype() { return rtype; }
+
     /*trusted*/ Class<?>[] ptypes() { return ptypes; }
 
     private static void checkRtype(Class<?> rtype) {
         rtype.equals(rtype);  // null check
     }
+
     private static int checkPtype(Class<?> ptype) {
         ptype.getClass();  //NPE
-        if (ptype == void.class)
-            throw newIllegalArgumentException("parameter type cannot be void");
-        if (ptype == double.class || ptype == long.class)  return 1;
+        if (ptype == void.class) { throw newIllegalArgumentException("parameter type cannot be void"); }
+        if (ptype == double.class || ptype == long.class) { return 1; }
         return 0;
     }
+
     /** Return number of extra slots (count of long/double args). */
     private static int checkPtypes(Class<?>[] ptypes) {
         int slots = 0;
@@ -126,42 +132,42 @@ class MethodType implements java.io.Serializable {
         checkSlotCount(ptypes.length + slots);
         return slots;
     }
+
     private static void checkSlotCount(int count) {
-        if ((count & 0xFF) != count)
-            throw newIllegalArgumentException("bad parameter count "+count);
+        if ((count & 0xFF) != count) { throw newIllegalArgumentException("bad parameter count " + count); }
     }
+
     private static IndexOutOfBoundsException newIndexOutOfBoundsException(Object num) {
-        if (num instanceof Integer)  num = "bad index: "+num;
+        if (num instanceof Integer) { num = "bad index: " + num; }
         return new IndexOutOfBoundsException(num.toString());
     }
 
-    static final HashMap<MethodType,MethodType> internTable
-            = new HashMap<MethodType, MethodType>();
+    static final HashMap<MethodType, MethodType> internTable = new HashMap<MethodType, MethodType>();
 
     static final Class<?>[] NO_PTYPES = {};
 
     /**
      * Finds or creates an instance of the given method type.
+     *
      * @param rtype  the return type
      * @param ptypes the parameter types
      * @return a method type with the given components
-     * @throws NullPointerException if {@code rtype} or {@code ptypes} or any element of {@code ptypes} is null
+     * @throws NullPointerException     if {@code rtype} or {@code ptypes} or any element of {@code ptypes} is null
      * @throws IllegalArgumentException if any element of {@code ptypes} is {@code void.class}
      */
-    public static
-    MethodType methodType(Class<?> rtype, Class<?>[] ptypes) {
+    public static MethodType methodType(Class<?> rtype, Class<?>[] ptypes) {
         return makeImpl(rtype, ptypes, false);
     }
 
     /**
      * Finds or creates a method type with the given components.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
+     *
      * @return a method type with the given components
-     * @throws NullPointerException if {@code rtype} or {@code ptypes} or any element of {@code ptypes} is null
+     * @throws NullPointerException     if {@code rtype} or {@code ptypes} or any element of {@code ptypes} is null
      * @throws IllegalArgumentException if any element of {@code ptypes} is {@code void.class}
      */
-    public static
-    MethodType methodType(Class<?> rtype, List<Class<?>> ptypes) {
+    public static MethodType methodType(Class<?> rtype, List<Class<?>> ptypes) {
         boolean notrust = false;  // random List impl. could return evil ptypes array
         return makeImpl(rtype, listToArray(ptypes), notrust);
     }
@@ -176,13 +182,13 @@ class MethodType implements java.io.Serializable {
      * Finds or creates a method type with the given components.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * The leading parameter type is prepended to the remaining array.
+     *
      * @return a method type with the given components
-     * @throws NullPointerException if {@code rtype} or {@code ptype0} or {@code ptypes} or any element of {@code ptypes} is null
+     * @throws NullPointerException     if {@code rtype} or {@code ptype0} or {@code ptypes} or any element of {@code ptypes} is null
      * @throws IllegalArgumentException if {@code ptype0} or {@code ptypes} or any element of {@code ptypes} is {@code void.class}
      */
-    public static
-    MethodType methodType(Class<?> rtype, Class<?> ptype0, Class<?>... ptypes) {
-        Class<?>[] ptypes1 = new Class<?>[1+ptypes.length];
+    public static MethodType methodType(Class<?> rtype, Class<?> ptype0, Class<?>... ptypes) {
+        Class<?>[] ptypes1 = new Class<?>[1 + ptypes.length];
         ptypes1[0] = ptype0;
         System.arraycopy(ptypes, 0, ptypes1, 1, ptypes.length);
         return makeImpl(rtype, ptypes1, true);
@@ -192,11 +198,11 @@ class MethodType implements java.io.Serializable {
      * Finds or creates a method type with the given components.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * The resulting method has no parameter types.
+     *
      * @return a method type with the given return value
      * @throws NullPointerException if {@code rtype} is null
      */
-    public static
-    MethodType methodType(Class<?> rtype) {
+    public static MethodType methodType(Class<?> rtype) {
         return makeImpl(rtype, NO_PTYPES, true);
     }
 
@@ -204,13 +210,13 @@ class MethodType implements java.io.Serializable {
      * Finds or creates a method type with the given components.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * The resulting method has the single given parameter type.
+     *
      * @return a method type with the given return value and parameter type
-     * @throws NullPointerException if {@code rtype} or {@code ptype0} is null
+     * @throws NullPointerException     if {@code rtype} or {@code ptype0} is null
      * @throws IllegalArgumentException if {@code ptype0} is {@code void.class}
      */
-    public static
-    MethodType methodType(Class<?> rtype, Class<?> ptype0) {
-        return makeImpl(rtype, new Class<?>[]{ ptype0 }, true);
+    public static MethodType methodType(Class<?> rtype, Class<?> ptype0) {
+        return makeImpl(rtype, new Class<?>[] { ptype0 }, true);
     }
 
     /**
@@ -218,35 +224,36 @@ class MethodType implements java.io.Serializable {
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * The resulting method has the same parameter types as {@code ptypes},
      * and the specified return type.
+     *
      * @throws NullPointerException if {@code rtype} or {@code ptypes} is null
      */
-    public static
-    MethodType methodType(Class<?> rtype, MethodType ptypes) {
+    public static MethodType methodType(Class<?> rtype, MethodType ptypes) {
         return makeImpl(rtype, ptypes.ptypes, true);
     }
 
     /**
      * Sole factory method to find or create an interned method type.
-     * @param rtype desired return type
-     * @param ptypes desired parameter types
+     *
+     * @param rtype   desired return type
+     * @param ptypes  desired parameter types
      * @param trusted whether the ptypes can be used without cloning
      * @return the unique method type of the desired structure
      */
-    /*trusted*/ static
-    MethodType makeImpl(Class<?> rtype, Class<?>[] ptypes, boolean trusted) {
+    /*trusted*/
+    static MethodType makeImpl(Class<?> rtype, Class<?>[] ptypes, boolean trusted) {
         if (ptypes.length == 0) {
-            ptypes = NO_PTYPES; trusted = true;
+            ptypes = NO_PTYPES;
+            trusted = true;
         }
         MethodType mt1 = new MethodType(rtype, ptypes);
         MethodType mt0;
         synchronized (internTable) {
             mt0 = internTable.get(mt1);
-            if (mt0 != null)
-                return mt0;
+            if (mt0 != null) { return mt0; }
         }
         if (!trusted)
-            // defensively copy the array passed in by the user
-            mt1 = new MethodType(rtype, ptypes.clone());
+        // defensively copy the array passed in by the user
+        { mt1 = new MethodType(rtype, ptypes.clone()); }
         // promote the object to the Real Thing, and reprobe
         MethodTypeForm form = MethodTypeForm.findForm(mt1);
         mt1.form = form;
@@ -256,8 +263,7 @@ class MethodType implements java.io.Serializable {
         }
         synchronized (internTable) {
             mt0 = internTable.get(mt1);
-            if (mt0 != null)
-                return mt0;
+            if (mt0 != null) { return mt0; }
             internTable.put(mt1, mt1);
         }
         return mt1;
@@ -270,25 +276,25 @@ class MethodType implements java.io.Serializable {
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * All parameters and the return type will be {@code Object},
      * except the final array parameter if any, which will be {@code Object[]}.
+     *
      * @param objectArgCount number of parameters (excluding the final array parameter if any)
-     * @param finalArray whether there will be a trailing array parameter, of type {@code Object[]}
+     * @param finalArray     whether there will be a trailing array parameter, of type {@code Object[]}
      * @return a generally applicable method type, for all calls of the given fixed argument count and a collected array of further arguments
      * @throws IllegalArgumentException if {@code objectArgCount} is negative or greater than 255 (or 254, if {@code finalArray} is true)
      * @see #genericMethodType(int)
      */
-    public static
-    MethodType genericMethodType(int objectArgCount, boolean finalArray) {
+    public static MethodType genericMethodType(int objectArgCount, boolean finalArray) {
         MethodType mt;
         checkSlotCount(objectArgCount);
         int ivarargs = (!finalArray ? 0 : 1);
-        int ootIndex = objectArgCount*2 + ivarargs;
+        int ootIndex = objectArgCount * 2 + ivarargs;
         if (ootIndex < objectOnlyTypes.length) {
             mt = objectOnlyTypes[ootIndex];
-            if (mt != null)  return mt;
+            if (mt != null) { return mt; }
         }
         Class<?>[] ptypes = new Class<?>[objectArgCount + ivarargs];
         Arrays.fill(ptypes, Object.class);
-        if (ivarargs != 0)  ptypes[objectArgCount] = Object[].class;
+        if (ivarargs != 0) { ptypes[objectArgCount] = Object[].class; }
         mt = makeImpl(Object.class, ptypes, true);
         if (ootIndex < objectOnlyTypes.length) {
             objectOnlyTypes[ootIndex] = mt;     // cache it here also!
@@ -300,28 +306,29 @@ class MethodType implements java.io.Serializable {
      * Finds or creates a method type whose components are all {@code Object}.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * All parameters and the return type will be Object.
+     *
      * @param objectArgCount number of parameters
      * @return a generally applicable method type, for all calls of the given argument count
      * @throws IllegalArgumentException if {@code objectArgCount} is negative or greater than 255
      * @see #genericMethodType(int, boolean)
      */
-    public static
-    MethodType genericMethodType(int objectArgCount) {
+    public static MethodType genericMethodType(int objectArgCount) {
         return genericMethodType(objectArgCount, false);
     }
 
     /**
      * Finds or creates a method type with a single different parameter type.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
+     *
      * @param num    the index (zero-based) of the parameter type to change
      * @param nptype a new parameter type to replace the old one with
      * @return the same type, except with the selected parameter changed
      * @throws IndexOutOfBoundsException if {@code num} is not a valid index into {@code parameterArray()}
-     * @throws IllegalArgumentException if {@code nptype} is {@code void.class}
-     * @throws NullPointerException if {@code nptype} is null
+     * @throws IllegalArgumentException  if {@code nptype} is {@code void.class}
+     * @throws NullPointerException      if {@code nptype} is null
      */
     public MethodType changeParameterType(int num, Class<?> nptype) {
-        if (parameterType(num) == nptype)  return this;
+        if (parameterType(num) == nptype) { return this; }
         checkPtype(nptype);
         Class<?>[] nptypes = ptypes.clone();
         nptypes[num] = nptype;
@@ -331,24 +338,24 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with additional parameter types.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
-     * @param num    the position (zero-based) of the inserted parameter type(s)
+     *
+     * @param num            the position (zero-based) of the inserted parameter type(s)
      * @param ptypesToInsert zero or more new parameter types to insert into the parameter list
      * @return the same type, except with the selected parameter(s) inserted
      * @throws IndexOutOfBoundsException if {@code num} is negative or greater than {@code parameterCount()}
-     * @throws IllegalArgumentException if any element of {@code ptypesToInsert} is {@code void.class}
-     *                                  or if the resulting method type would have more than 255 parameter slots
-     * @throws NullPointerException if {@code ptypesToInsert} or any of its elements is null
+     * @throws IllegalArgumentException  if any element of {@code ptypesToInsert} is {@code void.class}
+     *                                   or if the resulting method type would have more than 255 parameter slots
+     * @throws NullPointerException      if {@code ptypesToInsert} or any of its elements is null
      */
     public MethodType insertParameterTypes(int num, Class<?>... ptypesToInsert) {
         int len = ptypes.length;
-        if (num < 0 || num > len)
-            throw newIndexOutOfBoundsException(num);
+        if (num < 0 || num > len) { throw newIndexOutOfBoundsException(num); }
         int ins = checkPtypes(ptypesToInsert);
         checkSlotCount(parameterSlotCount() + ptypesToInsert.length + ins);
         int ilen = ptypesToInsert.length;
-        if (ilen == 0)  return this;
-        Class<?>[] nptypes = Arrays.copyOfRange(ptypes, 0, len+ilen);
-        System.arraycopy(nptypes, num, nptypes, num+ilen, len-num);
+        if (ilen == 0) { return this; }
+        Class<?>[] nptypes = Arrays.copyOfRange(ptypes, 0, len + ilen);
+        System.arraycopy(nptypes, num, nptypes, num + ilen, len - num);
         System.arraycopy(ptypesToInsert, 0, nptypes, num, ilen);
         return makeImpl(rtype, nptypes, true);
     }
@@ -356,11 +363,12 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with additional parameter types.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
+     *
      * @param ptypesToInsert zero or more new parameter types to insert after the end of the parameter list
      * @return the same type, except with the selected parameter(s) appended
      * @throws IllegalArgumentException if any element of {@code ptypesToInsert} is {@code void.class}
      *                                  or if the resulting method type would have more than 255 parameter slots
-     * @throws NullPointerException if {@code ptypesToInsert} or any of its elements is null
+     * @throws NullPointerException     if {@code ptypesToInsert} or any of its elements is null
      */
     public MethodType appendParameterTypes(Class<?>... ptypesToInsert) {
         return insertParameterTypes(parameterCount(), ptypesToInsert);
@@ -369,13 +377,14 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with additional parameter types.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
-     * @param num    the position (zero-based) of the inserted parameter type(s)
+     *
+     * @param num            the position (zero-based) of the inserted parameter type(s)
      * @param ptypesToInsert zero or more new parameter types to insert into the parameter list
      * @return the same type, except with the selected parameter(s) inserted
      * @throws IndexOutOfBoundsException if {@code num} is negative or greater than {@code parameterCount()}
-     * @throws IllegalArgumentException if any element of {@code ptypesToInsert} is {@code void.class}
-     *                                  or if the resulting method type would have more than 255 parameter slots
-     * @throws NullPointerException if {@code ptypesToInsert} or any of its elements is null
+     * @throws IllegalArgumentException  if any element of {@code ptypesToInsert} is {@code void.class}
+     *                                   or if the resulting method type would have more than 255 parameter slots
+     * @throws NullPointerException      if {@code ptypesToInsert} or any of its elements is null
      */
     public MethodType insertParameterTypes(int num, List<Class<?>> ptypesToInsert) {
         return insertParameterTypes(num, listToArray(ptypesToInsert));
@@ -384,11 +393,12 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with additional parameter types.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
+     *
      * @param ptypesToInsert zero or more new parameter types to insert after the end of the parameter list
      * @return the same type, except with the selected parameter(s) appended
      * @throws IllegalArgumentException if any element of {@code ptypesToInsert} is {@code void.class}
      *                                  or if the resulting method type would have more than 255 parameter slots
-     * @throws NullPointerException if {@code ptypesToInsert} or any of its elements is null
+     * @throws NullPointerException     if {@code ptypesToInsert} or any of its elements is null
      */
     public MethodType appendParameterTypes(List<Class<?>> ptypesToInsert) {
         return insertParameterTypes(parameterCount(), ptypesToInsert);
@@ -397,18 +407,20 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with some parameter types omitted.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
-     * @param start  the index (zero-based) of the first parameter type to remove
-     * @param end    the index (greater than {@code start}) of the first parameter type after not to remove
+     *
+     * @param start the index (zero-based) of the first parameter type to remove
+     * @param end   the index (greater than {@code start}) of the first parameter type after not to remove
      * @return the same type, except with the selected parameter(s) removed
      * @throws IndexOutOfBoundsException if {@code start} is negative or greater than {@code parameterCount()}
-     *                                  or if {@code end} is negative or greater than {@code parameterCount()}
-     *                                  or if {@code start} is greater than {@code end}
+     *                                   or if {@code end} is negative or greater than {@code parameterCount()}
+     *                                   or if {@code start} is greater than {@code end}
      */
     public MethodType dropParameterTypes(int start, int end) {
         int len = ptypes.length;
-        if (!(0 <= start && start <= end && end <= len))
-            throw newIndexOutOfBoundsException("start="+start+" end="+end);
-        if (start == end)  return this;
+        if (!(0 <= start && start <= end && end <= len)) {
+            throw newIndexOutOfBoundsException("start=" + start + " end=" + end);
+        }
+        if (start == end) { return this; }
         Class<?>[] nptypes;
         if (start == 0) {
             if (end == len) {
@@ -434,18 +446,20 @@ class MethodType implements java.io.Serializable {
     /**
      * Finds or creates a method type with a different return type.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
+     *
      * @param nrtype a return parameter type to replace the old one with
      * @return the same type, except with the return type change
      * @throws NullPointerException if {@code nrtype} is null
      */
     public MethodType changeReturnType(Class<?> nrtype) {
-        if (returnType() == nrtype)  return this;
+        if (returnType() == nrtype) { return this; }
         return makeImpl(nrtype, ptypes, true);
     }
 
     /**
      * Reports if this type contains a primitive argument or return value.
      * The return type {@code void} counts as a primitive.
+     *
      * @return true if any of the types are primitives
      */
     public boolean hasPrimitives() {
@@ -457,6 +471,7 @@ class MethodType implements java.io.Serializable {
      * Wrappers are types which box primitive values, such as {@link Integer}.
      * The reference type {@code java.lang.Void} counts as a wrapper,
      * if it occurs as a return type.
+     *
      * @return true if any of the types are wrappers
      */
     public boolean hasWrappers() {
@@ -467,6 +482,7 @@ class MethodType implements java.io.Serializable {
      * Erases all reference types to {@code Object}.
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * All primitive types (including {@code void}) will remain unchanged.
+     *
      * @return a version of the original type with all reference types replaced
      */
     public MethodType erase() {
@@ -478,6 +494,7 @@ class MethodType implements java.io.Serializable {
      * Convenience method for {@link #genericMethodType(int) genericMethodType}.
      * The expression {@code type.wrap().erase()} produces the same value
      * as {@code type.generic()}.
+     *
      * @return a version of the original type with all types replaced
      */
     public MethodType generic() {
@@ -491,6 +508,7 @@ class MethodType implements java.io.Serializable {
      * A {@code void} return type is changed to the type {@code java.lang.Void}.
      * The expression {@code type.wrap().erase()} produces the same value
      * as {@code type.generic()}.
+     *
      * @return a version of the original type with all primitive types replaced
      */
     public MethodType wrap() {
@@ -502,6 +520,7 @@ class MethodType implements java.io.Serializable {
      * Convenience method for {@link #methodType(java.lang.Class, java.lang.Class[]) methodType}.
      * All primitive types (including {@code void}) will remain unchanged.
      * A return type of {@code java.lang.Void} is changed to {@code void}.
+     *
      * @return a version of the original type with all wrapper types replaced
      */
     public MethodType unwrap() {
@@ -510,25 +529,26 @@ class MethodType implements java.io.Serializable {
     }
 
     private static MethodType wrapWithPrims(MethodType pt) {
-        assert(pt.hasPrimitives());
+        assert (pt.hasPrimitives());
         MethodType wt = pt.wrapAlt;
         if (wt == null) {
             // fill in lazily
             wt = MethodTypeForm.canonicalize(pt, MethodTypeForm.WRAP, MethodTypeForm.WRAP);
-            assert(wt != null);
+            assert (wt != null);
             pt.wrapAlt = wt;
         }
         return wt;
     }
 
     private static MethodType unwrapWithNoPrims(MethodType wt) {
-        assert(!wt.hasPrimitives());
+        assert (!wt.hasPrimitives());
         MethodType uwt = wt.wrapAlt;
         if (uwt == null) {
             // fill in lazily
             uwt = MethodTypeForm.canonicalize(wt, MethodTypeForm.UNWRAP, MethodTypeForm.UNWRAP);
-            if (uwt == null)
+            if (uwt == null) {
                 uwt = wt;    // type has no wrappers or prims at all
+            }
             wt.wrapAlt = uwt;
         }
         return uwt;
@@ -536,6 +556,7 @@ class MethodType implements java.io.Serializable {
 
     /**
      * Returns the parameter type at the specified index, within this method type.
+     *
      * @param num the index (zero-based) of the desired parameter type
      * @return the selected parameter type
      * @throws IndexOutOfBoundsException if {@code num} is not a valid index into {@code parameterArray()}
@@ -543,15 +564,19 @@ class MethodType implements java.io.Serializable {
     public Class<?> parameterType(int num) {
         return ptypes[num];
     }
+
     /**
      * Returns the number of parameter types in this method type.
+     *
      * @return the number of parameter types
      */
     public int parameterCount() {
         return ptypes.length;
     }
+
     /**
      * Returns the return type of this method type.
+     *
      * @return the return type
      */
     public Class<?> returnType() {
@@ -561,6 +586,7 @@ class MethodType implements java.io.Serializable {
     /**
      * Presents the parameter types as a list (a convenience method).
      * The list will be immutable.
+     *
      * @return the parameter types (as an immutable list)
      */
     public List<Class<?>> parameterList() {
@@ -570,6 +596,7 @@ class MethodType implements java.io.Serializable {
     /**
      * Presents the parameter types as an array (a convenience method).
      * Changes to the array will not result in changes to the type.
+     *
      * @return the parameter types (as a fresh copy if necessary)
      */
     public Class<?>[] parameterArray() {
@@ -580,17 +607,17 @@ class MethodType implements java.io.Serializable {
      * Compares the specified object with this type for equality.
      * That is, it returns <tt>true</tt> if and only if the specified object
      * is also a method type with exactly the same parameters and return type.
+     *
      * @param x object to compare
      * @see Object#equals(Object)
      */
     @Override
     public boolean equals(Object x) {
-        return this == x || x instanceof MethodType && equals((MethodType)x);
+        return this == x || x instanceof MethodType && equals((MethodType) x);
     }
 
     private boolean equals(MethodType that) {
-        return this.rtype == that.rtype
-            && Arrays.equals(this.ptypes, that.ptypes);
+        return this.rtype == that.rtype && Arrays.equals(this.ptypes, that.ptypes);
     }
 
     /**
@@ -598,6 +625,7 @@ class MethodType implements java.io.Serializable {
      * It is defined to be the same as the hashcode of a List
      * whose elements are the return type followed by the
      * parameter types.
+     *
      * @return the hash code value for this method type
      * @see Object#hashCode()
      * @see #equals(Object)
@@ -605,10 +633,9 @@ class MethodType implements java.io.Serializable {
      */
     @Override
     public int hashCode() {
-      int hashCode = 31 + rtype.hashCode();
-      for (Class<?> ptype : ptypes)
-          hashCode = 31*hashCode + ptype.hashCode();
-      return hashCode;
+        int hashCode = 31 + rtype.hashCode();
+        for (Class<?> ptype : ptypes) { hashCode = 31 * hashCode + ptype.hashCode(); }
+        return hashCode;
     }
 
     /**
@@ -626,7 +653,7 @@ class MethodType implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("(");
         for (int i = 0; i < ptypes.length; i++) {
-            if (i > 0)  sb.append(",");
+            if (i > 0) { sb.append(","); }
             sb.append(ptypes[i].getSimpleName());
         }
         sb.append(")");
@@ -637,26 +664,26 @@ class MethodType implements java.io.Serializable {
 
     /*non-public*/
     boolean isConvertibleTo(MethodType newType) {
-        if (!canConvert(returnType(), newType.returnType()))
-            return false;
+        if (!canConvert(returnType(), newType.returnType())) { return false; }
         int argc = parameterCount();
-        if (argc != newType.parameterCount())
-            return false;
+        if (argc != newType.parameterCount()) { return false; }
         for (int i = 0; i < argc; i++) {
-            if (!canConvert(newType.parameterType(i), parameterType(i)))
-                return false;
+            if (!canConvert(newType.parameterType(i), parameterType(i))) { return false; }
         }
         return true;
     }
+
     /*non-public*/
     static boolean canConvert(Class<?> src, Class<?> dst) {
         // short-circuit a few cases:
-        if (src == dst || dst == Object.class)  return true;
+        if (src == dst || dst == Object.class) { return true; }
         // the remainder of this logic is documented in MethodHandle.asType
         if (src.isPrimitive()) {
             // can force void to an explicit null, a la reflect.Method.invoke
             // can also force void to a primitive zero, by analogy
-            if (src == void.class)  return true;  //or !dst.isPrimitive()?
+            if (src == void.class) {
+                return true;  //or !dst.isPrimitive()?
+            }
             Wrapper sw = Wrapper.forPrimitiveType(src);
             if (dst.isPrimitive()) {
                 // P->P must widen
@@ -667,7 +694,7 @@ class MethodType implements java.io.Serializable {
             }
         } else if (dst.isPrimitive()) {
             // any value can be dropped
-            if (dst == void.class)  return true;
+            if (dst == void.class) { return true; }
             Wrapper dw = Wrapper.forPrimitiveType(dst);
             // R->P must be able to unbox (from a dynamically chosen type) and widen
             // For example:
@@ -682,8 +709,7 @@ class MethodType implements java.io.Serializable {
             // to a wrapper whose primitive must be widened.  For example:
             //   Byte -> unbox:byte -> short/int/long/float/double
             //   Character -> unbox:char -> int/long/float/double
-            if (Wrapper.isWrapperType(src) &&
-                dw.isConvertibleFrom(Wrapper.forWrapperType(src))) {
+            if (Wrapper.isWrapperType(src) && dw.isConvertibleFrom(Wrapper.forWrapperType(src))) {
                 // can unbox from src and then widen to dst
                 return true;
             }
@@ -703,7 +729,8 @@ class MethodType implements java.io.Serializable {
 
     /// Queries which have to do with the bytecode architecture
 
-    /** Reports the number of JVM stack slots required to invoke a method
+    /**
+     * Reports the number of JVM stack slots required to invoke a method
      * of this type.  Note that (for historical reasons) the JVM requires
      * a second stack slot to pass long and double arguments.
      * So this method returns {@link #parameterCount() parameterCount} plus the
@@ -711,6 +738,7 @@ class MethodType implements java.io.Serializable {
      * <p>
      * This method is included for the benfit of applications that must
      * generate bytecodes that process method handles and invokedynamic.
+     *
      * @return the number of JVM stack slots for this type's parameters
      */
     /*non-public*/ int parameterSlotCount() {
@@ -719,12 +747,13 @@ class MethodType implements java.io.Serializable {
 
     /*non-public*/ Invokers invokers() {
         Invokers inv = invokers;
-        if (inv != null)  return inv;
+        if (inv != null) { return inv; }
         invokers = inv = new Invokers(this);
         return inv;
     }
 
-    /** Reports the number of JVM stack slots which carry all parameters including and after
+    /**
+     * Reports the number of JVM stack slots which carry all parameters including and after
      * the given position, which must be in the range of 0 to
      * {@code parameterCount} inclusive.  Successive parameters are
      * more shallowly stacked, and parameters are indexed in the bytecodes
@@ -742,24 +771,28 @@ class MethodType implements java.io.Serializable {
      * <p>
      * This method is included for the benfit of applications that must
      * generate bytecodes that process method handles and invokedynamic.
+     *
      * @param num an index (zero-based, inclusive) within the parameter types
      * @return the index of the (shallowest) JVM stack slot transmitting the
-     *         given parameter
+     * given parameter
      * @throws IllegalArgumentException if {@code num} is negative or greater than {@code parameterCount()}
      */
     /*non-public*/ int parameterSlotDepth(int num) {
-        if (num < 0 || num > ptypes.length)
+        if (num < 0 || num > ptypes.length) {
             parameterType(num);  // force a range check
-        return form.parameterToArgSlot(num-1);
+        }
+        return form.parameterToArgSlot(num - 1);
     }
 
-    /** Reports the number of JVM stack slots required to receive a return value
+    /**
+     * Reports the number of JVM stack slots required to receive a return value
      * from a method of this type.
      * If the {@link #returnType() return type} is void, it will be zero,
      * else if the return type is long or double, it will be two, else one.
      * <p>
      * This method is included for the benfit of applications that must
      * generate bytecodes that process method handles and invokedynamic.
+     *
      * @return the number of JVM stack slots (0, 1, or 2) for this type's return value
      * Will be removed for PFD.
      */
@@ -780,20 +813,20 @@ class MethodType implements java.io.Serializable {
      * <p>
      * This method is included for the benfit of applications that must
      * generate bytecodes that process method handles and {@code invokedynamic}.
+     *
      * @param descriptor a bytecode-level type descriptor string "(T...)T"
-     * @param loader the class loader in which to look up the types
+     * @param loader     the class loader in which to look up the types
      * @return a method type matching the bytecode-level type descriptor
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if the string is not well-formed
-     * @throws TypeNotPresentException if a named type cannot be found
+     * @throws TypeNotPresentException  if a named type cannot be found
      */
     public static MethodType fromMethodDescriptorString(String descriptor, ClassLoader loader)
-        throws IllegalArgumentException, TypeNotPresentException
-    {
+        throws IllegalArgumentException, TypeNotPresentException {
         if (!descriptor.startsWith("(") ||  // also generates NPE if needed
-            descriptor.indexOf(')') < 0 ||
-            descriptor.indexOf('.') >= 0)
-            throw new IllegalArgumentException("not a method descriptor: "+descriptor);
+            descriptor.indexOf(')') < 0 || descriptor.indexOf('.') >= 0) {
+            throw new IllegalArgumentException("not a method descriptor: " + descriptor);
+        }
         List<Class<?>> types = BytecodeDescriptor.parseMethod(descriptor, loader);
         Class<?> rtype = types.remove(types.size() - 1);
         checkSlotCount(types.size());
@@ -812,6 +845,7 @@ class MethodType implements java.io.Serializable {
      * generate bytecodes that process method handles and {@code invokedynamic}.
      * {@link #fromMethodDescriptorString(java.lang.String, java.lang.ClassLoader) fromMethodDescriptorString},
      * because the latter requires a suitable class loader argument.
+     *
      * @return the bytecode type descriptor representation
      */
     public String toMethodDescriptorString() {
@@ -823,26 +857,25 @@ class MethodType implements java.io.Serializable {
     /**
      * There are no serializable fields for {@code MethodType}.
      */
-    private static final java.io.ObjectStreamField[] serialPersistentFields = { };
+    private static final java.io.ObjectStreamField[] serialPersistentFields = {};
 
     /**
      * Save the {@code MethodType} instance to a stream.
      *
-     * @serialData
-     * For portability, the serialized format does not refer to named fields.
+     * @param the stream to write the object to
+     * @serialData For portability, the serialized format does not refer to named fields.
      * Instead, the return type and parameter type arrays are written directly
      * from the {@code writeObject} method, using two calls to {@code s.writeObject}
      * as follows:
      * <blockquote><pre>
-s.writeObject(this.returnType());
-s.writeObject(this.parameterArray());
+     * s.writeObject(this.returnType());
+     * s.writeObject(this.parameterArray());
      * </pre></blockquote>
      * <p>
      * The deserialized field values are checked as if they were
-     * provided to the factory method {@link #methodType(Class,Class[]) methodType}.
+     * provided to the factory method {@link #methodType(Class, Class[]) methodType}.
      * For example, null values, or {@code void} parameter types,
      * will lead to exceptions during deserialization.
-     * @param the stream to write the object to
      */
     private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
         s.defaultWriteObject();  // requires serialPersistentFields to be an empty array
@@ -857,6 +890,7 @@ s.writeObject(this.parameterArray());
      * It provides the parameters to the factory method called by
      * {@link #readResolve readResolve}.
      * After that call it is discarded.
+     *
      * @param the stream to read the object from
      * @see #MethodType()
      * @see #readResolve
@@ -865,7 +899,7 @@ s.writeObject(this.parameterArray());
     private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();  // requires serialPersistentFields to be an empty array
 
-        Class<?>   returnType     = (Class<?>)   s.readObject();
+        Class<?> returnType = (Class<?>) s.readObject();
         Class<?>[] parameterArray = (Class<?>[]) s.readObject();
 
         // Probably this object will never escape, but let's check
@@ -885,6 +919,7 @@ s.writeObject(this.parameterArray());
         this.rtype = null;
         this.ptypes = null;
     }
+
     private void MethodType_init(Class<?> rtype, Class<?>[] ptypes) {
         // In order to communicate these values to readResolve, we must
         // store them into the implementation-specific final fields.
@@ -897,12 +932,11 @@ s.writeObject(this.parameterArray());
     // Support for resetting final fields while deserializing
     private static final sun.misc.Unsafe unsafe = sun.misc.Unsafe.getUnsafe();
     private static final long rtypeOffset, ptypesOffset;
+
     static {
         try {
-            rtypeOffset = unsafe.objectFieldOffset
-                (MethodType.class.getDeclaredField("rtype"));
-            ptypesOffset = unsafe.objectFieldOffset
-                (MethodType.class.getDeclaredField("ptypes"));
+            rtypeOffset = unsafe.objectFieldOffset(MethodType.class.getDeclaredField("rtype"));
+            ptypesOffset = unsafe.objectFieldOffset(MethodType.class.getDeclaredField("ptypes"));
         } catch (Exception ex) {
             throw new Error(ex);
         }
@@ -911,6 +945,7 @@ s.writeObject(this.parameterArray());
     /**
      * Resolves and initializes a {@code MethodType} object
      * after serialization.
+     *
      * @return the fully initialized {@code MethodType} object
      */
     private Object readResolve() {

@@ -115,38 +115,36 @@ public class InputMethodEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source the object where the event originated
-     * @param id the event type
-     * @param when a long integer that specifies the time the event occurred
-     * @param text the combined committed and composed text,
-     *      committed text first; must be <code>null</code>
-     *      when the event type is <code>CARET_POSITION_CHANGED</code>;
-     *      may be <code>null</code> for
-     *      <code>INPUT_METHOD_TEXT_CHANGED</code> if there's no
-     *      committed or composed text
+     * @param source                  the object where the event originated
+     * @param id                      the event type
+     * @param when                    a long integer that specifies the time the event occurred
+     * @param text                    the combined committed and composed text,
+     *                                committed text first; must be <code>null</code>
+     *                                when the event type is <code>CARET_POSITION_CHANGED</code>;
+     *                                may be <code>null</code> for
+     *                                <code>INPUT_METHOD_TEXT_CHANGED</code> if there's no
+     *                                committed or composed text
      * @param committedCharacterCount the number of committed
-     *      characters in the text
-     * @param caret the caret (a.k.a. insertion point);
-     *      <code>null</code> if there's no caret within current
-     *      composed text
-     * @param visiblePosition the position that's most important
-     *      to be visible; <code>null</code> if there's no
-     *      recommendation for a visible position within current
-     *      composed text
+     *                                characters in the text
+     * @param caret                   the caret (a.k.a. insertion point);
+     *                                <code>null</code> if there's no caret within current
+     *                                composed text
+     * @param visiblePosition         the position that's most important
+     *                                to be visible; <code>null</code> if there's no
+     *                                recommendation for a visible position within current
+     *                                composed text
      * @throws IllegalArgumentException if <code>id</code> is not
-     *      in the range
-     *      <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>;
-     *      or if id is <code>CARET_POSITION_CHANGED</code> and
-     *      <code>text</code> is not <code>null</code>;
-     *      or if <code>committedCharacterCount</code> is not in the range
-     *      <code>0</code>..<code>(text.getEndIndex() - text.getBeginIndex())</code>
+     *                                  in the range
+     *                                  <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>;
+     *                                  or if id is <code>CARET_POSITION_CHANGED</code> and
+     *                                  <code>text</code> is not <code>null</code>;
+     *                                  or if <code>committedCharacterCount</code> is not in the range
+     *                                  <code>0</code>..<code>(text.getEndIndex() - text.getBeginIndex())</code>
      * @throws IllegalArgumentException if <code>source</code> is null
-     *
      * @since 1.4
      */
-    public InputMethodEvent(Component source, int id, long when,
-            AttributedCharacterIterator text, int committedCharacterCount,
-            TextHitInfo caret, TextHitInfo visiblePosition) {
+    public InputMethodEvent(Component source, int id, long when, AttributedCharacterIterator text,
+        int committedCharacterCount, TextHitInfo caret, TextHitInfo visiblePosition) {
         super(source, id);
         if (id < INPUT_METHOD_FIRST || id > INPUT_METHOD_LAST) {
             throw new IllegalArgumentException("id outside of valid range");
@@ -170,7 +168,7 @@ public class InputMethodEvent extends AWTEvent {
 
         this.caret = caret;
         this.visiblePosition = visiblePosition;
-   }
+    }
 
     /**
      * Constructs an <code>InputMethodEvent</code> with the specified
@@ -188,37 +186,35 @@ public class InputMethodEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source the object where the event originated
-     * @param id the event type
-     * @param text the combined committed and composed text,
-     *      committed text first; must be <code>null</code>
-     *      when the event type is <code>CARET_POSITION_CHANGED</code>;
-     *      may be <code>null</code> for
-     *      <code>INPUT_METHOD_TEXT_CHANGED</code> if there's no
-     *      committed or composed text
+     * @param source                  the object where the event originated
+     * @param id                      the event type
+     * @param text                    the combined committed and composed text,
+     *                                committed text first; must be <code>null</code>
+     *                                when the event type is <code>CARET_POSITION_CHANGED</code>;
+     *                                may be <code>null</code> for
+     *                                <code>INPUT_METHOD_TEXT_CHANGED</code> if there's no
+     *                                committed or composed text
      * @param committedCharacterCount the number of committed
-     *      characters in the text
-     * @param caret the caret (a.k.a. insertion point);
-     *      <code>null</code> if there's no caret within current
-     *      composed text
-     * @param visiblePosition the position that's most important
-     *      to be visible; <code>null</code> if there's no
-     *      recommendation for a visible position within current
-     *      composed text
+     *                                characters in the text
+     * @param caret                   the caret (a.k.a. insertion point);
+     *                                <code>null</code> if there's no caret within current
+     *                                composed text
+     * @param visiblePosition         the position that's most important
+     *                                to be visible; <code>null</code> if there's no
+     *                                recommendation for a visible position within current
+     *                                composed text
      * @throws IllegalArgumentException if <code>id</code> is not
-     *      in the range
-     *      <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>;
-     *      or if id is <code>CARET_POSITION_CHANGED</code> and
-     *      <code>text</code> is not <code>null</code>;
-     *      or if <code>committedCharacterCount</code> is not in the range
-     *      <code>0</code>..<code>(text.getEndIndex() - text.getBeginIndex())</code>
+     *                                  in the range
+     *                                  <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>;
+     *                                  or if id is <code>CARET_POSITION_CHANGED</code> and
+     *                                  <code>text</code> is not <code>null</code>;
+     *                                  or if <code>committedCharacterCount</code> is not in the range
+     *                                  <code>0</code>..<code>(text.getEndIndex() - text.getBeginIndex())</code>
      * @throws IllegalArgumentException if <code>source</code> is null
      */
-    public InputMethodEvent(Component source, int id,
-            AttributedCharacterIterator text, int committedCharacterCount,
-            TextHitInfo caret, TextHitInfo visiblePosition) {
-        this(source, id, EventQueue.getMostRecentEventTime(), text,
-             committedCharacterCount, caret, visiblePosition);
+    public InputMethodEvent(Component source, int id, AttributedCharacterIterator text, int committedCharacterCount,
+        TextHitInfo caret, TextHitInfo visiblePosition) {
+        this(source, id, EventQueue.getMostRecentEventTime(), text, committedCharacterCount, caret, visiblePosition);
     }
 
     /**
@@ -242,24 +238,22 @@ public class InputMethodEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source the object where the event originated
-     * @param id the event type
-     * @param caret the caret (a.k.a. insertion point);
-     *      <code>null</code> if there's no caret within current
-     *      composed text
+     * @param source          the object where the event originated
+     * @param id              the event type
+     * @param caret           the caret (a.k.a. insertion point);
+     *                        <code>null</code> if there's no caret within current
+     *                        composed text
      * @param visiblePosition the position that's most important
-     *      to be visible; <code>null</code> if there's no
-     *      recommendation for a visible position within current
-     *      composed text
+     *                        to be visible; <code>null</code> if there's no
+     *                        recommendation for a visible position within current
+     *                        composed text
      * @throws IllegalArgumentException if <code>id</code> is not
-     *      in the range
-     *      <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>
+     *                                  in the range
+     *                                  <code>INPUT_METHOD_FIRST</code>..<code>INPUT_METHOD_LAST</code>
      * @throws IllegalArgumentException if <code>source</code> is null
      */
-    public InputMethodEvent(Component source, int id, TextHitInfo caret,
-            TextHitInfo visiblePosition) {
-        this(source, id, EventQueue.getMostRecentEventTime(), null,
-             0, caret, visiblePosition);
+    public InputMethodEvent(Component source, int id, TextHitInfo caret, TextHitInfo visiblePosition) {
+        this(source, id, EventQueue.getMostRecentEventTime(), null, 0, caret, visiblePosition);
     }
 
     /**
@@ -324,6 +318,7 @@ public class InputMethodEvent extends AWTEvent {
 
     /**
      * Returns whether or not this event has been consumed.
+     *
      * @see #consume
      */
     public boolean isConsumed() {
@@ -337,7 +332,7 @@ public class InputMethodEvent extends AWTEvent {
      * @since 1.4
      */
     public long getWhen() {
-      return when;
+        return when;
     }
 
     /**
@@ -352,15 +347,15 @@ public class InputMethodEvent extends AWTEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case INPUT_METHOD_TEXT_CHANGED:
-              typeStr = "INPUT_METHOD_TEXT_CHANGED";
-              break;
-          case CARET_POSITION_CHANGED:
-              typeStr = "CARET_POSITION_CHANGED";
-              break;
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case INPUT_METHOD_TEXT_CHANGED:
+                typeStr = "INPUT_METHOD_TEXT_CHANGED";
+                break;
+            case CARET_POSITION_CHANGED:
+                typeStr = "CARET_POSITION_CHANGED";
+                break;
+            default:
+                typeStr = "unknown type";
         }
 
         String textString;

@@ -32,7 +32,6 @@ package java.security;
  * service provider who wishes to supply the implementation
  * of a cryptographically strong pseudo-random number generator.
  *
- *
  * @see SecureRandom
  * @since 1.2
  */
@@ -67,8 +66,7 @@ public abstract class SecureRandomSpi implements java.io.Serializable {
      * seed other random number generators.
      *
      * @param numBytes the number of seed bytes to generate.
-     *
      * @return the seed bytes.
      */
-     protected abstract byte[] engineGenerateSeed(int numBytes);
+    protected abstract byte[] engineGenerateSeed(int numBytes);
 }

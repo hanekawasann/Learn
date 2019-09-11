@@ -38,10 +38,12 @@ package java.awt.image;
 import java.awt.Point;
 import java.awt.Graphics2D;
 import java.awt.color.*;
+
 import sun.java2d.cmm.ColorTransform;
 import sun.java2d.cmm.CMSManager;
 import sun.java2d.cmm.ProfileDeferralMgr;
 import sun.java2d.cmm.PCMM;
+
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.RenderingHints;
@@ -65,17 +67,18 @@ import java.awt.RenderingHints;
  * <p>
  * Note that Source and Destination may be the same object.
  * <p>
+ *
  * @see java.awt.RenderingHints#KEY_COLOR_RENDERING
  * @see java.awt.RenderingHints#KEY_DITHERING
  */
 public class ColorConvertOp implements BufferedImageOp, RasterOp {
-    ICC_Profile[]    profileList;
-    ColorSpace[]     CSList;
-    ColorTransform    thisTransform, thisRasterTransform;
-    ICC_Profile      thisSrcProfile, thisDestProfile;
-    RenderingHints   hints;
-    boolean          gotProfiles;
-    float[]          srcMinVals, srcMaxVals, dstMinVals, dstMaxVals;
+    ICC_Profile[] profileList;
+    ColorSpace[] CSList;
+    ColorTransform thisTransform, thisRasterTransform;
+    ICC_Profile thisSrcProfile, thisDestProfile;
+    RenderingHints hints;
+    boolean gotProfiles;
+    float[] srcMinVals, srcMaxVals, dstMinVals, dstMaxVals;
 
     /* the class initializer */
     static {
@@ -92,13 +95,13 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * directly from the ColorSpace of the source image to that of the
      * destination.  The destination argument of the filter method
      * cannot be specified as null.
+     *
      * @param hints the <code>RenderingHints</code> object used to control
-     *        the color conversion, or <code>null</code>
+     *              the color conversion, or <code>null</code>
      */
-    public ColorConvertOp (RenderingHints hints)
-    {
-        profileList = new ICC_Profile [0];    /* 0 length list */
-        this.hints  = hints;
+    public ColorConvertOp(RenderingHints hints) {
+        profileList = new ICC_Profile[0];    /* 0 length list */
+        this.hints = hints;
     }
 
     /**
@@ -111,27 +114,26 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * for the destination created by the filter method.  Otherwise, the
      * ColorSpace defines an intermediate space to which the source is
      * converted before being converted to the destination space.
+     *
      * @param cspace defines the destination <code>ColorSpace</code> or an
-     *        intermediate <code>ColorSpace</code>
-     * @param hints the <code>RenderingHints</code> object used to control
-     *        the color conversion, or <code>null</code>
+     *               intermediate <code>ColorSpace</code>
+     * @param hints  the <code>RenderingHints</code> object used to control
+     *               the color conversion, or <code>null</code>
      * @throws NullPointerException if cspace is null
      */
-    public ColorConvertOp (ColorSpace cspace, RenderingHints hints)
-    {
+    public ColorConvertOp(ColorSpace cspace, RenderingHints hints) {
         if (cspace == null) {
             throw new NullPointerException("ColorSpace cannot be null");
         }
         if (cspace instanceof ICC_ColorSpace) {
-            profileList = new ICC_Profile [1];    /* 1 profile in the list */
+            profileList = new ICC_Profile[1];    /* 1 profile in the list */
 
-            profileList [0] = ((ICC_ColorSpace) cspace).getProfile();
-        }
-        else {
+            profileList[0] = ((ICC_ColorSpace) cspace).getProfile();
+        } else {
             CSList = new ColorSpace[1]; /* non-ICC case: 1 ColorSpace in list */
             CSList[0] = cspace;
         }
-        this.hints  = hints;
+        this.hints = hints;
     }
 
 
@@ -146,24 +148,22 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * must match the number of components in dstCspace.  For BufferedImages,
      * the two ColorSpaces define intermediate spaces through which the
      * source is converted before being converted to the destination space.
+     *
      * @param srcCspace the source <code>ColorSpace</code>
      * @param dstCspace the destination <code>ColorSpace</code>
-     * @param hints the <code>RenderingHints</code> object used to control
-     *        the color conversion, or <code>null</code>
+     * @param hints     the <code>RenderingHints</code> object used to control
+     *                  the color conversion, or <code>null</code>
      * @throws NullPointerException if either srcCspace or dstCspace is null
      */
-    public ColorConvertOp(ColorSpace srcCspace, ColorSpace dstCspace,
-                           RenderingHints hints)
-    {
+    public ColorConvertOp(ColorSpace srcCspace, ColorSpace dstCspace, RenderingHints hints) {
         if ((srcCspace == null) || (dstCspace == null)) {
             throw new NullPointerException("ColorSpaces cannot be null");
         }
-        if ((srcCspace instanceof ICC_ColorSpace) &&
-            (dstCspace instanceof ICC_ColorSpace)) {
-            profileList = new ICC_Profile [2];    /* 2 profiles in the list */
+        if ((srcCspace instanceof ICC_ColorSpace) && (dstCspace instanceof ICC_ColorSpace)) {
+            profileList = new ICC_Profile[2];    /* 2 profiles in the list */
 
-            profileList [0] = ((ICC_ColorSpace) srcCspace).getProfile();
-            profileList [1] = ((ICC_ColorSpace) dstCspace).getProfile();
+            profileList[0] = ((ICC_ColorSpace) srcCspace).getProfile();
+            profileList[1] = ((ICC_ColorSpace) dstCspace).getProfile();
 
             getMinMaxValsFromColorSpaces(srcCspace, dstCspace);
         } else {
@@ -172,11 +172,11 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             CSList[0] = srcCspace;
             CSList[1] = dstCspace;
         }
-        this.hints  = hints;
+        this.hints = hints;
     }
 
 
-     /**
+    /**
      * Constructs a new ColorConvertOp from an array of ICC_Profiles.
      * The RenderingHints argument may be null.
      * The sequence of profiles may include profiles that represent color
@@ -196,15 +196,15 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * of the last profile in the array.  The array must have at least two
      * elements or calling the filter method for Rasters will throw an
      * IllegalArgumentException.
+     *
      * @param profiles the array of <code>ICC_Profile</code> objects
-     * @param hints the <code>RenderingHints</code> object used to control
-     *        the color conversion, or <code>null</code>
-     * @exception IllegalArgumentException when the profile sequence does not
-     *             specify a well-defined color conversion
-     * @exception NullPointerException if profiles is null
+     * @param hints    the <code>RenderingHints</code> object used to control
+     *                 the color conversion, or <code>null</code>
+     * @throws IllegalArgumentException when the profile sequence does not
+     *                                  specify a well-defined color conversion
+     * @throws NullPointerException     if profiles is null
      */
-    public ColorConvertOp (ICC_Profile[] profiles, RenderingHints hints)
-    {
+    public ColorConvertOp(ICC_Profile[] profiles, RenderingHints hints) {
         if (profiles == null) {
             throw new NullPointerException("Profiles cannot be null");
         }
@@ -213,7 +213,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         for (int i1 = 0; i1 < profiles.length; i1++) {
             profileList[i1] = profiles[i1];
         }
-        this.hints  = hints;
+        this.hints = hints;
     }
 
 
@@ -221,10 +221,11 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * Returns the array of ICC_Profiles used to construct this ColorConvertOp.
      * Returns null if the ColorConvertOp was not constructed from such an
      * array.
+     *
      * @return the array of <code>ICC_Profile</code> objects of this
-     *         <code>ColorConvertOp</code>, or <code>null</code> if this
-     *         <code>ColorConvertOp</code> was not constructed with an
-     *         array of <code>ICC_Profile</code> objects.
+     * <code>ColorConvertOp</code>, or <code>null</code> if this
+     * <code>ColorConvertOp</code> was not constructed with an
+     * array of <code>ICC_Profile</code> objects.
      */
     public final ICC_Profile[] getICC_Profiles() {
         if (gotProfiles) {
@@ -241,15 +242,16 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * ColorConverts the source BufferedImage.
      * If the destination image is null,
      * a BufferedImage will be created with an appropriate ColorModel.
-     * @param src the source <code>BufferedImage</code> to be converted
+     *
+     * @param src  the source <code>BufferedImage</code> to be converted
      * @param dest the destination <code>BufferedImage</code>,
-     *        or <code>null</code>
+     *             or <code>null</code>
      * @return <code>dest</code> color converted from <code>src</code>
-     *         or a new, converted <code>BufferedImage</code>
-     *         if <code>dest</code> is <code>null</code>
-     * @exception IllegalArgumentException if dest is null and this op was
-     *             constructed using the constructor which takes only a
-     *             RenderingHints argument, since the operation is ill defined.
+     * or a new, converted <code>BufferedImage</code>
+     * if <code>dest</code> is <code>null</code>
+     * @throws IllegalArgumentException if dest is null and this op was
+     *                                  constructed using the constructor which takes only a
+     *                                  RenderingHints argument, since the operation is ill defined.
      */
     public final BufferedImage filter(BufferedImage src, BufferedImage dest) {
         ColorSpace srcColorSpace, destColorSpace;
@@ -272,10 +274,8 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             destColorSpace = null;
         }
 
-        if ((CSList != null) ||
-            (!(srcColorSpace instanceof ICC_ColorSpace)) ||
-            ((dest != null) &&
-             (!(destColorSpace instanceof ICC_ColorSpace)))) {
+        if ((CSList != null) || (!(srcColorSpace instanceof ICC_ColorSpace)) ||
+            ((dest != null) && (!(destColorSpace instanceof ICC_ColorSpace)))) {
             /* non-ICC case */
             dest = nonICCBIFilter(src, srcColorSpace, dest, destColorSpace);
         } else {
@@ -295,29 +295,23 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
     }
 
-    private final BufferedImage ICCBIFilter(BufferedImage src,
-                                            ColorSpace srcColorSpace,
-                                            BufferedImage dest,
-                                            ColorSpace destColorSpace) {
-    int              nProfiles = profileList.length;
-    ICC_Profile      srcProfile = null, destProfile = null;
+    private final BufferedImage ICCBIFilter(BufferedImage src, ColorSpace srcColorSpace, BufferedImage dest,
+        ColorSpace destColorSpace) {
+        int nProfiles = profileList.length;
+        ICC_Profile srcProfile = null, destProfile = null;
 
         srcProfile = ((ICC_ColorSpace) srcColorSpace).getProfile();
 
         if (dest == null) {        /* last profile in the list defines
                                       the output color space */
             if (nProfiles == 0) {
-                throw new IllegalArgumentException(
-                    "Destination ColorSpace is undefined");
+                throw new IllegalArgumentException("Destination ColorSpace is undefined");
             }
-            destProfile = profileList [nProfiles - 1];
+            destProfile = profileList[nProfiles - 1];
             dest = createCompatibleDestImage(src, null);
-        }
-        else {
-            if (src.getHeight() != dest.getHeight() ||
-                src.getWidth() != dest.getWidth()) {
-                throw new IllegalArgumentException(
-                    "Width or height of BufferedImages do not match");
+        } else {
+            if (src.getHeight() != dest.getHeight() || src.getWidth() != dest.getWidth()) {
+                throw new IllegalArgumentException("Width or height of BufferedImages do not match");
             }
             destProfile = ((ICC_ColorSpace) destColorSpace).getProfile();
         }
@@ -346,8 +340,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
 
         /* make a new transform if needed */
-        if ((thisTransform == null) || (thisSrcProfile != srcProfile) ||
-            (thisDestProfile != destProfile) ) {
+        if ((thisTransform == null) || (thisSrcProfile != srcProfile) || (thisDestProfile != destProfile)) {
             updateBITransform(srcProfile, destProfile);
         }
 
@@ -357,12 +350,11 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         return dest;
     }
 
-    private void updateBITransform(ICC_Profile srcProfile,
-                                   ICC_Profile destProfile) {
-        ICC_Profile[]    theProfiles;
-        int              i1, nProfiles, nTransforms, whichTrans, renderState;
-        ColorTransform[]  theTransforms;
-        boolean          useSrc = false, useDest = false;
+    private void updateBITransform(ICC_Profile srcProfile, ICC_Profile destProfile) {
+        ICC_Profile[] theProfiles;
+        int i1, nProfiles, nTransforms, whichTrans, renderState;
+        ColorTransform[] theTransforms;
+        boolean useSrc = false, useDest = false;
 
         nProfiles = profileList.length;
         nTransforms = nProfiles;
@@ -370,8 +362,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             nTransforms += 1;
             useSrc = true;
         }
-        if ((nProfiles == 0) || (destProfile != profileList[nProfiles - 1]) ||
-            (nTransforms < 2)) {
+        if ((nProfiles == 0) || (destProfile != profileList[nProfiles - 1]) || (nTransforms < 2)) {
             nTransforms += 1;
             useDest = true;
         }
@@ -387,8 +378,8 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
 
         for (i1 = 0; i1 < nProfiles; i1++) {
-                                   /* insert profiles defined in this Op */
-            theProfiles[idx++] = profileList [i1];
+            /* insert profiles defined in this Op */
+            theProfiles[idx++] = profileList[i1];
         }
 
         if (useDest) {
@@ -397,15 +388,14 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
 
         /* make the transform list */
-        theTransforms = new ColorTransform [nTransforms];
+        theTransforms = new ColorTransform[nTransforms];
 
         /* initialize transform get loop */
         if (theProfiles[0].getProfileClass() == ICC_Profile.CLASS_OUTPUT) {
                                         /* if first profile is a printer
                                            render as colorimetric */
             renderState = ICC_Profile.icRelativeColorimetric;
-        }
-        else {
+        } else {
             renderState = ICC_Profile.icPerceptual; /* render any other
                                                        class perceptually */
         }
@@ -416,20 +406,17 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
 
         /* get the transforms from each profile */
         for (i1 = 0; i1 < nTransforms; i1++) {
-            if (i1 == nTransforms -1) {         /* last profile? */
+            if (i1 == nTransforms - 1) {         /* last profile? */
                 whichTrans = ColorTransform.Out; /* get output transform */
-            }
-            else {      /* check for abstract profile */
+            } else {      /* check for abstract profile */
                 if ((whichTrans == ColorTransform.Simulation) &&
-                    (theProfiles[i1].getProfileClass () ==
-                     ICC_Profile.CLASS_ABSTRACT)) {
-                renderState = ICC_Profile.icPerceptual;
+                    (theProfiles[i1].getProfileClass() == ICC_Profile.CLASS_ABSTRACT)) {
+                    renderState = ICC_Profile.icPerceptual;
                     whichTrans = ColorTransform.In;
                 }
             }
 
-            theTransforms[i1] = mdl.createTransform (
-                theProfiles[i1], renderState, whichTrans);
+            theTransforms[i1] = mdl.createTransform(theProfiles[i1], renderState, whichTrans);
 
             /* get this profile's rendering intent to select transform
                from next profile */
@@ -455,19 +442,20 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * create this ColorConvertOp must have provided enough information
      * to define both source and destination color spaces.  See above.
      * Otherwise, an exception is thrown.
-     * @param src the source <code>Raster</code> to be converted
+     *
+     * @param src  the source <code>Raster</code> to be converted
      * @param dest the destination <code>WritableRaster</code>,
-     *        or <code>null</code>
+     *             or <code>null</code>
      * @return <code>dest</code> color converted from <code>src</code>
-     *         or a new, converted <code>WritableRaster</code>
-     *         if <code>dest</code> is <code>null</code>
-     * @exception IllegalArgumentException if the number of source or
-     *             destination bands is incorrect, the source or destination
-     *             color spaces are undefined, or this op was constructed
-     *             with one of the constructors that applies only to
-     *             operations on BufferedImages.
+     * or a new, converted <code>WritableRaster</code>
+     * if <code>dest</code> is <code>null</code>
+     * @throws IllegalArgumentException if the number of source or
+     *                                  destination bands is incorrect, the source or destination
+     *                                  color spaces are undefined, or this op was constructed
+     *                                  with one of the constructors that applies only to
+     *                                  operations on BufferedImages.
      */
-    public final WritableRaster filter (Raster src, WritableRaster dest)  {
+    public final WritableRaster filter(Raster src, WritableRaster dest) {
 
         if (CSList != null) {
             /* non-ICC case */
@@ -475,46 +463,38 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
         int nProfiles = profileList.length;
         if (nProfiles < 2) {
-            throw new IllegalArgumentException(
-                "Source or Destination ColorSpace is undefined");
+            throw new IllegalArgumentException("Source or Destination ColorSpace is undefined");
         }
         if (src.getNumBands() != profileList[0].getNumComponents()) {
             throw new IllegalArgumentException(
-                "Numbers of source Raster bands and source color space " +
-                "components do not match");
+                "Numbers of source Raster bands and source color space " + "components do not match");
         }
         if (dest == null) {
             dest = createCompatibleDestRaster(src);
-        }
-        else {
-            if (src.getHeight() != dest.getHeight() ||
-                src.getWidth() != dest.getWidth()) {
-                throw new IllegalArgumentException(
-                    "Width or height of Rasters do not match");
+        } else {
+            if (src.getHeight() != dest.getHeight() || src.getWidth() != dest.getWidth()) {
+                throw new IllegalArgumentException("Width or height of Rasters do not match");
             }
-            if (dest.getNumBands() !=
-                profileList[nProfiles-1].getNumComponents()) {
+            if (dest.getNumBands() != profileList[nProfiles - 1].getNumComponents()) {
                 throw new IllegalArgumentException(
-                    "Numbers of destination Raster bands and destination " +
-                    "color space components do not match");
+                    "Numbers of destination Raster bands and destination " + "color space components do not match");
             }
         }
 
         /* make a new transform if needed */
         if (thisRasterTransform == null) {
-            int              i1, whichTrans, renderState;
-            ColorTransform[]  theTransforms;
+            int i1, whichTrans, renderState;
+            ColorTransform[] theTransforms;
 
             /* make the transform list */
-            theTransforms = new ColorTransform [nProfiles];
+            theTransforms = new ColorTransform[nProfiles];
 
             /* initialize transform get loop */
             if (profileList[0].getProfileClass() == ICC_Profile.CLASS_OUTPUT) {
                                             /* if first profile is a printer
                                                render as colorimetric */
                 renderState = ICC_Profile.icRelativeColorimetric;
-            }
-            else {
+            } else {
                 renderState = ICC_Profile.icPerceptual; /* render any other
                                                            class perceptually */
             }
@@ -525,20 +505,17 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
 
             /* get the transforms from each profile */
             for (i1 = 0; i1 < nProfiles; i1++) {
-                if (i1 == nProfiles -1) {         /* last profile? */
+                if (i1 == nProfiles - 1) {         /* last profile? */
                     whichTrans = ColorTransform.Out; /* get output transform */
-                }
-                else {  /* check for abstract profile */
+                } else {  /* check for abstract profile */
                     if ((whichTrans == ColorTransform.Simulation) &&
-                        (profileList[i1].getProfileClass () ==
-                         ICC_Profile.CLASS_ABSTRACT)) {
+                        (profileList[i1].getProfileClass() == ICC_Profile.CLASS_ABSTRACT)) {
                         renderState = ICC_Profile.icPerceptual;
                         whichTrans = ColorTransform.In;
                     }
                 }
 
-                theTransforms[i1] = mdl.createTransform (
-                    profileList[i1], renderState, whichTrans);
+                theTransforms[i1] = mdl.createTransform(profileList[i1], renderState, whichTrans);
 
                 /* get this profile's rendering intent to select transform
                    from next profile */
@@ -554,18 +531,13 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
 
         int srcTransferType = src.getTransferType();
         int dstTransferType = dest.getTransferType();
-        if ((srcTransferType == DataBuffer.TYPE_FLOAT) ||
-            (srcTransferType == DataBuffer.TYPE_DOUBLE) ||
-            (dstTransferType == DataBuffer.TYPE_FLOAT) ||
-            (dstTransferType == DataBuffer.TYPE_DOUBLE)) {
+        if ((srcTransferType == DataBuffer.TYPE_FLOAT) || (srcTransferType == DataBuffer.TYPE_DOUBLE) ||
+            (dstTransferType == DataBuffer.TYPE_FLOAT) || (dstTransferType == DataBuffer.TYPE_DOUBLE)) {
             if (srcMinVals == null) {
-                getMinMaxValsFromProfiles(profileList[0],
-                                          profileList[nProfiles-1]);
+                getMinMaxValsFromProfiles(profileList[0], profileList[nProfiles - 1]);
             }
             /* color convert the raster */
-            thisRasterTransform.colorConvert(src, dest,
-                                             srcMinVals, srcMaxVals,
-                                             dstMinVals, dstMaxVals);
+            thisRasterTransform.colorConvert(src, dest, srcMinVals, srcMaxVals, dstMinVals, dstMaxVals);
         } else {
             /* color convert the raster */
             thisRasterTransform.colorConvert(src, dest);
@@ -579,11 +551,12 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * Returns the bounding box of the destination, given this source.
      * Note that this will be the same as the the bounding box of the
      * source.
+     *
      * @param src the source <code>BufferedImage</code>
      * @return a <code>Rectangle2D</code> that is the bounding box
-     *         of the destination, given the specified <code>src</code>
+     * of the destination, given the specified <code>src</code>
      */
-    public final Rectangle2D getBounds2D (BufferedImage src) {
+    public final Rectangle2D getBounds2D(BufferedImage src) {
         return getBounds2D(src.getRaster());
     }
 
@@ -591,11 +564,12 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * Returns the bounding box of the destination, given this source.
      * Note that this will be the same as the the bounding box of the
      * source.
+     *
      * @param src the source <code>Raster</code>
      * @return a <code>Rectangle2D</code> that is the bounding box
-     *         of the destination, given the specified <code>src</code>
+     * of the destination, given the specified <code>src</code>
      */
-    public final Rectangle2D getBounds2D (Raster src) {
+    public final Rectangle2D getBounds2D(Raster src) {
         /*        return new Rectangle (src.getXOffset(),
                               src.getYOffset(),
                               src.getWidth(), src.getHeight()); */
@@ -605,26 +579,26 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
     /**
      * Creates a zeroed destination image with the correct size and number of
      * bands, given this source.
-     * @param src       Source image for the filter operation.
-     * @param destCM    ColorModel of the destination.  If null, an
-     *                  appropriate ColorModel will be used.
+     *
+     * @param src    Source image for the filter operation.
+     * @param destCM ColorModel of the destination.  If null, an
+     *               appropriate ColorModel will be used.
      * @return a <code>BufferedImage</code> with the correct size and
      * number of bands from the specified <code>src</code>.
      * @throws IllegalArgumentException if <code>destCM</code> is
-     *         <code>null</code> and this <code>ColorConvertOp</code> was
-     *         created without any <code>ICC_Profile</code> or
-     *         <code>ColorSpace</code> defined for the destination
+     *                                  <code>null</code> and this <code>ColorConvertOp</code> was
+     *                                  created without any <code>ICC_Profile</code> or
+     *                                  <code>ColorSpace</code> defined for the destination
      */
-    public BufferedImage createCompatibleDestImage (BufferedImage src,
-                                                    ColorModel destCM) {
-        ColorSpace cs = null;;
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+        ColorSpace cs = null;
+        ;
         if (destCM == null) {
             if (CSList == null) {
                 /* ICC case */
                 int nProfiles = profileList.length;
                 if (nProfiles == 0) {
-                    throw new IllegalArgumentException(
-                        "Destination ColorSpace is undefined");
+                    throw new IllegalArgumentException("Destination ColorSpace is undefined");
                 }
                 ICC_Profile destProfile = profileList[nProfiles - 1];
                 cs = new ICC_ColorSpace(destProfile);
@@ -637,31 +611,26 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         return createCompatibleDestImage(src, destCM, cs);
     }
 
-    private BufferedImage createCompatibleDestImage(BufferedImage src,
-                                                    ColorModel destCM,
-                                                    ColorSpace destCS) {
+    private BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM, ColorSpace destCS) {
         BufferedImage image;
         if (destCM == null) {
             ColorModel srcCM = src.getColorModel();
             int nbands = destCS.getNumComponents();
             boolean hasAlpha = srcCM.hasAlpha();
             if (hasAlpha) {
-               nbands += 1;
+                nbands += 1;
             }
             int[] nbits = new int[nbands];
             for (int i = 0; i < nbands; i++) {
                 nbits[i] = 8;
             }
-            destCM = new ComponentColorModel(destCS, nbits, hasAlpha,
-                                             srcCM.isAlphaPremultiplied(),
-                                             srcCM.getTransparency(),
-                                             DataBuffer.TYPE_BYTE);
+            destCM = new ComponentColorModel(destCS, nbits, hasAlpha, srcCM.isAlphaPremultiplied(),
+                srcCM.getTransparency(), DataBuffer.TYPE_BYTE);
         }
         int w = src.getWidth();
         int h = src.getHeight();
-        image = new BufferedImage(destCM,
-                                  destCM.createCompatibleWritableRaster(w, h),
-                                  destCM.isAlphaPremultiplied(), null);
+        image = new BufferedImage(destCM, destCM.createCompatibleWritableRaster(w, h), destCM.isAlphaPremultiplied(),
+            null);
         return image;
     }
 
@@ -669,39 +638,35 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
     /**
      * Creates a zeroed destination Raster with the correct size and number of
      * bands, given this source.
+     *
      * @param src the specified <code>Raster</code>
      * @return a <code>WritableRaster</code> with the correct size and number
-     *         of bands from the specified <code>src</code>
+     * of bands from the specified <code>src</code>
      * @throws IllegalArgumentException if this <code>ColorConvertOp</code>
-     *         was created without sufficient information to define the
-     *         <code>dst</code> and <code>src</code> color spaces
+     *                                  was created without sufficient information to define the
+     *                                  <code>dst</code> and <code>src</code> color spaces
      */
-    public WritableRaster createCompatibleDestRaster (Raster src) {
+    public WritableRaster createCompatibleDestRaster(Raster src) {
         int ncomponents;
 
         if (CSList != null) {
             /* non-ICC case */
             if (CSList.length != 2) {
-                throw new IllegalArgumentException(
-                    "Destination ColorSpace is undefined");
+                throw new IllegalArgumentException("Destination ColorSpace is undefined");
             }
             ncomponents = CSList[1].getNumComponents();
         } else {
             /* ICC case */
             int nProfiles = profileList.length;
             if (nProfiles < 2) {
-                throw new IllegalArgumentException(
-                    "Destination ColorSpace is undefined");
+                throw new IllegalArgumentException("Destination ColorSpace is undefined");
             }
-            ncomponents = profileList[nProfiles-1].getNumComponents();
+            ncomponents = profileList[nProfiles - 1].getNumComponents();
         }
 
-        WritableRaster dest =
-            Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
-                                  src.getWidth(),
-                                  src.getHeight(),
-                                  ncomponents,
-                                  new Point(src.getMinX(), src.getMinY()));
+        WritableRaster dest = Raster
+            .createInterleavedRaster(DataBuffer.TYPE_BYTE, src.getWidth(), src.getHeight(), ncomponents,
+                new Point(src.getMinX(), src.getMinY()));
         return dest;
     }
 
@@ -711,12 +676,13 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
      * it will be used to hold the return value.  Note that
      * for this class, the destination point will be the same
      * as the source point.
+     *
      * @param srcPt the specified source <code>Point2D</code>
      * @param dstPt the destination <code>Point2D</code>
      * @return <code>dstPt</code> after setting its location to be
-     *         the same as <code>srcPt</code>
+     * the same as <code>srcPt</code>
      */
-    public final Point2D getPoint2D (Point2D srcPt, Point2D dstPt) {
+    public final Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
         if (dstPt == null) {
             dstPt = new Point2D.Float();
         }
@@ -729,40 +695,35 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
     /**
      * Returns the RenderingIntent from the specified ICC Profile.
      */
-    private int getRenderingIntent (ICC_Profile profile) {
+    private int getRenderingIntent(ICC_Profile profile) {
         byte[] header = profile.getData(ICC_Profile.icSigHead);
         int index = ICC_Profile.icHdrRenderingIntent;
-        return (((header[index]   & 0xff) << 24) |
-                ((header[index+1] & 0xff) << 16) |
-                ((header[index+2] & 0xff) <<  8) |
-                 (header[index+3] & 0xff));
+        return (((header[index] & 0xff) << 24) | ((header[index + 1] & 0xff) << 16) |
+            ((header[index + 2] & 0xff) << 8) | (header[index + 3] & 0xff));
     }
 
     /**
      * Returns the rendering hints used by this op.
+     *
      * @return the <code>RenderingHints</code> object of this
-     *         <code>ColorConvertOp</code>
+     * <code>ColorConvertOp</code>
      */
     public final RenderingHints getRenderingHints() {
         return hints;
     }
 
-    private final BufferedImage nonICCBIFilter(BufferedImage src,
-                                               ColorSpace srcColorSpace,
-                                               BufferedImage dst,
-                                               ColorSpace dstColorSpace) {
+    private final BufferedImage nonICCBIFilter(BufferedImage src, ColorSpace srcColorSpace, BufferedImage dst,
+        ColorSpace dstColorSpace) {
 
         int w = src.getWidth();
         int h = src.getHeight();
-        ICC_ColorSpace ciespace =
-            (ICC_ColorSpace) ColorSpace.getInstance(ColorSpace.CS_CIEXYZ);
+        ICC_ColorSpace ciespace = (ICC_ColorSpace) ColorSpace.getInstance(ColorSpace.CS_CIEXYZ);
         if (dst == null) {
             dst = createCompatibleDestImage(src, null);
             dstColorSpace = dst.getColorModel().getColorSpace();
         } else {
             if ((h != dst.getHeight()) || (w != dst.getWidth())) {
-                throw new IllegalArgumentException(
-                    "Width or height of BufferedImages do not match");
+                throw new IllegalArgumentException("Width or height of BufferedImages do not match");
             }
         }
         Raster srcRas = src.getRaster();
@@ -793,8 +754,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
                 dstProfile = ((ICC_ColorSpace) dstColorSpace).getProfile();
             }
             /* make a new transform if needed */
-            if ((thisTransform == null) || (thisSrcProfile != srcProfile) ||
-                (thisDestProfile != dstProfile) ) {
+            if ((thisTransform == null) || (thisSrcProfile != srcProfile) || (thisDestProfile != dstProfile)) {
                 updateBITransform(srcProfile, dstProfile);
             }
             // process per scanline
@@ -833,7 +793,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
                 int size = ((dstNumComp + 1) > 3) ? (dstNumComp + 1) : 3;
                 dstColor = new float[size];
             } else {
-                int size = (dstNumComp  > 3) ? dstNumComp : 3;
+                int size = (dstNumComp > 3) ? dstNumComp : 3;
                 dstColor = new float[size];
             }
             short[] srcLine = new short[w * iccSrcNumComp];
@@ -861,9 +821,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
                         color = srcColorSpace.toCIEXYZ(color);
                     }
                     for (int i = 0; i < iccSrcNumComp; i++) {
-                        srcLine[idx++] = (short)
-                            ((color[i] - srcMinVal[i]) * srcInvDiffMinMax[i] +
-                             0.5f);
+                        srcLine[idx++] = (short) ((color[i] - srcMinVal[i]) * srcInvDiffMinMax[i] + 0.5f);
                     }
                 }
                 // color convert srcLine to dstLine
@@ -873,8 +831,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
                 idx = 0;
                 for (int x = 0; x < w; x++) {
                     for (int i = 0; i < iccDstNumComp; i++) {
-                        dstColor[i] = ((float) (dstLine[idx++] & 0xffff)) *
-                                      dstDiffMinMax[i] + dstMinVal[i];
+                        dstColor[i] = ((float) (dstLine[idx++] & 0xffff)) * dstDiffMinMax[i] + dstMinVal[i];
                     }
                     if (nonICCDst) {
                         color = srcColorSpace.fromCIEXYZ(dstColor);
@@ -941,30 +898,24 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
 
     /* color convert a Raster - handles byte, ushort, int, short, float,
        or double transferTypes */
-    private final WritableRaster nonICCRasterFilter(Raster src,
-                                                    WritableRaster dst)  {
+    private final WritableRaster nonICCRasterFilter(Raster src, WritableRaster dst) {
 
         if (CSList.length != 2) {
-            throw new IllegalArgumentException(
-                "Destination ColorSpace is undefined");
+            throw new IllegalArgumentException("Destination ColorSpace is undefined");
         }
         if (src.getNumBands() != CSList[0].getNumComponents()) {
             throw new IllegalArgumentException(
-                "Numbers of source Raster bands and source color space " +
-                "components do not match");
+                "Numbers of source Raster bands and source color space " + "components do not match");
         }
         if (dst == null) {
             dst = createCompatibleDestRaster(src);
         } else {
-            if (src.getHeight() != dst.getHeight() ||
-                src.getWidth() != dst.getWidth()) {
-                throw new IllegalArgumentException(
-                    "Width or height of Rasters do not match");
+            if (src.getHeight() != dst.getHeight() || src.getWidth() != dst.getWidth()) {
+                throw new IllegalArgumentException("Width or height of Rasters do not match");
             }
             if (dst.getNumBands() != CSList[1].getNumComponents()) {
                 throw new IllegalArgumentException(
-                    "Numbers of destination Raster bands and destination " +
-                    "color space components do not match");
+                    "Numbers of destination Raster bands and destination " + "color space components do not match");
             }
         }
 
@@ -977,14 +928,12 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         boolean srcIsFloat, dstIsFloat;
         int srcTransferType = src.getTransferType();
         int dstTransferType = dst.getTransferType();
-        if ((srcTransferType == DataBuffer.TYPE_FLOAT) ||
-            (srcTransferType == DataBuffer.TYPE_DOUBLE)) {
+        if ((srcTransferType == DataBuffer.TYPE_FLOAT) || (srcTransferType == DataBuffer.TYPE_DOUBLE)) {
             srcIsFloat = true;
         } else {
             srcIsFloat = false;
         }
-        if ((dstTransferType == DataBuffer.TYPE_FLOAT) ||
-            (dstTransferType == DataBuffer.TYPE_DOUBLE)) {
+        if ((dstTransferType == DataBuffer.TYPE_FLOAT) || (dstTransferType == DataBuffer.TYPE_DOUBLE)) {
             dstIsFloat = true;
         } else {
             dstIsFloat = false;
@@ -999,11 +948,9 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             srcScaleFactor = new float[srcNumBands];
             for (int i = 0; i < srcNumBands; i++) {
                 if (srcTransferType == DataBuffer.TYPE_SHORT) {
-                    srcScaleFactor[i] = (srcMaxVals[i] - srcMinVals[i]) /
-                                        32767.0f;
+                    srcScaleFactor[i] = (srcMaxVals[i] - srcMinVals[i]) / 32767.0f;
                 } else {
-                    srcScaleFactor[i] = (srcMaxVals[i] - srcMinVals[i]) /
-                        ((float) ((1 << srcSM.getSampleSize(i)) - 1));
+                    srcScaleFactor[i] = (srcMaxVals[i] - srcMinVals[i]) / ((float) ((1 << srcSM.getSampleSize(i)) - 1));
                 }
             }
         }
@@ -1011,12 +958,9 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             dstScaleFactor = new float[dstNumBands];
             for (int i = 0; i < dstNumBands; i++) {
                 if (dstTransferType == DataBuffer.TYPE_SHORT) {
-                    dstScaleFactor[i] = 32767.0f /
-                                        (dstMaxVals[i] - dstMinVals[i]);
+                    dstScaleFactor[i] = 32767.0f / (dstMaxVals[i] - dstMinVals[i]);
                 } else {
-                    dstScaleFactor[i] =
-                        ((float) ((1 << dstSM.getSampleSize(i)) - 1)) /
-                        (dstMaxVals[i] - dstMinVals[i]);
+                    dstScaleFactor[i] = ((float) ((1 << dstSM.getSampleSize(i)) - 1)) / (dstMaxVals[i] - dstMinVals[i]);
                 }
             }
         }
@@ -1055,8 +999,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         return dst;
     }
 
-    private void getMinMaxValsFromProfiles(ICC_Profile srcProfile,
-                                           ICC_Profile dstProfile) {
+    private void getMinMaxValsFromProfiles(ICC_Profile srcProfile, ICC_Profile dstProfile) {
         int type = srcProfile.getColorSpaceType();
         int nc = srcProfile.getNumComponents();
         srcMinVals = new float[nc];
@@ -1079,7 +1022,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
             maxVals[2] = 127.0f;
         } else if (type == ColorSpace.TYPE_XYZ) {
             minVals[0] = minVals[1] = minVals[2] = 0.0f; // X, Y, Z
-            maxVals[0] = maxVals[1] = maxVals[2] = 1.0f + (32767.0f/ 32768.0f);
+            maxVals[0] = maxVals[1] = maxVals[2] = 1.0f + (32767.0f / 32768.0f);
         } else {
             for (int i = 0; i < nc; i++) {
                 minVals[i] = 0.0f;
@@ -1088,8 +1031,7 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
         }
     }
 
-    private void getMinMaxValsFromColorSpaces(ColorSpace srcCspace,
-                                              ColorSpace dstCspace) {
+    private void getMinMaxValsFromColorSpaces(ColorSpace srcCspace, ColorSpace dstCspace) {
         int nc = srcCspace.getNumComponents();
         srcMinVals = new float[nc];
         srcMaxVals = new float[nc];

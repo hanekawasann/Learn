@@ -49,12 +49,13 @@ package java.util.concurrent;
  *   }
  * }
  * </pre>
- *
+ * <p>
  * The {@link Executors#defaultThreadFactory} method provides a more
  * useful simple implementation, that sets the created thread context
  * to known values before returning it.
- * @since 1.5
+ *
  * @author Doug Lea
+ * @since 1.5
  */
 public interface ThreadFactory {
 
@@ -64,7 +65,7 @@ public interface ThreadFactory {
      *
      * @param r a runnable to be executed by new thread instance
      * @return constructed thread, or {@code null} if the request to
-     *         create a thread is rejected
+     * create a thread is rejected
      */
     Thread newThread(Runnable r);
 }

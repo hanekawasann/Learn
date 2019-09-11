@@ -64,10 +64,9 @@ package java.awt.dnd;
  * respective listener's method and all the necessary data should be retrieved
  * from the returned <code>Transferable</code> before that method returns.
  *
+ * @author David Mendenhall
  * @see DropTargetEvent
  * @see DropTargetListener
- *
- * @author David Mendenhall
  * @since 1.4
  */
 public abstract class DropTargetAdapter implements DropTargetListener {

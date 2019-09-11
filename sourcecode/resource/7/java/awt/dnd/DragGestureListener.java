@@ -24,7 +24,6 @@
  */
 
 
-
 package java.awt.dnd;
 
 import java.util.EventListener;
@@ -38,14 +37,13 @@ import java.util.EventListener;
  * DragGestureRecognizer} calls this interface's
  * {@link #dragGestureRecognized dragGestureRecognized()}
  * method and passes a {@code DragGestureEvent}.
-
  *
  * @see java.awt.dnd.DragGestureRecognizer
  * @see java.awt.dnd.DragGestureEvent
  * @see java.awt.dnd.DragSource
  */
 
- public interface DragGestureListener extends EventListener {
+public interface DragGestureListener extends EventListener {
 
     /**
      * This method is invoked by the {@code DragGestureRecognizer}
@@ -53,12 +51,13 @@ import java.util.EventListener;
      * drag initiating gesture. To intiate the drag and drop operation,
      * if approtiate, {@link DragGestureEvent#startDrag startDrag()} method on
      * the {@code DragGestureEvent} has to be invoked.
-     * <P>
+     * <p>
+     *
+     * @param dge the <code>DragGestureEvent</code> describing
+     *            the gesture that has just occurred
      * @see java.awt.dnd.DragGestureRecognizer
      * @see java.awt.dnd.DragGestureEvent
-     * @param dge the <code>DragGestureEvent</code> describing
-     * the gesture that has just occurred
      */
 
-     void dragGestureRecognized(DragGestureEvent dge);
+    void dragGestureRecognized(DragGestureEvent dge);
 }

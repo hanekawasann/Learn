@@ -30,11 +30,10 @@ package java.net;
  * The class PasswordAuthentication is a data holder that is used by
  * Authenticator.  It is simply a repository for a user name and a password.
  *
+ * @author Bill Foote
  * @see java.net.Authenticator
  * @see java.net.Authenticator#getPasswordAuthentication()
- *
- * @author  Bill Foote
- * @since   1.2
+ * @since 1.2
  */
 
 public final class PasswordAuthentication {

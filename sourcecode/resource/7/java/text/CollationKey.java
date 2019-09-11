@@ -92,9 +92,9 @@ package java.text;
  * </pre>
  * </blockquote>
  *
- * @see          Collator
- * @see          RuleBasedCollator
- * @author       Helena Shih
+ * @author Helena Shih
+ * @see Collator
+ * @see RuleBasedCollator
  */
 
 public abstract class CollationKey implements Comparable<CollationKey> {
@@ -102,6 +102,7 @@ public abstract class CollationKey implements Comparable<CollationKey> {
      * Compare this CollationKey to the target CollationKey. The collation rules of the
      * Collator object which created these keys are applied. <strong>Note:</strong>
      * CollationKeys created by different Collators can not be compared.
+     *
      * @param target target CollationKey
      * @return Returns an integer value. Value is less than zero if this is less
      * than target, value is zero if this and target are equal and value is greater than
@@ -127,15 +128,15 @@ public abstract class CollationKey implements Comparable<CollationKey> {
     abstract public byte[] toByteArray();
 
 
-  /**
-   * CollationKey constructor.
-   *
-   * @param source - the source string.
-   * @exception NullPointerException if <code>source</code> is null.
-   * @since 1.6
-   */
+    /**
+     * CollationKey constructor.
+     *
+     * @param source - the source string.
+     * @throws NullPointerException if <code>source</code> is null.
+     * @since 1.6
+     */
     protected CollationKey(String source) {
-        if (source==null){
+        if (source == null) {
             throw new NullPointerException();
         }
         this.source = source;

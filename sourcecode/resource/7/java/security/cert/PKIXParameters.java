@@ -77,11 +77,10 @@ import java.util.Set;
  * provide the necessary locking. Multiple threads each manipulating
  * separate objects need not synchronize.
  *
+ * @author Sean Mullan
+ * @author Yassir Elley
  * @see CertPathValidator
- *
- * @since       1.4
- * @author      Sean Mullan
- * @author      Yassir Elley
+ * @since 1.4
  */
 public class PKIXParameters implements CertPathParameters {
 
@@ -108,15 +107,13 @@ public class PKIXParameters implements CertPathParameters {
      *
      * @param trustAnchors a <code>Set</code> of <code>TrustAnchor</code>s
      * @throws InvalidAlgorithmParameterException if the specified
-     * <code>Set</code> is empty <code>(trustAnchors.isEmpty() == true)</code>
-     * @throws NullPointerException if the specified <code>Set</code> is
-     * <code>null</code>
-     * @throws ClassCastException if any of the elements in the <code>Set</code>
-     * are not of type <code>java.security.cert.TrustAnchor</code>
+     *                                            <code>Set</code> is empty <code>(trustAnchors.isEmpty() == true)</code>
+     * @throws NullPointerException               if the specified <code>Set</code> is
+     *                                            <code>null</code>
+     * @throws ClassCastException                 if any of the elements in the <code>Set</code>
+     *                                            are not of type <code>java.security.cert.TrustAnchor</code>
      */
-    public PKIXParameters(Set<TrustAnchor> trustAnchors)
-        throws InvalidAlgorithmParameterException
-    {
+    public PKIXParameters(Set<TrustAnchor> trustAnchors) throws InvalidAlgorithmParameterException {
         setTrustAnchors(trustAnchors);
 
         this.unmodInitialPolicies = Collections.<String>emptySet();
@@ -132,26 +129,21 @@ public class PKIXParameters implements CertPathParameters {
      * are considered; all other certificate types are ignored.
      *
      * @param keystore a <code>KeyStore</code> from which the set of
-     * most-trusted CAs will be populated
-     * @throws KeyStoreException if the keystore has not been initialized
+     *                 most-trusted CAs will be populated
+     * @throws KeyStoreException                  if the keystore has not been initialized
      * @throws InvalidAlgorithmParameterException if the keystore does
-     * not contain at least one trusted certificate entry
-     * @throws NullPointerException if the keystore is <code>null</code>
+     *                                            not contain at least one trusted certificate entry
+     * @throws NullPointerException               if the keystore is <code>null</code>
      */
-    public PKIXParameters(KeyStore keystore)
-        throws KeyStoreException, InvalidAlgorithmParameterException
-    {
-        if (keystore == null)
-            throw new NullPointerException("the keystore parameter must be " +
-                "non-null");
+    public PKIXParameters(KeyStore keystore) throws KeyStoreException, InvalidAlgorithmParameterException {
+        if (keystore == null) { throw new NullPointerException("the keystore parameter must be " + "non-null"); }
         Set<TrustAnchor> hashSet = new HashSet<TrustAnchor>();
         Enumeration<String> aliases = keystore.aliases();
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
             if (keystore.isCertificateEntry(alias)) {
                 Certificate cert = keystore.getCertificate(alias);
-                if (cert instanceof X509Certificate)
-                    hashSet.add(new TrustAnchor((X509Certificate)cert, null));
+                if (cert instanceof X509Certificate) { hashSet.add(new TrustAnchor((X509Certificate) cert, null)); }
             }
         }
         setTrustAnchors(hashSet);
@@ -166,7 +158,6 @@ public class PKIXParameters implements CertPathParameters {
      *
      * @return an immutable <code>Set</code> of <code>TrustAnchor</code>s
      * (never <code>null</code>)
-     *
      * @see #setTrustAnchors
      */
     public Set<TrustAnchor> getTrustAnchors() {
@@ -181,33 +172,26 @@ public class PKIXParameters implements CertPathParameters {
      *
      * @param trustAnchors a <code>Set</code> of <code>TrustAnchor</code>s
      * @throws InvalidAlgorithmParameterException if the specified
-     * <code>Set</code> is empty <code>(trustAnchors.isEmpty() == true)</code>
-     * @throws NullPointerException if the specified <code>Set</code> is
-     * <code>null</code>
-     * @throws ClassCastException if any of the elements in the set
-     * are not of type <code>java.security.cert.TrustAnchor</code>
-     *
+     *                                            <code>Set</code> is empty <code>(trustAnchors.isEmpty() == true)</code>
+     * @throws NullPointerException               if the specified <code>Set</code> is
+     *                                            <code>null</code>
+     * @throws ClassCastException                 if any of the elements in the set
+     *                                            are not of type <code>java.security.cert.TrustAnchor</code>
      * @see #getTrustAnchors
      */
-    public void setTrustAnchors(Set<TrustAnchor> trustAnchors)
-        throws InvalidAlgorithmParameterException
-    {
+    public void setTrustAnchors(Set<TrustAnchor> trustAnchors) throws InvalidAlgorithmParameterException {
         if (trustAnchors == null) {
-            throw new NullPointerException("the trustAnchors parameters must" +
-                " be non-null");
+            throw new NullPointerException("the trustAnchors parameters must" + " be non-null");
         }
         if (trustAnchors.isEmpty()) {
-            throw new InvalidAlgorithmParameterException("the trustAnchors " +
-                "parameter must be non-empty");
+            throw new InvalidAlgorithmParameterException("the trustAnchors " + "parameter must be non-empty");
         }
         for (Iterator<TrustAnchor> i = trustAnchors.iterator(); i.hasNext(); ) {
             if (!(i.next() instanceof TrustAnchor)) {
-                throw new ClassCastException("all elements of set must be "
-                    + "of type java.security.cert.TrustAnchor");
+                throw new ClassCastException("all elements of set must be " + "of type java.security.cert.TrustAnchor");
             }
         }
-        this.unmodTrustAnchors = Collections.unmodifiableSet
-                (new HashSet<TrustAnchor>(trustAnchors));
+        this.unmodTrustAnchors = Collections.unmodifiableSet(new HashSet<TrustAnchor>(trustAnchors));
     }
 
     /**
@@ -221,7 +205,6 @@ public class PKIXParameters implements CertPathParameters {
      * @return an immutable <code>Set</code> of initial policy OIDs in
      * <code>String</code> format, or an empty <code>Set</code> (implying any
      * policy is acceptable). Never returns <code>null</code>.
-     *
      * @see #setInitialPolicies
      */
     public Set<String> getInitialPolicies() {
@@ -241,24 +224,20 @@ public class PKIXParameters implements CertPathParameters {
      * subsequent modifications.
      *
      * @param initialPolicies a <code>Set</code> of initial policy
-     * OIDs in <code>String</code> format (or <code>null</code>)
+     *                        OIDs in <code>String</code> format (or <code>null</code>)
      * @throws ClassCastException if any of the elements in the set are
-     * not of type <code>String</code>
-     *
+     *                            not of type <code>String</code>
      * @see #getInitialPolicies
      */
     public void setInitialPolicies(Set<String> initialPolicies) {
         if (initialPolicies != null) {
-            for (Iterator<String> i = initialPolicies.iterator();
-                        i.hasNext();) {
-                if (!(i.next() instanceof String))
-                    throw new ClassCastException("all elements of set must be "
-                        + "of type java.lang.String");
+            for (Iterator<String> i = initialPolicies.iterator(); i.hasNext(); ) {
+                if (!(i.next() instanceof String)) {
+                    throw new ClassCastException("all elements of set must be " + "of type java.lang.String");
+                }
             }
-            this.unmodInitialPolicies =
-                Collections.unmodifiableSet(new HashSet<String>(initialPolicies));
-        } else
-            this.unmodInitialPolicies = Collections.<String>emptySet();
+            this.unmodInitialPolicies = Collections.unmodifiableSet(new HashSet<String>(initialPolicies));
+        } else { this.unmodInitialPolicies = Collections.<String>emptySet(); }
     }
 
     /**
@@ -272,20 +251,19 @@ public class PKIXParameters implements CertPathParameters {
      * subsequent modifications.
      *
      * @param stores a <code>List</code> of <code>CertStore</code>s (or
-     * <code>null</code>)
+     *               <code>null</code>)
      * @throws ClassCastException if any of the elements in the list are
-     * not of type <code>java.security.cert.CertStore</code>
-     *
+     *                            not of type <code>java.security.cert.CertStore</code>
      * @see #getCertStores
      */
     public void setCertStores(List<CertStore> stores) {
         if (stores == null) {
             this.certStores = new ArrayList<CertStore>();
         } else {
-            for (Iterator<CertStore> i = stores.iterator(); i.hasNext();) {
+            for (Iterator<CertStore> i = stores.iterator(); i.hasNext(); ) {
                 if (!(i.next() instanceof CertStore)) {
-                    throw new ClassCastException("all elements of list must be "
-                        + "of type java.security.cert.CertStore");
+                    throw new ClassCastException(
+                        "all elements of list must be " + "of type java.security.cert.CertStore");
                 }
             }
             this.certStores = new ArrayList<CertStore>(stores);
@@ -297,7 +275,7 @@ public class PKIXParameters implements CertPathParameters {
      * <code>CertStore</code>s used in finding certificates and CRLs.
      *
      * @param store the <code>CertStore</code> to add. If <code>null</code>,
-     * the store is ignored (not added to list).
+     *              the store is ignored (not added to list).
      */
     public void addCertStore(CertStore store) {
         if (store != null) {
@@ -311,12 +289,10 @@ public class PKIXParameters implements CertPathParameters {
      *
      * @return an immutable <code>List</code> of <code>CertStore</code>s
      * (may be empty, but never <code>null</code>)
-     *
      * @see #setCertStores
      */
     public List<CertStore> getCertStores() {
-        return Collections.unmodifiableList
-                (new ArrayList<CertStore>(this.certStores));
+        return Collections.unmodifiableList(new ArrayList<CertStore>(this.certStores));
     }
 
     /**
@@ -361,7 +337,7 @@ public class PKIXParameters implements CertPathParameters {
      * By default, the ExplicitPolicyRequired flag is false.
      *
      * @param val <code>true</code> if explicit policy is to be required,
-     * <code>false</code> otherwise
+     *            <code>false</code> otherwise
      */
     public void setExplicitPolicyRequired(boolean val) {
         explicitPolicyRequired = val;
@@ -385,7 +361,7 @@ public class PKIXParameters implements CertPathParameters {
      * flag is false).
      *
      * @param val <code>true</code> if policy mapping is to be inhibited,
-     * <code>false</code> otherwise
+     *            <code>false</code> otherwise
      */
     public void setPolicyMappingInhibited(boolean val) {
         policyMappingInhibited = val;
@@ -409,7 +385,7 @@ public class PKIXParameters implements CertPathParameters {
      * returns <code>false</code>).
      *
      * @param val <code>true</code> if the any policy OID is to be
-     * inhibited, <code>false</code> otherwise
+     *            inhibited, <code>false</code> otherwise
      */
     public void setAnyPolicyInhibited(boolean val) {
         anyPolicyInhibited = val;
@@ -445,7 +421,7 @@ public class PKIXParameters implements CertPathParameters {
      * qualifiers in this manner in order to be PKIX compliant.
      *
      * @param qualifiersRejected the new value of the PolicyQualifiersRejected
-     * flag
+     *                           flag
      * @see #getPolicyQualifiersRejected
      * @see PolicyQualifierInfo
      */
@@ -482,10 +458,7 @@ public class PKIXParameters implements CertPathParameters {
      * @see #setDate
      */
     public Date getDate() {
-        if (date == null)
-            return null;
-        else
-            return (Date) this.date.clone();
+        if (date == null) { return null; } else { return (Date) this.date.clone(); }
     }
 
     /**
@@ -496,14 +469,11 @@ public class PKIXParameters implements CertPathParameters {
      * against subsequent modifications.
      *
      * @param date the <code>Date</code>, or <code>null</code> for the
-     * current time
+     *             current time
      * @see #getDate
      */
     public void setDate(Date date) {
-        if (date != null)
-            this.date = (Date) date.clone();
-        else
-            date = null;
+        if (date != null) { this.date = (Date) date.clone(); } else { date = null; }
     }
 
     /**
@@ -536,18 +506,17 @@ public class PKIXParameters implements CertPathParameters {
      * against subsequent modifications.
      *
      * @param checkers a <code>List</code> of <code>PKIXCertPathChecker</code>s.
-     * May be <code>null</code>, in which case no additional checkers will be
-     * used.
+     *                 May be <code>null</code>, in which case no additional checkers will be
+     *                 used.
      * @throws ClassCastException if any of the elements in the list
-     * are not of type <code>java.security.cert.PKIXCertPathChecker</code>
+     *                            are not of type <code>java.security.cert.PKIXCertPathChecker</code>
      * @see #getCertPathCheckers
      */
     public void setCertPathCheckers(List<PKIXCertPathChecker> checkers) {
         if (checkers != null) {
-            List<PKIXCertPathChecker> tmpList =
-                        new ArrayList<PKIXCertPathChecker>();
+            List<PKIXCertPathChecker> tmpList = new ArrayList<PKIXCertPathChecker>();
             for (PKIXCertPathChecker checker : checkers) {
-                tmpList.add((PKIXCertPathChecker)checker.clone());
+                tmpList.add((PKIXCertPathChecker) checker.clone());
             }
             this.certPathCheckers = tmpList;
         } else {
@@ -569,7 +538,7 @@ public class PKIXParameters implements CertPathParameters {
     public List<PKIXCertPathChecker> getCertPathCheckers() {
         List<PKIXCertPathChecker> tmpList = new ArrayList<PKIXCertPathChecker>();
         for (PKIXCertPathChecker ck : certPathCheckers) {
-            tmpList.add((PKIXCertPathChecker)ck.clone());
+            tmpList.add((PKIXCertPathChecker) ck.clone());
         }
         return Collections.unmodifiableList(tmpList);
     }
@@ -583,11 +552,11 @@ public class PKIXParameters implements CertPathParameters {
      * against subsequent modifications.
      *
      * @param checker a <code>PKIXCertPathChecker</code> to add to the list of
-     * checks. If <code>null</code>, the checker is ignored (not added to list).
+     *                checks. If <code>null</code>, the checker is ignored (not added to list).
      */
     public void addCertPathChecker(PKIXCertPathChecker checker) {
         if (checker != null) {
-            certPathCheckers.add((PKIXCertPathChecker)checker.clone());
+            certPathCheckers.add((PKIXCertPathChecker) checker.clone());
         }
     }
 
@@ -610,7 +579,7 @@ public class PKIXParameters implements CertPathParameters {
      *
      * @param sigProvider the signature provider's name (or <code>null</code>)
      * @see #getSigProvider
-    */
+     */
     public void setSigProvider(String sigProvider) {
         this.sigProvider = sigProvider;
     }
@@ -645,14 +614,11 @@ public class PKIXParameters implements CertPathParameters {
      * to protect against subsequent modifications.
      *
      * @param selector a <code>CertSelector</code> specifying the constraints
-     * on the target certificate (or <code>null</code>)
+     *                 on the target certificate (or <code>null</code>)
      * @see #getTargetCertConstraints
      */
     public void setTargetCertConstraints(CertSelector selector) {
-        if (selector != null)
-            certSelector = (CertSelector) selector.clone();
-        else
-            certSelector = null;
+        if (selector != null) { certSelector = (CertSelector) selector.clone(); } else { certSelector = null; }
     }
 
     /**
@@ -663,18 +629,16 @@ public class PKIXParameters implements CertPathParameters {
      */
     public Object clone() {
         try {
-            PKIXParameters copy = (PKIXParameters)super.clone();
+            PKIXParameters copy = (PKIXParameters) super.clone();
 
             // must clone these because addCertStore, et al. modify them
             if (certStores != null) {
                 copy.certStores = new ArrayList<CertStore>(certStores);
             }
             if (certPathCheckers != null) {
-                copy.certPathCheckers =
-                    new ArrayList<PKIXCertPathChecker>(certPathCheckers.size());
+                copy.certPathCheckers = new ArrayList<PKIXCertPathChecker>(certPathCheckers.size());
                 for (PKIXCertPathChecker checker : certPathCheckers) {
-                    copy.certPathCheckers.add(
-                                    (PKIXCertPathChecker)checker.clone());
+                    copy.certPathCheckers.add((PKIXCertPathChecker) checker.clone());
                 }
             }
 
@@ -698,8 +662,7 @@ public class PKIXParameters implements CertPathParameters {
 
         /* start with trusted anchor info */
         if (unmodTrustAnchors != null) {
-            sb.append("  Trust Anchors: " + unmodTrustAnchors.toString()
-                + "\n");
+            sb.append("  Trust Anchors: " + unmodTrustAnchors.toString() + "\n");
         }
 
         /* now, append initial state information */
@@ -707,8 +670,7 @@ public class PKIXParameters implements CertPathParameters {
             if (unmodInitialPolicies.isEmpty()) {
                 sb.append("  Initial Policy OIDs: any\n");
             } else {
-                sb.append("  Initial Policy OIDs: ["
-                    + unmodInitialPolicies.toString() + "]\n");
+                sb.append("  Initial Policy OIDs: [" + unmodInitialPolicies.toString() + "]\n");
             }
         }
 
@@ -725,11 +687,10 @@ public class PKIXParameters implements CertPathParameters {
         sb.append("  Target Cert Constraints: " + String.valueOf(certSelector) + "\n");
 
         /* finally, append miscellaneous parameters */
-        if (certPathCheckers != null)
-            sb.append("  Certification Path Checkers: ["
-                + certPathCheckers.toString() + "]\n");
-        if (certStores != null)
-            sb.append("  CertStores: [" + certStores.toString() + "]\n");
+        if (certPathCheckers != null) {
+            sb.append("  Certification Path Checkers: [" + certPathCheckers.toString() + "]\n");
+        }
+        if (certStores != null) { sb.append("  CertStores: [" + certStores.toString() + "]\n"); }
         sb.append("]");
         return sb.toString();
     }

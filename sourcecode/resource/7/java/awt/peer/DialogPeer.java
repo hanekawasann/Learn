@@ -30,7 +30,7 @@ import java.awt.*;
 /**
  * The peer interface for {@link Dialog}. This adds a couple of dialog specific
  * features to the {@link WindowPeer} interface.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -43,7 +43,6 @@ public interface DialogPeer extends WindowPeer {
      * Sets the title on the dialog window.
      *
      * @param title the title to set
-     *
      * @see Dialog#setTitle(String)
      */
     void setTitle(String title);
@@ -52,8 +51,7 @@ public interface DialogPeer extends WindowPeer {
      * Sets if the dialog should be resizable or not.
      *
      * @param resizeable {@code true} when the dialog should be resizable,
-     *        {@code false} if not
-     *
+     *                   {@code false} if not
      * @see Dialog#setResizable(boolean)
      */
     void setResizable(boolean resizeable);
@@ -62,7 +60,6 @@ public interface DialogPeer extends WindowPeer {
      * Block the specified windows. This is used for modal dialogs.
      *
      * @param windows the windows to block
-     *
      * @see Dialog#modalShow()
      * @see Dialog#blockWindows()
      */

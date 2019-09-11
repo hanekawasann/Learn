@@ -50,7 +50,7 @@ public class MethodDescriptor extends FeatureDescriptor {
      * Constructs a <code>MethodDescriptor</code> from a
      * <code>Method</code>.
      *
-     * @param method    The low-level method information.
+     * @param method The low-level method information.
      */
     public MethodDescriptor(Method method) {
         this(method, null);
@@ -62,12 +62,11 @@ public class MethodDescriptor extends FeatureDescriptor {
      * <code>Method</code> providing descriptive information for each
      * of the method's parameters.
      *
-     * @param method    The low-level method information.
-     * @param parameterDescriptors  Descriptive information for each of the
-     *                          method's parameters.
+     * @param method               The low-level method information.
+     * @param parameterDescriptors Descriptive information for each of the
+     *                             method's parameters.
      */
-    public MethodDescriptor(Method method,
-                ParameterDescriptor parameterDescriptors[]) {
+    public MethodDescriptor(Method method, ParameterDescriptor parameterDescriptors[]) {
         setName(method.getName());
         setMethod(method);
         this.parameterDescriptors = parameterDescriptors;
@@ -116,9 +115,7 @@ public class MethodDescriptor extends FeatureDescriptor {
     }
 
     private Method getMethod0() {
-        return (this.methodRef != null)
-                ? this.methodRef.get()
-                : null;
+        return (this.methodRef != null) ? this.methodRef.get() : null;
     }
 
     private synchronized void setParams(Class[] param) {
@@ -142,8 +139,8 @@ public class MethodDescriptor extends FeatureDescriptor {
         Class[] clss = new Class[params.size()];
 
         for (int i = 0; i < params.size(); i++) {
-            Reference ref = (Reference)params.get(i);
-            Class cls = (Class)ref.get();
+            Reference ref = (Reference) params.get(i);
+            Class cls = (Class) ref.get();
             if (cls == null) {
                 return null;
             } else {
@@ -158,7 +155,7 @@ public class MethodDescriptor extends FeatureDescriptor {
      * method's parameters.
      *
      * @return The locale-independent names of the parameters.  May return
-     *          a null array if the parameter names aren't known.
+     * a null array if the parameter names aren't known.
      */
     public ParameterDescriptor[] getParameterDescriptors() {
         return parameterDescriptors;
@@ -173,7 +170,7 @@ public class MethodDescriptor extends FeatureDescriptor {
      */
 
     MethodDescriptor(MethodDescriptor x, MethodDescriptor y) {
-        super(x,y);
+        super(x, y);
 
         methodRef = x.methodRef;
         if (y.methodRef != null) {
@@ -208,7 +205,7 @@ public class MethodDescriptor extends FeatureDescriptor {
         if (old.parameterDescriptors != null) {
             int len = old.parameterDescriptors.length;
             parameterDescriptors = new ParameterDescriptor[len];
-            for (int i = 0; i < len ; i++) {
+            for (int i = 0; i < len; i++) {
                 parameterDescriptors[i] = new ParameterDescriptor(old.parameterDescriptors[i]);
             }
         }

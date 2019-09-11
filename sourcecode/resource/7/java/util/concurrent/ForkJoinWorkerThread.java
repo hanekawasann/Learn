@@ -49,8 +49,8 @@ import java.util.concurrent.RejectedExecutionException;
  * custom {@link ForkJoinPool.ForkJoinWorkerThreadFactory} to use it
  * in a {@code ForkJoinPool}.
  *
- * @since 1.7
  * @author Doug Lea
+ * @since 1.7
  */
 public class ForkJoinWorkerThread extends Thread {
     /*
@@ -173,7 +173,7 @@ public class ForkJoinWorkerThread extends Thread {
     /**
      * Mask for pool indices encoded as shorts
      */
-    private static final int  SMASK  = 0xffff;
+    private static final int SMASK = 0xffff;
 
     /**
      * Capacity of work-stealing queue array upon initialization.
@@ -301,8 +301,7 @@ public class ForkJoinWorkerThread extends Thread {
         eventCount = ~k & SMASK; // clear wait count
         locallyFifo = pool.locallyFifo;
         Thread.UncaughtExceptionHandler ueh = pool.ueh;
-        if (ueh != null)
-            setUncaughtExceptionHandler(ueh);
+        if (ueh != null) { setUncaughtExceptionHandler(ueh); }
         setDaemon(true);
     }
 
@@ -370,7 +369,7 @@ public class ForkJoinWorkerThread extends Thread {
      * {@code super.onTermination} at the end of the overridden method.
      *
      * @param exception the exception causing this thread to abort due
-     * to an unrecoverable error, or {@code null} if completed normally
+     *                  to an unrecoverable error, or {@code null} if completed normally
      */
     protected void onTermination(Throwable exception) {
         try {
@@ -379,10 +378,9 @@ public class ForkJoinWorkerThread extends Thread {
             pool.deregisterWorker(this, exception);
         } catch (Throwable ex) {        // Shouldn't ever happen
             if (exception == null)      // but if so, at least rethrown
-                exception = ex;
+            { exception = ex; }
         } finally {
-            if (exception != null)
-                UNSAFE.throwException(exception);
+            if (exception != null) { UNSAFE.throwException(exception); }
         }
     }
 
@@ -434,8 +432,7 @@ public class ForkJoinWorkerThread extends Thread {
      * CASes slot i of array q from t to null. Caller must ensure q is
      * non-null and index is in range.
      */
-    private static final boolean casSlotNull(ForkJoinTask<?>[] q, int i,
-                                             ForkJoinTask<?> t) {
+    private static final boolean casSlotNull(ForkJoinTask<?>[] q, int i, ForkJoinTask<?> t) {
         return UNSAFE.compareAndSwapObject(q, (i << ASHIFT) + ABASE, t, null);
     }
 
@@ -444,8 +441,7 @@ public class ForkJoinWorkerThread extends Thread {
      * array q.  Caller must ensure q is non-null and index is in
      * range. This method is used only during resets and backouts.
      */
-    private static final void writeSlot(ForkJoinTask<?>[] q, int i,
-                                        ForkJoinTask<?> t) {
+    private static final void writeSlot(ForkJoinTask<?>[] q, int i, ForkJoinTask<?> t) {
         UNSAFE.putObjectVolatile(q, (i << ASHIFT) + ABASE, t);
     }
 
@@ -457,15 +453,13 @@ public class ForkJoinWorkerThread extends Thread {
      * @param t the task. Caller must ensure non-null.
      */
     final void pushTask(ForkJoinTask<?> t) {
-        ForkJoinTask<?>[] q; int s, m;
+        ForkJoinTask<?>[] q;
+        int s, m;
         if ((q = queue) != null) {    // ignore if queue removed
             long u = (((s = queueTop) & (m = q.length - 1)) << ASHIFT) + ABASE;
             UNSAFE.putOrderedObject(q, u, t);
             queueTop = s + 1;         // or use putOrderedInt
-            if ((s -= queueBase) <= 2)
-                pool.signalWork();
-            else if (s == m)
-                growQueue();
+            if ((s -= queueBase) <= 2) { pool.signalWork(); } else if (s == m) { growQueue(); }
         }
     }
 
@@ -477,10 +471,8 @@ public class ForkJoinWorkerThread extends Thread {
     private void growQueue() {
         ForkJoinTask<?>[] oldQ = queue;
         int size = oldQ != null ? oldQ.length << 1 : INITIAL_QUEUE_CAPACITY;
-        if (size > MAXIMUM_QUEUE_CAPACITY)
-            throw new RejectedExecutionException("Queue capacity exceeded");
-        if (size < INITIAL_QUEUE_CAPACITY)
-            size = INITIAL_QUEUE_CAPACITY;
+        if (size > MAXIMUM_QUEUE_CAPACITY) { throw new RejectedExecutionException("Queue capacity exceeded"); }
+        if (size < INITIAL_QUEUE_CAPACITY) { size = INITIAL_QUEUE_CAPACITY; }
         ForkJoinTask<?>[] q = queue = new ForkJoinTask<?>[size];
         int mask = size - 1;
         int top = queueTop;
@@ -489,9 +481,9 @@ public class ForkJoinWorkerThread extends Thread {
             for (int b = queueBase; b != top; ++b) {
                 long u = ((b & oldMask) << ASHIFT) + ABASE;
                 Object x = UNSAFE.getObjectVolatile(oldQ, u);
-                if (x != null && UNSAFE.compareAndSwapObject(oldQ, u, x, null))
-                    UNSAFE.putObjectVolatile
-                        (q, ((b & mask) << ASHIFT) + ABASE, x);
+                if (x != null && UNSAFE.compareAndSwapObject(oldQ, u, x, null)) {
+                    UNSAFE.putObjectVolatile(q, ((b & mask) << ASHIFT) + ABASE, x);
+                }
             }
         }
     }
@@ -504,11 +496,11 @@ public class ForkJoinWorkerThread extends Thread {
      * @return a task, or null if none or contended
      */
     final ForkJoinTask<?> deqTask() {
-        ForkJoinTask<?> t; ForkJoinTask<?>[] q; int b, i;
-        if (queueTop != (b = queueBase) &&
-            (q = queue) != null && // must read q after b
-            (i = (q.length - 1) & b) >= 0 &&
-            (t = q[i]) != null && queueBase == b &&
+        ForkJoinTask<?> t;
+        ForkJoinTask<?>[] q;
+        int b, i;
+        if (queueTop != (b = queueBase) && (q = queue) != null && // must read q after b
+            (i = (q.length - 1) & b) >= 0 && (t = q[i]) != null && queueBase == b &&
             UNSAFE.compareAndSwapObject(q, (i << ASHIFT) + ABASE, t, null)) {
             queueBase = b + 1;
             return t;
@@ -523,14 +515,13 @@ public class ForkJoinWorkerThread extends Thread {
      * @return a task, or null if none
      */
     final ForkJoinTask<?> locallyDeqTask() {
-        ForkJoinTask<?> t; int m, b, i;
+        ForkJoinTask<?> t;
+        int m, b, i;
         ForkJoinTask<?>[] q = queue;
         if (q != null && (m = q.length - 1) >= 0) {
             while (queueTop != (b = queueBase)) {
-                if ((t = q[i = m & b]) != null &&
-                    queueBase == b &&
-                    UNSAFE.compareAndSwapObject(q, (i << ASHIFT) + ABASE,
-                                                t, null)) {
+                if ((t = q[i = m & b]) != null && queueBase == b &&
+                    UNSAFE.compareAndSwapObject(q, (i << ASHIFT) + ABASE, t, null)) {
                     queueBase = b + 1;
                     return t;
                 }
@@ -547,12 +538,12 @@ public class ForkJoinWorkerThread extends Thread {
         int m;
         ForkJoinTask<?>[] q = queue;
         if (q != null && (m = q.length - 1) >= 0) {
-            for (int s; (s = queueTop) != queueBase;) {
+            for (int s; (s = queueTop) != queueBase; ) {
                 int i = m & --s;
                 long u = (i << ASHIFT) + ABASE; // raw offset
                 ForkJoinTask<?> t = q[i];
                 if (t == null)   // lost to stealer
-                    break;
+                { break; }
                 if (UNSAFE.compareAndSwapObject(q, u, t, null)) {
                     queueTop = s; // or putOrderedInt
                     return t;
@@ -572,8 +563,7 @@ public class ForkJoinWorkerThread extends Thread {
         ForkJoinTask<?>[] q;
         int s;
         if ((q = queue) != null && (s = queueTop) != queueBase &&
-            UNSAFE.compareAndSwapObject
-            (q, (((q.length - 1) & --s) << ASHIFT) + ABASE, t, null)) {
+            UNSAFE.compareAndSwapObject(q, (((q.length - 1) & --s) << ASHIFT) + ABASE, t, null)) {
             queueTop = s; // or putOrderedInt
             return true;
         }
@@ -586,8 +576,7 @@ public class ForkJoinWorkerThread extends Thread {
     final ForkJoinTask<?> peekTask() {
         int m;
         ForkJoinTask<?>[] q = queue;
-        if (q == null || (m = q.length - 1) < 0)
-            return null;
+        if (q == null || (m = q.length - 1) < 0) { return null; }
         int i = locallyFifo ? queueBase : (queueTop - 1);
         return q[i & m];
     }
@@ -599,11 +588,9 @@ public class ForkJoinWorkerThread extends Thread {
      */
     final void execTask(ForkJoinTask<?> t) {
         currentSteal = t;
-        for (;;) {
-            if (t != null)
-                t.doExec();
-            if (queueTop == queueBase)
-                break;
+        for (; ; ) {
+            if (t != null) { t.doExec(); }
+            if (queueTop == queueBase) { break; }
             t = locallyFifo ? locallyDeqTask() : popTask();
         }
         ++stealCount;
@@ -616,15 +603,12 @@ public class ForkJoinWorkerThread extends Thread {
      */
     final void cancelTasks() {
         ForkJoinTask<?> cj = currentJoin; // try to cancel ongoing tasks
-        if (cj != null && cj.status >= 0)
-            cj.cancelIgnoringExceptions();
+        if (cj != null && cj.status >= 0) { cj.cancelIgnoringExceptions(); }
         ForkJoinTask<?> cs = currentSteal;
-        if (cs != null && cs.status >= 0)
-            cs.cancelIgnoringExceptions();
+        if (cs != null && cs.status >= 0) { cs.cancelIgnoringExceptions(); }
         while (queueBase != queueTop) {
             ForkJoinTask<?> t = deqTask();
-            if (t != null)
-                t.cancelIgnoringExceptions();
+            if (t != null) { t.cancelIgnoringExceptions(); }
         }
     }
 
@@ -671,8 +655,7 @@ public class ForkJoinWorkerThread extends Thread {
     final ForkJoinTask<?> pollTask() {
         ForkJoinWorkerThread[] ws;
         ForkJoinTask<?> t = pollLocalTask();
-        if (t != null || (ws = pool.workers) == null)
-            return t;
+        if (t != null || (ws = pool.workers) == null) { return t; }
         int n = ws.length; // cheap version of FJP.scan
         int steps = n << 1;
         int r = nextSeed();
@@ -680,8 +663,7 @@ public class ForkJoinWorkerThread extends Thread {
         while (i < steps) {
             ForkJoinWorkerThread w = ws[(i++ + r) & (n - 1)];
             if (w != null && w.queueBase != w.queueTop && w.queue != null) {
-                if ((t = w.deqTask()) != null)
-                    return t;
+                if ((t = w.deqTask()) != null) { return t; }
                 i = 0;
             }
         }
@@ -708,25 +690,23 @@ public class ForkJoinWorkerThread extends Thread {
     final int joinTask(ForkJoinTask<?> joinMe) {
         ForkJoinTask<?> prevJoin = currentJoin;
         currentJoin = joinMe;
-        for (int s, retries = MAX_HELP;;) {
+        for (int s, retries = MAX_HELP; ; ) {
             if ((s = joinMe.status) < 0) {
                 currentJoin = prevJoin;
                 return s;
             }
             if (retries > 0) {
                 if (queueTop != queueBase) {
-                    if (!localHelpJoinTask(joinMe))
+                    if (!localHelpJoinTask(joinMe)) {
                         retries = 0;           // cannot help
-                }
-                else if (retries == MAX_HELP >>> 1) {
+                    }
+                } else if (retries == MAX_HELP >>> 1) {
                     --retries;                 // check uncommon case
-                    if (tryDeqAndExec(joinMe) >= 0)
+                    if (tryDeqAndExec(joinMe) >= 0) {
                         Thread.yield();        // for politeness
-                }
-                else
-                    retries = helpJoinTask(joinMe) ? MAX_HELP : retries - 1;
-            }
-            else {
+                    }
+                } else { retries = helpJoinTask(joinMe) ? MAX_HELP : retries - 1; }
+            } else {
                 retries = MAX_HELP;           // restart if not done
                 pool.tryAwaitJoin(joinMe);
             }
@@ -740,14 +720,13 @@ public class ForkJoinWorkerThread extends Thread {
      * @return false if any other non-cancelled task exists in local queue
      */
     private boolean localHelpJoinTask(ForkJoinTask<?> joinMe) {
-        int s, i; ForkJoinTask<?>[] q; ForkJoinTask<?> t;
-        if ((s = queueTop) != queueBase && (q = queue) != null &&
-            (i = (q.length - 1) & --s) >= 0 &&
+        int s, i;
+        ForkJoinTask<?>[] q;
+        ForkJoinTask<?> t;
+        if ((s = queueTop) != queueBase && (q = queue) != null && (i = (q.length - 1) & --s) >= 0 &&
             (t = q[i]) != null) {
-            if (t != joinMe && t.status >= 0)
-                return false;
-            if (UNSAFE.compareAndSwapObject
-                (q, (i << ASHIFT) + ABASE, t, null)) {
+            if (t != joinMe && t.status >= 0) { return false; }
+            if (UNSAFE.compareAndSwapObject(q, (i << ASHIFT) + ABASE, t, null)) {
                 queueTop = s;           // or putOrderedInt
                 t.doExec();
             }
@@ -766,7 +745,7 @@ public class ForkJoinWorkerThread extends Thread {
      * greater than MAX_HELP links.  All of these cases are dealt with
      * by just retrying by caller.
      *
-     * @param joinMe the task to join
+     * @param joinMe   the task to join
      * @param canSteal true if local queue is empty
      * @return true if ran a task
      */
@@ -777,34 +756,35 @@ public class ForkJoinWorkerThread extends Thread {
         if (ws != null && ws.length > m && joinMe.status >= 0) {
             int levels = MAX_HELP;              // remaining chain length
             ForkJoinTask<?> task = joinMe;      // base of chain
-            outer:for (ForkJoinWorkerThread thread = this;;) {
+            outer:
+            for (ForkJoinWorkerThread thread = this; ; ) {
                 // Try to find v, the stealer of task, by first using hint
                 ForkJoinWorkerThread v = ws[thread.stealHint & m];
                 if (v == null || v.currentSteal != task) {
-                    for (int j = 0; ;) {        // search array
+                    for (int j = 0; ; ) {        // search array
                         if ((v = ws[j]) != null && v.currentSteal == task) {
                             thread.stealHint = j;
                             break;              // save hint for next time
                         }
-                        if (++j > m)
+                        if (++j > m) {
                             break outer;        // can't find stealer
+                        }
                     }
                 }
                 // Try to help v, using specialized form of deqTask
-                for (;;) {
-                    ForkJoinTask<?>[] q; int b, i;
-                    if (joinMe.status < 0)
-                        break outer;
-                    if ((b = v.queueBase) == v.queueTop ||
-                        (q = v.queue) == null ||
-                        (i = (q.length-1) & b) < 0)
+                for (; ; ) {
+                    ForkJoinTask<?>[] q;
+                    int b, i;
+                    if (joinMe.status < 0) { break outer; }
+                    if ((b = v.queueBase) == v.queueTop || (q = v.queue) == null || (i = (q.length - 1) & b) < 0) {
                         break;                  // empty
+                    }
                     long u = (i << ASHIFT) + ABASE;
                     ForkJoinTask<?> t = q[i];
-                    if (task.status < 0)
+                    if (task.status < 0) {
                         break outer;            // stale
-                    if (t != null && v.queueBase == b &&
-                        UNSAFE.compareAndSwapObject(q, u, t, null)) {
+                    }
+                    if (t != null && v.queueBase == b && UNSAFE.compareAndSwapObject(q, u, t, null)) {
                         v.queueBase = b + 1;
                         v.stealHint = poolIndex;
                         ForkJoinTask<?> ps = currentSteal;
@@ -816,13 +796,12 @@ public class ForkJoinWorkerThread extends Thread {
                 }
                 // Try to descend to find v's stealer
                 ForkJoinTask<?> next = v.currentJoin;
-                if (--levels > 0 && task.status >= 0 &&
-                    next != null && next != task) {
+                if (--levels > 0 && task.status >= 0 && next != null && next != task) {
                     task = next;
                     thread = v;
-                }
-                else
+                } else {
                     break;  // max levels, stale, dead-end, or cyclic
+                }
             }
         }
         return helped;
@@ -840,16 +819,13 @@ public class ForkJoinWorkerThread extends Thread {
         ForkJoinWorkerThread[] ws = pool.workers;
         if (ws != null && ws.length > m && t.status >= 0) {
             for (int j = 0; j <= m; ++j) {
-                ForkJoinTask<?>[] q; int b, i;
+                ForkJoinTask<?>[] q;
+                int b, i;
                 ForkJoinWorkerThread v = ws[j];
-                if (v != null &&
-                    (b = v.queueBase) != v.queueTop &&
-                    (q = v.queue) != null &&
-                    (i = (q.length - 1) & b) >= 0 &&
-                    q[i] ==  t) {
+                if (v != null && (b = v.queueBase) != v.queueTop && (q = v.queue) != null &&
+                    (i = (q.length - 1) & b) >= 0 && q[i] == t) {
                     long u = (i << ASHIFT) + ABASE;
-                    if (v.queueBase == b &&
-                        UNSAFE.compareAndSwapObject(q, u, t, null)) {
+                    if (v.queueBase == b && UNSAFE.compareAndSwapObject(q, u, t, null)) {
                         v.queueBase = b + 1;
                         v.stealHint = poolIndex;
                         ForkJoinTask<?> ps = currentSteal;
@@ -868,20 +844,20 @@ public class ForkJoinWorkerThread extends Thread {
      * Implements ForkJoinTask.getSurplusQueuedTaskCount().  Returns
      * an estimate of the number of tasks, offset by a function of
      * number of idle workers.
-     *
+     * <p>
      * This method provides a cheap heuristic guide for task
      * partitioning when programmers, frameworks, tools, or languages
      * have little or no idea about task granularity.  In essence by
      * offering this method, we ask users only about tradeoffs in
      * overhead vs expected throughput and its variance, rather than
      * how finely to partition tasks.
-     *
+     * <p>
      * In a steady state strict (tree-structured) computation, each
      * thread makes available for stealing enough tasks for other
      * threads to remain active. Inductively, if all threads play by
      * the same rules, each thread should make available only a
      * constant number of tasks.
-     *
+     * <p>
      * The minimum useful constant is just 1. But using a value of 1
      * would require immediate replenishment upon each steal to
      * maintain enough tasks, which is infeasible.  Further,
@@ -892,14 +868,14 @@ public class ForkJoinWorkerThread extends Thread {
      * approximately the same level of computation tree. However,
      * producing extra tasks amortizes the uncertainty of progress and
      * diffusion assumptions.
-     *
+     * <p>
      * So, users will want to use values larger, but not much larger
      * than 1 to both smooth over transient shortages and hedge
      * against uneven progress; as traded off against the cost of
      * extra task overhead. We leave the user to pick a threshold
      * value to compare with the results of this call to guide
      * decisions, but recommend values such as 3.
-     *
+     * <p>
      * When all threads are active, it is on average OK to estimate
      * surplus strictly locally. In steady-state, if one thread is
      * maintaining say 2 surplus tasks, then so are others. So we can
@@ -930,19 +906,16 @@ public class ForkJoinWorkerThread extends Thread {
         ForkJoinTask<?> ps = currentSteal; // to restore below
         ForkJoinPool p = pool;
         p.addQuiescerCount(1);
-        for (;;) {
+        for (; ; ) {
             ForkJoinWorkerThread[] ws = p.workers;
             ForkJoinWorkerThread v = null;
             int n;
-            if (queueTop != queueBase)
-                v = this;
-            else if (ws != null && (n = ws.length) > 1) {
+            if (queueTop != queueBase) { v = this; } else if (ws != null && (n = ws.length) > 1) {
                 ForkJoinWorkerThread w;
                 int r = nextSeed(); // cheap version of FJP.scan
                 int steps = n << 1;
                 for (int i = 0; i < steps; ++i) {
-                    if ((w = ws[(i + r) & (n - 1)]) != null &&
-                        w.queueBase != w.queueTop) {
+                    if ((w = ws[(i + r) & (n - 1)]) != null && w.queueBase != w.queueTop) {
                         v = w;
                         break;
                     }
@@ -954,14 +927,12 @@ public class ForkJoinWorkerThread extends Thread {
                     active = true;
                     p.addActiveCount(1);
                 }
-                if ((t = (v != this) ? v.deqTask() :
-                     locallyFifo ? locallyDeqTask() : popTask()) != null) {
+                if ((t = (v != this) ? v.deqTask() : locallyFifo ? locallyDeqTask() : popTask()) != null) {
                     currentSteal = t;
                     t.doExec();
                     currentSteal = ps;
                 }
-            }
-            else {
+            } else {
                 if (active) {
                     active = false;
                     p.addActiveCount(-1);
@@ -990,8 +961,7 @@ public class ForkJoinWorkerThread extends Thread {
         } catch (Exception e) {
             throw new Error(e);
         }
-        if ((s & (s-1)) != 0)
-            throw new Error("data type scale not a power of two");
+        if ((s & (s - 1)) != 0) { throw new Error("data type scale not a power of two"); }
         ASHIFT = 31 - Integer.numberOfLeadingZeros(s);
     }
 

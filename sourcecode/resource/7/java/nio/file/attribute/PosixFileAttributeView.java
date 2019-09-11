@@ -135,9 +135,7 @@ import java.io.IOException;
  * @since 1.7
  */
 
-public interface PosixFileAttributeView
-    extends BasicFileAttributeView, FileOwnerAttributeView
-{
+public interface PosixFileAttributeView extends BasicFileAttributeView, FileOwnerAttributeView {
     /**
      * Returns the name of the attribute view. Attribute views of this type
      * have the name {@code "posix"}.
@@ -146,12 +144,11 @@ public interface PosixFileAttributeView
     String name();
 
     /**
-     * @throws  IOException                {@inheritDoc}
-     * @throws  SecurityException
-     *          In the case of the default provider, a security manager is
-     *          installed, and it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
-     *          or its {@link SecurityManager#checkRead(String) checkRead} method
-     *          denies read access to the file.
+     * @throws IOException       {@inheritDoc}
+     * @throws SecurityException In the case of the default provider, a security manager is
+     *                           installed, and it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
+     *                           or its {@link SecurityManager#checkRead(String) checkRead} method
+     *                           denies read access to the file.
      */
     @Override
     PosixFileAttributes readAttributes() throws IOException;
@@ -159,35 +156,26 @@ public interface PosixFileAttributeView
     /**
      * Updates the file permissions.
      *
-     * @param   perms
-     *          the new set of permissions
-     *
-     * @throws  ClassCastException
-     *          if the sets contains elements that are not of type {@code
-     *          PosixFilePermission}
-     * @throws  IOException
-     *          if an I/O error occurs
-     * @throws  SecurityException
-     *          In the case of the default provider, a security manager is
-     *          installed, and it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
-     *          or its {@link SecurityManager#checkWrite(String) checkWrite}
-     *          method denies write access to the file.
+     * @param perms the new set of permissions
+     * @throws ClassCastException if the sets contains elements that are not of type {@code
+     *                            PosixFilePermission}
+     * @throws IOException        if an I/O error occurs
+     * @throws SecurityException  In the case of the default provider, a security manager is
+     *                            installed, and it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
+     *                            or its {@link SecurityManager#checkWrite(String) checkWrite}
+     *                            method denies write access to the file.
      */
     void setPermissions(Set<PosixFilePermission> perms) throws IOException;
 
     /**
      * Updates the file group-owner.
      *
-     * @param   group
-     *          the new file group-owner
-     *
-     * @throws  IOException
-     *          if an I/O error occurs
-     * @throws  SecurityException
-     *          In the case of the default provider, and a security manager is
-     *          installed, it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
-     *          or its {@link SecurityManager#checkWrite(String) checkWrite}
-     *          method denies write access to the file.
+     * @param group the new file group-owner
+     * @throws IOException       if an I/O error occurs
+     * @throws SecurityException In the case of the default provider, and a security manager is
+     *                           installed, it denies {@link RuntimePermission}<tt>("accessUserInformation")</tt>
+     *                           or its {@link SecurityManager#checkWrite(String) checkWrite}
+     *                           method denies write access to the file.
      */
     void setGroup(GroupPrincipal group) throws IOException;
 }

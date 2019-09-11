@@ -31,8 +31,6 @@ import java.math.BigInteger;
  * This class specifies an RSA private key.
  *
  * @author Jan Luehe
- *
- *
  * @see java.security.Key
  * @see java.security.KeyFactory
  * @see KeySpec
@@ -49,7 +47,7 @@ public class RSAPrivateKeySpec implements KeySpec {
     /**
      * Creates a new RSAPrivateKeySpec.
      *
-     * @param modulus the modulus
+     * @param modulus         the modulus
      * @param privateExponent the private exponent
      */
     public RSAPrivateKeySpec(BigInteger modulus, BigInteger privateExponent) {

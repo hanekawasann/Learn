@@ -56,14 +56,14 @@ import java.io.IOException;
  * up text as far as possible, and then contiguous ranges of letters are
  * repeatedly compared against a list of known words (i.e., the dictionary)
  * to divide them up into words.
- *
+ * <p>
  * DictionaryBasedBreakIterator uses the same rule language as RuleBasedBreakIterator,
  * but adds one more special substitution name: &lt;dictionary&gt;.  This substitution
  * name is used to identify characters in words in the dictionary.  The idea is that
  * if the iterator passes over a chunk of text that includes two or more characters
  * in a row that are included in &lt;dictionary&gt;, it goes back through that range and
  * derives additional break positions (if possible) using the dictionary.
- *
+ * <p>
  * DictionaryBasedBreakIterator is also constructed with the filename of a dictionary
  * file.  It follows a prescribed search path to locate the dictionary (right now,
  * it looks for it in /com/ibm/text/resources in each directory in the classpath,
@@ -109,13 +109,13 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
 
     /**
      * Constructs a DictionaryBasedBreakIterator.
-     * @param description Same as the description parameter on RuleBasedBreakIterator,
-     * except for the special meaning of "<dictionary>".  This parameter is just
-     * passed through to RuleBasedBreakIterator's constructor.
+     *
+     * @param description        Same as the description parameter on RuleBasedBreakIterator,
+     *                           except for the special meaning of "<dictionary>".  This parameter is just
+     *                           passed through to RuleBasedBreakIterator's constructor.
      * @param dictionaryFilename The filename of the dictionary file to use
      */
-    public DictionaryBasedBreakIterator(String dataFile, String dictionaryFile)
-                                        throws IOException {
+    public DictionaryBasedBreakIterator(String dataFile, String dictionaryFile) throws IOException {
         super(dataFile);
         byte[] tmp = super.getAdditionalData();
         if (tmp != null) {
@@ -128,7 +128,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
     private void prepareCategoryFlags(byte[] data) {
         categoryFlags = new boolean[data.length];
         for (int i = 0; i < data.length; i++) {
-            categoryFlags[i] = (data[i] == (byte)1) ? true : false;
+            categoryFlags[i] = (data[i] == (byte) 1) ? true : false;
         }
     }
 
@@ -142,6 +142,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
     /**
      * Sets the current iteration position to the beginning of the text.
      * (i.e., the CharacterIterator's starting offset).
+     *
      * @return The offset of the beginning of the text.
      */
     public int first() {
@@ -154,6 +155,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
     /**
      * Sets the current iteration position to the end of the text.
      * (i.e., the CharacterIterator's ending offset).
+     *
      * @return The text's past-the-end offset.
      */
     public int last() {
@@ -165,6 +167,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
 
     /**
      * Advances the iterator one step backwards.
+     *
      * @return The position of the last boundary position before the
      * current iteration position
      */
@@ -195,6 +198,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
     /**
      * Sets the current iteration position to the last boundary position
      * before the specified position.
+     *
      * @param offset The position to begin searching from
      * @return The position of the last boundary before "offset"
      */
@@ -207,7 +211,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         // (which will eventually call other routines in this class that may
         // refresh the cache)
         if (cachedBreakPositions == null || offset <= cachedBreakPositions[0] ||
-                offset > cachedBreakPositions[cachedBreakPositions.length - 1]) {
+            offset > cachedBreakPositions[cachedBreakPositions.length - 1]) {
             cachedBreakPositions = null;
             return super.preceding(offset);
         }
@@ -217,8 +221,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         // before "offset"
         else {
             positionInCache = 0;
-            while (positionInCache < cachedBreakPositions.length
-                   && offset > cachedBreakPositions[positionInCache]) {
+            while (positionInCache < cachedBreakPositions.length && offset > cachedBreakPositions[positionInCache]) {
                 ++positionInCache;
             }
             --positionInCache;
@@ -230,6 +233,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
     /**
      * Sets the current iteration position to the first boundary position after
      * the specified position.
+     *
      * @param offset The position to begin searching forward from
      * @return The position of the first boundary after "offset"
      */
@@ -242,7 +246,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         // inherited following() method.  This will call other methods in this
         // class that may refresh the cache.
         if (cachedBreakPositions == null || offset < cachedBreakPositions[0] ||
-                offset >= cachedBreakPositions[cachedBreakPositions.length - 1]) {
+            offset >= cachedBreakPositions[cachedBreakPositions.length - 1]) {
             cachedBreakPositions = null;
             return super.following(offset);
         }
@@ -252,8 +256,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         // after "offset"
         else {
             positionInCache = 0;
-            while (positionInCache < cachedBreakPositions.length
-                   && offset >= cachedBreakPositions[positionInCache]) {
+            while (positionInCache < cachedBreakPositions.length && offset >= cachedBreakPositions[positionInCache]) {
                 ++positionInCache;
             }
             text.setIndex(cachedBreakPositions[positionInCache]);
@@ -270,8 +273,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         // if there are no cached break positions, or if we've just moved
         // off the end of the range covered by the cache, we have to dump
         // and possibly regenerate the cache
-        if (cachedBreakPositions == null ||
-            positionInCache == cachedBreakPositions.length - 1) {
+        if (cachedBreakPositions == null || positionInCache == cachedBreakPositions.length - 1) {
 
             // start by using the inherited handleNext() to find a tentative return
             // value.   dictionaryCharCount tells us how many dictionary characters
@@ -409,7 +411,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
                 // case there's an error in the text
                 if (text.getIndex() > farthestEndPoint) {
                     farthestEndPoint = text.getIndex();
-                    bestBreakPositions = (Stack)(currentBreakPositions.clone());
+                    bestBreakPositions = (Stack) (currentBreakPositions.clone());
                 }
 
                 // wrongBreakPositions is a list of all break positions
@@ -426,8 +428,8 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
                 // point the last time we tried it (this is to prevent a bunch of
                 // repetitive checks from slowing down some extreme cases)
                 Integer newStartingSpot = null;
-                while (!possibleBreakPositions.isEmpty() && wrongBreakPositions.contains(
-                            possibleBreakPositions.peek())) {
+                while (!possibleBreakPositions.isEmpty() &&
+                    wrongBreakPositions.contains(possibleBreakPositions.peek())) {
                     possibleBreakPositions.pop();
                 }
 
@@ -441,15 +443,13 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
                         currentBreakPositions = bestBreakPositions;
                         if (farthestEndPoint < endPos) {
                             text.setIndex(farthestEndPoint + 1);
-                        }
-                        else {
+                        } else {
                             break;
                         }
-                    }
-                    else {
+                    } else {
                         if ((currentBreakPositions.size() == 0 ||
-                             ((Integer)(currentBreakPositions.peek())).intValue() != text.getIndex())
-                            && text.getIndex() != startPos) {
+                            ((Integer) (currentBreakPositions.peek())).intValue() != text.getIndex()) &&
+                            text.getIndex() != startPos) {
                             currentBreakPositions.push(new Integer(text.getIndex()));
                         }
                         getNext();
@@ -463,15 +463,15 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
                 // it.  Then back up to that position and start over from there (i.e.,
                 // treat that position as the beginning of a new word)
                 else {
-                    Integer temp = (Integer)possibleBreakPositions.pop();
+                    Integer temp = (Integer) possibleBreakPositions.pop();
                     Object temp2 = null;
-                    while (!currentBreakPositions.isEmpty() && temp.intValue() <
-                           ((Integer)currentBreakPositions.peek()).intValue()) {
+                    while (!currentBreakPositions.isEmpty() &&
+                        temp.intValue() < ((Integer) currentBreakPositions.peek()).intValue()) {
                         temp2 = currentBreakPositions.pop();
                         wrongBreakPositions.addElement(temp2);
                     }
                     currentBreakPositions.push(temp);
-                    text.setIndex(((Integer)currentBreakPositions.peek()).intValue());
+                    text.setIndex(((Integer) currentBreakPositions.peek()).intValue());
                 }
 
                 // re-sync "c" for the next go-round, and drop out of the loop if
@@ -507,7 +507,7 @@ class DictionaryBasedBreakIterator extends RuleBasedBreakIterator {
         cachedBreakPositions[0] = startPos;
 
         for (int i = 0; i < currentBreakPositions.size(); i++) {
-            cachedBreakPositions[i + 1] = ((Integer)currentBreakPositions.elementAt(i)).intValue();
+            cachedBreakPositions[i + 1] = ((Integer) currentBreakPositions.elementAt(i)).intValue();
         }
         positionInCache = 0;
     }

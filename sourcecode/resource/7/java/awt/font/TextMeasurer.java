@@ -157,9 +157,10 @@ public final class TextMeasurer implements Cloneable {
     /**
      * Constructs a <code>TextMeasurer</code> from the source text.
      * The source text should be a single entire paragraph.
+     *
      * @param text the source paragraph.  Cannot be null.
-     * @param frc the information about a graphics device which is needed
-     *       to measure the text correctly.  Cannot be null.
+     * @param frc  the information about a graphics device which is needed
+     *             to measure the text correctly.  Cannot be null.
      */
     public TextMeasurer(AttributedCharacterIterator text, FontRenderContext frc) {
 
@@ -171,8 +172,7 @@ public final class TextMeasurer implements Cloneable {
         TextMeasurer other;
         try {
             other = (TextMeasurer) super.clone();
-        }
-        catch(CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             throw new Error();
         }
         if (fComponents != null) {
@@ -232,18 +232,16 @@ public final class TextMeasurer implements Cloneable {
             if (haveFont) {
                 Font defaultFont = TextLine.getFontAtCurrentPos(text);
                 int charsStart = text.getIndex() - text.getBeginIndex();
-                LineMetrics lm = defaultFont.getLineMetrics(fChars, charsStart, charsStart+1, fFrc);
+                LineMetrics lm = defaultFont.getLineMetrics(fChars, charsStart, charsStart + 1, fFrc);
                 fBaseline = (byte) lm.getBaselineIndex();
                 fBaselineOffsets = lm.getBaselineOffsets();
-            }
-            else {
+            } else {
                 // hmmm what to do here?  Just try to supply reasonable
                 // values I guess.
 
-                GraphicAttribute graphic = (GraphicAttribute)
-                                paragraphAttrs.get(TextAttribute.CHAR_REPLACEMENT);
+                GraphicAttribute graphic = (GraphicAttribute) paragraphAttrs.get(TextAttribute.CHAR_REPLACEMENT);
                 fBaseline = TextLayout.getBaselineFromGraphic(graphic);
-                Font dummyFont = new Font(new Hashtable(5, (float)0.9));
+                Font dummyFont = new Font(new Hashtable(5, (float) 0.9));
                 LineMetrics lm = dummyFont.getLineMetrics(" ", 0, 1, fFrc);
                 fBaselineOffsets = lm.getBaselineOffsets();
             }
@@ -260,7 +258,7 @@ public final class TextMeasurer implements Cloneable {
     private void generateComponents(int startingAt, int endingAt) {
 
         if (collectStats) {
-            formattedChars += (endingAt-startingAt);
+            formattedChars += (endingAt - startingAt);
         }
         int layoutFlags = 0; // no extra info yet, bidi determines run and line direction
         TextLabelFactory factory = new TextLabelFactory(fFrc, fChars, fBidi, layoutFlags);
@@ -272,19 +270,16 @@ public final class TextMeasurer implements Cloneable {
             int[] charsVtoL = BidiUtils.createVisualToLogicalMap(fLevels);
             charsLtoV = BidiUtils.createInverseMap(charsVtoL);
             fIsDirectionLTR = fBidi.baseIsLeftToRight();
-        }
-        else {
+        } else {
             fLevels = null;
             fIsDirectionLTR = true;
         }
 
         try {
-            fComponents = TextLine.getComponents(
-                fParagraph, fChars, startingAt, endingAt, charsLtoV, fLevels, factory);
-        }
-        catch(IllegalArgumentException e) {
-            System.out.println("startingAt="+startingAt+"; endingAt="+endingAt);
-            System.out.println("fComponentLimit="+fComponentLimit);
+            fComponents = TextLine.getComponents(fParagraph, fChars, startingAt, endingAt, charsLtoV, fLevels, factory);
+        } catch (IllegalArgumentException e) {
+            System.out.println("startingAt=" + startingAt + "; endingAt=" + endingAt);
+            System.out.println("fComponentLimit=" + fComponentLimit);
             throw e;
         }
 
@@ -309,8 +304,7 @@ public final class TextMeasurer implements Cloneable {
             int gaLimit = tlcStart + fComponents[tlcIndex].getNumCharacters();
             if (gaLimit > startPos) {
                 break;
-            }
-            else {
+            } else {
                 tlcStart = gaLimit;
             }
         }
@@ -327,8 +321,7 @@ public final class TextMeasurer implements Cloneable {
                 width -= tlc.getAdvanceBetween(startPos - tlcStart, lineBreak);
                 tlcStart += numCharsInGa;
                 startPos = tlcStart;
-            }
-            else {
+            } else {
                 return tlcStart + lineBreak;
             }
         }
@@ -359,10 +352,10 @@ public final class TextMeasurer implements Cloneable {
 
         if (fLevels != null) {
             // Back up over counterdirectional whitespace
-            final byte baseLevel = (byte) (fIsDirectionLTR? 0 : 1);
-            for (int cdWsStart = limitPos; --cdWsStart >= startPos;) {
+            final byte baseLevel = (byte) (fIsDirectionLTR ? 0 : 1);
+            for (int cdWsStart = limitPos; --cdWsStart >= startPos; ) {
                 if ((fLevels[cdWsStart] % 2) == baseLevel ||
-                        Character.getDirectionality(fChars[cdWsStart]) != Character.DIRECTIONALITY_WHITESPACE) {
+                    Character.getDirectionality(fChars[cdWsStart]) != Character.DIRECTIONALITY_WHITESPACE) {
                     return ++cdWsStart;
                 }
             }
@@ -371,8 +364,7 @@ public final class TextMeasurer implements Cloneable {
         return startPos;
     }
 
-    private TextLineComponent[] makeComponentsOnRange(int startPos,
-                                                      int limitPos) {
+    private TextLineComponent[] makeComponentsOnRange(int startPos, int limitPos) {
 
         // sigh I really hate to do this here since it's part of the
         // bidi algorithm.
@@ -387,8 +379,7 @@ public final class TextMeasurer implements Cloneable {
             int gaLimit = tlcStart + fComponents[tlcIndex].getNumCharacters();
             if (gaLimit > startPos) {
                 break;
-            }
-            else {
+            } else {
                 tlcStart = gaLimit;
             }
         }
@@ -399,21 +390,19 @@ public final class TextMeasurer implements Cloneable {
         {
             boolean split = false;
             int compStart = tlcStart;
-            int lim=tlcIndex;
-            for (boolean cont=true; cont; lim++) {
+            int lim = tlcIndex;
+            for (boolean cont = true; cont; lim++) {
                 int gaLimit = compStart + fComponents[lim].getNumCharacters();
-                if (cdWsStart > Math.max(compStart, startPos)
-                            && cdWsStart < Math.min(gaLimit, limitPos)) {
+                if (cdWsStart > Math.max(compStart, startPos) && cdWsStart < Math.min(gaLimit, limitPos)) {
                     split = true;
                 }
                 if (gaLimit >= limitPos) {
-                    cont=false;
-                }
-                else {
+                    cont = false;
+                } else {
                     compStart = gaLimit;
                 }
             }
-            componentCount = lim-tlcIndex;
+            componentCount = lim - tlcIndex;
             if (split) {
                 componentCount++;
             }
@@ -427,11 +416,9 @@ public final class TextMeasurer implements Cloneable {
 
         int subsetFlag;
         if (breakPt == startPos) {
-            subsetFlag = fIsDirectionLTR? TextLineComponent.LEFT_TO_RIGHT :
-                                          TextLineComponent.RIGHT_TO_LEFT;
+            subsetFlag = fIsDirectionLTR ? TextLineComponent.LEFT_TO_RIGHT : TextLineComponent.RIGHT_TO_LEFT;
             breakPt = limitPos;
-        }
-        else {
+        } else {
             subsetFlag = TextLineComponent.UNCHANGED;
         }
 
@@ -443,15 +430,12 @@ public final class TextMeasurer implements Cloneable {
             int start = Math.max(linePos, tlcStart);
             int limit = Math.min(breakPt, tlcLimit);
 
-            components[newCompIndex++] = fComponents[tlcIndex].getSubset(
-                                                                start-tlcStart,
-                                                                limit-tlcStart,
-                                                                subsetFlag);
-            linePos += (limit-start);
+            components[newCompIndex++] = fComponents[tlcIndex]
+                .getSubset(start - tlcStart, limit - tlcStart, subsetFlag);
+            linePos += (limit - start);
             if (linePos == breakPt) {
                 breakPt = limitPos;
-                subsetFlag = fIsDirectionLTR? TextLineComponent.LEFT_TO_RIGHT :
-                                              TextLineComponent.RIGHT_TO_LEFT;
+                subsetFlag = fIsDirectionLTR ? TextLineComponent.LEFT_TO_RIGHT : TextLineComponent.RIGHT_TO_LEFT;
             }
             if (linePos == tlcLimit) {
                 tlcIndex++;
@@ -476,15 +460,8 @@ public final class TextMeasurer implements Cloneable {
 
         TextLineComponent[] components = makeComponentsOnRange(startPos, limitPos);
 
-        return new TextLine(fFrc,
-                            components,
-                            fBaselineOffsets,
-                            fChars,
-                            startPos,
-                            limitPos,
-                            charsLtoV,
-                            charLevels,
-                            fIsDirectionLTR);
+        return new TextLine(fFrc, components, fBaselineOffsets, fChars, startPos, limitPos, charsLtoV, charLevels,
+            fIsDirectionLTR);
 
     }
 
@@ -503,14 +480,13 @@ public final class TextMeasurer implements Cloneable {
         // If we've already gone past the layout window, format to end of paragraph
         if (layoutCount > 0 && !haveLayoutWindow) {
             float avgLineLength = Math.max(layoutCharCount / layoutCount, 1);
-            compLimit = Math.min(localStart + (int)(avgLineLength*EST_LINES), fChars.length);
+            compLimit = Math.min(localStart + (int) (avgLineLength * EST_LINES), fChars.length);
         }
 
         if (localStart > 0 || compLimit < fChars.length) {
             if (charIter == null) {
                 charIter = new CharArrayIterator(fChars);
-            }
-            else {
+            } else {
                 charIter.reset(fChars);
             }
             if (fLineBreak == null) {
@@ -538,23 +514,21 @@ public final class TextMeasurer implements Cloneable {
      * on a line beginning at <code>start</code> and possible
      * measuring up to <code>maxAdvance</code> in graphical width.
      *
-     * @param start the character index at which to start measuring.
-     *  <code>start</code> is an absolute index, not relative to the
-     *  start of the paragraph
+     * @param start      the character index at which to start measuring.
+     *                   <code>start</code> is an absolute index, not relative to the
+     *                   start of the paragraph
      * @param maxAdvance the graphical width in which the line must fit
      * @return the index after the last character that will fit
-     *  on a line beginning at <code>start</code>, which is not longer
-     *  than <code>maxAdvance</code> in graphical width
+     * on a line beginning at <code>start</code>, which is not longer
+     * than <code>maxAdvance</code> in graphical width
      * @throws IllegalArgumentException if <code>start</code> is
-     *          less than the beginning of the paragraph.
+     *                                  less than the beginning of the paragraph.
      */
     public int getLineBreakIndex(int start, float maxAdvance) {
 
         int localStart = start - fStart;
 
-        if (!haveLayoutWindow ||
-                localStart < fComponentStart ||
-                localStart >= fComponentLimit) {
+        if (!haveLayoutWindow || localStart < fComponentStart || localStart >= fComponentLimit) {
             makeLayoutWindow(localStart);
         }
 
@@ -570,12 +544,12 @@ public final class TextMeasurer implements Cloneable {
      * @param start the character index at which to start measuring
      * @param limit the character index at which to stop measuring
      * @return the graphical width of a line beginning at <code>start</code>
-     *   and including characters up to <code>limit</code>
+     * and including characters up to <code>limit</code>
      * @throws IndexOutOfBoundsException if <code>limit</code> is less
-     *         than <code>start</code>
-     * @throws IllegalArgumentException if <code>start</code> or
-     *          <code>limit</code> is not between the beginning of
-     *          the paragraph and the end of the paragraph.
+     *                                   than <code>start</code>
+     * @throws IllegalArgumentException  if <code>start</code> or
+     *                                   <code>limit</code> is not between the beginning of
+     *                                   the paragraph and the end of the paragraph.
      */
     public float getAdvanceBetween(int start, int limit) {
 
@@ -593,14 +567,14 @@ public final class TextMeasurer implements Cloneable {
      *
      * @param start the index of the first character
      * @param limit the index after the last character.  Must be greater
-     *   than <code>start</code>
+     *              than <code>start</code>
      * @return a <code>TextLayout</code> for the characters beginning at
-     *  <code>start</code> up to (but not including) <code>limit</code>
+     * <code>start</code> up to (but not including) <code>limit</code>
      * @throws IndexOutOfBoundsException if <code>limit</code> is less
-     *         than <code>start</code>
-     * @throws IllegalArgumentException if <code>start</code> or
-     *          <code>limit</code> is not between the beginning of
-     *          the paragraph and the end of the paragraph.
+     *                                   than <code>start</code>
+     * @throws IllegalArgumentException  if <code>start</code> or
+     *                                   <code>limit</code> is not between the beginning of
+     *                                   the paragraph and the end of the paragraph.
      */
     public TextLayout getLayout(int start, int limit) {
 
@@ -611,14 +585,11 @@ public final class TextMeasurer implements Cloneable {
         TextLine textLine = makeTextLineOnRange(localStart, localLimit);
 
         if (localLimit < fChars.length) {
-            layoutCharCount += limit-start;
+            layoutCharCount += limit - start;
             layoutCount++;
         }
 
-        return new TextLayout(textLine,
-                              fBaseline,
-                              fBaselineOffsets,
-                              fJustifyRatio);
+        return new TextLayout(textLine, fBaseline, fBaselineOffsets, fJustifyRatio);
     }
 
     private int formattedChars = 0;
@@ -642,16 +613,16 @@ public final class TextMeasurer implements Cloneable {
      * <code>TextMeasurer</code> than to create a new one from scratch.
      *
      * @param newParagraph the text of the paragraph after performing
-     * the insertion.  Cannot be null.
-     * @param insertPos the position in the text where the character was
-     * inserted.  Must not be less than the start of
-     * <code>newParagraph</code>, and must be less than the end of
-     * <code>newParagraph</code>.
+     *                     the insertion.  Cannot be null.
+     * @param insertPos    the position in the text where the character was
+     *                     inserted.  Must not be less than the start of
+     *                     <code>newParagraph</code>, and must be less than the end of
+     *                     <code>newParagraph</code>.
      * @throws IndexOutOfBoundsException if <code>insertPos</code> is less
-     *         than the start of <code>newParagraph</code> or greater than
-     *         or equal to the end of <code>newParagraph</code>
-     * @throws NullPointerException if <code>newParagraph</code> is
-     *         <code>null</code>
+     *                                   than the start of <code>newParagraph</code> or greater than
+     *                                   or equal to the end of <code>newParagraph</code>
+     * @throws NullPointerException      if <code>newParagraph</code> is
+     *                                   <code>null</code>
      */
     public void insertChar(AttributedCharacterIterator newParagraph, int insertPos) {
 
@@ -664,25 +635,21 @@ public final class TextMeasurer implements Cloneable {
 
         fStart = newParagraph.getBeginIndex();
         int end = newParagraph.getEndIndex();
-        if (end - fStart != fChars.length+1) {
+        if (end - fStart != fChars.length + 1) {
             initAll(newParagraph);
         }
 
-        char[] newChars = new char[end-fStart];
+        char[] newChars = new char[end - fStart];
         int newCharIndex = insertPos - fStart;
         System.arraycopy(fChars, 0, newChars, 0, newCharIndex);
 
         char newChar = newParagraph.setIndex(insertPos);
         newChars[newCharIndex] = newChar;
-        System.arraycopy(fChars,
-                         newCharIndex,
-                         newChars,
-                         newCharIndex+1,
-                         end-insertPos-1);
+        System.arraycopy(fChars, newCharIndex, newChars, newCharIndex + 1, end - insertPos - 1);
         fChars = newChars;
 
         if (fBidi != null || Bidi.requiresBidi(newChars, newCharIndex, newCharIndex + 1) ||
-                newParagraph.getAttribute(TextAttribute.BIDI_EMBEDDING) != null) {
+            newParagraph.getAttribute(TextAttribute.BIDI_EMBEDDING) != null) {
 
             fBidi = new Bidi(newParagraph);
             if (fBidi.isLeftToRight()) {
@@ -690,10 +657,7 @@ public final class TextMeasurer implements Cloneable {
             }
         }
 
-        fParagraph = StyledParagraph.insertChar(newParagraph,
-                                                fChars,
-                                                insertPos,
-                                                fParagraph);
+        fParagraph = StyledParagraph.insertChar(newParagraph, fChars, insertPos, fParagraph);
         invalidateComponents();
     }
 
@@ -708,30 +672,30 @@ public final class TextMeasurer implements Cloneable {
      * from scratch.
      *
      * @param newParagraph the text of the paragraph after performing
-     * the deletion.  Cannot be null.
-     * @param deletePos the position in the text where the character was removed.
-     * Must not be less than
-     * the start of <code>newParagraph</code>, and must not be greater than the
-     * end of <code>newParagraph</code>.
+     *                     the deletion.  Cannot be null.
+     * @param deletePos    the position in the text where the character was removed.
+     *                     Must not be less than
+     *                     the start of <code>newParagraph</code>, and must not be greater than the
+     *                     end of <code>newParagraph</code>.
      * @throws IndexOutOfBoundsException if <code>deletePos</code> is
-     *         less than the start of <code>newParagraph</code> or greater
-     *         than the end of <code>newParagraph</code>
-     * @throws NullPointerException if <code>newParagraph</code> is
-     *         <code>null</code>
+     *                                   less than the start of <code>newParagraph</code> or greater
+     *                                   than the end of <code>newParagraph</code>
+     * @throws NullPointerException      if <code>newParagraph</code> is
+     *                                   <code>null</code>
      */
     public void deleteChar(AttributedCharacterIterator newParagraph, int deletePos) {
 
         fStart = newParagraph.getBeginIndex();
         int end = newParagraph.getEndIndex();
-        if (end - fStart != fChars.length-1) {
+        if (end - fStart != fChars.length - 1) {
             initAll(newParagraph);
         }
 
-        char[] newChars = new char[end-fStart];
-        int changedIndex = deletePos-fStart;
+        char[] newChars = new char[end - fStart];
+        int changedIndex = deletePos - fStart;
 
-        System.arraycopy(fChars, 0, newChars, 0, deletePos-fStart);
-        System.arraycopy(fChars, changedIndex+1, newChars, changedIndex, end-deletePos);
+        System.arraycopy(fChars, 0, newChars, 0, deletePos - fStart);
+        System.arraycopy(fChars, changedIndex + 1, newChars, changedIndex, end - deletePos);
         fChars = newChars;
 
         if (fBidi != null) {
@@ -741,10 +705,7 @@ public final class TextMeasurer implements Cloneable {
             }
         }
 
-        fParagraph = StyledParagraph.deleteChar(newParagraph,
-                                                fChars,
-                                                deletePos,
-                                                fParagraph);
+        fParagraph = StyledParagraph.deleteChar(newParagraph, fChars, deletePos, fParagraph);
         invalidateComponents();
     }
 

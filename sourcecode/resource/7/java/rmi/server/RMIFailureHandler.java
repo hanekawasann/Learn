@@ -34,8 +34,8 @@ package java.rmi.server;
  * indicating whether the runtime should attempt to re-create the
  * <code>ServerSocket</code>.
  *
- * @author      Ann Wollrath
- * @since       JDK1.1
+ * @author Ann Wollrath
+ * @since JDK1.1
  */
 public interface RMIFailureHandler {
 

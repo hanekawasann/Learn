@@ -109,17 +109,17 @@ public class SimpleBeanInfo implements BeanInfo {
      * current object's class file and loads an image object
      * from that file.  Typically images will be GIFs.
      * <p>
-     * @param resourceName  A pathname relative to the directory
-     *          holding the class file of the current class.  For example,
-     *          "wombat.gif".
-     * @return  an image object.  May be null if the load failed.
+     *
+     * @param resourceName A pathname relative to the directory
+     *                     holding the class file of the current class.  For example,
+     *                     "wombat.gif".
+     * @return an image object.  May be null if the load failed.
      */
     public java.awt.Image loadImage(final String resourceName) {
         try {
             final Class c = getClass();
-            java.awt.image.ImageProducer ip = (java.awt.image.ImageProducer)
-                java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
+            java.awt.image.ImageProducer ip = (java.awt.image.ImageProducer) java.security.AccessController
+                .doPrivileged(new java.security.PrivilegedAction() {
                     public Object run() {
                         java.net.URL url;
                         if ((url = c.getResource(resourceName)) == null) {
@@ -132,10 +132,9 @@ public class SimpleBeanInfo implements BeanInfo {
                             }
                         }
                     }
-            });
+                });
 
-            if (ip == null)
-                return null;
+            if (ip == null) { return null; }
             java.awt.Toolkit tk = java.awt.Toolkit.getDefaultToolkit();
             return tk.createImage(ip);
         } catch (Exception ex) {

@@ -42,6 +42,7 @@ package java.util;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.IOException;
+
 import sun.util.ResourceBundleEnumeration;
 
 /**
@@ -121,11 +122,11 @@ public class PropertyResourceBundle extends ResourceBundle {
      * must be encoded in ISO-8859-1.
      *
      * @param stream an InputStream that represents a property file
-     *        to read from.
-     * @throws IOException if an I/O error occurs
+     *               to read from.
+     * @throws IOException          if an I/O error occurs
      * @throws NullPointerException if <code>stream</code> is null
      */
-    public PropertyResourceBundle (InputStream stream) throws IOException {
+    public PropertyResourceBundle(InputStream stream) throws IOException {
         Properties properties = new Properties();
         properties.load(stream);
         lookup = new HashMap(properties);
@@ -138,12 +139,12 @@ public class PropertyResourceBundle extends ResourceBundle {
      * there is no limitation as to the encoding of the input property file.
      *
      * @param reader a Reader that represents a property file to
-     *        read from.
-     * @throws IOException if an I/O error occurs
+     *               read from.
+     * @throws IOException          if an I/O error occurs
      * @throws NullPointerException if <code>reader</code> is null
      * @since 1.6
      */
-    public PropertyResourceBundle (Reader reader) throws IOException {
+    public PropertyResourceBundle(Reader reader) throws IOException {
         Properties properties = new Properties();
         properties.load(reader);
         lookup = new HashMap(properties);
@@ -162,13 +163,12 @@ public class PropertyResourceBundle extends ResourceBundle {
      * this <code>ResourceBundle</code> and its parent bundles.
      *
      * @return an <code>Enumeration</code> of the keys contained in
-     *         this <code>ResourceBundle</code> and its parent bundles.
+     * this <code>ResourceBundle</code> and its parent bundles.
      * @see #keySet()
      */
     public Enumeration<String> getKeys() {
         ResourceBundle parent = this.parent;
-        return new ResourceBundleEnumeration(lookup.keySet(),
-                (parent != null) ? parent.getKeys() : null);
+        return new ResourceBundleEnumeration(lookup.keySet(), (parent != null) ? parent.getKeys() : null);
     }
 
     /**
@@ -176,9 +176,9 @@ public class PropertyResourceBundle extends ResourceBundle {
      * <em>only</em> in this <code>ResourceBundle</code>.
      *
      * @return a <code>Set</code> of the keys contained only in this
-     *         <code>ResourceBundle</code>
-     * @since 1.6
+     * <code>ResourceBundle</code>
      * @see #keySet()
+     * @since 1.6
      */
     protected Set<String> handleKeySet() {
         return lookup.keySet();
@@ -186,5 +186,5 @@ public class PropertyResourceBundle extends ResourceBundle {
 
     // ==================privates====================
 
-    private Map<String,Object> lookup;
+    private Map<String, Object> lookup;
 }

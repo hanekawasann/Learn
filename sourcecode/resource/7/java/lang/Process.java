@@ -29,7 +29,7 @@ import java.io.*;
 
 /**
  * The {@link ProcessBuilder#start()} and
- * {@link Runtime#exec(String[],String[],File) Runtime.exec}
+ * {@link Runtime#exec(String[], String[], File) Runtime.exec}
  * methods create a native process and return an instance of a
  * subclass of {@code Process} that can be used to control the process
  * and obtain information about it.  The class {@code Process}
@@ -71,7 +71,7 @@ import java.io.*;
  * <p>As of 1.5, {@link ProcessBuilder#start()} is the preferred way
  * to create a {@code Process}.
  *
- * @since   JDK1.0
+ * @since JDK1.0
  */
 public abstract class Process {
     /**
@@ -89,7 +89,7 @@ public abstract class Process {
      * output stream to be buffered.
      *
      * @return the output stream connected to the normal input of the
-     *         subprocess
+     * subprocess
      */
     abstract public OutputStream getOutputStream();
 
@@ -115,7 +115,7 @@ public abstract class Process {
      * input stream to be buffered.
      *
      * @return the input stream connected to the normal output of the
-     *         subprocess
+     * subprocess
      */
     abstract public InputStream getInputStream();
 
@@ -136,7 +136,7 @@ public abstract class Process {
      * input stream to be buffered.
      *
      * @return the input stream connected to the error output of
-     *         the subprocess
+     * the subprocess
      */
     abstract public InputStream getErrorStream();
 
@@ -149,12 +149,12 @@ public abstract class Process {
      * subprocess exits.
      *
      * @return the exit value of the subprocess represented by this
-     *         {@code Process} object.  By convention, the value
-     *         {@code 0} indicates normal termination.
+     * {@code Process} object.  By convention, the value
+     * {@code 0} indicates normal termination.
      * @throws InterruptedException if the current thread is
-     *         {@linkplain Thread#interrupt() interrupted} by another
-     *         thread while it is waiting, then the wait is ended and
-     *         an {@link InterruptedException} is thrown.
+     *                              {@linkplain Thread#interrupt() interrupted} by another
+     *                              thread while it is waiting, then the wait is ended and
+     *                              an {@link InterruptedException} is thrown.
      */
     abstract public int waitFor() throws InterruptedException;
 
@@ -162,10 +162,10 @@ public abstract class Process {
      * Returns the exit value for the subprocess.
      *
      * @return the exit value of the subprocess represented by this
-     *         {@code Process} object.  By convention, the value
-     *         {@code 0} indicates normal termination.
+     * {@code Process} object.  By convention, the value
+     * {@code 0} indicates normal termination.
      * @throws IllegalThreadStateException if the subprocess represented
-     *         by this {@code Process} object has not yet terminated
+     *                                     by this {@code Process} object has not yet terminated
      */
     abstract public int exitValue();
 

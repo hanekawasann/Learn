@@ -42,14 +42,12 @@ import java.util.concurrent.TimeUnit;
  *
  * <p> Instances of this class are immutable.
  *
- * @since 1.7
  * @see java.nio.file.Files#setLastModifiedTime
  * @see java.nio.file.Files#getLastModifiedTime
+ * @since 1.7
  */
 
-public final class FileTime
-    implements Comparable<FileTime>
-{
+public final class FileTime implements Comparable<FileTime> {
     /**
      * The value since the epoch; can be negative.
      */
@@ -74,8 +72,7 @@ public final class FileTime
      * Returns a DaysAndNanos object representing the value.
      */
     private DaysAndNanos asDaysAndNanos() {
-        if (daysAndNanos == null)
-            daysAndNanos = new DaysAndNanos(value, unit);
+        if (daysAndNanos == null) { daysAndNanos = new DaysAndNanos(value, unit); }
         return daysAndNanos;
     }
 
@@ -83,8 +80,7 @@ public final class FileTime
      * Initializes a new instance of this class.
      */
     private FileTime(long value, TimeUnit unit) {
-        if (unit == null)
-            throw new NullPointerException();
+        if (unit == null) { throw new NullPointerException(); }
         this.value = value;
         this.unit = unit;
     }
@@ -93,13 +89,10 @@ public final class FileTime
      * Returns a {@code FileTime} representing a value at the given unit of
      * granularity.
      *
-     * @param   value
-     *          the value since the epoch (1970-01-01T00:00:00Z); can be
-     *          negative
-     * @param   unit
-     *          the unit of granularity to interpret the value
-     *
-     * @return  a {@code FileTime} representing the given value
+     * @param value the value since the epoch (1970-01-01T00:00:00Z); can be
+     *              negative
+     * @param unit  the unit of granularity to interpret the value
+     * @return a {@code FileTime} representing the given value
      */
     public static FileTime from(long value, TimeUnit unit) {
         return new FileTime(value, unit);
@@ -108,11 +101,9 @@ public final class FileTime
     /**
      * Returns a {@code FileTime} representing the given value in milliseconds.
      *
-     * @param   value
-     *          the value, in milliseconds, since the epoch
-     *          (1970-01-01T00:00:00Z); can be negative
-     *
-     * @return  a {@code FileTime} representing the given value
+     * @param value the value, in milliseconds, since the epoch
+     *              (1970-01-01T00:00:00Z); can be negative
+     * @return a {@code FileTime} representing the given value
      */
     public static FileTime fromMillis(long value) {
         return new FileTime(value, TimeUnit.MILLISECONDS);
@@ -125,11 +116,9 @@ public final class FileTime
      * saturate to {@code Long.MIN_VALUE} if negative or {@code Long.MAX_VALUE}
      * if positive.
      *
-     * @param   unit
-     *          the unit of granularity for the return value
-     *
-     * @return  value in the given unit of granularity, since the epoch
-     *          since the epoch (1970-01-01T00:00:00Z); can be negative
+     * @param unit the unit of granularity for the return value
+     * @return value in the given unit of granularity, since the epoch
+     * since the epoch (1970-01-01T00:00:00Z); can be negative
      */
     public long to(TimeUnit unit) {
         return unit.convert(this.value, this.unit);
@@ -142,7 +131,7 @@ public final class FileTime
      * saturate to {@code Long.MIN_VALUE} if negative or {@code Long.MAX_VALUE}
      * if positive.
      *
-     * @return  the value in milliseconds, since the epoch (1970-01-01T00:00:00Z)
+     * @return the value in milliseconds, since the epoch (1970-01-01T00:00:00Z)
      */
     public long toMillis() {
         return unit.toMillis(value);
@@ -155,15 +144,13 @@ public final class FileTime
      * null} and is a {@code FileTime} that represents the same time. This
      * method satisfies the general contract of the {@code Object.equals} method.
      *
-     * @param   obj
-     *          the object to compare with
-     *
-     * @return  {@code true} if, and only if, the given object is a {@code
-     *          FileTime} that represents the same time
+     * @param obj the object to compare with
+     * @return {@code true} if, and only if, the given object is a {@code
+     * FileTime} that represents the same time
      */
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof FileTime) ? compareTo((FileTime)obj) == 0 : false;
+        return (obj instanceof FileTime) ? compareTo((FileTime) obj) == 0 : false;
     }
 
     /**
@@ -172,7 +159,7 @@ public final class FileTime
      * <p> The hash code is based upon the value represented, and satisfies the
      * general contract of the {@link Object#hashCode} method.
      *
-     * @return  the hash-code value
+     * @return the hash-code value
      */
     @Override
     public int hashCode() {
@@ -183,13 +170,11 @@ public final class FileTime
     /**
      * Compares the value of two {@code FileTime} objects for order.
      *
-     * @param   other
-     *          the other {@code FileTime} to be compared
-     *
-     * @return  {@code 0} if this {@code FileTime} is equal to {@code other}, a
-     *          value less than 0 if this {@code FileTime} represents a time
-     *          that is before {@code other}, and a value greater than 0 if this
-     *          {@code FileTime} represents a time that is after {@code other}
+     * @param other the other {@code FileTime} to be compared
+     * @return {@code 0} if this {@code FileTime} is equal to {@code other}, a
+     * value less than 0 if this {@code FileTime} represents a time
+     * that is before {@code other}, and a value greater than 0 if this
+     * {@code FileTime} represents a time that is after {@code other}
      */
     @Override
     public int compareTo(FileTime other) {
@@ -225,7 +210,7 @@ public final class FileTime
      * and may be negative-signed. If more than four digits then leading zeros
      * are not present. The year before "{@code 0001}" is "{@code -0001}".
      *
-     * @return  the string representation of this file time
+     * @return the string representation of this file time
      */
     @Override
     public String toString() {
@@ -245,7 +230,7 @@ public final class FileTime
                     if (fraction < 0L) {
                         final long MAX_FRACTION_PLUS_1 = 1000L * 1000L * 1000L;
                         fraction += MAX_FRACTION_PLUS_1;
-                        if (ms != Long.MIN_VALUE) ms--;
+                        if (ms != Long.MIN_VALUE) { ms--; }
                     }
 
                     // convert to String, adding leading zeros as required and
@@ -257,11 +242,10 @@ public final class FileTime
                     while (width-- > 0) {
                         sb.append('0');
                     }
-                    if (s.charAt(len-1) == '0') {
+                    if (s.charAt(len - 1) == '0') {
                         // drop trailing zeros
                         len--;
-                        while (s.charAt(len-1) == '0')
-                            len--;
+                        while (s.charAt(len - 1) == '0') { len--; }
                         sb.append(s.substring(0, len));
                     } else {
                         sb.append(s);
@@ -271,19 +255,15 @@ public final class FileTime
             }
 
             // create calendar to use with formatter.
-            GregorianCalendar cal =
-                new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ROOT);
-            if (value < 0L)
-                cal.setGregorianChange(new Date(Long.MIN_VALUE));
+            GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ROOT);
+            if (value < 0L) { cal.setGregorianChange(new Date(Long.MIN_VALUE)); }
             cal.setTimeInMillis(ms);
 
             // years are negative before common era
             String sign = (cal.get(Calendar.ERA) == GregorianCalendar.BC) ? "-" : "";
 
             // [-]YYYY-MM-DDThh:mm:ss[.s]Z
-            v = new Formatter(Locale.ROOT)
-                .format("%s%tFT%tR:%tS%sZ", sign, cal, cal, cal, fractionAsString)
-                .toString();
+            v = new Formatter(Locale.ROOT).format("%s%tFT%tR:%tS%sZ", sign, cal, cal, cal, fractionAsString).toString();
             valueAsString = v;
         }
         return v;
@@ -320,14 +300,29 @@ public final class FileTime
         DaysAndNanos(long value, TimeUnit unit) {
             long scale;
             switch (unit) {
-                case DAYS         : scale = C0; break;
-                case HOURS        : scale = C1; break;
-                case MINUTES      : scale = C2; break;
-                case SECONDS      : scale = C3; break;
-                case MILLISECONDS : scale = C4; break;
-                case MICROSECONDS : scale = C5; break;
-                case NANOSECONDS  : scale = C6; break;
-                default : throw new AssertionError("Unit not handled");
+                case DAYS:
+                    scale = C0;
+                    break;
+                case HOURS:
+                    scale = C1;
+                    break;
+                case MINUTES:
+                    scale = C2;
+                    break;
+                case SECONDS:
+                    scale = C3;
+                    break;
+                case MILLISECONDS:
+                    scale = C4;
+                    break;
+                case MICROSECONDS:
+                    scale = C5;
+                    break;
+                case NANOSECONDS:
+                    scale = C6;
+                    break;
+                default:
+                    throw new AssertionError("Unit not handled");
             }
             this.days = unit.toDays(value);
             this.excessNanos = unit.toNanos(value - (this.days * scale));
@@ -342,22 +337,18 @@ public final class FileTime
 
         @Override
         public boolean equals(Object obj) {
-            return (obj instanceof DaysAndNanos) ?
-                compareTo((DaysAndNanos)obj) == 0 : false;
+            return (obj instanceof DaysAndNanos) ? compareTo((DaysAndNanos) obj) == 0 : false;
         }
 
         @Override
         public int hashCode() {
-            return (int)(days ^ (days >>> 32) ^
-                         excessNanos ^ (excessNanos >>> 32));
+            return (int) (days ^ (days >>> 32) ^ excessNanos ^ (excessNanos >>> 32));
         }
 
         @Override
         public int compareTo(DaysAndNanos other) {
-            if (this.days != other.days)
-                return (this.days < other.days) ? -1 : 1;
-            return (this.excessNanos < other.excessNanos) ? -1 :
-                   (this.excessNanos == other.excessNanos) ? 0 : 1;
+            if (this.days != other.days) { return (this.days < other.days) ? -1 : 1; }
+            return (this.excessNanos < other.excessNanos) ? -1 : (this.excessNanos == other.excessNanos) ? 0 : 1;
         }
     }
 }

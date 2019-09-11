@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 
 /**
- *
  * This class implements an IP Socket Address (IP address + port number)
  * It can also be a pair (hostname + port number), in which case an attempt
  * will be made to resolve the hostname. If resolution fails then the address
@@ -73,42 +72,39 @@ public class InetSocketAddress extends SocketAddress {
      * A port number of <code>zero</code> will let the system pick up an
      * ephemeral port in a <code>bind</code> operation.
      * <p>
-     * @param   port    The port number
+     *
+     * @param port The port number
      * @throws IllegalArgumentException if the port parameter is outside the specified
-     * range of valid port values.
+     *                                  range of valid port values.
      */
     public InetSocketAddress(int port) {
         this(InetAddress.anyLocalAddress(), port);
     }
 
     /**
-     *
      * Creates a socket address from an IP address and a port number.
      * <p>
      * A valid port value is between 0 and 65535.
      * A port number of <code>zero</code> will let the system pick up an
      * ephemeral port in a <code>bind</code> operation.
-     * <P>
+     * <p>
      * A <code>null</code> address will assign the <i>wildcard</i> address.
      * <p>
-     * @param   addr    The IP address
-     * @param   port    The port number
+     *
+     * @param addr The IP address
+     * @param port The port number
      * @throws IllegalArgumentException if the port parameter is outside the specified
-     * range of valid port values.
+     *                                  range of valid port values.
      */
     public InetSocketAddress(InetAddress addr, int port) {
         if (port < 0 || port > 0xFFFF) {
             throw new IllegalArgumentException("port out of range:" + port);
         }
         this.port = port;
-        if (addr == null)
-            this.addr = InetAddress.anyLocalAddress();
-        else
-            this.addr = addr;
+        if (addr == null) { this.addr = InetAddress.anyLocalAddress(); } else { this.addr = addr; }
     }
 
     /**
-     *
      * Creates a socket address from a hostname and a port number.
      * <p>
      * An attempt will be made to resolve the hostname into an InetAddress.
@@ -117,19 +113,20 @@ public class InetSocketAddress extends SocketAddress {
      * If there is a security manager, its <code>checkConnect</code> method
      * is called with the host name as its argument to check the permissiom
      * to resolve it. This could result in a SecurityException.
-     * <P>
+     * <p>
      * A valid port value is between 0 and 65535.
      * A port number of <code>zero</code> will let the system pick up an
      * ephemeral port in a <code>bind</code> operation.
-     * <P>
-     * @param   hostname the Host name
-     * @param   port    The port number
+     * <p>
+     *
+     * @param hostname the Host name
+     * @param port     The port number
      * @throws IllegalArgumentException if the port parameter is outside the range
-     * of valid port values, or if the hostname parameter is <TT>null</TT>.
-     * @throws SecurityException if a security manager is present and
-     *                           permission to resolve the host name is
-     *                           denied.
-     * @see     #isUnresolved()
+     *                                  of valid port values, or if the hostname parameter is <TT>null</TT>.
+     * @throws SecurityException        if a security manager is present and
+     *                                  permission to resolve the host name is
+     *                                  denied.
+     * @see #isUnresolved()
      */
     public InetSocketAddress(String hostname, int port) {
         if (port < 0 || port > 0xFFFF) {
@@ -140,7 +137,7 @@ public class InetSocketAddress extends SocketAddress {
         }
         try {
             addr = InetAddress.getByName(hostname);
-        } catch(UnknownHostException e) {
+        } catch (UnknownHostException e) {
             this.hostname = hostname;
             addr = null;
         }
@@ -148,7 +145,6 @@ public class InetSocketAddress extends SocketAddress {
     }
 
     /**
-     *
      * Creates an unresolved socket address from a hostname and a port number.
      * <p>
      * No attempt will be made to resolve the hostname into an InetAddress.
@@ -157,15 +153,16 @@ public class InetSocketAddress extends SocketAddress {
      * A valid port value is between 0 and 65535.
      * A port number of <code>zero</code> will let the system pick up an
      * ephemeral port in a <code>bind</code> operation.
-     * <P>
-     * @param   host    the Host name
-     * @param   port    The port number
+     * <p>
+     *
+     * @param host the Host name
+     * @param port The port number
+     * @return a <code>InetSocketAddress</code> representing the unresolved
+     * socket address
      * @throws IllegalArgumentException if the port parameter is outside
-     *                  the range of valid port values, or if the hostname
-     *                  parameter is <TT>null</TT>.
-     * @see     #isUnresolved()
-     * @return  a <code>InetSocketAddress</code> representing the unresolved
-     *          socket address
+     *                                  the range of valid port values, or if the hostname
+     *                                  parameter is <TT>null</TT>.
+     * @see #isUnresolved()
      * @since 1.5
      */
     public static InetSocketAddress createUnresolved(String host, int port) {
@@ -182,8 +179,7 @@ public class InetSocketAddress extends SocketAddress {
         return s;
     }
 
-    private void readObject(ObjectInputStream s)
-        throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
 
         // Check that our invariants are satisfied
@@ -192,8 +188,7 @@ public class InetSocketAddress extends SocketAddress {
         }
 
         if (hostname == null && addr == null) {
-            throw new InvalidObjectException("hostname and addr " +
-                                             "can't both be null");
+            throw new InvalidObjectException("hostname and addr " + "can't both be null");
         }
     }
 
@@ -207,7 +202,6 @@ public class InetSocketAddress extends SocketAddress {
     }
 
     /**
-     *
      * Gets the <code>InetAddress</code>.
      *
      * @return the InetAdress or <code>null</code> if it is unresolved.
@@ -221,13 +215,11 @@ public class InetSocketAddress extends SocketAddress {
      * Note: This method may trigger a name service reverse lookup if the
      * address was created with a literal IP address.
      *
-     * @return  the hostname part of the address.
+     * @return the hostname part of the address.
      */
     public final String getHostName() {
-        if (hostname != null)
-            return hostname;
-        if (addr != null)
-            return addr.getHostName();
+        if (hostname != null) { return hostname; }
+        if (addr != null) { return addr.getHostName(); }
         return null;
     }
 
@@ -240,13 +232,9 @@ public class InetSocketAddress extends SocketAddress {
      * @since 1.7
      */
     public final String getHostString() {
-        if (hostname != null)
-            return hostname;
+        if (hostname != null) { return hostname; }
         if (addr != null) {
-            if (addr.hostName != null)
-                return addr.hostName;
-            else
-                return addr.getHostAddress();
+            if (addr.hostName != null) { return addr.hostName; } else { return addr.getHostAddress(); }
         }
         return null;
     }
@@ -255,7 +243,7 @@ public class InetSocketAddress extends SocketAddress {
      * Checks whether the address has been resolved or not.
      *
      * @return <code>true</code> if the hostname couldn't be resolved into
-     *          an <code>InetAddress</code>.
+     * an <code>InetAddress</code>.
      */
     public final boolean isUnresolved() {
         return addr == null;
@@ -267,7 +255,7 @@ public class InetSocketAddress extends SocketAddress {
      * and concatenating the port number (with a colon). If the address
      * is unresolved then the part before the colon will only contain the hostname.
      *
-     * @return  a string representation of this object.
+     * @return a string representation of this object.
      */
     public String toString() {
         if (isUnresolved()) {
@@ -288,40 +276,33 @@ public class InetSocketAddress extends SocketAddress {
      * numbers are equal.
      * If both addresses are unresolved, then the hostname & the port number
      * are compared.
-     *
+     * <p>
      * Note: Hostnames are case insensitive. e.g. "FooBar" and "foobar" are
      * considered equal.
      *
-     * @param   obj   the object to compare against.
-     * @return  <code>true</code> if the objects are the same;
-     *          <code>false</code> otherwise.
+     * @param obj the object to compare against.
+     * @return <code>true</code> if the objects are the same;
+     * <code>false</code> otherwise.
      * @see java.net.InetAddress#equals(java.lang.Object)
      */
     public final boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof InetSocketAddress))
-            return false;
+        if (obj == null || !(obj instanceof InetSocketAddress)) { return false; }
         InetSocketAddress sockAddr = (InetSocketAddress) obj;
         boolean sameIP = false;
-        if (this.addr != null)
-            sameIP = this.addr.equals(sockAddr.addr);
-        else if (this.hostname != null)
-            sameIP = (sockAddr.addr == null) &&
-                this.hostname.equalsIgnoreCase(sockAddr.hostname);
-        else
-            sameIP = (sockAddr.addr == null) && (sockAddr.hostname == null);
+        if (this.addr != null) { sameIP = this.addr.equals(sockAddr.addr); } else if (this.hostname != null) {
+            sameIP = (sockAddr.addr == null) && this.hostname.equalsIgnoreCase(sockAddr.hostname);
+        } else { sameIP = (sockAddr.addr == null) && (sockAddr.hostname == null); }
         return sameIP && (this.port == sockAddr.port);
     }
 
     /**
      * Returns a hashcode for this socket address.
      *
-     * @return  a hash code value for this socket address.
+     * @return a hash code value for this socket address.
      */
     public final int hashCode() {
-        if (addr != null)
-            return addr.hashCode() + port;
-        if (hostname != null)
-            return hostname.toLowerCase().hashCode() + port;
+        if (addr != null) { return addr.hashCode() + port; }
+        if (hostname != null) { return hostname.toLowerCase().hashCode() + port; }
         return port;
     }
 }

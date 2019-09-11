@@ -56,18 +56,18 @@ package java.lang.invoke;
  * <p>
  * Here is an example of a switch point in action:
  * <blockquote><pre>
-MethodHandle MH_strcat = MethodHandles.lookup()
-    .findVirtual(String.class, "concat", MethodType.methodType(String.class, String.class));
-SwitchPoint spt = new SwitchPoint();
-assert(!spt.hasBeenInvalidated());
-// the following steps may be repeated to re-use the same switch point:
-MethodHandle worker1 = MH_strcat;
-MethodHandle worker2 = MethodHandles.permuteArguments(MH_strcat, MH_strcat.type(), 1, 0);
-MethodHandle worker = spt.guardWithTest(worker1, worker2);
-assertEquals("method", (String) worker.invokeExact("met", "hod"));
-SwitchPoint.invalidateAll(new SwitchPoint[]{ spt });
-assert(spt.hasBeenInvalidated());
-assertEquals("hodmet", (String) worker.invokeExact("met", "hod"));
+ * MethodHandle MH_strcat = MethodHandles.lookup()
+ * .findVirtual(String.class, "concat", MethodType.methodType(String.class, String.class));
+ * SwitchPoint spt = new SwitchPoint();
+ * assert(!spt.hasBeenInvalidated());
+ * // the following steps may be repeated to re-use the same switch point:
+ * MethodHandle worker1 = MH_strcat;
+ * MethodHandle worker2 = MethodHandles.permuteArguments(MH_strcat, MH_strcat.type(), 1, 0);
+ * MethodHandle worker = spt.guardWithTest(worker1, worker2);
+ * assertEquals("method", (String) worker.invokeExact("met", "hod"));
+ * SwitchPoint.invalidateAll(new SwitchPoint[]{ spt });
+ * assert(spt.hasBeenInvalidated());
+ * assertEquals("hodmet", (String) worker.invokeExact("met", "hod"));
  * </pre></blockquote>
  * <p style="font-size:smaller;">
  * <em>Discussion:</em>
@@ -83,36 +83,36 @@ assertEquals("hodmet", (String) worker.invokeExact("met", "hod"));
  * A switch point behaves as if implemented on top of {@link MutableCallSite},
  * approximately as follows:
  * <blockquote><pre>
-public class SwitchPoint {
-  private static final MethodHandle
-    K_true  = MethodHandles.constant(boolean.class, true),
-    K_false = MethodHandles.constant(boolean.class, false);
-  private final MutableCallSite mcs;
-  private final MethodHandle mcsInvoker;
-  public SwitchPoint() {
-    this.mcs = new MutableCallSite(K_true);
-    this.mcsInvoker = mcs.dynamicInvoker();
-  }
-  public MethodHandle guardWithTest(
-                MethodHandle target, MethodHandle fallback) {
-    // Note:  mcsInvoker is of type ()boolean.
-    // Target and fallback may take any arguments, but must have the same type.
-    return MethodHandles.guardWithTest(this.mcsInvoker, target, fallback);
-  }
-  public static void invalidateAll(SwitchPoint[] spts) {
-    List&lt;MutableCallSite&gt; mcss = new ArrayList&lt;&gt;();
-    for (SwitchPoint spt : spts)  mcss.add(spt.mcs);
-    for (MutableCallSite mcs : mcss)  mcs.setTarget(K_false);
-    MutableCallSite.syncAll(mcss.toArray(new MutableCallSite[0]));
-  }
-}
+ * public class SwitchPoint {
+ * private static final MethodHandle
+ * K_true  = MethodHandles.constant(boolean.class, true),
+ * K_false = MethodHandles.constant(boolean.class, false);
+ * private final MutableCallSite mcs;
+ * private final MethodHandle mcsInvoker;
+ * public SwitchPoint() {
+ * this.mcs = new MutableCallSite(K_true);
+ * this.mcsInvoker = mcs.dynamicInvoker();
+ * }
+ * public MethodHandle guardWithTest(
+ * MethodHandle target, MethodHandle fallback) {
+ * // Note:  mcsInvoker is of type ()boolean.
+ * // Target and fallback may take any arguments, but must have the same type.
+ * return MethodHandles.guardWithTest(this.mcsInvoker, target, fallback);
+ * }
+ * public static void invalidateAll(SwitchPoint[] spts) {
+ * List&lt;MutableCallSite&gt; mcss = new ArrayList&lt;&gt;();
+ * for (SwitchPoint spt : spts)  mcss.add(spt.mcs);
+ * for (MutableCallSite mcs : mcss)  mcs.setTarget(K_false);
+ * MutableCallSite.syncAll(mcss.toArray(new MutableCallSite[0]));
+ * }
+ * }
  * </pre></blockquote>
+ *
  * @author Remi Forax, JSR 292 EG
  */
 public class SwitchPoint {
-    private static final MethodHandle
-        K_true  = MethodHandles.constant(boolean.class, true),
-        K_false = MethodHandles.constant(boolean.class, false);
+    private static final MethodHandle K_true = MethodHandles.constant(boolean.class, true), K_false = MethodHandles
+        .constant(boolean.class, false);
 
     private final MutableCallSite mcs;
     private final MethodHandle mcsInvoker;
@@ -160,16 +160,17 @@ public class SwitchPoint {
      * The target and fallback must be of exactly the same method type,
      * and the resulting combined method handle will also be of this type.
      *
-     * @param target the method handle selected by the switch point as long as it is valid
+     * @param target   the method handle selected by the switch point as long as it is valid
      * @param fallback the method handle selected by the switch point after it is invalidated
      * @return a combined method handle which always calls either the target or fallback
-     * @throws NullPointerException if either argument is null
+     * @throws NullPointerException     if either argument is null
      * @throws IllegalArgumentException if the two method types do not match
      * @see MethodHandles#guardWithTest
      */
     public MethodHandle guardWithTest(MethodHandle target, MethodHandle fallback) {
-        if (mcs.getTarget() == K_false)
+        if (mcs.getTarget() == K_false) {
             return fallback;  // already invalid
+        }
         return MethodHandles.guardWithTest(mcsInvoker, target, fallback);
     }
 
@@ -215,11 +216,13 @@ public class SwitchPoint {
      *                              or the array contains a null
      */
     public static void invalidateAll(SwitchPoint[] switchPoints) {
-        if (switchPoints.length == 0)  return;
+        if (switchPoints.length == 0) { return; }
         MutableCallSite[] sites = new MutableCallSite[switchPoints.length];
         for (int i = 0; i < switchPoints.length; i++) {
             SwitchPoint spt = switchPoints[i];
-            if (spt == null)  break;  // MSC.syncAll will trigger a NPE
+            if (spt == null) {
+                break;  // MSC.syncAll will trigger a NPE
+            }
             sites[i] = spt.mcs;
             spt.mcs.setTarget(K_false);
         }

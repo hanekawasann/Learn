@@ -36,10 +36,10 @@
 package java.awt.color;
 
 import java.awt.image.LookupTable;
+
 import sun.java2d.cmm.ProfileDeferralInfo;
 
 /**
- *
  * A subclass of the ICC_Profile class which represents profiles
  * which meet the following criteria: the color space type of the
  * profile is TYPE_GRAY and the profile includes the grayTRCTag and
@@ -56,20 +56,18 @@ import sun.java2d.cmm.ProfileDeferralInfo;
  * Connection Space, the device gray component is transformed by
  * a lookup through the tone reproduction curve (TRC).  The result is
  * treated as the achromatic component of the PCS.
-<pre>
-
-&nbsp;               PCSY = grayTRC[deviceGray]
-
-</pre>
+ * <pre>
+ *
+ * &nbsp;               PCSY = grayTRC[deviceGray]
+ *
+ * </pre>
  * The inverse transform is done by converting the PCS Y components to
  * device Gray via the inverse of the grayTRC.
  * <p>
  */
 
 
-
-public class ICC_ProfileGray
-extends ICC_Profile {
+public class ICC_ProfileGray extends ICC_Profile {
 
     static final long serialVersionUID = -1124721290732002649L;
 
@@ -91,6 +89,7 @@ extends ICC_Profile {
     /**
      * Returns a float array of length 3 containing the X, Y, and Z
      * components of the mediaWhitePointTag in the ICC profile.
+     *
      * @return an array containing the components of the
      * mediaWhitePointTag in the ICC profile.
      */
@@ -105,18 +104,19 @@ extends ICC_Profile {
      * than a single gamma value, then an exception is thrown.  In this
      * case the actual table can be obtained via getTRC().  When
      * using a gamma value, the PCS Y component is computed as follows:
-<pre>
-
-&nbsp;                         gamma
-&nbsp;        PCSY = deviceGray
-
-</pre>
+     * <pre>
+     *
+     * &nbsp;                         gamma
+     * &nbsp;        PCSY = deviceGray
+     *
+     * </pre>
+     *
      * @return the gamma value as a float.
-     * @exception ProfileDataException if the profile does not specify
-     *            the TRC as a single gamma value.
+     * @throws ProfileDataException if the profile does not specify
+     *                              the TRC as a single gamma value.
      */
     public float getGamma() {
-    float theGamma;
+        float theGamma;
 
         theGamma = super.getGamma(ICC_Profile.icSigGrayTRCTag);
         return theGamma;
@@ -136,12 +136,13 @@ extends ICC_Profile {
      * Value 0.0 is represented by an array value of 0x0000 and
      * value 1.0 by 0xFFFF, i.e. the values are really unsigned
      * short values, although they are returned in a short array.
+     *
      * @return a short array representing the TRC.
-     * @exception ProfileDataException if the profile does not specify
-     *            the TRC as a table.
+     * @throws ProfileDataException if the profile does not specify
+     *                              the TRC as a table.
      */
     public short[] getTRC() {
-    short[]    theTRC;
+        short[] theTRC;
 
         theTRC = super.getTRC(ICC_Profile.icSigGrayTRCTag);
         return theTRC;

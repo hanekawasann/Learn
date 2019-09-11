@@ -40,7 +40,7 @@ import java.security.*;
  * or the <code>Connection.abort</code> method.
  * If there is no <code>SQLPermission</code> object, these methods
  * throw a <code>java.lang.SecurityException</code> as a runtime exception.
- * <P>
+ * <p>
  * A <code>SQLPermission</code> object contains
  * a name (also referred to as a "target name") but no actions
  * list; there is either a named permission or there is not.
@@ -51,11 +51,11 @@ import java.security.*;
  * signify a wildcard match. For example: <code>loadLibrary.*</code>
  * or <code>*</code> is valid,
  * but <code>*loadLibrary</code> or <code>a*b</code> is not valid.
- * <P>
+ * <p>
  * The following table lists all the possible <code>SQLPermission</code> target names.
  * The table gives a description of what the permission allows
  * and a discussion of the risks of granting code the permission.
- * <P>
+ * <p>
  *
  * <table border=1 cellpadding=5 summary="permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -97,19 +97,19 @@ import java.security.*;
  * will wait for the database to reply to any one request.</td>
  * </tr>
  * </table>
- *<p>
+ * <p>
  * The person running an applet decides what permissions to allow
  * and will run the <code>Policy Tool</code> to create an
  * <code>SQLPermission</code> in a policy file.  A programmer does
  * not use a constructor directly to create an instance of <code>SQLPermission</code>
  * but rather uses a tool.
- * @since 1.3
+ *
  * @see java.security.BasicPermission
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
+ * @since 1.3
  */
 
 public final class SQLPermission extends BasicPermission {
@@ -119,11 +119,10 @@ public final class SQLPermission extends BasicPermission {
      * The name is the symbolic name of the <code>SQLPermission</code>.
      *
      * @param name the name of this <code>SQLPermission</code> object, which must
-     * be either {@code  setLog}, {@code callAbort}, {@code setSyncFactory},
-     *  or {@code setNetworkTimeout}
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     *             be either {@code  setLog}, {@code callAbort}, {@code setSyncFactory},
+     *             or {@code setNetworkTimeout}
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
-
      */
 
     public SQLPermission(String name) {
@@ -136,13 +135,12 @@ public final class SQLPermission extends BasicPermission {
      * actions <code>String</code> is currently unused and should be
      * <code>null</code>.
      *
-     * @param name the name of this <code>SQLPermission</code> object, which must
-     * be either {@code  setLog}, {@code callAbort}, {@code setSyncFactory},
-     *  or {@code setNetworkTimeout}
+     * @param name    the name of this <code>SQLPermission</code> object, which must
+     *                be either {@code  setLog}, {@code callAbort}, {@code setSyncFactory},
+     *                or {@code setNetworkTimeout}
      * @param actions should be <code>null</code>
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
-
      */
 
     public SQLPermission(String name, String actions) {

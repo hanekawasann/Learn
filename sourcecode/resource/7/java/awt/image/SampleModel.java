@@ -36,70 +36,74 @@
 package java.awt.image;
 
 /**
- *  This abstract class defines an interface for extracting samples of pixels
- *  in an image.  All image data is expressed as a collection of pixels.
- *  Each pixel consists of a number of samples. A sample is a datum
- *  for one band of an image and a band consists of all samples of a
- *  particular type in an image.  For example, a pixel might contain
- *  three samples representing its red, green and blue components.
- *  There are three bands in the image containing this pixel.  One band
- *  consists of all the red samples from all pixels in the
- *  image.  The second band consists of all the green samples and
- *  the remaining band consists of all of the blue samples.  The pixel
- *  can be stored in various formats.  For example, all samples from
- *  a particular band can be stored contiguously or all samples from a
- *  single pixel can be stored contiguously.
- *  <p>
- *  Subclasses of SampleModel specify the types of samples they can
- *  represent (e.g. unsigned 8-bit byte, signed 16-bit short, etc.)
- *  and may specify how the samples are organized in memory.
- *  In the Java 2D(tm) API, built-in image processing operators may
- *  not operate on all possible sample types, but generally will work
- *  for unsigned integral samples of 16 bits or less.  Some operators
- *  support a wider variety of sample types.
- *  <p>
- *  A collection of pixels is represented as a Raster, which consists of
- *  a DataBuffer and a SampleModel.  The SampleModel allows access to
- *  samples in the DataBuffer and may provide low-level information that
- *  a programmer can use to directly manipulate samples and pixels in the
- *  DataBuffer.
- *  <p>
- *  This class is generally a fall back method for dealing with
- *  images.  More efficient code will cast the SampleModel to the
- *  appropriate subclass and extract the information needed to directly
- *  manipulate pixels in the DataBuffer.
+ * This abstract class defines an interface for extracting samples of pixels
+ * in an image.  All image data is expressed as a collection of pixels.
+ * Each pixel consists of a number of samples. A sample is a datum
+ * for one band of an image and a band consists of all samples of a
+ * particular type in an image.  For example, a pixel might contain
+ * three samples representing its red, green and blue components.
+ * There are three bands in the image containing this pixel.  One band
+ * consists of all the red samples from all pixels in the
+ * image.  The second band consists of all the green samples and
+ * the remaining band consists of all of the blue samples.  The pixel
+ * can be stored in various formats.  For example, all samples from
+ * a particular band can be stored contiguously or all samples from a
+ * single pixel can be stored contiguously.
+ * <p>
+ * Subclasses of SampleModel specify the types of samples they can
+ * represent (e.g. unsigned 8-bit byte, signed 16-bit short, etc.)
+ * and may specify how the samples are organized in memory.
+ * In the Java 2D(tm) API, built-in image processing operators may
+ * not operate on all possible sample types, but generally will work
+ * for unsigned integral samples of 16 bits or less.  Some operators
+ * support a wider variety of sample types.
+ * <p>
+ * A collection of pixels is represented as a Raster, which consists of
+ * a DataBuffer and a SampleModel.  The SampleModel allows access to
+ * samples in the DataBuffer and may provide low-level information that
+ * a programmer can use to directly manipulate samples and pixels in the
+ * DataBuffer.
+ * <p>
+ * This class is generally a fall back method for dealing with
+ * images.  More efficient code will cast the SampleModel to the
+ * appropriate subclass and extract the information needed to directly
+ * manipulate pixels in the DataBuffer.
  *
- *  @see java.awt.image.DataBuffer
- *  @see java.awt.image.Raster
- *  @see java.awt.image.ComponentSampleModel
- *  @see java.awt.image.PixelInterleavedSampleModel
- *  @see java.awt.image.BandedSampleModel
- *  @see java.awt.image.MultiPixelPackedSampleModel
- *  @see java.awt.image.SinglePixelPackedSampleModel
+ * @see java.awt.image.DataBuffer
+ * @see java.awt.image.Raster
+ * @see java.awt.image.ComponentSampleModel
+ * @see java.awt.image.PixelInterleavedSampleModel
+ * @see java.awt.image.BandedSampleModel
+ * @see java.awt.image.MultiPixelPackedSampleModel
+ * @see java.awt.image.SinglePixelPackedSampleModel
  */
 
-public abstract class SampleModel
-{
+public abstract class SampleModel {
 
-    /** Width in pixels of the region of image data that this SampleModel
-     *  describes.
+    /**
+     * Width in pixels of the region of image data that this SampleModel
+     * describes.
      */
     protected int width;
 
-    /** Height in pixels of the region of image data that this SampleModel
-     *  describes.
+    /**
+     * Height in pixels of the region of image data that this SampleModel
+     * describes.
      */
     protected int height;
 
     /** Number of bands of the image data that this SampleModel describes. */
     protected int numBands;
 
-    /** Data type of the DataBuffer storing the pixel data.
-     *  @see java.awt.image.DataBuffer
+    /**
+     * Data type of the DataBuffer storing the pixel data.
+     *
+     * @see java.awt.image.DataBuffer
      */
     protected int dataType;
 
     static private native void initIDs();
+
     static {
         ColorModel.loadLibraries();
         initIDs();
@@ -107,36 +111,31 @@ public abstract class SampleModel
 
     /**
      * Constructs a SampleModel with the specified parameters.
-     * @param dataType  The data type of the DataBuffer storing the pixel data.
-     * @param w         The width (in pixels) of the region of image data.
-     * @param h         The height (in pixels) of the region of image data.
-     * @param numBands  The number of bands of the image data.
+     *
+     * @param dataType The data type of the DataBuffer storing the pixel data.
+     * @param w        The width (in pixels) of the region of image data.
+     * @param h        The height (in pixels) of the region of image data.
+     * @param numBands The number of bands of the image data.
      * @throws IllegalArgumentException if <code>w</code> or <code>h</code>
-     *         is not greater than 0
+     *                                  is not greater than 0
      * @throws IllegalArgumentException if the product of <code>w</code>
-     *         and <code>h</code> is greater than
-     *         <code>Integer.MAX_VALUE</code>
+     *                                  and <code>h</code> is greater than
+     *                                  <code>Integer.MAX_VALUE</code>
      * @throws IllegalArgumentException if <code>dataType</code> is not
-     *         one of the supported data types
+     *                                  one of the supported data types
      */
-    public SampleModel(int dataType, int w, int h, int numBands)
-    {
-        long size = (long)w * h;
+    public SampleModel(int dataType, int w, int h, int numBands) {
+        long size = (long) w * h;
         if (w <= 0 || h <= 0) {
-            throw new IllegalArgumentException("Width ("+w+") and height ("+
-                                               h+") must be > 0");
+            throw new IllegalArgumentException("Width (" + w + ") and height (" + h + ") must be > 0");
         }
         if (size >= Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Dimensions (width="+w+
-                                               " height="+h+") are too large");
+            throw new IllegalArgumentException("Dimensions (width=" + w + " height=" + h + ") are too large");
         }
 
         if (dataType < DataBuffer.TYPE_BYTE ||
-            (dataType > DataBuffer.TYPE_DOUBLE &&
-             dataType != DataBuffer.TYPE_UNDEFINED))
-        {
-            throw new IllegalArgumentException("Unsupported dataType: "+
-                                               dataType);
+            (dataType > DataBuffer.TYPE_DOUBLE && dataType != DataBuffer.TYPE_UNDEFINED)) {
+            throw new IllegalArgumentException("Unsupported dataType: " + dataType);
         }
 
         if (numBands <= 0) {
@@ -149,70 +148,82 @@ public abstract class SampleModel
         this.numBands = numBands;
     }
 
-    /** Returns the width in pixels.
-     *  @return the width in pixels of the region of image data
-     *          that this <code>SampleModel</code> describes.
+    /**
+     * Returns the width in pixels.
+     *
+     * @return the width in pixels of the region of image data
+     * that this <code>SampleModel</code> describes.
      */
     final public int getWidth() {
-         return width;
+        return width;
     }
 
-    /** Returns the height in pixels.
-     *  @return the height in pixels of the region of image data
-     *          that this <code>SampleModel</code> describes.
+    /**
+     * Returns the height in pixels.
+     *
+     * @return the height in pixels of the region of image data
+     * that this <code>SampleModel</code> describes.
      */
     final public int getHeight() {
-         return height;
+        return height;
     }
 
-    /** Returns the total number of bands of image data.
-     *  @return the number of bands of image data that this
-     *          <code>SampleModel</code> describes.
+    /**
+     * Returns the total number of bands of image data.
+     *
+     * @return the number of bands of image data that this
+     * <code>SampleModel</code> describes.
      */
     final public int getNumBands() {
-         return numBands;
+        return numBands;
     }
 
-    /** Returns the number of data elements needed to transfer a pixel
-     *  via the getDataElements and setDataElements methods.  When pixels
-     *  are transferred via these methods, they may be transferred in a
-     *  packed or unpacked format, depending on the implementation of the
-     *  SampleModel.  Using these methods, pixels are transferred as an
-     *  array of getNumDataElements() elements of a primitive type given
-     *  by getTransferType().  The TransferType may or may not be the same
-     *  as the storage DataType.
-     *  @return the number of data elements.
-     *  @see #getDataElements(int, int, Object, DataBuffer)
-     *  @see #getDataElements(int, int, int, int, Object, DataBuffer)
-     *  @see #setDataElements(int, int, Object, DataBuffer)
-     *  @see #setDataElements(int, int, int, int, Object, DataBuffer)
-     *  @see #getTransferType
+    /**
+     * Returns the number of data elements needed to transfer a pixel
+     * via the getDataElements and setDataElements methods.  When pixels
+     * are transferred via these methods, they may be transferred in a
+     * packed or unpacked format, depending on the implementation of the
+     * SampleModel.  Using these methods, pixels are transferred as an
+     * array of getNumDataElements() elements of a primitive type given
+     * by getTransferType().  The TransferType may or may not be the same
+     * as the storage DataType.
+     *
+     * @return the number of data elements.
+     * @see #getDataElements(int, int, Object, DataBuffer)
+     * @see #getDataElements(int, int, int, int, Object, DataBuffer)
+     * @see #setDataElements(int, int, Object, DataBuffer)
+     * @see #setDataElements(int, int, int, int, Object, DataBuffer)
+     * @see #getTransferType
      */
     public abstract int getNumDataElements();
 
-    /** Returns the data type of the DataBuffer storing the pixel data.
-     *  @return the data type.
+    /**
+     * Returns the data type of the DataBuffer storing the pixel data.
+     *
+     * @return the data type.
      */
     final public int getDataType() {
         return dataType;
     }
 
-    /** Returns the TransferType used to transfer pixels via the
-     *  getDataElements and setDataElements methods.  When pixels
-     *  are transferred via these methods, they may be transferred in a
-     *  packed or unpacked format, depending on the implementation of the
-     *  SampleModel.  Using these methods, pixels are transferred as an
-     *  array of getNumDataElements() elements of a primitive type given
-     *  by getTransferType().  The TransferType may or may not be the same
-     *  as the storage DataType.  The TransferType will be one of the types
-     *  defined in DataBuffer.
-     *  @return the transfer type.
-     *  @see #getDataElements(int, int, Object, DataBuffer)
-     *  @see #getDataElements(int, int, int, int, Object, DataBuffer)
-     *  @see #setDataElements(int, int, Object, DataBuffer)
-     *  @see #setDataElements(int, int, int, int, Object, DataBuffer)
-     *  @see #getNumDataElements
-     *  @see java.awt.image.DataBuffer
+    /**
+     * Returns the TransferType used to transfer pixels via the
+     * getDataElements and setDataElements methods.  When pixels
+     * are transferred via these methods, they may be transferred in a
+     * packed or unpacked format, depending on the implementation of the
+     * SampleModel.  Using these methods, pixels are transferred as an
+     * array of getNumDataElements() elements of a primitive type given
+     * by getTransferType().  The TransferType may or may not be the same
+     * as the storage DataType.  The TransferType will be one of the types
+     * defined in DataBuffer.
+     *
+     * @return the transfer type.
+     * @see #getDataElements(int, int, Object, DataBuffer)
+     * @see #getDataElements(int, int, int, int, Object, DataBuffer)
+     * @see #setDataElements(int, int, Object, DataBuffer)
+     * @see #setDataElements(int, int, int, int, Object, DataBuffer)
+     * @see #getNumDataElements
+     * @see java.awt.image.DataBuffer
      */
     public int getTransferType() {
         return dataType;
@@ -223,27 +234,24 @@ public abstract class SampleModel
      * one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location
-     * @param y         The Y coordinate of the pixel location
-     * @param iArray    If non-null, returns the samples in this array
-     * @param data      The DataBuffer containing the image data
-     * @return the samples for the specified pixel.
-     * @see #setPixel(int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the pixel location
+     * @param y      The Y coordinate of the pixel location
+     * @param iArray If non-null, returns the samples in this array
+     * @param data   The DataBuffer containing the image data
+     * @return the samples for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if iArray is too small to hold the output.
+     *                                        not in bounds, or if iArray is too small to hold the output.
+     * @see #setPixel(int, int, int[], DataBuffer)
      */
     public int[] getPixel(int x, int y, int iArray[], DataBuffer data) {
 
         int pixels[];
 
-        if (iArray != null)
-            pixels = iArray;
-        else
-            pixels = new int[numBands];
+        if (iArray != null) { pixels = iArray; } else { pixels = new int[numBands]; }
 
-        for (int i=0; i<numBands; i++) {
+        for (int i = 0; i < numBands; i++) {
             pixels[i] = getSample(x, y, i, data);
         }
 
@@ -281,23 +289,22 @@ public abstract class SampleModel
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds, or if obj is non-null and is not large enough to hold
      * the pixel data.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param obj       If non-null, a primitive array in which to return
-     *                  the pixel data.
-     * @param data      The DataBuffer containing the image data.
+     *
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param obj  If non-null, a primitive array in which to return
+     *             the pixel data.
+     * @param data The DataBuffer containing the image data.
      * @return the data elements for the specified pixel.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates are
+     *                                        not in bounds, or if obj is too small to hold the output.
      * @see #getNumDataElements
      * @see #getTransferType
      * @see java.awt.image.DataBuffer
      * @see #setDataElements(int, int, Object, DataBuffer)
-     *
-     * @throws NullPointerException if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if obj is too small to hold the output.
      */
-    public abstract Object getDataElements(int x, int y,
-                                           Object obj, DataBuffer data);
+    public abstract Object getDataElements(int x, int y, Object obj, DataBuffer data);
 
     /**
      * Returns the pixel data for the specified rectangle of pixels in a
@@ -333,25 +340,24 @@ public abstract class SampleModel
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds, or if obj is non-null and is not large enough to hold
      * the pixel data.
-     * @param x         The minimum X coordinate of the pixel rectangle.
-     * @param y         The minimum Y coordinate of the pixel rectangle.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param obj       If non-null, a primitive array in which to return
-     *                  the pixel data.
-     * @param data      The DataBuffer containing the image data.
+     *
+     * @param x    The minimum X coordinate of the pixel rectangle.
+     * @param y    The minimum Y coordinate of the pixel rectangle.
+     * @param w    The width of the pixel rectangle.
+     * @param h    The height of the pixel rectangle.
+     * @param obj  If non-null, a primitive array in which to return
+     *             the pixel data.
+     * @param data The DataBuffer containing the image data.
      * @return the data elements for the specified region of pixels.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates are
+     *                                        not in bounds, or if obj is too small to hold the output.
      * @see #getNumDataElements
      * @see #getTransferType
      * @see #setDataElements(int, int, int, int, Object, DataBuffer)
      * @see java.awt.image.DataBuffer
-     *
-     * @throws NullPointerException if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if obj is too small to hold the output.
      */
-    public Object getDataElements(int x, int y, int w, int h,
-                                  Object obj, DataBuffer data) {
+    public Object getDataElements(int x, int y, int w, int h, Object obj, DataBuffer data) {
 
         int type = getTransferType();
         int numDataElems = getNumDataElements();
@@ -361,128 +367,112 @@ public abstract class SampleModel
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        switch(type) {
+        switch (type) {
 
-        case DataBuffer.TYPE_BYTE:
+            case DataBuffer.TYPE_BYTE:
 
-            byte[] btemp;
-            byte[] bdata;
+                byte[] btemp;
+                byte[] bdata;
 
-            if (obj == null)
-                bdata = new byte[numDataElems*w*h];
-            else
-                bdata = (byte[])obj;
+                if (obj == null) { bdata = new byte[numDataElems * w * h]; } else { bdata = (byte[]) obj; }
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    o = getDataElements(j, i, o, data);
-                    btemp = (byte[])o;
-                    for (int k=0; k<numDataElems; k++) {
-                        bdata[cnt++] = btemp[k];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        o = getDataElements(j, i, o, data);
+                        btemp = (byte[]) o;
+                        for (int k = 0; k < numDataElems; k++) {
+                            bdata[cnt++] = btemp[k];
+                        }
                     }
                 }
-            }
-            obj = (Object)bdata;
-            break;
+                obj = (Object) bdata;
+                break;
 
-        case DataBuffer.TYPE_USHORT:
-        case DataBuffer.TYPE_SHORT:
+            case DataBuffer.TYPE_USHORT:
+            case DataBuffer.TYPE_SHORT:
 
-            short[] sdata;
-            short[] stemp;
+                short[] sdata;
+                short[] stemp;
 
-            if (obj == null)
-                sdata = new short[numDataElems*w*h];
-            else
-                sdata = (short[])obj;
+                if (obj == null) { sdata = new short[numDataElems * w * h]; } else { sdata = (short[]) obj; }
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    o = getDataElements(j, i, o, data);
-                    stemp = (short[])o;
-                    for (int k=0; k<numDataElems; k++) {
-                        sdata[cnt++] = stemp[k];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        o = getDataElements(j, i, o, data);
+                        stemp = (short[]) o;
+                        for (int k = 0; k < numDataElems; k++) {
+                            sdata[cnt++] = stemp[k];
+                        }
                     }
                 }
-            }
 
-            obj = (Object)sdata;
-            break;
+                obj = (Object) sdata;
+                break;
 
-        case DataBuffer.TYPE_INT:
+            case DataBuffer.TYPE_INT:
 
-            int[] idata;
-            int[] itemp;
+                int[] idata;
+                int[] itemp;
 
-            if (obj == null)
-                idata = new int[numDataElems*w*h];
-            else
-                idata = (int[])obj;
+                if (obj == null) { idata = new int[numDataElems * w * h]; } else { idata = (int[]) obj; }
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    o = getDataElements(j, i, o, data);
-                    itemp = (int[])o;
-                    for (int k=0; k<numDataElems; k++) {
-                        idata[cnt++] = itemp[k];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        o = getDataElements(j, i, o, data);
+                        itemp = (int[]) o;
+                        for (int k = 0; k < numDataElems; k++) {
+                            idata[cnt++] = itemp[k];
+                        }
                     }
                 }
-            }
 
-            obj = (Object)idata;
-            break;
+                obj = (Object) idata;
+                break;
 
-        case DataBuffer.TYPE_FLOAT:
+            case DataBuffer.TYPE_FLOAT:
 
-            float[] fdata;
-            float[] ftemp;
+                float[] fdata;
+                float[] ftemp;
 
-            if (obj == null)
-                fdata = new float[numDataElems*w*h];
-            else
-                fdata = (float[])obj;
+                if (obj == null) { fdata = new float[numDataElems * w * h]; } else { fdata = (float[]) obj; }
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    o = getDataElements(j, i, o, data);
-                    ftemp = (float[])o;
-                    for (int k=0; k<numDataElems; k++) {
-                        fdata[cnt++] = ftemp[k];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        o = getDataElements(j, i, o, data);
+                        ftemp = (float[]) o;
+                        for (int k = 0; k < numDataElems; k++) {
+                            fdata[cnt++] = ftemp[k];
+                        }
                     }
                 }
-            }
 
-            obj = (Object)fdata;
-            break;
+                obj = (Object) fdata;
+                break;
 
-        case DataBuffer.TYPE_DOUBLE:
+            case DataBuffer.TYPE_DOUBLE:
 
-            double[] ddata;
-            double[] dtemp;
+                double[] ddata;
+                double[] dtemp;
 
-            if (obj == null)
-                ddata = new double[numDataElems*w*h];
-            else
-                ddata = (double[])obj;
+                if (obj == null) { ddata = new double[numDataElems * w * h]; } else { ddata = (double[]) obj; }
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    o = getDataElements(j, i, o, data);
-                    dtemp = (double[])o;
-                    for (int k=0; k<numDataElems; k++) {
-                        ddata[cnt++] = dtemp[k];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        o = getDataElements(j, i, o, data);
+                        dtemp = (double[]) o;
+                        for (int k = 0; k < numDataElems; k++) {
+                            ddata[cnt++] = dtemp[k];
+                        }
                     }
                 }
-            }
 
-            obj = (Object)ddata;
-            break;
+                obj = (Object) ddata;
+                break;
         }
 
         return obj;
@@ -518,21 +508,20 @@ public abstract class SampleModel
      * a ClassCastException is thrown.  An
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds, or if obj is not large enough to hold the pixel data.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param obj       A primitive array containing pixel data.
-     * @param data      The DataBuffer containing the image data.
+     *
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param obj  A primitive array containing pixel data.
+     * @param data The DataBuffer containing the image data.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates are
+     *                                        not in bounds, or if obj is too small to hold the input.
      * @see #getNumDataElements
      * @see #getTransferType
      * @see #getDataElements(int, int, Object, DataBuffer)
      * @see java.awt.image.DataBuffer
-     *
-     * @throws NullPointerException if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if obj is too small to hold the input.
      */
-    public abstract void setDataElements(int x, int y,
-                                         Object obj, DataBuffer data);
+    public abstract void setDataElements(int x, int y, Object obj, DataBuffer data);
 
     /**
      * Sets the data for a rectangle of pixels in the specified DataBuffer
@@ -565,23 +554,22 @@ public abstract class SampleModel
      * a ClassCastException is thrown.  An
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds, or if obj is not large enough to hold the pixel data.
-     * @param x         The minimum X coordinate of the pixel rectangle.
-     * @param y         The minimum Y coordinate of the pixel rectangle.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param obj       A primitive array containing pixel data.
-     * @param data      The DataBuffer containing the image data.
+     *
+     * @param x    The minimum X coordinate of the pixel rectangle.
+     * @param y    The minimum Y coordinate of the pixel rectangle.
+     * @param w    The width of the pixel rectangle.
+     * @param h    The height of the pixel rectangle.
+     * @param obj  A primitive array containing pixel data.
+     * @param data The DataBuffer containing the image data.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates are
+     *                                        not in bounds, or if obj is too small to hold the input.
      * @see #getNumDataElements
      * @see #getTransferType
      * @see #getDataElements(int, int, int, int, Object, DataBuffer)
      * @see java.awt.image.DataBuffer
-     *
-     * @throws NullPointerException if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if obj is too small to hold the input.
      */
-    public void setDataElements(int x, int y, int w, int h,
-                                Object obj, DataBuffer data) {
+    public void setDataElements(int x, int y, int w, int h, Object obj, DataBuffer data) {
 
         int cnt = 0;
         Object o = null;
@@ -591,94 +579,93 @@ public abstract class SampleModel
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        switch(type) {
+        switch (type) {
 
-        case DataBuffer.TYPE_BYTE:
+            case DataBuffer.TYPE_BYTE:
 
-            byte[] barray = (byte[])obj;
-            byte[] btemp = new byte[numDataElems];
+                byte[] barray = (byte[]) obj;
+                byte[] btemp = new byte[numDataElems];
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    for (int k=0; k<numDataElems; k++) {
-                        btemp[k] = barray[cnt++];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        for (int k = 0; k < numDataElems; k++) {
+                            btemp[k] = barray[cnt++];
+                        }
+
+                        setDataElements(j, i, btemp, data);
                     }
-
-                    setDataElements(j, i, btemp, data);
                 }
-            }
-            break;
+                break;
 
-        case DataBuffer.TYPE_USHORT:
-        case DataBuffer.TYPE_SHORT:
+            case DataBuffer.TYPE_USHORT:
+            case DataBuffer.TYPE_SHORT:
 
-            short[] sarray = (short[])obj;
-            short[] stemp = new short[numDataElems];
+                short[] sarray = (short[]) obj;
+                short[] stemp = new short[numDataElems];
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    for (int k=0; k<numDataElems; k++) {
-                        stemp[k] = sarray[cnt++];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        for (int k = 0; k < numDataElems; k++) {
+                            stemp[k] = sarray[cnt++];
+                        }
+
+                        setDataElements(j, i, stemp, data);
                     }
-
-                    setDataElements(j, i, stemp, data);
                 }
-            }
-            break;
+                break;
 
-        case DataBuffer.TYPE_INT:
+            case DataBuffer.TYPE_INT:
 
-            int[] iArray = (int[])obj;
-            int[] itemp = new int[numDataElems];
+                int[] iArray = (int[]) obj;
+                int[] itemp = new int[numDataElems];
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    for (int k=0; k<numDataElems; k++) {
-                        itemp[k] = iArray[cnt++];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        for (int k = 0; k < numDataElems; k++) {
+                            itemp[k] = iArray[cnt++];
+                        }
+
+                        setDataElements(j, i, itemp, data);
                     }
-
-                    setDataElements(j, i, itemp, data);
                 }
-            }
-            break;
+                break;
 
-        case DataBuffer.TYPE_FLOAT:
+            case DataBuffer.TYPE_FLOAT:
 
-            float[] fArray = (float[])obj;
-            float[] ftemp = new float[numDataElems];
+                float[] fArray = (float[]) obj;
+                float[] ftemp = new float[numDataElems];
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    for (int k=0; k<numDataElems; k++) {
-                        ftemp[k] = fArray[cnt++];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        for (int k = 0; k < numDataElems; k++) {
+                            ftemp[k] = fArray[cnt++];
+                        }
+
+                        setDataElements(j, i, ftemp, data);
                     }
-
-                    setDataElements(j, i, ftemp, data);
                 }
-            }
-            break;
+                break;
 
-        case DataBuffer.TYPE_DOUBLE:
+            case DataBuffer.TYPE_DOUBLE:
 
-            double[] dArray = (double[])obj;
-            double[] dtemp = new double[numDataElems];
+                double[] dArray = (double[]) obj;
+                double[] dtemp = new double[numDataElems];
 
-            for (int i=y; i<y1; i++) {
-                for (int j=x; j<x1; j++) {
-                    for (int k=0; k<numDataElems; k++) {
-                        dtemp[k] = dArray[cnt++];
+                for (int i = y; i < y1; i++) {
+                    for (int j = x; j < x1; j++) {
+                        for (int k = 0; k < numDataElems; k++) {
+                            dtemp[k] = dArray[cnt++];
+                        }
+
+                        setDataElements(j, i, dtemp, data);
                     }
-
-                    setDataElements(j, i, dtemp, data);
                 }
-            }
-            break;
+                break;
         }
 
     }
@@ -687,29 +674,24 @@ public abstract class SampleModel
      * Returns the samples for the specified pixel in an array of float.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param fArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified pixel.
-     * @see #setPixel(int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the pixel location.
+     * @param y      The Y coordinate of the pixel location.
+     * @param fArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if fArray is too small to hold the output.
+     *                                        not in bounds, or if fArray is too small to hold the output.
+     * @see #setPixel(int, int, float[], DataBuffer)
      */
-    public float[] getPixel(int x, int y, float fArray[],
-                            DataBuffer data) {
+    public float[] getPixel(int x, int y, float fArray[], DataBuffer data) {
 
         float pixels[];
 
-        if (fArray != null)
-            pixels = fArray;
-        else
-            pixels = new float[numBands];
+        if (fArray != null) { pixels = fArray; } else { pixels = new float[numBands]; }
 
-        for (int i=0; i<numBands; i++)
-            pixels[i] = getSampleFloat(x, y, i, data);
+        for (int i = 0; i < numBands; i++) { pixels[i] = getSampleFloat(x, y, i, data); }
 
         return pixels;
     }
@@ -718,29 +700,24 @@ public abstract class SampleModel
      * Returns the samples for the specified pixel in an array of double.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param dArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified pixel.
-     * @see #setPixel(int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the pixel location.
+     * @param y      The Y coordinate of the pixel location.
+     * @param dArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if dArray is too small to hold the output.
+     *                                        not in bounds, or if dArray is too small to hold the output.
+     * @see #setPixel(int, int, double[], DataBuffer)
      */
-    public double[] getPixel(int x, int y, double dArray[],
-                             DataBuffer data) {
+    public double[] getPixel(int x, int y, double dArray[], DataBuffer data) {
 
         double pixels[];
 
-        if(dArray != null)
-            pixels = dArray;
-        else
-            pixels = new double[numBands];
+        if (dArray != null) { pixels = dArray; } else { pixels = new double[numBands]; }
 
-        for (int i=0; i<numBands; i++)
-            pixels[i] = getSampleDouble(x, y, i, data);
+        for (int i = 0; i < numBands; i++) { pixels[i] = getSampleDouble(x, y, i, data); }
 
         return pixels;
     }
@@ -750,41 +727,36 @@ public abstract class SampleModel
      * int array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param iArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified region of pixels.
-     * @see #setPixels(int, int, int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param iArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified region of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if iArray is too small to hold the output.
+     *                                        not in bounds, or if iArray is too small to hold the output.
+     * @see #setPixels(int, int, int, int, int[], DataBuffer)
      */
-    public int[] getPixels(int x, int y, int w, int h,
-                           int iArray[], DataBuffer data) {
+    public int[] getPixels(int x, int y, int w, int h, int iArray[], DataBuffer data) {
 
         int pixels[];
-        int Offset=0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        if (iArray != null)
-            pixels = iArray;
-        else
-            pixels = new int[numBands * w * h];
+        if (iArray != null) { pixels = iArray; } else { pixels = new int[numBands * w * h]; }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
-                for(int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     pixels[Offset++] = getSample(j, i, k, data);
                 }
             }
@@ -798,41 +770,36 @@ public abstract class SampleModel
      * array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param fArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified region of pixels.
-     * @see #setPixels(int, int, int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param fArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified region of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if fArray is too small to hold the output.
+     *                                        not in bounds, or if fArray is too small to hold the output.
+     * @see #setPixels(int, int, int, int, float[], DataBuffer)
      */
-    public float[] getPixels(int x, int y, int w, int h,
-                             float fArray[], DataBuffer data) {
+    public float[] getPixels(int x, int y, int w, int h, float fArray[], DataBuffer data) {
 
         float pixels[];
         int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        if (fArray != null)
-            pixels = fArray;
-        else
-            pixels = new float[numBands * w * h];
+        if (fArray != null) { pixels = fArray; } else { pixels = new float[numBands * w * h]; }
 
-        for (int i=y; i<y1; i++) {
-            for(int j=x; j<x1; j++) {
-                for(int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     pixels[Offset++] = getSampleFloat(j, i, k, data);
                 }
             }
@@ -846,41 +813,36 @@ public abstract class SampleModel
      * array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param dArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified region of pixels.
-     * @see #setPixels(int, int, int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param dArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified region of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if dArray is too small to hold the output.
+     *                                        not in bounds, or if dArray is too small to hold the output.
+     * @see #setPixels(int, int, int, int, double[], DataBuffer)
      */
-    public double[] getPixels(int x, int y, int w, int h,
-                              double dArray[], DataBuffer data) {
+    public double[] getPixels(int x, int y, int w, int h, double dArray[], DataBuffer data) {
         double pixels[];
-        int    Offset = 0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        if (dArray != null)
-            pixels = dArray;
-        else
-            pixels = new double[numBands * w * h];
+        if (dArray != null) { pixels = dArray; } else { pixels = new double[numBands * w * h]; }
 
         // Fix 4217412
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
-                for (int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     pixels[Offset++] = getSampleDouble(j, i, k, data);
                 }
             }
@@ -895,16 +857,16 @@ public abstract class SampleModel
      * at (x,y) as an int.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to return.
-     * @param data      The DataBuffer containing the image data.
-     * @return the sample in a specified band for the specified pixel.
-     * @see #setSample(int, int, int, int, DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to return.
+     * @param data The DataBuffer containing the image data.
+     * @return the sample in a specified band for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
+     * @see #setSample(int, int, int, int, DataBuffer)
      */
     public abstract int getSample(int x, int y, int b, DataBuffer data);
 
@@ -914,15 +876,15 @@ public abstract class SampleModel
      * for the pixel located at (x,y) as a float.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to return.
-     * @param data      The DataBuffer containing the image data.
-     * @return the sample in a specified band for the specified pixel.
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to return.
+     * @param data The DataBuffer containing the image data.
+     * @return the sample in a specified band for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
      */
     public float getSampleFloat(int x, int y, int b, DataBuffer data) {
 
@@ -936,15 +898,15 @@ public abstract class SampleModel
      * for a pixel located at (x,y) as a double.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to return.
-     * @param data      The DataBuffer containing the image data.
-     * @return the sample in a specified band for the specified pixel.
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to return.
+     * @param data The DataBuffer containing the image data.
+     * @return the sample in a specified band for the specified pixel.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
      */
     public double getSampleDouble(int x, int y, int b, DataBuffer data) {
 
@@ -959,42 +921,36 @@ public abstract class SampleModel
      * of pixels in an int array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to return.
-     * @param iArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified band for the specified region
-     *         of pixels.
-     * @see #setSamples(int, int, int, int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to return.
+     * @param iArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified band for the specified region
+     * of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if iArray is too small to
-     * hold the output.
+     *                                        the band index are not in bounds, or if iArray is too small to
+     *                                        hold the output.
+     * @see #setSamples(int, int, int, int, int, int[], DataBuffer)
      */
-    public int[] getSamples(int x, int y, int w, int h, int b,
-                            int iArray[], DataBuffer data) {
+    public int[] getSamples(int x, int y, int w, int h, int b, int iArray[], DataBuffer data) {
         int pixels[];
-        int Offset=0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x1 < x || x1 > width ||
-            y < 0 || y1 < y || y1 > height)
-        {
+        if (x < 0 || x1 < x || x1 > width || y < 0 || y1 < y || y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        if (iArray != null)
-            pixels = iArray;
-        else
-            pixels = new int[w * h];
+        if (iArray != null) { pixels = iArray; } else { pixels = new int[w * h]; }
 
-        for(int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 pixels[Offset++] = getSample(j, i, b, data);
             }
         }
@@ -1007,43 +963,36 @@ public abstract class SampleModel
      * of pixels in a float array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to return.
-     * @param fArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified band for the specified region
-     *         of pixels.
-     * @see #setSamples(int, int, int, int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to return.
+     * @param fArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified band for the specified region
+     * of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if fArray is too small to
-     * hold the output.
+     *                                        the band index are not in bounds, or if fArray is too small to
+     *                                        hold the output.
+     * @see #setSamples(int, int, int, int, int, float[], DataBuffer)
      */
-    public float[] getSamples(int x, int y, int w, int h,
-                              int b, float fArray[],
-                              DataBuffer data) {
+    public float[] getSamples(int x, int y, int w, int h, int b, float fArray[], DataBuffer data) {
         float pixels[];
-        int   Offset=0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x1 < x || x1 > width ||
-            y < 0 || y1 < y || y1 > height)
-        {
+        if (x < 0 || x1 < x || x1 > width || y < 0 || y1 < y || y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates");
         }
 
-        if (fArray != null)
-            pixels = fArray;
-        else
-            pixels = new float[w * h];
+        if (fArray != null) { pixels = fArray; } else { pixels = new float[w * h]; }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 pixels[Offset++] = getSampleFloat(j, i, b, data);
             }
         }
@@ -1056,43 +1005,36 @@ public abstract class SampleModel
      * of pixels in a double array, one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to return.
-     * @param dArray    If non-null, returns the samples in this array.
-     * @param data      The DataBuffer containing the image data.
-     * @return the samples for the specified band for the specified region
-     *         of pixels.
-     * @see #setSamples(int, int, int, int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to return.
+     * @param dArray If non-null, returns the samples in this array.
+     * @param data   The DataBuffer containing the image data.
+     * @return the samples for the specified band for the specified region
+     * of pixels.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if dArray is too small to
-     * hold the output.
+     *                                        the band index are not in bounds, or if dArray is too small to
+     *                                        hold the output.
+     * @see #setSamples(int, int, int, int, int, double[], DataBuffer)
      */
-    public double[] getSamples(int x, int y, int w, int h,
-                               int b, double dArray[],
-                               DataBuffer data) {
+    public double[] getSamples(int x, int y, int w, int h, int b, double dArray[], DataBuffer data) {
         double pixels[];
-        int    Offset=0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x1 < x || x1 > width ||
-            y < 0 || y1 < y || y1 > height)
-        {
+        if (x < 0 || x1 < x || x1 > width || y < 0 || y1 < y || y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates");
         }
 
-        if (dArray != null)
-            pixels = dArray;
-        else
-            pixels = new double[w * h];
+        if (dArray != null) { pixels = dArray; } else { pixels = new double[w * h]; }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 pixels[Offset++] = getSampleDouble(j, i, b, data);
             }
         }
@@ -1104,59 +1046,56 @@ public abstract class SampleModel
      * Sets a pixel in  the DataBuffer using an int array of samples for input.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param iArray    The input samples in an int array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixel(int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if iArray or data is null.
+     * @param x      The X coordinate of the pixel location.
+     * @param y      The Y coordinate of the pixel location.
+     * @param iArray The input samples in an int array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if iArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if iArray is too small to hold the input.
+     *                                        not in bounds, or if iArray is too small to hold the input.
+     * @see #getPixel(int, int, int[], DataBuffer)
      */
     public void setPixel(int x, int y, int iArray[], DataBuffer data) {
 
-        for (int i=0; i<numBands; i++)
-            setSample(x, y, i, iArray[i], data);
+        for (int i = 0; i < numBands; i++) { setSample(x, y, i, iArray[i], data); }
     }
 
     /**
      * Sets a pixel in the DataBuffer using a float array of samples for input.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param fArray    The input samples in a float array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixel(int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if fArray or data is null.
+     * @param x      The X coordinate of the pixel location.
+     * @param y      The Y coordinate of the pixel location.
+     * @param fArray The input samples in a float array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if fArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if fArray is too small to hold the input.
+     *                                        not in bounds, or if fArray is too small to hold the input.
+     * @see #getPixel(int, int, float[], DataBuffer)
      */
     public void setPixel(int x, int y, float fArray[], DataBuffer data) {
 
-        for (int i=0; i<numBands; i++)
-            setSample(x, y, i, fArray[i], data);
+        for (int i = 0; i < numBands; i++) { setSample(x, y, i, fArray[i], data); }
     }
 
     /**
      * Sets a pixel in the DataBuffer using a double array of samples
      * for input.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param dArray    The input samples in a double array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixel(int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if dArray or data is null.
+     * @param x      The X coordinate of the pixel location.
+     * @param y      The Y coordinate of the pixel location.
+     * @param dArray The input samples in a double array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if dArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if fArray is too small to hold the input.
+     *                                        not in bounds, or if fArray is too small to hold the input.
+     * @see #getPixel(int, int, double[], DataBuffer)
      */
     public void setPixel(int x, int y, double dArray[], DataBuffer data) {
 
-        for (int i=0; i<numBands; i++)
-            setSample(x, y, i, dArray[i], data);
+        for (int i = 0; i < numBands; i++) { setSample(x, y, i, dArray[i], data); }
     }
 
     /**
@@ -1164,33 +1103,31 @@ public abstract class SampleModel
      * one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param iArray    The input samples in an int array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixels(int, int, int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if iArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param iArray The input samples in an int array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if iArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if iArray is too small to hold the input.
+     *                                        not in bounds, or if iArray is too small to hold the input.
+     * @see #getPixels(int, int, int, int, int[], DataBuffer)
      */
-    public void setPixels(int x, int y, int w, int h,
-                          int iArray[], DataBuffer data) {
-        int Offset=0;
+    public void setPixels(int x, int y, int w, int h, int iArray[], DataBuffer data) {
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
-                for (int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     setSample(j, i, k, iArray[Offset++], data);
                 }
             }
@@ -1202,33 +1139,31 @@ public abstract class SampleModel
      * one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param fArray    The input samples in a float array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixels(int, int, int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if fArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param fArray The input samples in a float array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if fArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if fArray is too small to hold the input.
+     *                                        not in bounds, or if fArray is too small to hold the input.
+     * @see #getPixels(int, int, int, int, float[], DataBuffer)
      */
-    public void setPixels(int x, int y, int w, int h,
-                          float fArray[], DataBuffer data) {
-        int Offset=0;
+    public void setPixels(int x, int y, int w, int h, float fArray[], DataBuffer data) {
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
-                for(int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     setSample(j, i, k, fArray[Offset++], data);
                 }
             }
@@ -1240,33 +1175,31 @@ public abstract class SampleModel
      * containing one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param dArray    The input samples in a double array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getPixels(int, int, int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if dArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param dArray The input samples in a double array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if dArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     * not in bounds, or if dArray is too small to hold the input.
+     *                                        not in bounds, or if dArray is too small to hold the input.
+     * @see #getPixels(int, int, int, int, double[], DataBuffer)
      */
-    public void setPixels(int x, int y, int w, int h,
-                          double dArray[], DataBuffer data) {
-        int Offset=0;
+    public void setPixels(int x, int y, int w, int h, double dArray[], DataBuffer data) {
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
-                for (int k=0; k<numBands; k++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
+                for (int k = 0; k < numBands; k++) {
                     setSample(j, i, k, dArray[Offset++], data);
                 }
             }
@@ -1278,20 +1211,18 @@ public abstract class SampleModel
      * in the DataBuffer using an int for input.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to set.
-     * @param s         The input sample as an int.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSample(int, int, int,  DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to set.
+     * @param s    The input sample as an int.
+     * @param data The DataBuffer containing the image data.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
+     * @see #getSample(int, int, int, DataBuffer)
      */
-    public abstract void setSample(int x, int y, int b,
-                                   int s,
-                                   DataBuffer data);
+    public abstract void setSample(int x, int y, int b, int s, DataBuffer data);
 
     /**
      * Sets a sample in the specified band for the pixel located at (x,y)
@@ -1302,21 +1233,19 @@ public abstract class SampleModel
      * that int value.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to set.
-     * @param s         The input sample as a float.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSample(int, int, int, DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to set.
+     * @param s    The input sample as a float.
+     * @param data The DataBuffer containing the image data.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
+     * @see #getSample(int, int, int, DataBuffer)
      */
-    public void setSample(int x, int y, int b,
-                          float s ,
-                          DataBuffer data) {
-        int sample = (int)s;
+    public void setSample(int x, int y, int b, float s, DataBuffer data) {
+        int sample = (int) s;
 
         setSample(x, y, b, sample, data);
     }
@@ -1330,21 +1259,19 @@ public abstract class SampleModel
      * that int value.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the pixel location.
-     * @param y         The Y coordinate of the pixel location.
-     * @param b         The band to set.
-     * @param s         The input sample as a double.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSample(int, int, int, DataBuffer)
      *
-     * @throws NullPointerException if data is null.
+     * @param x    The X coordinate of the pixel location.
+     * @param y    The Y coordinate of the pixel location.
+     * @param b    The band to set.
+     * @param s    The input sample as a double.
+     * @param data The DataBuffer containing the image data.
+     * @throws NullPointerException           if data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds.
+     *                                        the band index are not in bounds.
+     * @see #getSample(int, int, int, DataBuffer)
      */
-    public void setSample(int x, int y, int b,
-                          double s,
-                          DataBuffer data) {
-        int sample = (int)s;
+    public void setSample(int x, int y, int b, double s, DataBuffer data) {
+        int sample = (int) s;
 
         setSample(x, y, b, sample, data);
     }
@@ -1354,34 +1281,32 @@ public abstract class SampleModel
      * of pixels from an int array containing one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to set.
-     * @param iArray    The input samples in an int array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSamples(int, int, int, int, int, int[], DataBuffer)
      *
-     * @throws NullPointerException if iArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to set.
+     * @param iArray The input samples in an int array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if iArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if iArray is too small to
-     * hold the input.
+     *                                        the band index are not in bounds, or if iArray is too small to
+     *                                        hold the input.
+     * @see #getSamples(int, int, int, int, int, int[], DataBuffer)
      */
-    public void setSamples(int x, int y, int w, int h, int b,
-                           int iArray[], DataBuffer data) {
+    public void setSamples(int x, int y, int w, int h, int b, int iArray[], DataBuffer data) {
 
-        int Offset=0;
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 setSample(j, i, b, iArray[Offset++], data);
             }
         }
@@ -1392,34 +1317,32 @@ public abstract class SampleModel
      * of pixels from a float array containing one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to set.
-     * @param fArray    The input samples in a float array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSamples(int, int, int, int, int, float[], DataBuffer)
      *
-     * @throws NullPointerException if fArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to set.
+     * @param fArray The input samples in a float array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if fArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if fArray is too small to
-     * hold the input.
+     *                                        the band index are not in bounds, or if fArray is too small to
+     *                                        hold the input.
+     * @see #getSamples(int, int, int, int, int, float[], DataBuffer)
      */
-    public void setSamples(int x, int y, int w, int h, int b,
-                           float fArray[], DataBuffer data) {
-        int Offset=0;
+    public void setSamples(int x, int y, int w, int h, int b, float fArray[], DataBuffer data) {
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 setSample(j, i, b, fArray[Offset++], data);
             }
         }
@@ -1430,48 +1353,47 @@ public abstract class SampleModel
      * of pixels from a double array containing one sample per array element.
      * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
      * not in bounds.
-     * @param x         The X coordinate of the upper left pixel location.
-     * @param y         The Y coordinate of the upper left pixel location.
-     * @param w         The width of the pixel rectangle.
-     * @param h         The height of the pixel rectangle.
-     * @param b         The band to set.
-     * @param dArray    The input samples in a double array.
-     * @param data      The DataBuffer containing the image data.
-     * @see #getSamples(int, int, int, int, int, double[], DataBuffer)
      *
-     * @throws NullPointerException if dArray or data is null.
+     * @param x      The X coordinate of the upper left pixel location.
+     * @param y      The Y coordinate of the upper left pixel location.
+     * @param w      The width of the pixel rectangle.
+     * @param h      The height of the pixel rectangle.
+     * @param b      The band to set.
+     * @param dArray The input samples in a double array.
+     * @param data   The DataBuffer containing the image data.
+     * @throws NullPointerException           if dArray or data is null.
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     * the band index are not in bounds, or if dArray is too small to
-     * hold the input.
+     *                                        the band index are not in bounds, or if dArray is too small to
+     *                                        hold the input.
+     * @see #getSamples(int, int, int, int, int, double[], DataBuffer)
      */
-    public void setSamples(int x, int y, int w, int h, int b,
-                           double dArray[], DataBuffer data) {
-        int Offset=0;
+    public void setSamples(int x, int y, int w, int h, int b, double dArray[], DataBuffer data) {
+        int Offset = 0;
         int x1 = x + w;
         int y1 = y + h;
 
 
-        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width ||
-            y < 0 || y >= height || h > height || y1 < 0 || y1 > height)
-        {
+        if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 ||
+            y1 > height) {
             throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
         }
 
-        for (int i=y; i<y1; i++) {
-            for (int j=x; j<x1; j++) {
+        for (int i = y; i < y1; i++) {
+            for (int j = x; j < x1; j++) {
                 setSample(j, i, b, dArray[Offset++], data);
             }
         }
     }
 
     /**
-     *  Creates a SampleModel which describes data in this SampleModel's
-     *  format, but with a different width and height.
-     *  @param w the width of the image data
-     *  @param h the height of the image data
-     *  @return a <code>SampleModel</code> describing the same image
-     *          data as this <code>SampleModel</code>, but with a
-     *          different size.
+     * Creates a SampleModel which describes data in this SampleModel's
+     * format, but with a different width and height.
+     *
+     * @param w the width of the image data
+     * @param h the height of the image data
+     * @return a <code>SampleModel</code> describing the same image
+     * data as this <code>SampleModel</code>, but with a
+     * different size.
      */
     public abstract SampleModel createCompatibleSampleModel(int w, int h);
 
@@ -1479,28 +1401,34 @@ public abstract class SampleModel
      * Creates a new SampleModel
      * with a subset of the bands of this
      * SampleModel.
+     *
      * @param bands the subset of bands of this <code>SampleModel</code>
      * @return a <code>SampleModel</code> with a subset of bands of this
-     *         <code>SampleModel</code>.
+     * <code>SampleModel</code>.
      */
     public abstract SampleModel createSubsetSampleModel(int bands[]);
 
     /**
      * Creates a DataBuffer that corresponds to this SampleModel.
      * The DataBuffer's width and height will match this SampleModel's.
+     *
      * @return a <code>DataBuffer</code> corresponding to this
-     *         <code>SampleModel</code>.
+     * <code>SampleModel</code>.
      */
     public abstract DataBuffer createDataBuffer();
 
-    /** Returns the size in bits of samples for all bands.
-     *  @return the size of samples for all bands.
+    /**
+     * Returns the size in bits of samples for all bands.
+     *
+     * @return the size of samples for all bands.
      */
     public abstract int[] getSampleSize();
 
-    /** Returns the size in bits of samples for the specified band.
-     *  @param band the specified band
-     *  @return the size of the samples of the specified band.
+    /**
+     * Returns the size in bits of samples for the specified band.
+     *
+     * @param band the specified band
+     * @return the size of the samples of the specified band.
      */
     public abstract int getSampleSize(int band);
 

@@ -26,7 +26,6 @@ package java.net;
 
 
 /**
- *
  * This class represents a Socket Address with no protocol attachment.
  * As an abstract class, it is meant to be subclassed with a specific,
  * protocol dependent, implementation.
@@ -38,5 +37,4 @@ package java.net;
  * @see java.net.ServerSocket
  * @since 1.4
  */
-public abstract class SocketAddress implements java.io.Serializable {
-}
+public abstract class SocketAddress implements java.io.Serializable { }

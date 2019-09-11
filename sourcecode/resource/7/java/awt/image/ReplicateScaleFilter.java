@@ -43,10 +43,9 @@ import java.awt.Rectangle;
  * implementation dependencies, there may be differences in pixel values
  * of an image filtered on different platforms.
  *
+ * @author Jim Graham
  * @see FilteredImageSource
  * @see ImageFilter
- *
- * @author      Jim Graham
  */
 public class ReplicateScaleFilter extends ImageFilter {
 
@@ -92,16 +91,15 @@ public class ReplicateScaleFilter extends ImageFilter {
     /**
      * Constructs a ReplicateScaleFilter that scales the pixels from
      * its source Image as specified by the width and height parameters.
-     * @param width the target width to scale the image
+     *
+     * @param width  the target width to scale the image
      * @param height the target height to scale the image
      * @throws IllegalArgumentException if <code>width</code> equals
-     *         zero or <code>height</code> equals zero
+     *                                  zero or <code>height</code> equals zero
      */
     public ReplicateScaleFilter(int width, int height) {
         if (width == 0 || height == 0) {
-            throw new IllegalArgumentException("Width ("+width+
-                                                ") and height ("+height+
-                                                ") must be non-zero");
+            throw new IllegalArgumentException("Width (" + width + ") and height (" + height + ") must be non-zero");
         }
         destWidth = width;
         destHeight = height;
@@ -120,8 +118,8 @@ public class ReplicateScaleFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setProperties(Hashtable<?,?> props) {
-        Hashtable<Object,Object> p = (Hashtable<Object,Object>)props.clone();
+    public void setProperties(Hashtable<?, ?> props) {
+        Hashtable<Object, Object> p = (Hashtable<Object, Object>) props.clone();
         String key = "rescale";
         String val = destWidth + "x" + destHeight;
         Object o = p.get(key);
@@ -142,6 +140,7 @@ public class ReplicateScaleFilter extends ImageFilter {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer
      */
     public void setDimensions(int w, int h) {
@@ -183,9 +182,7 @@ public class ReplicateScaleFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, byte pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, byte pixels[], int off, int scansize) {
         if (srcrows == null || srccols == null) {
             calculateMaps();
         }
@@ -206,8 +203,7 @@ public class ReplicateScaleFilter extends ImageFilter {
                 outpix[dx] = pixels[srcoff + sx - x];
             }
             if (dx > dx1) {
-                consumer.setPixels(dx1, dy, dx - dx1, 1,
-                                   model, outpix, dx1, destWidth);
+                consumer.setPixels(dx1, dy, dx - dx1, 1, model, outpix, dx1, destWidth);
             }
         }
     }
@@ -224,9 +220,7 @@ public class ReplicateScaleFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, int pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, int pixels[], int off, int scansize) {
         if (srcrows == null || srccols == null) {
             calculateMaps();
         }
@@ -247,8 +241,7 @@ public class ReplicateScaleFilter extends ImageFilter {
                 outpix[dx] = pixels[srcoff + sx - x];
             }
             if (dx > dx1) {
-                consumer.setPixels(dx1, dy, dx - dx1, 1,
-                                   model, outpix, dx1, destWidth);
+                consumer.setPixels(dx1, dy, dx - dx1, 1, model, outpix, dx1, destWidth);
             }
         }
     }

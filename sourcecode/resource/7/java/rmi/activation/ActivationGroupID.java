@@ -33,17 +33,17 @@ import java.rmi.server.UID;
  * <li>identifies the group uniquely within the activation system, and
  * <li>contains a reference to the group's activation system so that the
  * group can contact its activation system when necessary.</ul><p>
- *
+ * <p>
  * The <code>ActivationGroupID</code> is returned from the call to
  * <code>ActivationSystem.registerGroup</code> and is used to identify
  * the group within the activation system. This group id is passed
  * as one of the arguments to the activation group's special constructor
  * when an activation group is created/recreated.
  *
- * @author      Ann Wollrath
- * @see         ActivationGroup
- * @see         ActivationGroupDesc
- * @since       1.2
+ * @author Ann Wollrath
+ * @see ActivationGroup
+ * @see ActivationGroupDesc
+ * @since 1.2
  */
 public class ActivationGroupID implements java.io.Serializable {
     /**
@@ -57,7 +57,7 @@ public class ActivationGroupID implements java.io.Serializable {
     private UID uid = new UID();
 
     /** indicate compatibility with the Java 2 SDK v1.2 version of class */
-    private  static final long serialVersionUID = -1648432278909740833L;
+    private static final long serialVersionUID = -1648432278909740833L;
 
     /**
      * Constructs a unique group id.
@@ -71,6 +71,7 @@ public class ActivationGroupID implements java.io.Serializable {
 
     /**
      * Returns the group's activation system.
+     *
      * @return the group's activation system
      * @since 1.2
      */
@@ -95,18 +96,18 @@ public class ActivationGroupID implements java.io.Serializable {
      * Returns true if both of the following conditions are true:
      * 1) the unique identifiers are equivalent (by content), and
      * 2) the activation system specified in each
-     *    refers to the same remote object.
+     * refers to the same remote object.
      *
-     * @param   obj     the Object to compare with
-     * @return  true if these Objects are equal; false otherwise.
-     * @see             java.util.Hashtable
+     * @param obj the Object to compare with
+     * @return true if these Objects are equal; false otherwise.
+     * @see java.util.Hashtable
      * @since 1.2
      */
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj instanceof ActivationGroupID) {
-            ActivationGroupID id = (ActivationGroupID)obj;
+            ActivationGroupID id = (ActivationGroupID) obj;
             return (uid.equals(id.uid) && system.equals(id.system));
         } else {
             return false;

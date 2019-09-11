@@ -37,16 +37,15 @@ import java.util.*;
 class ApplicationShutdownHooks {
     /* The set of registered hooks */
     private static IdentityHashMap<Thread, Thread> hooks;
+
     static {
         try {
-            Shutdown.add(1 /* shutdown hook invocation order */,
-                false /* not registered if shutdown in progress */,
+            Shutdown.add(1 /* shutdown hook invocation order */, false /* not registered if shutdown in progress */,
                 new Runnable() {
                     public void run() {
                         runHooks();
                     }
-                }
-            );
+                });
             hooks = new IdentityHashMap<>();
         } catch (IllegalStateException e) {
             // application shutdown hooks cannot be added if
@@ -62,14 +61,11 @@ class ApplicationShutdownHooks {
      * but does not do any security checks.
      */
     static synchronized void add(Thread hook) {
-        if(hooks == null)
-            throw new IllegalStateException("Shutdown in progress");
+        if (hooks == null) { throw new IllegalStateException("Shutdown in progress"); }
 
-        if (hook.isAlive())
-            throw new IllegalArgumentException("Hook already running");
+        if (hook.isAlive()) { throw new IllegalArgumentException("Hook already running"); }
 
-        if (hooks.containsKey(hook))
-            throw new IllegalArgumentException("Hook previously registered");
+        if (hooks.containsKey(hook)) { throw new IllegalArgumentException("Hook previously registered"); }
 
         hooks.put(hook, hook);
     }
@@ -78,11 +74,9 @@ class ApplicationShutdownHooks {
      * does not do any security checks.
      */
     static synchronized boolean remove(Thread hook) {
-        if(hooks == null)
-            throw new IllegalStateException("Shutdown in progress");
+        if (hooks == null) { throw new IllegalStateException("Shutdown in progress"); }
 
-        if (hook == null)
-            throw new NullPointerException();
+        if (hook == null) { throw new NullPointerException(); }
 
         return hooks.remove(hook) != null;
     }
@@ -93,7 +87,7 @@ class ApplicationShutdownHooks {
      */
     static void runHooks() {
         Collection<Thread> threads;
-        synchronized(ApplicationShutdownHooks.class) {
+        synchronized (ApplicationShutdownHooks.class) {
             threads = hooks.keySet();
             hooks = null;
         }

@@ -33,11 +33,8 @@ package java.security.spec;
  * All parameter specifications must implement this interface.
  *
  * @author Jan Luehe
- *
- *
  * @see java.security.AlgorithmParameters
  * @see DSAParameterSpec
- *
  * @since 1.2
  */
 

@@ -121,7 +121,6 @@ import sun.security.jca.GetInstance.Instance;
  * other algorithms are supported.
  *
  * @author Benjamin Renaud
- *
  * @see java.security.spec.AlgorithmParameterSpec
  */
 
@@ -136,10 +135,10 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * Creates a KeyPairGenerator object for the specified algorithm.
      *
      * @param algorithm the standard string name of the algorithm.
-     * See the KeyPairGenerator section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-     * for information about standard algorithm names.
+     *                  See the KeyPairGenerator section in the <a href=
+     *                  "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
+     *                  Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     *                  for information about standard algorithm names.
      */
     protected KeyPairGenerator(String algorithm) {
         this.algorithm = algorithm;
@@ -158,13 +157,12 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
         return this.algorithm;
     }
 
-    private static KeyPairGenerator getInstance(Instance instance,
-            String algorithm) {
+    private static KeyPairGenerator getInstance(Instance instance, String algorithm) {
         KeyPairGenerator kpg;
         if (instance.impl instanceof KeyPairGenerator) {
-            kpg = (KeyPairGenerator)instance.impl;
+            kpg = (KeyPairGenerator) instance.impl;
         } else {
-            KeyPairGeneratorSpi spi = (KeyPairGeneratorSpi)instance.impl;
+            KeyPairGeneratorSpi spi = (KeyPairGeneratorSpi) instance.impl;
             kpg = new Delegate(spi, algorithm);
         }
         kpg.provider = instance.provider;
@@ -185,35 +183,28 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * the {@link Security#getProviders() Security.getProviders()} method.
      *
      * @param algorithm the standard string name of the algorithm.
-     * See the KeyPairGenerator section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-     * for information about standard algorithm names.
-     *
+     *                  See the KeyPairGenerator section in the <a href=
+     *                  "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
+     *                  Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     *                  for information about standard algorithm names.
      * @return the new KeyPairGenerator object.
-     *
-     * @exception NoSuchAlgorithmException if no Provider supports a
-     *          KeyPairGeneratorSpi implementation for the
-     *          specified algorithm.
-     *
+     * @throws NoSuchAlgorithmException if no Provider supports a
+     *                                  KeyPairGeneratorSpi implementation for the
+     *                                  specified algorithm.
      * @see Provider
      */
-    public static KeyPairGenerator getInstance(String algorithm)
-            throws NoSuchAlgorithmException {
-        List<Service> list =
-                GetInstance.getServices("KeyPairGenerator", algorithm);
+    public static KeyPairGenerator getInstance(String algorithm) throws NoSuchAlgorithmException {
+        List<Service> list = GetInstance.getServices("KeyPairGenerator", algorithm);
         Iterator<Service> t = list.iterator();
         if (t.hasNext() == false) {
-            throw new NoSuchAlgorithmException
-                (algorithm + " KeyPairGenerator not available");
+            throw new NoSuchAlgorithmException(algorithm + " KeyPairGenerator not available");
         }
         // find a working Spi or KeyPairGenerator subclass
         NoSuchAlgorithmException failure = null;
         do {
             Service s = t.next();
             try {
-                Instance instance =
-                    GetInstance.getInstance(s, KeyPairGeneratorSpi.class);
+                Instance instance = GetInstance.getInstance(s, KeyPairGeneratorSpi.class);
                 if (instance.impl instanceof KeyPairGenerator) {
                     return getInstance(instance, algorithm);
                 } else {
@@ -241,32 +232,24 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * the {@link Security#getProviders() Security.getProviders()} method.
      *
      * @param algorithm the standard string name of the algorithm.
-     * See the KeyPairGenerator section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-     * for information about standard algorithm names.
-     *
-     * @param provider the string name of the provider.
-     *
+     *                  See the KeyPairGenerator section in the <a href=
+     *                  "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
+     *                  Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     *                  for information about standard algorithm names.
+     * @param provider  the string name of the provider.
      * @return the new KeyPairGenerator object.
-     *
-     * @exception NoSuchAlgorithmException if a KeyPairGeneratorSpi
-     *          implementation for the specified algorithm is not
-     *          available from the specified provider.
-     *
-     * @exception NoSuchProviderException if the specified provider is not
-     *          registered in the security provider list.
-     *
-     * @exception IllegalArgumentException if the provider name is null
-     *          or empty.
-     *
+     * @throws NoSuchAlgorithmException if a KeyPairGeneratorSpi
+     *                                  implementation for the specified algorithm is not
+     *                                  available from the specified provider.
+     * @throws NoSuchProviderException  if the specified provider is not
+     *                                  registered in the security provider list.
+     * @throws IllegalArgumentException if the provider name is null
+     *                                  or empty.
      * @see Provider
      */
-    public static KeyPairGenerator getInstance(String algorithm,
-            String provider)
-            throws NoSuchAlgorithmException, NoSuchProviderException {
-        Instance instance = GetInstance.getInstance("KeyPairGenerator",
-                KeyPairGeneratorSpi.class, algorithm, provider);
+    public static KeyPairGenerator getInstance(String algorithm, String provider)
+        throws NoSuchAlgorithmException, NoSuchProviderException {
+        Instance instance = GetInstance.getInstance("KeyPairGenerator", KeyPairGeneratorSpi.class, algorithm, provider);
         return getInstance(instance, algorithm);
     }
 
@@ -280,29 +263,21 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * does not have to be registered in the provider list.
      *
      * @param algorithm the standard string name of the algorithm.
-     * See the KeyPairGenerator section in the <a href=
-     * "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
-     * Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-     * for information about standard algorithm names.
-     *
-     * @param provider the provider.
-     *
+     *                  See the KeyPairGenerator section in the <a href=
+     *                  "{@docRoot}/../technotes/guides/security/StandardNames.html#KeyPairGenerator">
+     *                  Java Cryptography Architecture Standard Algorithm Name Documentation</a>
+     *                  for information about standard algorithm names.
+     * @param provider  the provider.
      * @return the new KeyPairGenerator object.
-     *
-     * @exception NoSuchAlgorithmException if a KeyPairGeneratorSpi
-     *          implementation for the specified algorithm is not available
-     *          from the specified Provider object.
-     *
-     * @exception IllegalArgumentException if the specified provider is null.
-     *
+     * @throws NoSuchAlgorithmException if a KeyPairGeneratorSpi
+     *                                  implementation for the specified algorithm is not available
+     *                                  from the specified Provider object.
+     * @throws IllegalArgumentException if the specified provider is null.
      * @see Provider
-     *
      * @since 1.4
      */
-    public static KeyPairGenerator getInstance(String algorithm,
-            Provider provider) throws NoSuchAlgorithmException {
-        Instance instance = GetInstance.getInstance("KeyPairGenerator",
-                KeyPairGeneratorSpi.class, algorithm, provider);
+    public static KeyPairGenerator getInstance(String algorithm, Provider provider) throws NoSuchAlgorithmException {
+        Instance instance = GetInstance.getInstance("KeyPairGenerator", KeyPairGeneratorSpi.class, algorithm, provider);
         return getInstance(instance, algorithm);
     }
 
@@ -330,11 +305,10 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * used.)
      *
      * @param keysize the keysize. This is an
-     * algorithm-specific metric, such as modulus length, specified in
-     * number of bits.
-     *
-     * @exception InvalidParameterException if the <code>keysize</code> is not
-     * supported by this KeyPairGenerator object.
+     *                algorithm-specific metric, such as modulus length, specified in
+     *                number of bits.
+     * @throws InvalidParameterException if the <code>keysize</code> is not
+     *                                   supported by this KeyPairGenerator object.
      */
     public void initialize(int keysize) {
         initialize(keysize, JCAUtil.getSecureRandom());
@@ -345,13 +319,11 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * the given source of randomness (and a default parameter set).
      *
      * @param keysize the keysize. This is an
-     * algorithm-specific metric, such as modulus length, specified in
-     * number of bits.
-     * @param random the source of randomness.
-     *
-     * @exception InvalidParameterException if the <code>keysize</code> is not
-     * supported by this KeyPairGenerator object.
-     *
+     *                algorithm-specific metric, such as modulus length, specified in
+     *                number of bits.
+     * @param random  the source of randomness.
+     * @throws InvalidParameterException if the <code>keysize</code> is not
+     *                                   supported by this KeyPairGenerator object.
      * @since 1.2
      */
     public void initialize(int keysize, SecureRandom random) {
@@ -380,7 +352,7 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * abstract class.
      * This method calls the KeyPairGeneratorSpi
      * {@link KeyPairGeneratorSpi#initialize(
-     * java.security.spec.AlgorithmParameterSpec,
+     *java.security.spec.AlgorithmParameterSpec,
      * java.security.SecureRandom) initialize} method,
      * passing it <code>params</code> and a source of randomness (obtained
      * from the highest-priority installed provider or system-provided if none
@@ -389,14 +361,11 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * UnsupportedOperationException if it is not overridden by the provider.
      *
      * @param params the parameter set used to generate the keys.
-     *
-     * @exception InvalidAlgorithmParameterException if the given parameters
-     * are inappropriate for this key pair generator.
-     *
+     * @throws InvalidAlgorithmParameterException if the given parameters
+     *                                            are inappropriate for this key pair generator.
      * @since 1.2
      */
-    public void initialize(AlgorithmParameterSpec params)
-            throws InvalidAlgorithmParameterException {
+    public void initialize(AlgorithmParameterSpec params) throws InvalidAlgorithmParameterException {
         initialize(params, JCAUtil.getSecureRandom());
     }
 
@@ -408,7 +377,7 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * abstract class.
      * This method calls the KeyPairGeneratorSpi {@link
      * KeyPairGeneratorSpi#initialize(
-     * java.security.spec.AlgorithmParameterSpec,
+     *java.security.spec.AlgorithmParameterSpec,
      * java.security.SecureRandom) initialize} method,
      * passing it <code>params</code> and <code>random</code>.
      * That <code>initialize</code>
@@ -417,16 +386,12 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      *
      * @param params the parameter set used to generate the keys.
      * @param random the source of randomness.
-     *
-     * @exception InvalidAlgorithmParameterException if the given parameters
-     * are inappropriate for this key pair generator.
-     *
+     * @throws InvalidAlgorithmParameterException if the given parameters
+     *                                            are inappropriate for this key pair generator.
      * @since 1.2
      */
-    public void initialize(AlgorithmParameterSpec params,
-                           SecureRandom random)
-        throws InvalidAlgorithmParameterException
-    {
+    public void initialize(AlgorithmParameterSpec params, SecureRandom random)
+        throws InvalidAlgorithmParameterException {
         // This does nothing, because either
         // 1. the implementation object returned by getInstance() is an
         //    instance of KeyPairGenerator which has its own
@@ -452,7 +417,6 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
      * {@link #generateKeyPair() generateKeyPair}.
      *
      * @return the generated key pair
-     *
      * @since 1.2
      */
     public final KeyPair genKeyPair() {
@@ -536,8 +500,8 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
 
         private Iterator<Service> serviceIterator;
 
-        private final static int I_NONE   = 1;
-        private final static int I_SIZE   = 2;
+        private final static int I_NONE = 1;
+        private final static int I_SIZE = 2;
         private final static int I_PARAMS = 3;
 
         private int initType;
@@ -551,10 +515,9 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
             this.spi = spi;
         }
 
-        Delegate(Instance instance, Iterator<Service> serviceIterator,
-                String algorithm) {
+        Delegate(Instance instance, Iterator<Service> serviceIterator, String algorithm) {
             super(algorithm);
-            spi = (KeyPairGeneratorSpi)instance.impl;
+            spi = (KeyPairGeneratorSpi) instance.impl;
             provider = instance.provider;
             this.serviceIterator = serviceIterator;
             initType = I_NONE;
@@ -566,8 +529,7 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
          * available, this method returns null. However, the active spi of
          * this class is never set to null.
          */
-        private KeyPairGeneratorSpi nextSpi(KeyPairGeneratorSpi oldSpi,
-                boolean reinit) {
+        private KeyPairGeneratorSpi nextSpi(KeyPairGeneratorSpi oldSpi, boolean reinit) {
             synchronized (lock) {
                 // somebody else did a failover concurrently
                 // try that spi now
@@ -588,15 +550,14 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
                         if (inst instanceof KeyPairGenerator) {
                             continue;
                         }
-                        KeyPairGeneratorSpi spi = (KeyPairGeneratorSpi)inst;
+                        KeyPairGeneratorSpi spi = (KeyPairGeneratorSpi) inst;
                         if (reinit) {
                             if (initType == I_SIZE) {
                                 spi.initialize(initKeySize, initRandom);
                             } else if (initType == I_PARAMS) {
                                 spi.initialize(initParams, initRandom);
                             } else if (initType != I_NONE) {
-                                throw new AssertionError
-                                    ("KeyPairGenerator initType: " + initType);
+                                throw new AssertionError("KeyPairGenerator initType: " + initType);
                             }
                         }
                         provider = s.getProvider();
@@ -645,8 +606,8 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
         }
 
         // engine method
-        public void initialize(AlgorithmParameterSpec params,
-                SecureRandom random) throws InvalidAlgorithmParameterException {
+        public void initialize(AlgorithmParameterSpec params, SecureRandom random)
+            throws InvalidAlgorithmParameterException {
             if (serviceIterator == null) {
                 spi.initialize(params, random);
                 return;
@@ -669,10 +630,10 @@ public abstract class KeyPairGenerator extends KeyPairGeneratorSpi {
                 }
             } while (mySpi != null);
             if (failure instanceof RuntimeException) {
-                throw (RuntimeException)failure;
+                throw (RuntimeException) failure;
             }
             // must be an InvalidAlgorithmParameterException
-            throw (InvalidAlgorithmParameterException)failure;
+            throw (InvalidAlgorithmParameterException) failure;
         }
 
         // engine method

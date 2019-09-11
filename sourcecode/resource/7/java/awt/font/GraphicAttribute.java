@@ -93,14 +93,15 @@ public abstract class GraphicAttribute {
     /**
      * Constructs a <code>GraphicAttribute</code>.
      * Subclasses use this to define the alignment of the graphic.
+     *
      * @param alignment an int representing one of the
-     * <code>GraphicAttribute</code> alignment fields
+     *                  <code>GraphicAttribute</code> alignment fields
      * @throws IllegalArgumentException if alignment is not one of the
-     * five defined values.
+     *                                  five defined values.
      */
     protected GraphicAttribute(int alignment) {
         if (alignment < BOTTOM_ALIGNMENT || alignment > HANGING_BASELINE) {
-          throw new IllegalArgumentException("bad alignment");
+            throw new IllegalArgumentException("bad alignment");
         }
         fAlignment = alignment;
     }
@@ -108,6 +109,7 @@ public abstract class GraphicAttribute {
     /**
      * Returns the ascent of this <code>GraphicAttribute</code>.  A
      * graphic can be rendered above its ascent.
+     *
      * @return the ascent of this <code>GraphicAttribute</code>.
      * @see #getBounds()
      */
@@ -117,6 +119,7 @@ public abstract class GraphicAttribute {
     /**
      * Returns the descent of this <code>GraphicAttribute</code>.  A
      * graphic can be rendered below its descent.
+     *
      * @return the descent of this <code>GraphicAttribute</code>.
      * @see #getBounds()
      */
@@ -128,6 +131,7 @@ public abstract class GraphicAttribute {
      * from the point at which the graphic is rendered and the point where
      * the next character or graphic is rendered.  A graphic can be
      * rendered beyond its advance
+     *
      * @return the advance of this <code>GraphicAttribute</code>.
      * @see #getBounds()
      */
@@ -141,13 +145,13 @@ public abstract class GraphicAttribute {
      * or advance;  but if it is, this method's implementation must
      * indicate where the graphic is rendered.
      * Default bounds is the rectangle (0, -ascent, advance, ascent+descent).
+     *
      * @return a <code>Rectangle2D</code> that encloses all of the bits
      * rendered by this <code>GraphicAttribute</code>.
      */
     public Rectangle2D getBounds() {
         float ascent = getAscent();
-        return new Rectangle2D.Float(0, -ascent,
-                                        getAdvance(), ascent+getDescent());
+        return new Rectangle2D.Float(0, -ascent, getAdvance(), ascent + getDescent());
     }
 
     /**
@@ -159,10 +163,11 @@ public abstract class GraphicAttribute {
      * The default implementation returns the rectangle returned by
      * {@link #getBounds}, transformed by the provided {@link AffineTransform}
      * if present.
+     *
      * @param tx an optional {@link AffineTransform} to apply to the
-     *   outline of this <code>GraphicAttribute</code>. This can be null.
+     *           outline of this <code>GraphicAttribute</code>. This can be null.
      * @return a <code>Shape</code> representing this graphic attribute,
-     *   suitable for stroking or filling.
+     * suitable for stroking or filling.
      * @since 1.6
      */
     public Shape getOutline(AffineTransform tx) {
@@ -176,10 +181,11 @@ public abstract class GraphicAttribute {
     /**
      * Renders this <code>GraphicAttribute</code> at the specified
      * location.
+     *
      * @param graphics the {@link Graphics2D} into which to render the
-     * graphic
-     * @param x the user-space X coordinate where the graphic is rendered
-     * @param y the user-space Y coordinate where the graphic is rendered
+     *                 graphic
+     * @param x        the user-space X coordinate where the graphic is rendered
+     * @param y        the user-space Y coordinate where the graphic is rendered
      */
     public abstract void draw(Graphics2D graphics, float x, float y);
 
@@ -187,6 +193,7 @@ public abstract class GraphicAttribute {
      * Returns the alignment of this <code>GraphicAttribute</code>.
      * Alignment can be to a particular baseline, or to the absolute top
      * or bottom of a line.
+     *
      * @return the alignment of this <code>GraphicAttribute</code>.
      */
     public final int getAlignment() {
@@ -199,6 +206,7 @@ public abstract class GraphicAttribute {
      * <code>GraphicAttribute</code>.  Subclasses
      * can override this method to provide different justification
      * information.
+     *
      * @return a {@link GlyphJustificationInfo} object that contains the
      * justification information for this <code>GraphicAttribute</code>.
      */
@@ -207,15 +215,14 @@ public abstract class GraphicAttribute {
         // should we cache this?
         float advance = getAdvance();
 
-        return new GlyphJustificationInfo(
-                                     advance,   // weight
-                                     false,     // growAbsorb
-                                     2,         // growPriority
-                                     advance/3, // growLeftLimit
-                                     advance/3, // growRightLimit
-                                     false,     // shrinkAbsorb
-                                     1,         // shrinkPriority
-                                     0,         // shrinkLeftLimit
-                                     0);        // shrinkRightLimit
+        return new GlyphJustificationInfo(advance,   // weight
+            false,     // growAbsorb
+            2,         // growPriority
+            advance / 3, // growLeftLimit
+            advance / 3, // growRightLimit
+            false,     // shrinkAbsorb
+            1,         // shrinkPriority
+            0,         // shrinkLeftLimit
+            0);        // shrinkRightLimit
     }
 }

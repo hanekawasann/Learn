@@ -49,21 +49,18 @@ import java.util.Properties;
  * "Acme Software". No other named Identity in the scope has the same
  * public  key. Of course, none has the same name as well.
  *
+ * @author Benjamin Renaud
  * @see Identity
  * @see Signer
  * @see Principal
  * @see Key
- *
- * @author Benjamin Renaud
- *
  * @deprecated This class is no longer used. Its functionality has been
  * replaced by <code>java.security.KeyStore</code>, the
  * <code>java.security.cert</code> package, and
  * <code>java.security.Principal</code>.
  */
 @Deprecated
-public abstract
-class IdentityScope extends Identity {
+public abstract class IdentityScope extends Identity {
 
     private static final long serialVersionUID = -2337346281189773310L;
 
@@ -73,8 +70,7 @@ class IdentityScope extends Identity {
     // initialize the system scope
     private static void initializeSystemScope() {
 
-        String classname = AccessController.doPrivileged(
-                                new PrivilegedAction<String>() {
+        String classname = AccessController.doPrivileged(new PrivilegedAction<String>() {
             public String run() {
                 return Security.getProperty("system.scope");
             }
@@ -115,14 +111,12 @@ class IdentityScope extends Identity {
     /**
      * Constructs a new identity scope with the specified name and scope.
      *
-     * @param name the scope name.
+     * @param name  the scope name.
      * @param scope the scope for the new identity scope.
-     *
-     * @exception KeyManagementException if there is already an identity
-     * with the same name in the scope.
+     * @throws KeyManagementException if there is already an identity
+     *                                with the same name in the scope.
      */
-    public IdentityScope(String name, IdentityScope scope)
-    throws KeyManagementException {
+    public IdentityScope(String name, IdentityScope scope) throws KeyManagementException {
         super(name, scope);
     }
 
@@ -130,8 +124,7 @@ class IdentityScope extends Identity {
      * Returns the system's identity scope.
      *
      * @return the system's identity scope, or {@code null} if none has been
-     *         set.
-     *
+     * set.
      * @see #setSystemScope
      */
     public static IdentityScope getSystemScope() {
@@ -151,11 +144,9 @@ class IdentityScope extends Identity {
      * as its argument to see if it's ok to set the identity scope.
      *
      * @param scope the scope to set.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     * <code>checkSecurityAccess</code> method doesn't allow
-     * setting the identity scope.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkSecurityAccess</code> method doesn't allow
+     *                           setting the identity scope.
      * @see #getSystemScope
      * @see SecurityManager#checkSecurityAccess
      */
@@ -175,7 +166,6 @@ class IdentityScope extends Identity {
      * Returns the identity in this scope with the specified name (if any).
      *
      * @param name the name of the identity to be retrieved.
-     *
      * @return the identity named <code>name</code>, or null if there are
      * no identities named <code>name</code> in this scope.
      */
@@ -186,8 +176,7 @@ class IdentityScope extends Identity {
      * specified principal. (Note: Identity implements Principal.)
      *
      * @param principal the principal corresponding to the identity
-     * to be retrieved.
-     *
+     *                  to be retrieved.
      * @return the identity whose name is the same as that of the
      * principal, or null if there are no identities of the same name
      * in this scope.
@@ -200,7 +189,6 @@ class IdentityScope extends Identity {
      * Retrieves the identity with the specified public key.
      *
      * @param key the public key for the identity to be returned.
-     *
      * @return the identity with the given key, or null if there are
      * no identities in this scope with that key.
      */
@@ -210,24 +198,21 @@ class IdentityScope extends Identity {
      * Adds an identity to this identity scope.
      *
      * @param identity the identity to be added.
-     *
-     * @exception KeyManagementException if the identity is not
-     * valid, a name conflict occurs, another identity has the same
-     * public key as the identity being added, or another exception
-     * occurs. */
-    public abstract void addIdentity(Identity identity)
-    throws KeyManagementException;
+     * @throws KeyManagementException if the identity is not
+     *                                valid, a name conflict occurs, another identity has the same
+     *                                public key as the identity being added, or another exception
+     *                                occurs.
+     */
+    public abstract void addIdentity(Identity identity) throws KeyManagementException;
 
     /**
      * Removes an identity from this identity scope.
      *
      * @param identity the identity to be removed.
-     *
-     * @exception KeyManagementException if the identity is missing,
-     * or another exception occurs.
+     * @throws KeyManagementException if the identity is missing,
+     *                                or another exception occurs.
      */
-    public abstract void removeIdentity(Identity identity)
-    throws KeyManagementException;
+    public abstract void removeIdentity(Identity identity) throws KeyManagementException;
 
     /**
      * Returns an enumeration of all identities in this identity scope.

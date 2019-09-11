@@ -54,10 +54,9 @@ import java.text.AttributedCharacterIterator.Attribute;
  *     of the context that the text is input into.
  * </ul>
  *
+ * @author JavaSoft Asia/Pacific
  * @see java.awt.Component#getInputMethodRequests
  * @see java.awt.event.InputMethodListener
- *
- * @author JavaSoft Asia/Pacific
  * @since 1.2
  */
 
@@ -94,7 +93,7 @@ public interface InputMethodRequests {
      * coordinates.
      *
      * @param offset the offset within the composed text, if there is composed
-     * text; null otherwise
+     *               text; null otherwise
      * @return a rectangle representing the screen location of the offset
      */
     Rectangle getTextLocation(TextHitInfo offset);
@@ -141,13 +140,12 @@ public interface InputMethodRequests {
      * should be made accessible.
      *
      * @param beginIndex the index of the first character
-     * @param endIndex the index of the character following the last character
+     * @param endIndex   the index of the character following the last character
      * @param attributes a list of attributes that the input method is
-     * interested in
+     *                   interested in
      * @return an iterator providing access to the text and its attributes
      */
-    AttributedCharacterIterator getCommittedText(int beginIndex, int endIndex,
-                                                 Attribute[] attributes);
+    AttributedCharacterIterator getCommittedText(int beginIndex, int endIndex, Attribute[] attributes);
 
     /**
      * Gets the length of the entire text contained in the text
@@ -177,7 +175,7 @@ public interface InputMethodRequests {
      * should be made accessible.
      *
      * @param attributes a list of attributes that the input method is
-     * interested in
+     *                   interested in
      * @return the latest committed text, or null when the "Undo Commit"
      * feature is not supported
      */
@@ -201,7 +199,7 @@ public interface InputMethodRequests {
      * should be made accessible.
      *
      * @param attributes a list of attributes that the input method is
-     * interested in
+     *                   interested in
      * @return the currently selected text
      */
     AttributedCharacterIterator getSelectedText(Attribute[] attributes);

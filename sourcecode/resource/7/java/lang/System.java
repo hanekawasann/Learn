@@ -33,6 +33,7 @@ import java.security.PrivilegedAction;
 import java.security.AllPermission;
 import java.nio.channels.Channel;
 import java.nio.channels.spi.SelectorProvider;
+
 import sun.nio.ch.Interruptible;
 import sun.reflect.Reflection;
 import sun.security.util.SecurityConstants;
@@ -48,8 +49,8 @@ import sun.reflect.annotation.AnnotationType;
  * variables; a means of loading files and libraries; and a utility
  * method for quickly copying a portion of an array.
  *
- * @author  unascribed
- * @since   JDK1.0
+ * @author unascribed
+ * @since JDK1.0
  */
 public final class System {
 
@@ -61,6 +62,7 @@ public final class System {
      * described in the initializeSystemClass method.
      */
     private static native void registerNatives();
+
     static {
         registerNatives();
     }
@@ -91,16 +93,16 @@ public final class System {
      * <p>
      * See the <code>println</code> methods in class <code>PrintStream</code>.
      *
-     * @see     java.io.PrintStream#println()
-     * @see     java.io.PrintStream#println(boolean)
-     * @see     java.io.PrintStream#println(char)
-     * @see     java.io.PrintStream#println(char[])
-     * @see     java.io.PrintStream#println(double)
-     * @see     java.io.PrintStream#println(float)
-     * @see     java.io.PrintStream#println(int)
-     * @see     java.io.PrintStream#println(long)
-     * @see     java.io.PrintStream#println(java.lang.Object)
-     * @see     java.io.PrintStream#println(java.lang.String)
+     * @see java.io.PrintStream#println()
+     * @see java.io.PrintStream#println(boolean)
+     * @see java.io.PrintStream#println(char)
+     * @see java.io.PrintStream#println(char[])
+     * @see java.io.PrintStream#println(double)
+     * @see java.io.PrintStream#println(float)
+     * @see java.io.PrintStream#println(int)
+     * @see java.io.PrintStream#println(long)
+     * @see java.io.PrintStream#println(java.lang.Object)
+     * @see java.io.PrintStream#println(java.lang.String)
      */
     public final static PrintStream out = null;
 
@@ -127,20 +129,16 @@ public final class System {
      *
      * <p>First, if there is a security manager, its <code>checkPermission</code>
      * method is called with a <code>RuntimePermission("setIO")</code> permission
-     *  to see if it's ok to reassign the "standard" input stream.
+     * to see if it's ok to reassign the "standard" input stream.
      * <p>
      *
      * @param in the new standard input stream.
-     *
-     * @throws SecurityException
-     *        if a security manager exists and its
-     *        <code>checkPermission</code> method doesn't allow
-     *        reassigning of the standard input stream.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPermission</code> method doesn't allow
+     *                           reassigning of the standard input stream.
      * @see SecurityManager#checkPermission
      * @see java.lang.RuntimePermission
-     *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public static void setIn(InputStream in) {
         checkIO();
@@ -152,19 +150,15 @@ public final class System {
      *
      * <p>First, if there is a security manager, its <code>checkPermission</code>
      * method is called with a <code>RuntimePermission("setIO")</code> permission
-     *  to see if it's ok to reassign the "standard" output stream.
+     * to see if it's ok to reassign the "standard" output stream.
      *
      * @param out the new standard output stream
-     *
-     * @throws SecurityException
-     *        if a security manager exists and its
-     *        <code>checkPermission</code> method doesn't allow
-     *        reassigning of the standard output stream.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPermission</code> method doesn't allow
+     *                           reassigning of the standard output stream.
      * @see SecurityManager#checkPermission
      * @see java.lang.RuntimePermission
-     *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public static void setOut(PrintStream out) {
         checkIO();
@@ -176,19 +170,15 @@ public final class System {
      *
      * <p>First, if there is a security manager, its <code>checkPermission</code>
      * method is called with a <code>RuntimePermission("setIO")</code> permission
-     *  to see if it's ok to reassign the "standard" error output stream.
+     * to see if it's ok to reassign the "standard" error output stream.
      *
      * @param err the new standard error output stream.
-     *
-     * @throws SecurityException
-     *        if a security manager exists and its
-     *        <code>checkPermission</code> method doesn't allow
-     *        reassigning of the standard error output stream.
-     *
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPermission</code> method doesn't allow
+     *                           reassigning of the standard error output stream.
      * @see SecurityManager#checkPermission
      * @see java.lang.RuntimePermission
-     *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public static void setErr(PrintStream err) {
         checkIO();
@@ -196,22 +186,22 @@ public final class System {
     }
 
     private static volatile Console cons = null;
+
     /**
      * Returns the unique {@link java.io.Console Console} object associated
      * with the current Java virtual machine, if any.
      *
-     * @return  The system console, if any, otherwise <tt>null</tt>.
-     *
-     * @since   1.6
+     * @return The system console, if any, otherwise <tt>null</tt>.
+     * @since 1.6
      */
-     public static Console console() {
-         if (cons == null) {
-             synchronized (System.class) {
-                 cons = sun.misc.SharedSecrets.getJavaIOAccess().console();
-             }
-         }
-         return cons;
-     }
+    public static Console console() {
+        if (cons == null) {
+            synchronized (System.class) {
+                cons = sun.misc.SharedSecrets.getJavaIOAccess().console();
+            }
+        }
+        return cons;
+    }
 
     /**
      * Returns the channel inherited from the entity that created this
@@ -227,15 +217,10 @@ public final class System {
      * inheritedChannel}, this method may return other kinds of
      * channels in the future.
      *
-     * @return  The inherited channel, if any, otherwise <tt>null</tt>.
-     *
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
-     * @throws  SecurityException
-     *          If a security manager is present and it does not
-     *          permit access to the channel.
-     *
+     * @return The inherited channel, if any, otherwise <tt>null</tt>.
+     * @throws IOException       If an I/O error occurs
+     * @throws SecurityException If a security manager is present and it does not
+     *                           permit access to the channel.
      * @since 1.5
      */
     public static Channel inheritedChannel() throws IOException {
@@ -250,7 +235,9 @@ public final class System {
     }
 
     private static native void setIn0(InputStream in);
+
     private static native void setOut0(PrintStream out);
+
     private static native void setErr0(PrintStream err);
 
     /**
@@ -268,16 +255,15 @@ public final class System {
      * security manager has been established, then no action is taken and
      * the method simply returns.
      *
-     * @param      s   the security manager.
-     * @exception  SecurityException  if the security manager has already
-     *             been set and its <code>checkPermission</code> method
-     *             doesn't allow it to be replaced.
+     * @param s the security manager.
+     * @throws SecurityException if the security manager has already
+     *                           been set and its <code>checkPermission</code> method
+     *                           doesn't allow it to be replaced.
      * @see #getSecurityManager
      * @see SecurityManager#checkPermission
      * @see java.lang.RuntimePermission
      */
-    public static
-    void setSecurityManager(final SecurityManager s) {
+    public static void setSecurityManager(final SecurityManager s) {
         try {
             s.checkPackageAccess("java.lang");
         } catch (Exception e) {
@@ -286,14 +272,12 @@ public final class System {
         setSecurityManager0(s);
     }
 
-    private static synchronized
-    void setSecurityManager0(final SecurityManager s) {
+    private static synchronized void setSecurityManager0(final SecurityManager s) {
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
             // ask the currently installed security manager if we
             // can replace it.
-            sm.checkPermission(new RuntimePermission
-                                     ("setSecurityManager"));
+            sm.checkPermission(new RuntimePermission("setSecurityManager"));
         }
 
         if ((s != null) && (s.getClass().getClassLoader() != null)) {
@@ -307,8 +291,7 @@ public final class System {
             // (in this case: the new security manager class) on the stack).
             AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
-                    s.getClass().getProtectionDomain().implies
-                        (SecurityConstants.ALL_PERMISSION);
+                    s.getClass().getProtectionDomain().implies(SecurityConstants.ALL_PERMISSION);
                     return null;
                 }
             });
@@ -320,10 +303,10 @@ public final class System {
     /**
      * Gets the system security interface.
      *
-     * @return  if a security manager has already been established for the
-     *          current application, then that security manager is returned;
-     *          otherwise, <code>null</code> is returned.
-     * @see     #setSecurityManager
+     * @return if a security manager has already been established for the
+     * current application, then that security manager is returned;
+     * otherwise, <code>null</code> is returned.
+     * @see #setSecurityManager
      */
     public static SecurityManager getSecurityManager() {
         return security;
@@ -341,9 +324,9 @@ public final class System {
      * a discussion of slight discrepancies that may arise between
      * "computer time" and coordinated universal time (UTC).
      *
-     * @return  the difference, measured in milliseconds, between
-     *          the current time and midnight, January 1, 1970 UTC.
-     * @see     java.util.Date
+     * @return the difference, measured in milliseconds, between
+     * the current time and midnight, January 1, 1970 UTC.
+     * @see java.util.Date
      */
     public static native long currentTimeMillis();
 
@@ -373,22 +356,22 @@ public final class System {
      * instance of a Java virtual machine, is computed.
      *
      * <p> For example, to measure how long some code takes to execute:
-     *  <pre> {@code
+     * <pre> {@code
      * long startTime = System.nanoTime();
      * // ... the code being measured ...
      * long estimatedTime = System.nanoTime() - startTime;}</pre>
      *
      * <p>To compare two nanoTime values
-     *  <pre> {@code
+     * <pre> {@code
      * long t0 = System.nanoTime();
      * ...
      * long t1 = System.nanoTime();}</pre>
-     *
+     * <p>
      * one should use {@code t1 - t0 < 0}, not {@code t1 < t0},
      * because of the possibility of numerical overflow.
      *
      * @return the current value of the running Java Virtual Machine's
-     *         high-resolution time source, in nanoseconds
+     * high-resolution time source, in nanoseconds
      * @since 1.5
      */
     public static native long nanoTime();
@@ -472,22 +455,20 @@ public final class System {
      * paragraph effectively applies only to the situation where both
      * arrays have component types that are reference types.)
      *
-     * @param      src      the source array.
-     * @param      srcPos   starting position in the source array.
-     * @param      dest     the destination array.
-     * @param      destPos  starting position in the destination data.
-     * @param      length   the number of array elements to be copied.
-     * @exception  IndexOutOfBoundsException  if copying would cause
-     *               access of data outside array bounds.
-     * @exception  ArrayStoreException  if an element in the <code>src</code>
-     *               array could not be stored into the <code>dest</code> array
-     *               because of a type mismatch.
-     * @exception  NullPointerException if either <code>src</code> or
-     *               <code>dest</code> is <code>null</code>.
+     * @param src     the source array.
+     * @param srcPos  starting position in the source array.
+     * @param dest    the destination array.
+     * @param destPos starting position in the destination data.
+     * @param length  the number of array elements to be copied.
+     * @throws IndexOutOfBoundsException if copying would cause
+     *                                   access of data outside array bounds.
+     * @throws ArrayStoreException       if an element in the <code>src</code>
+     *                                   array could not be stored into the <code>dest</code> array
+     *                                   because of a type mismatch.
+     * @throws NullPointerException      if either <code>src</code> or
+     *                                   <code>dest</code> is <code>null</code>.
      */
-    public static native void arraycopy(Object src,  int  srcPos,
-                                        Object dest, int destPos,
-                                        int length);
+    public static native void arraycopy(Object src, int srcPos, Object dest, int destPos, int length);
 
     /**
      * Returns the same hash code for the given object as
@@ -497,8 +478,8 @@ public final class System {
      * The hash code for the null reference is zero.
      *
      * @param x object for which the hashCode is to be calculated
-     * @return  the hashCode
-     * @since   JDK1.1
+     * @return the hashCode
+     * @since JDK1.1
      */
     public static native int identityHashCode(Object x);
 
@@ -524,6 +505,7 @@ public final class System {
      */
 
     private static Properties props;
+
     private static native Properties initProperties(Properties props);
 
     /**
@@ -607,14 +589,14 @@ public final class System {
      * <code>getProperties</code> operation, it may choose to permit the
      * {@link #getProperty(String)} operation.
      *
-     * @return     the system properties
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPropertiesAccess</code> method doesn't allow access
-     *              to the system properties.
-     * @see        #setProperties
-     * @see        java.lang.SecurityException
-     * @see        java.lang.SecurityManager#checkPropertiesAccess()
-     * @see        java.util.Properties
+     * @return the system properties
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPropertiesAccess</code> method doesn't allow access
+     *                           to the system properties.
+     * @see #setProperties
+     * @see java.lang.SecurityException
+     * @see java.lang.SecurityManager#checkPropertiesAccess()
+     * @see java.util.Properties
      */
     public static Properties getProperties() {
         SecurityManager sm = getSecurityManager();
@@ -652,14 +634,14 @@ public final class System {
      * <code>null</code>, then the current set of system properties is
      * forgotten.
      *
-     * @param      props   the new system properties.
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPropertiesAccess</code> method doesn't allow access
-     *              to the system properties.
-     * @see        #getProperties
-     * @see        java.util.Properties
-     * @see        java.lang.SecurityException
-     * @see        java.lang.SecurityManager#checkPropertiesAccess()
+     * @param props the new system properties.
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPropertiesAccess</code> method doesn't allow access
+     *                           to the system properties.
+     * @see #getProperties
+     * @see java.util.Properties
+     * @see java.lang.SecurityException
+     * @see java.lang.SecurityManager#checkPropertiesAccess()
      */
     public static void setProperties(Properties props) {
         SecurityManager sm = getSecurityManager();
@@ -684,20 +666,19 @@ public final class System {
      * properties is first created and initialized in the same manner as
      * for the <code>getProperties</code> method.
      *
-     * @param      key   the name of the system property.
-     * @return     the string value of the system property,
-     *             or <code>null</code> if there is no property with that key.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPropertyAccess</code> method doesn't allow
-     *              access to the specified system property.
-     * @exception  NullPointerException if <code>key</code> is
-     *             <code>null</code>.
-     * @exception  IllegalArgumentException if <code>key</code> is empty.
-     * @see        #setProperty
-     * @see        java.lang.SecurityException
-     * @see        java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
-     * @see        java.lang.System#getProperties()
+     * @param key the name of the system property.
+     * @return the string value of the system property,
+     * or <code>null</code> if there is no property with that key.
+     * @throws SecurityException        if a security manager exists and its
+     *                                  <code>checkPropertyAccess</code> method doesn't allow
+     *                                  access to the specified system property.
+     * @throws NullPointerException     if <code>key</code> is
+     *                                  <code>null</code>.
+     * @throws IllegalArgumentException if <code>key</code> is empty.
+     * @see #setProperty
+     * @see java.lang.SecurityException
+     * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
+     * @see java.lang.System#getProperties()
      */
     public static String getProperty(String key) {
         checkKey(key);
@@ -720,20 +701,19 @@ public final class System {
      * properties is first created and initialized in the same manner as
      * for the <code>getProperties</code> method.
      *
-     * @param      key   the name of the system property.
-     * @param      def   a default value.
-     * @return     the string value of the system property,
-     *             or the default value if there is no property with that key.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPropertyAccess</code> method doesn't allow
-     *             access to the specified system property.
-     * @exception  NullPointerException if <code>key</code> is
-     *             <code>null</code>.
-     * @exception  IllegalArgumentException if <code>key</code> is empty.
-     * @see        #setProperty
-     * @see        java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
-     * @see        java.lang.System#getProperties()
+     * @param key the name of the system property.
+     * @param def a default value.
+     * @return the string value of the system property,
+     * or the default value if there is no property with that key.
+     * @throws SecurityException        if a security manager exists and its
+     *                                  <code>checkPropertyAccess</code> method doesn't allow
+     *                                  access to the specified system property.
+     * @throws NullPointerException     if <code>key</code> is
+     *                                  <code>null</code>.
+     * @throws IllegalArgumentException if <code>key</code> is empty.
+     * @see #setProperty
+     * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
+     * @see java.lang.System#getProperties()
      */
     public static String getProperty(String key, String def) {
         checkKey(key);
@@ -756,30 +736,28 @@ public final class System {
      * value.
      * <p>
      *
-     * @param      key   the name of the system property.
-     * @param      value the value of the system property.
-     * @return     the previous value of the system property,
-     *             or <code>null</code> if it did not have one.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPermission</code> method doesn't allow
-     *             setting of the specified property.
-     * @exception  NullPointerException if <code>key</code> or
-     *             <code>value</code> is <code>null</code>.
-     * @exception  IllegalArgumentException if <code>key</code> is empty.
-     * @see        #getProperty
-     * @see        java.lang.System#getProperty(java.lang.String)
-     * @see        java.lang.System#getProperty(java.lang.String, java.lang.String)
-     * @see        java.util.PropertyPermission
-     * @see        SecurityManager#checkPermission
-     * @since      1.2
+     * @param key   the name of the system property.
+     * @param value the value of the system property.
+     * @return the previous value of the system property,
+     * or <code>null</code> if it did not have one.
+     * @throws SecurityException        if a security manager exists and its
+     *                                  <code>checkPermission</code> method doesn't allow
+     *                                  setting of the specified property.
+     * @throws NullPointerException     if <code>key</code> or
+     *                                  <code>value</code> is <code>null</code>.
+     * @throws IllegalArgumentException if <code>key</code> is empty.
+     * @see #getProperty
+     * @see java.lang.System#getProperty(java.lang.String)
+     * @see java.lang.System#getProperty(java.lang.String, java.lang.String)
+     * @see java.util.PropertyPermission
+     * @see SecurityManager#checkPermission
+     * @since 1.2
      */
     public static String setProperty(String key, String value) {
         checkKey(key);
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
-            sm.checkPermission(new PropertyPermission(key,
-                SecurityConstants.PROPERTY_WRITE_ACTION));
+            sm.checkPermission(new PropertyPermission(key, SecurityConstants.PROPERTY_WRITE_ACTION));
         }
 
         return (String) props.setProperty(key, value);
@@ -795,21 +773,20 @@ public final class System {
      * If no exception is thrown, the specified property is removed.
      * <p>
      *
-     * @param      key   the name of the system property to be removed.
-     * @return     the previous string value of the system property,
-     *             or <code>null</code> if there was no property with that key.
-     *
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkPropertyAccess</code> method doesn't allow
-     *              access to the specified system property.
-     * @exception  NullPointerException if <code>key</code> is
-     *             <code>null</code>.
-     * @exception  IllegalArgumentException if <code>key</code> is empty.
-     * @see        #getProperty
-     * @see        #setProperty
-     * @see        java.util.Properties
-     * @see        java.lang.SecurityException
-     * @see        java.lang.SecurityManager#checkPropertiesAccess()
+     * @param key the name of the system property to be removed.
+     * @return the previous string value of the system property,
+     * or <code>null</code> if there was no property with that key.
+     * @throws SecurityException        if a security manager exists and its
+     *                                  <code>checkPropertyAccess</code> method doesn't allow
+     *                                  access to the specified system property.
+     * @throws NullPointerException     if <code>key</code> is
+     *                                  <code>null</code>.
+     * @throws IllegalArgumentException if <code>key</code> is empty.
+     * @see #getProperty
+     * @see #setProperty
+     * @see java.util.Properties
+     * @see java.lang.SecurityException
+     * @see java.lang.SecurityManager#checkPropertiesAccess()
      * @since 1.5
      */
     public static String clearProperty(String key) {
@@ -865,22 +842,21 @@ public final class System {
      * <code>System.getenv("FOO").equals(System.getenv("foo"))</code>
      * is likely to be true on Microsoft Windows.
      *
-     * @param  name the name of the environment variable
+     * @param name the name of the environment variable
      * @return the string value of the variable, or <code>null</code>
-     *         if the variable is not defined in the system environment
+     * if the variable is not defined in the system environment
      * @throws NullPointerException if <code>name</code> is <code>null</code>
-     * @throws SecurityException
-     *         if a security manager exists and its
-     *         {@link SecurityManager#checkPermission checkPermission}
-     *         method doesn't allow access to the environment variable
-     *         <code>name</code>
-     * @see    #getenv()
-     * @see    ProcessBuilder#environment()
+     * @throws SecurityException    if a security manager exists and its
+     *                              {@link SecurityManager#checkPermission checkPermission}
+     *                              method doesn't allow access to the environment variable
+     *                              <code>name</code>
+     * @see #getenv()
+     * @see ProcessBuilder#environment()
      */
     public static String getenv(String name) {
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
-            sm.checkPermission(new RuntimePermission("getenv."+name));
+            sm.checkPermission(new RuntimePermission("getenv." + name));
         }
 
         return ProcessEnvironment.getenv(name);
@@ -919,15 +895,14 @@ public final class System {
      * are generally preferred over environment variables.
      *
      * @return the environment as a map of variable names to values
-     * @throws SecurityException
-     *         if a security manager exists and its
-     *         {@link SecurityManager#checkPermission checkPermission}
-     *         method doesn't allow access to the process environment
-     * @see    #getenv(String)
-     * @see    ProcessBuilder#environment()
-     * @since  1.5
+     * @throws SecurityException if a security manager exists and its
+     *                           {@link SecurityManager#checkPermission checkPermission}
+     *                           method doesn't allow access to the process environment
+     * @see #getenv(String)
+     * @see ProcessBuilder#environment()
+     * @since 1.5
      */
-    public static java.util.Map<String,String> getenv() {
+    public static java.util.Map<String, String> getenv() {
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
             sm.checkPermission(new RuntimePermission("getenv.*"));
@@ -950,11 +925,10 @@ public final class System {
      * Runtime.getRuntime().exit(n)
      * </pre></blockquote>
      *
-     * @param      status   exit status.
-     * @throws  SecurityException
-     *        if a security manager exists and its <code>checkExit</code>
-     *        method doesn't allow exit with the specified status.
-     * @see        java.lang.Runtime#exit(int)
+     * @param status exit status.
+     * @throws SecurityException if a security manager exists and its <code>checkExit</code>
+     *                           method doesn't allow exit with the specified status.
+     * @see java.lang.Runtime#exit(int)
      */
     public static void exit(int status) {
         Runtime.getRuntime().exit(status);
@@ -976,7 +950,7 @@ public final class System {
      * Runtime.getRuntime().gc()
      * </pre></blockquote>
      *
-     * @see     java.lang.Runtime#gc()
+     * @see java.lang.Runtime#gc()
      */
     public static void gc() {
         Runtime.getRuntime().gc();
@@ -998,7 +972,7 @@ public final class System {
      * Runtime.getRuntime().runFinalization()
      * </pre></blockquote>
      *
-     * @see     java.lang.Runtime#runFinalization()
+     * @see java.lang.Runtime#runFinalization()
      */
     public static void runFinalization() {
         Runtime.getRuntime().runFinalization();
@@ -1015,19 +989,17 @@ public final class System {
      * with 0 as its argument to ensure the exit is allowed.
      * This could result in a SecurityException.
      *
-     * @deprecated  This method is inherently unsafe.  It may result in
-     *      finalizers being called on live objects while other threads are
-     *      concurrently manipulating those objects, resulting in erratic
-     *      behavior or deadlock.
      * @param value indicating enabling or disabling of finalization
-     * @throws  SecurityException
-     *        if a security manager exists and its <code>checkExit</code>
-     *        method doesn't allow the exit.
-     *
-     * @see     java.lang.Runtime#exit(int)
-     * @see     java.lang.Runtime#gc()
-     * @see     java.lang.SecurityManager#checkExit(int)
-     * @since   JDK1.1
+     * @throws SecurityException if a security manager exists and its <code>checkExit</code>
+     *                           method doesn't allow the exit.
+     * @see java.lang.Runtime#exit(int)
+     * @see java.lang.Runtime#gc()
+     * @see java.lang.SecurityManager#checkExit(int)
+     * @since JDK1.1
+     * @deprecated This method is inherently unsafe.  It may result in
+     * finalizers being called on live objects while other threads are
+     * concurrently manipulating those objects, resulting in erratic
+     * behavior or deadlock.
      */
     @Deprecated
     public static void runFinalizersOnExit(boolean value) {
@@ -1045,15 +1017,15 @@ public final class System {
      * Runtime.getRuntime().load(name)
      * </pre></blockquote>
      *
-     * @param      filename   the file to load.
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkLink</code> method doesn't allow
-     *             loading of the specified dynamic library
-     * @exception  UnsatisfiedLinkError  if the file does not exist.
-     * @exception  NullPointerException if <code>filename</code> is
-     *             <code>null</code>
-     * @see        java.lang.Runtime#load(java.lang.String)
-     * @see        java.lang.SecurityManager#checkLink(java.lang.String)
+     * @param filename the file to load.
+     * @throws SecurityException    if a security manager exists and its
+     *                              <code>checkLink</code> method doesn't allow
+     *                              loading of the specified dynamic library
+     * @throws UnsatisfiedLinkError if the file does not exist.
+     * @throws NullPointerException if <code>filename</code> is
+     *                              <code>null</code>
+     * @see java.lang.Runtime#load(java.lang.String)
+     * @see java.lang.SecurityManager#checkLink(java.lang.String)
      */
     public static void load(String filename) {
         Runtime.getRuntime().load0(getCallerClass(), filename);
@@ -1070,15 +1042,15 @@ public final class System {
      * Runtime.getRuntime().loadLibrary(name)
      * </pre></blockquote>
      *
-     * @param      libname   the name of the library.
-     * @exception  SecurityException  if a security manager exists and its
-     *             <code>checkLink</code> method doesn't allow
-     *             loading of the specified dynamic library
-     * @exception  UnsatisfiedLinkError  if the library does not exist.
-     * @exception  NullPointerException if <code>libname</code> is
-     *             <code>null</code>
-     * @see        java.lang.Runtime#loadLibrary(java.lang.String)
-     * @see        java.lang.SecurityManager#checkLink(java.lang.String)
+     * @param libname the name of the library.
+     * @throws SecurityException    if a security manager exists and its
+     *                              <code>checkLink</code> method doesn't allow
+     *                              loading of the specified dynamic library
+     * @throws UnsatisfiedLinkError if the library does not exist.
+     * @throws NullPointerException if <code>libname</code> is
+     *                              <code>null</code>
+     * @see java.lang.Runtime#loadLibrary(java.lang.String)
+     * @see java.lang.SecurityManager#checkLink(java.lang.String)
      */
     public static void loadLibrary(String libname) {
         Runtime.getRuntime().loadLibrary0(getCallerClass(), libname);
@@ -1088,13 +1060,13 @@ public final class System {
      * Maps a library name into a platform-specific string representing
      * a native library.
      *
-     * @param      libname the name of the library.
-     * @return     a platform-dependent native library name.
-     * @exception  NullPointerException if <code>libname</code> is
-     *             <code>null</code>
-     * @see        java.lang.System#loadLibrary(java.lang.String)
-     * @see        java.lang.ClassLoader#findLibrary(java.lang.String)
-     * @since      1.2
+     * @param libname the name of the library.
+     * @return a platform-dependent native library name.
+     * @throws NullPointerException if <code>libname</code> is
+     *                              <code>null</code>
+     * @see java.lang.System#loadLibrary(java.lang.String)
+     * @see java.lang.ClassLoader#findLibrary(java.lang.String)
+     * @since 1.2
      */
     public static native String mapLibraryName(String libname);
 
@@ -1169,29 +1141,35 @@ public final class System {
 
     private static void setJavaLangAccess() {
         // Allow privileged classes outside of java.lang
-        sun.misc.SharedSecrets.setJavaLangAccess(new sun.misc.JavaLangAccess(){
+        sun.misc.SharedSecrets.setJavaLangAccess(new sun.misc.JavaLangAccess() {
             public sun.reflect.ConstantPool getConstantPool(Class klass) {
                 return klass.getConstantPool();
             }
+
             public void setAnnotationType(Class klass, AnnotationType type) {
                 klass.setAnnotationType(type);
             }
+
             public AnnotationType getAnnotationType(Class klass) {
                 return klass.getAnnotationType();
             }
-            public <E extends Enum<E>>
-                    E[] getEnumConstantsShared(Class<E> klass) {
+
+            public <E extends Enum<E>> E[] getEnumConstantsShared(Class<E> klass) {
                 return klass.getEnumConstantsShared();
             }
+
             public void blockedOn(Thread t, Interruptible b) {
                 t.blockedOn(b);
             }
+
             public void registerShutdownHook(int slot, boolean registerShutdownInProgress, Runnable hook) {
                 Shutdown.add(slot, registerShutdownInProgress, hook);
             }
+
             public int getStackTraceDepth(Throwable t) {
                 return t.getStackTraceDepth();
             }
+
             public StackTraceElement getStackTraceElement(Throwable t, int i) {
                 return t.getStackTraceElement(i);
             }

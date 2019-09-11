@@ -55,8 +55,7 @@ import static sun.java2d.StateTrackable.State.*;
  * documentation for those methods.
  * </a>
  */
-public final class DataBufferShort extends DataBuffer
-{
+public final class DataBufferShort extends DataBuffer {
     /** The default data bank. */
     short data[];
 
@@ -70,7 +69,7 @@ public final class DataBufferShort extends DataBuffer
      * @param size The size of the <CODE>DataBuffer</CODE>.
      */
     public DataBufferShort(int size) {
-        super(STABLE, TYPE_SHORT,size);
+        super(STABLE, TYPE_SHORT, size);
         data = new short[size];
         bankdata = new short[1][];
         bankdata[0] = data;
@@ -80,13 +79,13 @@ public final class DataBufferShort extends DataBuffer
      * Constructs a short-based <CODE>DataBuffer</CODE> with the specified number of
      * banks all of which are the specified size.
      *
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size     The size of the banks in the <CODE>DataBuffer</CODE>.
      * @param numBanks The number of banks in the a<CODE>DataBuffer</CODE>.
      */
     public DataBufferShort(int size, int numBanks) {
-        super(STABLE, TYPE_SHORT,size,numBanks);
+        super(STABLE, TYPE_SHORT, size, numBanks);
         bankdata = new short[numBanks][];
-        for (int i= 0; i < numBanks; i++) {
+        for (int i = 0; i < numBanks; i++) {
             bankdata[i] = new short[size];
         }
         data = bankdata[0];
@@ -105,7 +104,7 @@ public final class DataBufferShort extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The short array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
      */
     public DataBufferShort(short dataArray[], int size) {
         super(UNTRACKABLE, TYPE_SHORT, size);
@@ -127,8 +126,8 @@ public final class DataBufferShort extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The short array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
-     * @param offset The offset into the <CODE>dataArray</CODE>.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
+     * @param offset    The offset into the <CODE>dataArray</CODE>.
      */
     public DataBufferShort(short dataArray[], int size, int offset) {
         super(UNTRACKABLE, TYPE_SHORT, size, 1, offset);
@@ -149,7 +148,7 @@ public final class DataBufferShort extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The short arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
      */
     public DataBufferShort(short dataArray[][], int size) {
         super(UNTRACKABLE, TYPE_SHORT, size, dataArray.length);
@@ -173,8 +172,8 @@ public final class DataBufferShort extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The short arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
-     * @param offsets The offsets into each array.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param offsets   The offsets into each array.
      */
     public DataBufferShort(short dataArray[][], int size, int offsets[]) {
         super(UNTRACKABLE, TYPE_SHORT, size, dataArray.length, offsets);
@@ -237,47 +236,48 @@ public final class DataBufferShort extends DataBuffer
      * @see #setElem(int, int, int)
      */
     public int getElem(int i) {
-        return (int)(data[i+offset]);
+        return (int) (data[i + offset]);
     }
 
     /**
      * Returns the requested data array element from the specified bank.
      *
      * @param bank The bank from which you want to get a data array element.
-     * @param i The data array element you want to get.
+     * @param i    The data array element you want to get.
      * @return The requested data array element as an integer.
      * @see #setElem(int, int)
      * @see #setElem(int, int, int)
      */
     public int getElem(int bank, int i) {
-        return (int)(bankdata[bank][i+offsets[bank]]);
+        return (int) (bankdata[bank][i + offsets[bank]]);
     }
 
     /**
      * Sets the requested data array element in the first (default) bank
      * to the specified value.
      *
-     * @param i The data array element you want to set.
+     * @param i   The data array element you want to set.
      * @param val The integer value to which you want to set the data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int i, int val) {
-        data[i+offset] = (short)val;
+        data[i + offset] = (short) val;
         theTrackable.markDirty();
     }
 
     /**
      * Sets the requested data array element in the specified bank
      * from the given integer.
+     *
      * @param bank The bank in which you want to set the data array element.
-     * @param i The data array element you want to set.
-     * @param val The integer value to which you want to set the specified data array element.
+     * @param i    The data array element you want to set.
+     * @param val  The integer value to which you want to set the specified data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int bank, int i, int val) {
-        bankdata[bank][i+offsets[bank]] = (short)val;
+        bankdata[bank][i + offsets[bank]] = (short) val;
         theTrackable.markDirty();
     }
 }

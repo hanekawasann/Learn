@@ -23,6 +23,7 @@
  * questions.
  */
 package java.net;
+
 import java.io.IOException;
 
 /*
@@ -38,10 +39,13 @@ import java.io.IOException;
 
 class Inet6AddressImpl implements InetAddressImpl {
     public native String getLocalHostName() throws UnknownHostException;
-    public native InetAddress[]
-        lookupAllHostAddr(String hostname) throws UnknownHostException;
+
+    public native InetAddress[] lookupAllHostAddr(String hostname) throws UnknownHostException;
+
     public native String getHostByAddr(byte[] addr) throws UnknownHostException;
-    private native boolean isReachable0(byte[] addr, int scope, int timeout, byte[] inf, int ttl, int if_scope) throws IOException;
+
+    private native boolean isReachable0(byte[] addr, int scope, int timeout, byte[] inf, int ttl, int if_scope)
+        throws IOException;
 
     public boolean isReachable(InetAddress addr, int timeout, NetworkInterface netif, int ttl) throws IOException {
         byte[] ifaddr = null;
@@ -72,8 +76,7 @@ class Inet6AddressImpl implements InetAddressImpl {
                 return false;
             }
         }
-        if (addr instanceof Inet6Address)
-            scope = ((Inet6Address) addr).getScopeId();
+        if (addr instanceof Inet6Address) { scope = ((Inet6Address) addr).getScopeId(); }
         return isReachable0(addr.getAddress(), scope, timeout, ifaddr, ttl, netif_scope);
     }
 
@@ -91,18 +94,17 @@ class Inet6AddressImpl implements InetAddressImpl {
 
     public synchronized InetAddress loopbackAddress() {
         if (loopbackAddress == null) {
-             if (InetAddress.preferIPv6Address) {
-                 byte[] loopback =
-                        {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-                 loopbackAddress = new Inet6Address("localhost", loopback);
-             } else {
+            if (InetAddress.preferIPv6Address) {
+                byte[] loopback = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x01 };
+                loopbackAddress = new Inet6Address("localhost", loopback);
+            } else {
                 loopbackAddress = (new Inet4AddressImpl()).loopbackAddress();
-             }
+            }
         }
         return loopbackAddress;
     }
 
-    private InetAddress      anyLocalAddress;
-    private InetAddress      loopbackAddress;
+    private InetAddress anyLocalAddress;
+    private InetAddress loopbackAddress;
 }

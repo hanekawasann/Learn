@@ -54,7 +54,7 @@ package java.lang;
  * In general, if sb refers to an instance of a <code>StringBuilder</code>,
  * then <code>sb.append(x)</code> has the same effect as
  * <code>sb.insert(sb.length(),&nbsp;x)</code>.
- *
+ * <p>
  * Every string builder has a capacity. As long as the length of the
  * character sequence contained in the string builder does not exceed
  * the capacity, it is not necessary to allocate a new internal
@@ -64,15 +64,12 @@ package java.lang;
  * use by multiple threads. If such synchronization is required then it is
  * recommended that {@link java.lang.StringBuffer} be used.
  *
- * @author      Michael McCloskey
- * @see         java.lang.StringBuffer
- * @see         java.lang.String
- * @since       1.5
+ * @author Michael McCloskey
+ * @see java.lang.StringBuffer
+ * @see java.lang.String
+ * @since 1.5
  */
-public final class StringBuilder
-    extends AbstractStringBuilder
-    implements java.io.Serializable, CharSequence
-{
+public final class StringBuilder extends AbstractStringBuilder implements java.io.Serializable, CharSequence {
 
     /** use serialVersionUID for interoperability */
     static final long serialVersionUID = 4383685877147921099L;
@@ -89,9 +86,9 @@ public final class StringBuilder
      * Constructs a string builder with no characters in it and an
      * initial capacity specified by the <code>capacity</code> argument.
      *
-     * @param      capacity  the initial capacity.
-     * @throws     NegativeArraySizeException  if the <code>capacity</code>
-     *               argument is less than <code>0</code>.
+     * @param capacity the initial capacity.
+     * @throws NegativeArraySizeException if the <code>capacity</code>
+     *                                    argument is less than <code>0</code>.
      */
     public StringBuilder(int capacity) {
         super(capacity);
@@ -102,8 +99,8 @@ public final class StringBuilder
      * specified string. The initial capacity of the string builder is
      * <code>16</code> plus the length of the string argument.
      *
-     * @param   str   the initial contents of the buffer.
-     * @throws    NullPointerException if <code>str</code> is <code>null</code>
+     * @param str the initial contents of the buffer.
+     * @throws NullPointerException if <code>str</code> is <code>null</code>
      */
     public StringBuilder(String str) {
         super(str.length() + 16);
@@ -116,8 +113,8 @@ public final class StringBuilder
      * the string builder is <code>16</code> plus the length of the
      * <code>CharSequence</code> argument.
      *
-     * @param      seq   the sequence to copy.
-     * @throws    NullPointerException if <code>seq</code> is <code>null</code>
+     * @param seq the sequence to copy.
+     * @throws NullPointerException if <code>seq</code> is <code>null</code>
      */
     public StringBuilder(CharSequence seq) {
         this(seq.length() + 16);
@@ -135,12 +132,10 @@ public final class StringBuilder
 
     // Appends the specified string builder to this sequence.
     private StringBuilder append(StringBuilder sb) {
-        if (sb == null)
-            return append("null");
+        if (sb == null) { return append("null"); }
         int len = sb.length();
         int newcount = count + len;
-        if (newcount > value.length)
-            expandCapacity(newcount);
+        if (newcount > value.length) { expandCapacity(newcount); }
         sb.getChars(0, len, value, count);
         count = newcount;
         return this;
@@ -162,8 +157,8 @@ public final class StringBuilder
      * <i>n</i>; otherwise, it is equal to the character at index <i>k-n</i>
      * in the argument <code>sb</code>.
      *
-     * @param   sb   the <tt>StringBuffer</tt> to append.
-     * @return  a reference to this object.
+     * @param sb the <tt>StringBuffer</tt> to append.
+     * @return a reference to this object.
      */
     public StringBuilder append(StringBuffer sb) {
         super.append(sb);
@@ -171,21 +166,18 @@ public final class StringBuilder
     }
 
     /**
+     *
      */
     public StringBuilder append(CharSequence s) {
-        if (s == null)
-            s = "null";
-        if (s instanceof String)
-            return this.append((String)s);
-        if (s instanceof StringBuffer)
-            return this.append((StringBuffer)s);
-        if (s instanceof StringBuilder)
-            return this.append((StringBuilder)s);
+        if (s == null) { s = "null"; }
+        if (s instanceof String) { return this.append((String) s); }
+        if (s instanceof StringBuffer) { return this.append((StringBuffer) s); }
+        if (s instanceof StringBuilder) { return this.append((StringBuilder) s); }
         return this.append(s, 0, s.length());
     }
 
     /**
-     * @throws     IndexOutOfBoundsException {@inheritDoc}
+     * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public StringBuilder append(CharSequence s, int start, int end) {
         super.append(s, start, end);
@@ -270,9 +262,7 @@ public final class StringBuilder
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
-    public StringBuilder insert(int index, char[] str, int offset,
-                                int len)
-    {
+    public StringBuilder insert(int index, char[] str, int offset, int len) {
         super.insert(index, str, offset, len);
         return this;
     }
@@ -304,19 +294,15 @@ public final class StringBuilder
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public StringBuilder insert(int dstOffset, CharSequence s) {
-        if (s == null)
-            s = "null";
-        if (s instanceof String)
-            return this.insert(dstOffset, (String)s);
+        if (s == null) { s = "null"; }
+        if (s instanceof String) { return this.insert(dstOffset, (String) s); }
         return this.insert(dstOffset, s, 0, s.length());
     }
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    public StringBuilder insert(int dstOffset, CharSequence s,
-                                int start, int end)
-    {
+    public StringBuilder insert(int dstOffset, CharSequence s, int start, int end) {
         super.insert(dstOffset, s, start, end);
         return this;
     }
@@ -376,8 +362,7 @@ public final class StringBuilder
      * @throws NullPointerException {@inheritDoc}
      */
     public int indexOf(String str, int fromIndex) {
-        return String.indexOf(value, 0, count,
-                              str.toCharArray(), 0, str.length(), fromIndex);
+        return String.indexOf(value, 0, count, str.toCharArray(), 0, str.length(), fromIndex);
     }
 
     /**
@@ -391,8 +376,7 @@ public final class StringBuilder
      * @throws NullPointerException {@inheritDoc}
      */
     public int lastIndexOf(String str, int fromIndex) {
-        return String.lastIndexOf(value, 0, count,
-                              str.toCharArray(), 0, str.length(), fromIndex);
+        return String.lastIndexOf(value, 0, count, str.toCharArray(), 0, str.length(), fromIndex);
     }
 
     public StringBuilder reverse() {
@@ -410,14 +394,13 @@ public final class StringBuilder
      * (that is, serialize it).
      *
      * @serialData the number of characters currently stored in the string
-     *             builder (<tt>int</tt>), followed by the characters in the
-     *             string builder (<tt>char[]</tt>).   The length of the
-     *             <tt>char</tt> array may be greater than the number of
-     *             characters currently stored in the string builder, in which
-     *             case extra characters are ignored.
+     * builder (<tt>int</tt>), followed by the characters in the
+     * string builder (<tt>char[]</tt>).   The length of the
+     * <tt>char</tt> array may be greater than the number of
+     * characters currently stored in the string builder, in which
+     * case extra characters are ignored.
      */
-    private void writeObject(java.io.ObjectOutputStream s)
-        throws java.io.IOException {
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
         s.defaultWriteObject();
         s.writeInt(count);
         s.writeObject(value);
@@ -427,8 +410,7 @@ public final class StringBuilder
      * readObject is called to restore the state of the StringBuffer from
      * a stream.
      */
-    private void readObject(java.io.ObjectInputStream s)
-        throws java.io.IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();
         count = s.readInt();
         value = (char[]) s.readObject();

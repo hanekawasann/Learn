@@ -45,10 +45,10 @@ public abstract class CacheResponse {
      * Returns the response headers as a Map.
      *
      * @return An immutable Map from response header field names to
-     *         lists of field values. The status line has null as its
-     *         field name.
+     * lists of field values. The status line has null as its
+     * field name.
      * @throws IOException if an I/O error occurs
-     *            while getting the response headers
+     *                     while getting the response headers
      */
     public abstract Map<String, List<String>> getHeaders() throws IOException;
 
@@ -56,9 +56,9 @@ public abstract class CacheResponse {
      * Returns the response body as an InputStream.
      *
      * @return an InputStream from which the response body can
-     *         be accessed
+     * be accessed
      * @throws IOException if an I/O error occurs while
-     *         getting the response body
+     *                     getting the response body
      */
     public abstract InputStream getBody() throws IOException;
 }

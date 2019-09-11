@@ -35,18 +35,18 @@ import java.util.StringTokenizer;
  * A NetPermission contains a name (also referred to as a "target name") but
  * no actions list; you either have the named permission
  * or you don't.
- * <P>
+ * <p>
  * The target name is the name of the network permission (see below). The naming
  * convention follows the  hierarchical property naming convention.
  * Also, an asterisk
  * may appear at the end of the name, following a ".", or by itself, to
  * signify a wildcard match. For example: "foo.*" or "*" is valid,
  * "*foo" or "a*b" is not valid.
- * <P>
+ * <p>
  * The following table lists all the possible NetPermission target names,
  * and for each provides a description of what the permission allows
  * and a discussion of the risks of granting code the permission.
- * <P>
+ * <p>
  *
  * <table border=1 cellpadding=5 summary="Permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -146,23 +146,21 @@ import java.util.StringTokenizer;
  *   <td>The ability
  * to specify a stream handler when constructing a URL</td>
  *   <td>Malicious code may create a URL with resources that it would
-normally not have access to (like file:/foo/fum/), specifying a
-stream handler that gets the actual bytes from someplace it does
-have access to. Thus it might be able to trick the system into
-creating a ProtectionDomain/CodeSource for a class even though
-that class really didn't come from that location.</td>
+ * normally not have access to (like file:/foo/fum/), specifying a
+ * stream handler that gets the actual bytes from someplace it does
+ * have access to. Thus it might be able to trick the system into
+ * creating a ProtectionDomain/CodeSource for a class even though
+ * that class really didn't come from that location.</td>
  * </tr>
  * </table>
  *
+ * @author Marianne Mueller
+ * @author Roland Schemers
  * @see java.security.BasicPermission
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
- *
- * @author Marianne Mueller
- * @author Roland Schemers
  */
 
 public final class NetPermission extends BasicPermission {
@@ -176,13 +174,11 @@ public final class NetPermission extends BasicPermission {
      * signify a wildcard match.
      *
      * @param name the name of the NetPermission.
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public NetPermission(String name)
-    {
+    public NetPermission(String name) {
         super(name);
     }
 
@@ -191,15 +187,13 @@ public final class NetPermission extends BasicPermission {
      * The name is the symbolic name of the NetPermission, and the
      * actions String is currently unused and should be null.
      *
-     * @param name the name of the NetPermission.
+     * @param name    the name of the NetPermission.
      * @param actions should be null.
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public NetPermission(String name, String actions)
-    {
+    public NetPermission(String name, String actions) {
         super(name, actions);
     }
 }

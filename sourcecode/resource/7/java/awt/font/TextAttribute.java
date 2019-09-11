@@ -59,38 +59,38 @@ import java.util.HashMap;
  * <p>
  * For each text attribute, the documentation provides:
  * <UL>
- *   <LI>the type of its value,
- *   <LI>the relevant predefined constants, if any
- *   <LI>the default effect if the attribute is absent
- *   <LI>the valid values if there are limitations
- *   <LI>a description of the effect.
+ * <LI>the type of its value,
+ * <LI>the relevant predefined constants, if any
+ * <LI>the default effect if the attribute is absent
+ * <LI>the valid values if there are limitations
+ * <LI>a description of the effect.
  * </UL>
  * <p>
  * <H4>Values</H4>
  * <UL>
- *   <LI>The values of attributes must always be immutable.
- *   <LI>Where value limitations are given, any value outside of that
- *   set is reserved for future use; the value will be treated as
- *   the default.
- *   <LI>The value <code>null</code> is treated the same as the
- *   default value and results in the default behavior.
- *   <li>If the value is not of the proper type, the attribute
- *   will be ignored.
- *   <li>The identity of the value does not matter, only the actual
- *   value.  For example, <code>TextAttribute.WEIGHT_BOLD</code> and
- *   <code>new Float(2.0)</code>
- *   indicate the same <code>WEIGHT</code>.
- *   <li>Attribute values of type <code>Number</code> (used for
- *   <code>WEIGHT</code>, <code>WIDTH</code>, <code>POSTURE</code>,
- *   <code>SIZE</code>, <code>JUSTIFICATION</code>, and
- *   <code>TRACKING</code>) can vary along their natural range and are
- *   not restricted to the predefined constants.
- *   <code>Number.floatValue()</code> is used to get the actual value
- *   from the <code>Number</code>.
- *   <li>The values for <code>WEIGHT</code>, <code>WIDTH</code>, and
- *   <code>POSTURE</code> are interpolated by the system, which
- *   can select the 'nearest available' font or use other techniques to
- *   approximate the user's request.
+ * <LI>The values of attributes must always be immutable.
+ * <LI>Where value limitations are given, any value outside of that
+ * set is reserved for future use; the value will be treated as
+ * the default.
+ * <LI>The value <code>null</code> is treated the same as the
+ * default value and results in the default behavior.
+ * <li>If the value is not of the proper type, the attribute
+ * will be ignored.
+ * <li>The identity of the value does not matter, only the actual
+ * value.  For example, <code>TextAttribute.WEIGHT_BOLD</code> and
+ * <code>new Float(2.0)</code>
+ * indicate the same <code>WEIGHT</code>.
+ * <li>Attribute values of type <code>Number</code> (used for
+ * <code>WEIGHT</code>, <code>WIDTH</code>, <code>POSTURE</code>,
+ * <code>SIZE</code>, <code>JUSTIFICATION</code>, and
+ * <code>TRACKING</code>) can vary along their natural range and are
+ * not restricted to the predefined constants.
+ * <code>Number.floatValue()</code> is used to get the actual value
+ * from the <code>Number</code>.
+ * <li>The values for <code>WEIGHT</code>, <code>WIDTH</code>, and
+ * <code>POSTURE</code> are interpolated by the system, which
+ * can select the 'nearest available' font or use other techniques to
+ * approximate the user's request.
  *
  * </UL>
  *
@@ -98,8 +98,8 @@ import java.util.HashMap;
  * <p>
  * <font size="-1">
  * <table align="center" border="0" cellspacing="0" cellpadding="2" width="%95"
- *     summary="Key, value type, principal constants, and default value
- *     behavior of all TextAttributes">
+ * summary="Key, value type, principal constants, and default value
+ * behavior of all TextAttributes">
  * <tr bgcolor="#ccccff">
  * <th valign="TOP" align="CENTER">Key</th>
  * <th valign="TOP" align="CENTER">Value Type</th>
@@ -110,9 +110,9 @@ import java.util.HashMap;
  * <td valign="TOP">{@link #FAMILY}</td>
  * <td valign="TOP">String</td>
  * <td valign="TOP">See Font {@link java.awt.Font#DIALOG DIALOG},
-{@link java.awt.Font#DIALOG_INPUT DIALOG_INPUT},<br> {@link java.awt.Font#SERIF SERIF},
-{@link java.awt.Font#SANS_SERIF SANS_SERIF}, and {@link java.awt.Font#MONOSPACED MONOSPACED}.
-</td>
+ * {@link java.awt.Font#DIALOG_INPUT DIALOG_INPUT},<br> {@link java.awt.Font#SERIF SERIF},
+ * {@link java.awt.Font#SANS_SERIF SANS_SERIF}, and {@link java.awt.Font#MONOSPACED MONOSPACED}.
+ * </td>
  * <td valign="TOP">"Default" (use platform default)</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
@@ -261,8 +261,9 @@ public final class TextAttribute extends Attribute {
 
     /**
      * Constructs a <code>TextAttribute</code> with the specified name.
+     *
      * @param name the attribute name to assign to this
-     * <code>TextAttribute</code>
+     *             <code>TextAttribute</code>
      */
     protected TextAttribute(String name) {
         super(name);
@@ -276,8 +277,7 @@ public final class TextAttribute extends Attribute {
      */
     protected Object readResolve() throws InvalidObjectException {
         if (this.getClass() != TextAttribute.class) {
-            throw new InvalidObjectException(
-                "subclass didn't correctly implement readResolve");
+            throw new InvalidObjectException("subclass didn't correctly implement readResolve");
         }
 
         TextAttribute instance = (TextAttribute) instanceMap.get(getName());
@@ -325,8 +325,7 @@ public final class TextAttribute extends Attribute {
      * The "Bold" in the name is part of the face name, not a separate
      * request that the font's weight be bold.</p>
      */
-    public static final TextAttribute FAMILY =
-        new TextAttribute("family");
+    public static final TextAttribute FAMILY = new TextAttribute("family");
 
     /**
      * Attribute key for the weight of a font.  Values are instances
@@ -348,87 +347,86 @@ public final class TextAttribute extends Attribute {
      *
      * <p>The system can interpolate the provided value.
      */
-    public static final TextAttribute WEIGHT =
-        new TextAttribute("weight");
+    public static final TextAttribute WEIGHT = new TextAttribute("weight");
 
     /**
      * The lightest predefined weight.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_EXTRA_LIGHT =
-        Float.valueOf(0.5f);
+    public static final Float WEIGHT_EXTRA_LIGHT = Float.valueOf(0.5f);
 
     /**
      * The standard light weight.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_LIGHT =
-        Float.valueOf(0.75f);
+    public static final Float WEIGHT_LIGHT = Float.valueOf(0.75f);
 
     /**
      * An intermediate weight between <code>WEIGHT_LIGHT</code> and
      * <code>WEIGHT_STANDARD</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_DEMILIGHT =
-        Float.valueOf(0.875f);
+    public static final Float WEIGHT_DEMILIGHT = Float.valueOf(0.875f);
 
     /**
      * The standard weight. This is the default value for <code>WEIGHT</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_REGULAR =
-        Float.valueOf(1.0f);
+    public static final Float WEIGHT_REGULAR = Float.valueOf(1.0f);
 
     /**
      * A moderately heavier weight than <code>WEIGHT_REGULAR</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_SEMIBOLD =
-        Float.valueOf(1.25f);
+    public static final Float WEIGHT_SEMIBOLD = Float.valueOf(1.25f);
 
     /**
      * An intermediate weight between <code>WEIGHT_REGULAR</code> and
      * <code>WEIGHT_BOLD</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_MEDIUM =
-        Float.valueOf(1.5f);
+    public static final Float WEIGHT_MEDIUM = Float.valueOf(1.5f);
 
     /**
      * A moderately lighter weight than <code>WEIGHT_BOLD</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_DEMIBOLD =
-        Float.valueOf(1.75f);
+    public static final Float WEIGHT_DEMIBOLD = Float.valueOf(1.75f);
 
     /**
      * The standard bold weight.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_BOLD =
-        Float.valueOf(2.0f);
+    public static final Float WEIGHT_BOLD = Float.valueOf(2.0f);
 
     /**
      * A moderately heavier weight than <code>WEIGHT_BOLD</code>.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_HEAVY =
-        Float.valueOf(2.25f);
+    public static final Float WEIGHT_HEAVY = Float.valueOf(2.25f);
 
     /**
      * An extra heavy weight.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_EXTRABOLD =
-        Float.valueOf(2.5f);
+    public static final Float WEIGHT_EXTRABOLD = Float.valueOf(2.5f);
 
     /**
      * The heaviest predefined weight.
+     *
      * @see #WEIGHT
      */
-    public static final Float WEIGHT_ULTRABOLD =
-        Float.valueOf(2.75f);
+    public static final Float WEIGHT_ULTRABOLD = Float.valueOf(2.75f);
 
     /**
      * Attribute key for the width of a font.  Values are instances of
@@ -445,44 +443,43 @@ public final class TextAttribute extends Attribute {
      *
      * <p>The system can interpolate the provided value.
      */
-    public static final TextAttribute WIDTH =
-        new TextAttribute("width");
+    public static final TextAttribute WIDTH = new TextAttribute("width");
 
     /**
      * The most condensed predefined width.
+     *
      * @see #WIDTH
      */
-    public static final Float WIDTH_CONDENSED =
-        Float.valueOf(0.75f);
+    public static final Float WIDTH_CONDENSED = Float.valueOf(0.75f);
 
     /**
      * A moderately condensed width.
+     *
      * @see #WIDTH
      */
-    public static final Float WIDTH_SEMI_CONDENSED =
-        Float.valueOf(0.875f);
+    public static final Float WIDTH_SEMI_CONDENSED = Float.valueOf(0.875f);
 
     /**
      * The standard width. This is the default value for
      * <code>WIDTH</code>.
+     *
      * @see #WIDTH
      */
-    public static final Float WIDTH_REGULAR =
-        Float.valueOf(1.0f);
+    public static final Float WIDTH_REGULAR = Float.valueOf(1.0f);
 
     /**
      * A moderately extended width.
+     *
      * @see #WIDTH
      */
-    public static final Float WIDTH_SEMI_EXTENDED =
-        Float.valueOf(1.25f);
+    public static final Float WIDTH_SEMI_EXTENDED = Float.valueOf(1.25f);
 
     /**
      * The most extended predefined width.
+     *
      * @see #WIDTH
      */
-    public static final Float WIDTH_EXTENDED =
-        Float.valueOf(1.5f);
+    public static final Float WIDTH_EXTENDED = Float.valueOf(1.5f);
 
     /**
      * Attribute key for the posture of a font.  Values are instances
@@ -505,23 +502,22 @@ public final class TextAttribute extends Attribute {
      *
      * @see java.awt.Font#getItalicAngle()
      */
-    public static final TextAttribute POSTURE =
-        new TextAttribute("posture");
+    public static final TextAttribute POSTURE = new TextAttribute("posture");
 
     /**
      * The standard posture, upright.  This is the default value for
      * <code>POSTURE</code>.
+     *
      * @see #POSTURE
      */
-    public static final Float POSTURE_REGULAR =
-        Float.valueOf(0.0f);
+    public static final Float POSTURE_REGULAR = Float.valueOf(0.0f);
 
     /**
      * The standard italic posture.
+     *
      * @see #POSTURE
      */
-    public static final Float POSTURE_OBLIQUE =
-        Float.valueOf(0.20f);
+    public static final Float POSTURE_OBLIQUE = Float.valueOf(0.20f);
 
     /**
      * Attribute key for the font size.  Values are instances of
@@ -538,8 +534,7 @@ public final class TextAttribute extends Attribute {
      * 2x transform might be different than that of a 24 point font
      * with no transform.
      */
-    public static final TextAttribute SIZE =
-        new TextAttribute("size");
+    public static final TextAttribute SIZE = new TextAttribute("size");
 
     /**
      * Attribute key for the transform of a font.  Values are
@@ -576,8 +571,7 @@ public final class TextAttribute extends Attribute {
      * @see TransformAttribute
      * @see java.awt.geom.AffineTransform
      */
-     public static final TextAttribute TRANSFORM =
-        new TextAttribute("transform");
+    public static final TextAttribute TRANSFORM = new TextAttribute("transform");
 
     /**
      * Attribute key for superscripting and subscripting.  Values are
@@ -597,22 +591,21 @@ public final class TextAttribute extends Attribute {
      * impact the ascent and descent of a font.  The ascent
      * and descent can never become negative, however.
      */
-    public static final TextAttribute SUPERSCRIPT =
-        new TextAttribute("superscript");
+    public static final TextAttribute SUPERSCRIPT = new TextAttribute("superscript");
 
     /**
      * Standard superscript.
+     *
      * @see #SUPERSCRIPT
      */
-    public static final Integer SUPERSCRIPT_SUPER =
-        Integer.valueOf(1);
+    public static final Integer SUPERSCRIPT_SUPER = Integer.valueOf(1);
 
     /**
      * Standard subscript.
+     *
      * @see #SUPERSCRIPT
      */
-    public static final Integer SUPERSCRIPT_SUB =
-        Integer.valueOf(-1);
+    public static final Integer SUPERSCRIPT_SUB = Integer.valueOf(-1);
 
     /**
      * Attribute key used to provide the font to use to render text.
@@ -674,8 +667,7 @@ public final class TextAttribute extends Attribute {
      *
      * @see java.awt.Font
      */
-    public static final TextAttribute FONT =
-        new TextAttribute("font");
+    public static final TextAttribute FONT = new TextAttribute("font");
 
     /**
      * Attribute key for a user-defined glyph to display in lieu
@@ -698,8 +690,7 @@ public final class TextAttribute extends Attribute {
      *
      * @see GraphicAttribute
      */
-    public static final TextAttribute CHAR_REPLACEMENT =
-        new TextAttribute("char_replacement");
+    public static final TextAttribute CHAR_REPLACEMENT = new TextAttribute("char_replacement");
 
     //
     // Adornments added to text.
@@ -718,8 +709,7 @@ public final class TextAttribute extends Attribute {
      * @see java.awt.Paint
      * @see #SWAP_COLORS
      */
-    public static final TextAttribute FOREGROUND =
-        new TextAttribute("foreground");
+    public static final TextAttribute FOREGROUND = new TextAttribute("foreground");
 
     /**
      * Attribute key for the paint used to render the background of
@@ -737,8 +727,7 @@ public final class TextAttribute extends Attribute {
      * @see java.awt.Paint
      * @see #SWAP_COLORS
      */
-    public static final TextAttribute BACKGROUND =
-        new TextAttribute("background");
+    public static final TextAttribute BACKGROUND = new TextAttribute("background");
 
     /**
      * Attribute key for underline.  Values are instances of
@@ -750,16 +739,14 @@ public final class TextAttribute extends Attribute {
      * <p>The underline affects both the visual bounds and the outline
      * of the text.
      */
-    public static final TextAttribute UNDERLINE =
-        new TextAttribute("underline");
+    public static final TextAttribute UNDERLINE = new TextAttribute("underline");
 
     /**
      * Standard underline.
      *
      * @see #UNDERLINE
      */
-    public static final Integer UNDERLINE_ON =
-        Integer.valueOf(0);
+    public static final Integer UNDERLINE_ON = Integer.valueOf(0);
 
     /**
      * Attribute key for strikethrough.  Values are instances of
@@ -771,16 +758,14 @@ public final class TextAttribute extends Attribute {
      * <p>The strikethrough affects both the visual bounds and the
      * outline of the text.
      */
-    public static final TextAttribute STRIKETHROUGH =
-        new TextAttribute("strikethrough");
+    public static final TextAttribute STRIKETHROUGH = new TextAttribute("strikethrough");
 
     /**
      * A single strikethrough.
      *
      * @see #STRIKETHROUGH
      */
-    public static final Boolean STRIKETHROUGH_ON =
-        Boolean.TRUE;
+    public static final Boolean STRIKETHROUGH_ON = Boolean.TRUE;
 
     //
     // Attributes use to control layout of text on a line.
@@ -806,22 +791,21 @@ public final class TextAttribute extends Attribute {
      *
      * @see java.text.Bidi
      */
-    public static final TextAttribute RUN_DIRECTION =
-        new TextAttribute("run_direction");
+    public static final TextAttribute RUN_DIRECTION = new TextAttribute("run_direction");
 
     /**
      * Left-to-right run direction.
+     *
      * @see #RUN_DIRECTION
      */
-    public static final Boolean RUN_DIRECTION_LTR =
-        Boolean.FALSE;
+    public static final Boolean RUN_DIRECTION_LTR = Boolean.FALSE;
 
     /**
      * Right-to-left run direction.
+     *
      * @see #RUN_DIRECTION
      */
-    public static final Boolean RUN_DIRECTION_RTL =
-        Boolean.TRUE;
+    public static final Boolean RUN_DIRECTION_RTL = Boolean.TRUE;
 
     /**
      * Attribute key for the embedding level of the text.  Values are
@@ -844,8 +828,7 @@ public final class TextAttribute extends Attribute {
      *
      * @see java.text.Bidi
      */
-    public static final TextAttribute BIDI_EMBEDDING =
-        new TextAttribute("bidi_embedding");
+    public static final TextAttribute BIDI_EMBEDDING = new TextAttribute("bidi_embedding");
 
     /**
      * Attribute key for the justification of a paragraph.  Values are
@@ -868,23 +851,22 @@ public final class TextAttribute extends Attribute {
      *
      * @see TextLayout#getJustifiedLayout
      */
-    public static final TextAttribute JUSTIFICATION =
-        new TextAttribute("justification");
+    public static final TextAttribute JUSTIFICATION = new TextAttribute("justification");
 
     /**
      * Justify the line to the full requested width.  This is the
      * default value for <code>JUSTIFICATION</code>.
+     *
      * @see #JUSTIFICATION
      */
-    public static final Float JUSTIFICATION_FULL =
-        Float.valueOf(1.0f);
+    public static final Float JUSTIFICATION_FULL = Float.valueOf(1.0f);
 
     /**
      * Do not allow the line to be justified.
+     *
      * @see #JUSTIFICATION
      */
-    public static final Float JUSTIFICATION_NONE =
-        Float.valueOf(0.0f);
+    public static final Float JUSTIFICATION_NONE = Float.valueOf(0.0f);
 
     //
     // For use by input method.
@@ -913,8 +895,7 @@ public final class TextAttribute extends Attribute {
      * @see java.awt.im.InputMethodHighlight
      * @see java.text.Annotation
      */
-    public static final TextAttribute INPUT_METHOD_HIGHLIGHT =
-        new TextAttribute("input method highlight");
+    public static final TextAttribute INPUT_METHOD_HIGHLIGHT = new TextAttribute("input method highlight");
 
     /**
      * Attribute key for input method underlines.  Values
@@ -936,48 +917,47 @@ public final class TextAttribute extends Attribute {
      *
      * @since 1.3
      */
-    public static final TextAttribute INPUT_METHOD_UNDERLINE =
-        new TextAttribute("input method underline");
+    public static final TextAttribute INPUT_METHOD_UNDERLINE = new TextAttribute("input method underline");
 
     /**
      * Single pixel solid low underline.
+     *
      * @see #INPUT_METHOD_UNDERLINE
      * @since 1.3
      */
-    public static final Integer UNDERLINE_LOW_ONE_PIXEL =
-        Integer.valueOf(1);
+    public static final Integer UNDERLINE_LOW_ONE_PIXEL = Integer.valueOf(1);
 
     /**
      * Double pixel solid low underline.
+     *
      * @see #INPUT_METHOD_UNDERLINE
      * @since 1.3
      */
-    public static final Integer UNDERLINE_LOW_TWO_PIXEL =
-        Integer.valueOf(2);
+    public static final Integer UNDERLINE_LOW_TWO_PIXEL = Integer.valueOf(2);
 
     /**
      * Single pixel dotted low underline.
+     *
      * @see #INPUT_METHOD_UNDERLINE
      * @since 1.3
      */
-    public static final Integer UNDERLINE_LOW_DOTTED =
-        Integer.valueOf(3);
+    public static final Integer UNDERLINE_LOW_DOTTED = Integer.valueOf(3);
 
     /**
      * Double pixel gray low underline.
+     *
      * @see #INPUT_METHOD_UNDERLINE
      * @since 1.3
      */
-    public static final Integer UNDERLINE_LOW_GRAY =
-        Integer.valueOf(4);
+    public static final Integer UNDERLINE_LOW_GRAY = Integer.valueOf(4);
 
     /**
      * Single pixel dashed low underline.
+     *
      * @see #INPUT_METHOD_UNDERLINE
      * @since 1.3
      */
-    public static final Integer UNDERLINE_LOW_DASHED =
-        Integer.valueOf(5);
+    public static final Integer UNDERLINE_LOW_DASHED = Integer.valueOf(5);
 
     /**
      * Attribute key for swapping foreground and background
@@ -998,16 +978,15 @@ public final class TextAttribute extends Attribute {
      * @see #FOREGROUND
      * @see #BACKGROUND
      */
-    public static final TextAttribute SWAP_COLORS =
-        new TextAttribute("swap_colors");
+    public static final TextAttribute SWAP_COLORS = new TextAttribute("swap_colors");
 
     /**
      * Swap foreground and background.
+     *
      * @see #SWAP_COLORS
      * @since 1.3
      */
-    public static final Boolean SWAP_COLORS_ON =
-        Boolean.TRUE;
+    public static final Boolean SWAP_COLORS_ON = Boolean.TRUE;
 
     /**
      * Attribute key for converting ASCII decimal digits to other
@@ -1025,8 +1004,7 @@ public final class TextAttribute extends Attribute {
      * @see NumericShaper
      * @since 1.4
      */
-    public static final TextAttribute NUMERIC_SHAPING =
-        new TextAttribute("numeric_shaping");
+    public static final TextAttribute NUMERIC_SHAPING = new TextAttribute("numeric_shaping");
 
     /**
      * Attribute key to request kerning. Values are instances of
@@ -1044,16 +1022,15 @@ public final class TextAttribute extends Attribute {
      *
      * @since 1.6
      */
-    public static final TextAttribute KERNING =
-        new TextAttribute("kerning");
+    public static final TextAttribute KERNING = new TextAttribute("kerning");
 
     /**
      * Request standard kerning.
+     *
      * @see #KERNING
      * @since 1.6
      */
-    public static final Integer KERNING_ON =
-        Integer.valueOf(1);
+    public static final Integer KERNING_ON = Integer.valueOf(1);
 
 
     /**
@@ -1067,16 +1044,15 @@ public final class TextAttribute extends Attribute {
      *
      * @since 1.6
      */
-    public static final TextAttribute LIGATURES =
-        new TextAttribute("ligatures");
+    public static final TextAttribute LIGATURES = new TextAttribute("ligatures");
 
     /**
      * Request standard optional ligatures.
+     *
      * @see #LIGATURES
      * @since 1.6
      */
-    public static final Integer LIGATURES_ON =
-        Integer.valueOf(1);
+    public static final Integer LIGATURES_ON = Integer.valueOf(1);
 
     /**
      * Attribute key to control tracking.  Values are instances of
@@ -1096,22 +1072,21 @@ public final class TextAttribute extends Attribute {
      *
      * @since 1.6
      */
-    public static final TextAttribute TRACKING =
-        new TextAttribute("tracking");
+    public static final TextAttribute TRACKING = new TextAttribute("tracking");
 
     /**
      * Perform tight tracking.
+     *
      * @see #TRACKING
      * @since 1.6
      */
-    public static final Float TRACKING_TIGHT =
-        Float.valueOf(-.04f);
+    public static final Float TRACKING_TIGHT = Float.valueOf(-.04f);
 
     /**
      * Perform loose tracking.
+     *
      * @see #TRACKING
      * @since 1.6
      */
-    public static final Float TRACKING_LOOSE =
-        Float.valueOf(.04f);
+    public static final Float TRACKING_LOOSE = Float.valueOf(.04f);
 }

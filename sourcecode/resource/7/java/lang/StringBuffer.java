@@ -68,22 +68,19 @@ package java.lang;
  * the capacity, it is not necessary to allocate a new internal
  * buffer array. If the internal buffer overflows, it is
  * automatically made larger.
- *
+ * <p>
  * As of  release JDK 5, this class has been supplemented with an equivalent
  * class designed for use by a single thread, {@link StringBuilder}.  The
  * <tt>StringBuilder</tt> class should generally be used in preference to
  * this one, as it supports all of the same operations but it is faster, as
  * it performs no synchronization.
  *
- * @author      Arthur van Hoff
- * @see     java.lang.StringBuilder
- * @see     java.lang.String
- * @since   JDK1.0
+ * @author Arthur van Hoff
+ * @see java.lang.StringBuilder
+ * @see java.lang.String
+ * @since JDK1.0
  */
- public final class StringBuffer
-    extends AbstractStringBuilder
-    implements java.io.Serializable, CharSequence
-{
+public final class StringBuffer extends AbstractStringBuilder implements java.io.Serializable, CharSequence {
 
     /** use serialVersionUID from JDK 1.0.2 for interoperability */
     static final long serialVersionUID = 3388685877147921107L;
@@ -100,9 +97,9 @@ package java.lang;
      * Constructs a string buffer with no characters in it and
      * the specified initial capacity.
      *
-     * @param      capacity  the initial capacity.
-     * @exception  NegativeArraySizeException  if the <code>capacity</code>
-     *               argument is less than <code>0</code>.
+     * @param capacity the initial capacity.
+     * @throws NegativeArraySizeException if the <code>capacity</code>
+     *                                    argument is less than <code>0</code>.
      */
     public StringBuffer(int capacity) {
         super(capacity);
@@ -113,8 +110,8 @@ package java.lang;
      * specified string. The initial capacity of the string buffer is
      * <code>16</code> plus the length of the string argument.
      *
-     * @param   str   the initial contents of the buffer.
-     * @exception NullPointerException if <code>str</code> is <code>null</code>
+     * @param str the initial contents of the buffer.
+     * @throws NullPointerException if <code>str</code> is <code>null</code>
      */
     public StringBuffer(String str) {
         super(str.length() + 16);
@@ -131,8 +128,8 @@ package java.lang;
      * less than or equal to zero, then an empty buffer of capacity
      * <code>16</code> is returned.
      *
-     * @param      seq   the sequence to copy.
-     * @exception NullPointerException if <code>seq</code> is <code>null</code>
+     * @param seq the sequence to copy.
+     * @throws NullPointerException if <code>seq</code> is <code>null</code>
      * @since 1.5
      */
     public StringBuffer(CharSequence seq) {
@@ -156,7 +153,7 @@ package java.lang;
     }
 
     /**
-     * @since      1.5
+     * @since 1.5
      */
     public synchronized void trimToSize() {
         super.trimToSize();
@@ -164,7 +161,7 @@ package java.lang;
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @see        #length()
+     * @see #length()
      */
     public synchronized void setLength(int newLength) {
         super.setLength(newLength);
@@ -172,59 +169,55 @@ package java.lang;
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @see        #length()
+     * @see #length()
      */
     public synchronized char charAt(int index) {
-        if ((index < 0) || (index >= count))
-            throw new StringIndexOutOfBoundsException(index);
+        if ((index < 0) || (index >= count)) { throw new StringIndexOutOfBoundsException(index); }
         return value[index];
     }
 
     /**
-     * @since      1.5
+     * @since 1.5
      */
     public synchronized int codePointAt(int index) {
         return super.codePointAt(index);
     }
 
     /**
-     * @since     1.5
+     * @since 1.5
      */
     public synchronized int codePointBefore(int index) {
         return super.codePointBefore(index);
     }
 
     /**
-     * @since     1.5
+     * @since 1.5
      */
     public synchronized int codePointCount(int beginIndex, int endIndex) {
         return super.codePointCount(beginIndex, endIndex);
     }
 
     /**
-     * @since     1.5
+     * @since 1.5
      */
     public synchronized int offsetByCodePoints(int index, int codePointOffset) {
         return super.offsetByCodePoints(index, codePointOffset);
     }
 
     /**
-     * @throws NullPointerException {@inheritDoc}
+     * @throws NullPointerException      {@inheritDoc}
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    public synchronized void getChars(int srcBegin, int srcEnd, char[] dst,
-                                      int dstBegin)
-    {
+    public synchronized void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
         super.getChars(srcBegin, srcEnd, dst, dstBegin);
     }
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @see        #length()
+     * @see #length()
      */
     public synchronized void setCharAt(int index, char ch) {
-        if ((index < 0) || (index >= count))
-            throw new StringIndexOutOfBoundsException(index);
+        if ((index < 0) || (index >= count)) { throw new StringIndexOutOfBoundsException(index); }
         value[index] = ch;
     }
 
@@ -258,8 +251,8 @@ package java.lang;
      * This method synchronizes on <code>this</code> (the destination)
      * object but does not synchronize on the source (<code>sb</code>).
      *
-     * @param   sb   the <tt>StringBuffer</tt> to append.
-     * @return  a reference to this object.
+     * @param sb the <tt>StringBuffer</tt> to append.
+     * @return a reference to this object.
      * @since 1.4
      */
     public synchronized StringBuffer append(StringBuffer sb) {
@@ -285,27 +278,23 @@ package java.lang;
      * <p>If <code>s</code> is <code>null</code>, then the four characters
      * <code>"null"</code> are appended.
      *
-     * @param   s the <code>CharSequence</code> to append.
-     * @return  a reference to this object.
+     * @param s the <code>CharSequence</code> to append.
+     * @return a reference to this object.
      * @since 1.5
      */
     public StringBuffer append(CharSequence s) {
         // Note, synchronization achieved via other invocations
-        if (s == null)
-            s = "null";
-        if (s instanceof String)
-            return this.append((String)s);
-        if (s instanceof StringBuffer)
-            return this.append((StringBuffer)s);
+        if (s == null) { s = "null"; }
+        if (s instanceof String) { return this.append((String) s); }
+        if (s instanceof StringBuffer) { return this.append((StringBuffer) s); }
         return this.append(s, 0, s.length());
     }
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.5
+     * @since 1.5
      */
-    public synchronized StringBuffer append(CharSequence s, int start, int end)
-    {
+    public synchronized StringBuffer append(CharSequence s, int start, int end) {
         super.append(s, start, end);
         return this;
     }
@@ -363,7 +352,7 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
     public synchronized StringBuffer delete(int start, int end) {
         super.delete(start, end);
@@ -372,7 +361,7 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
     public synchronized StringBuffer deleteCharAt(int index) {
         super.deleteCharAt(index);
@@ -381,7 +370,7 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
     public synchronized StringBuffer replace(int start, int end, String str) {
         super.replace(start, end, str);
@@ -390,7 +379,7 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
     public synchronized String substring(int start) {
         return substring(start, count);
@@ -398,7 +387,7 @@ package java.lang;
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.4
+     * @since 1.4
      */
     public synchronized CharSequence subSequence(int start, int end) {
         return super.substring(start, end);
@@ -406,7 +395,7 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
     public synchronized String substring(int start, int end) {
         return super.substring(start, end);
@@ -414,11 +403,9 @@ package java.lang;
 
     /**
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
-     * @since      1.2
+     * @since 1.2
      */
-    public synchronized StringBuffer insert(int index, char[] str, int offset,
-                                            int len)
-    {
+    public synchronized StringBuffer insert(int index, char[] str, int offset, int len) {
         super.insert(index, str, offset, len);
         return this;
     }
@@ -449,24 +436,20 @@ package java.lang;
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.5
+     * @since 1.5
      */
     public StringBuffer insert(int dstOffset, CharSequence s) {
         // Note, synchronization achieved via other invocations
-        if (s == null)
-            s = "null";
-        if (s instanceof String)
-            return this.insert(dstOffset, (String)s);
+        if (s == null) { s = "null"; }
+        if (s instanceof String) { return this.insert(dstOffset, (String) s); }
         return this.insert(dstOffset, s, 0, s.length());
     }
 
     /**
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @since      1.5
+     * @since 1.5
      */
-    public synchronized StringBuffer insert(int dstOffset, CharSequence s,
-                                            int start, int end)
-    {
+    public synchronized StringBuffer insert(int dstOffset, CharSequence s, int start, int end) {
         super.insert(dstOffset, s, start, end);
         return this;
     }
@@ -516,7 +499,7 @@ package java.lang;
 
     /**
      * @throws NullPointerException {@inheritDoc}
-     * @since      1.4
+     * @since 1.4
      */
     public int indexOf(String str) {
         return indexOf(str, 0);
@@ -524,16 +507,15 @@ package java.lang;
 
     /**
      * @throws NullPointerException {@inheritDoc}
-     * @since      1.4
+     * @since 1.4
      */
     public synchronized int indexOf(String str, int fromIndex) {
-        return String.indexOf(value, 0, count,
-                              str.toCharArray(), 0, str.length(), fromIndex);
+        return String.indexOf(value, 0, count, str.toCharArray(), 0, str.length(), fromIndex);
     }
 
     /**
      * @throws NullPointerException {@inheritDoc}
-     * @since      1.4
+     * @since 1.4
      */
     public int lastIndexOf(String str) {
         // Note, synchronization achieved via other invocations
@@ -542,15 +524,14 @@ package java.lang;
 
     /**
      * @throws NullPointerException {@inheritDoc}
-     * @since      1.4
+     * @since 1.4
      */
     public synchronized int lastIndexOf(String str, int fromIndex) {
-        return String.lastIndexOf(value, 0, count,
-                              str.toCharArray(), 0, str.length(), fromIndex);
+        return String.lastIndexOf(value, 0, count, str.toCharArray(), 0, str.length(), fromIndex);
     }
 
     /**
-     * @since   JDK1.0.2
+     * @since JDK1.0.2
      */
     public synchronized StringBuffer reverse() {
         super.reverse();
@@ -565,26 +546,22 @@ package java.lang;
      * Serializable fields for StringBuffer.
      *
      * @serialField value  char[]
-     *              The backing character array of this StringBuffer.
+     * The backing character array of this StringBuffer.
      * @serialField count int
-     *              The number of characters in this StringBuffer.
+     * The number of characters in this StringBuffer.
      * @serialField shared  boolean
-     *              A flag indicating whether the backing array is shared.
-     *              The value is ignored upon deserialization.
+     * A flag indicating whether the backing array is shared.
+     * The value is ignored upon deserialization.
      */
-    private static final java.io.ObjectStreamField[] serialPersistentFields =
-    {
-        new java.io.ObjectStreamField("value", char[].class),
-        new java.io.ObjectStreamField("count", Integer.TYPE),
-        new java.io.ObjectStreamField("shared", Boolean.TYPE),
-    };
+    private static final java.io.ObjectStreamField[] serialPersistentFields = {
+        new java.io.ObjectStreamField("value", char[].class), new java.io.ObjectStreamField("count", Integer.TYPE),
+        new java.io.ObjectStreamField("shared", Boolean.TYPE), };
 
     /**
      * readObject is called to restore the state of the StringBuffer from
      * a stream.
      */
-    private synchronized void writeObject(java.io.ObjectOutputStream s)
-        throws java.io.IOException {
+    private synchronized void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
         java.io.ObjectOutputStream.PutField fields = s.putFields();
         fields.put("value", value);
         fields.put("count", count);
@@ -596,10 +573,9 @@ package java.lang;
      * readObject is called to restore the state of the StringBuffer from
      * a stream.
      */
-    private void readObject(java.io.ObjectInputStream s)
-        throws java.io.IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         java.io.ObjectInputStream.GetField fields = s.readFields();
-        value = (char[])fields.get("value", null);
+        value = (char[]) fields.get("value", null);
         count = fields.get("count", 0);
     }
 }

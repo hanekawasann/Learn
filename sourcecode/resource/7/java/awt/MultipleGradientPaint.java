@@ -41,7 +41,9 @@ import java.util.Arrays;
  */
 public abstract class MultipleGradientPaint implements Paint {
 
-    /** The method to use when painting outside the gradient bounds.
+    /**
+     * The method to use when painting outside the gradient bounds.
+     *
      * @since 1.6
      */
     public static enum CycleMethod {
@@ -63,7 +65,9 @@ public abstract class MultipleGradientPaint implements Paint {
         REPEAT
     }
 
-    /** The color space in which to perform the gradient interpolation.
+    /**
+     * The color space in which to perform the gradient interpolation.
+     *
      * @since 1.6
      */
     public static enum ColorSpaceType {
@@ -112,33 +116,26 @@ public abstract class MultipleGradientPaint implements Paint {
     /**
      * Package-private constructor.
      *
-     * @param fractions numbers ranging from 0.0 to 1.0 specifying the
-     *                  distribution of colors along the gradient
-     * @param colors array of colors corresponding to each fractional value
-     * @param cycleMethod either {@code NO_CYCLE}, {@code REFLECT},
-     *                    or {@code REPEAT}
-     * @param colorSpace which color space to use for interpolation,
-     *                   either {@code SRGB} or {@code LINEAR_RGB}
+     * @param fractions         numbers ranging from 0.0 to 1.0 specifying the
+     *                          distribution of colors along the gradient
+     * @param colors            array of colors corresponding to each fractional value
+     * @param cycleMethod       either {@code NO_CYCLE}, {@code REFLECT},
+     *                          or {@code REPEAT}
+     * @param colorSpace        which color space to use for interpolation,
+     *                          either {@code SRGB} or {@code LINEAR_RGB}
      * @param gradientTransform transform to apply to the gradient
-     *
-     * @throws NullPointerException
-     * if {@code fractions} array is null,
-     * or {@code colors} array is null,
-     * or {@code gradientTransform} is null,
-     * or {@code cycleMethod} is null,
-     * or {@code colorSpace} is null
-     * @throws IllegalArgumentException
-     * if {@code fractions.length != colors.length},
-     * or {@code colors} is less than 2 in size,
-     * or a {@code fractions} value is less than 0.0 or greater than 1.0,
-     * or the {@code fractions} are not provided in strictly increasing order
+     * @throws NullPointerException     if {@code fractions} array is null,
+     *                                  or {@code colors} array is null,
+     *                                  or {@code gradientTransform} is null,
+     *                                  or {@code cycleMethod} is null,
+     *                                  or {@code colorSpace} is null
+     * @throws IllegalArgumentException if {@code fractions.length != colors.length},
+     *                                  or {@code colors} is less than 2 in size,
+     *                                  or a {@code fractions} value is less than 0.0 or greater than 1.0,
+     *                                  or the {@code fractions} are not provided in strictly increasing order
      */
-    MultipleGradientPaint(float[] fractions,
-                          Color[] colors,
-                          CycleMethod cycleMethod,
-                          ColorSpaceType colorSpace,
-                          AffineTransform gradientTransform)
-    {
+    MultipleGradientPaint(float[] fractions, Color[] colors, CycleMethod cycleMethod, ColorSpaceType colorSpace,
+        AffineTransform gradientTransform) {
         if (fractions == null) {
             throw new NullPointerException("Fractions array cannot be null");
         }
@@ -156,18 +153,15 @@ public abstract class MultipleGradientPaint implements Paint {
         }
 
         if (gradientTransform == null) {
-            throw new NullPointerException("Gradient transform cannot be "+
-                                           "null");
+            throw new NullPointerException("Gradient transform cannot be " + "null");
         }
 
         if (fractions.length != colors.length) {
-            throw new IllegalArgumentException("Colors and fractions must " +
-                                               "have equal size");
+            throw new IllegalArgumentException("Colors and fractions must " + "have equal size");
         }
 
         if (colors.length < 2) {
-            throw new IllegalArgumentException("User must specify at least " +
-                                               "2 colors");
+            throw new IllegalArgumentException("User must specify at least " + "2 colors");
         }
 
         // check that values are in the proper range and progress
@@ -175,15 +169,12 @@ public abstract class MultipleGradientPaint implements Paint {
         float previousFraction = -1.0f;
         for (float currentFraction : fractions) {
             if (currentFraction < 0f || currentFraction > 1f) {
-                throw new IllegalArgumentException("Fraction values must " +
-                                                   "be in the range 0 to 1: " +
-                                                   currentFraction);
+                throw new IllegalArgumentException(
+                    "Fraction values must " + "be in the range 0 to 1: " + currentFraction);
             }
 
             if (currentFraction <= previousFraction) {
-                throw new IllegalArgumentException("Keyframe fractions " +
-                                                   "must be increasing: " +
-                                                   currentFraction);
+                throw new IllegalArgumentException("Keyframe fractions " + "must be increasing: " + currentFraction);
             }
 
             previousFraction = currentFraction;
@@ -204,7 +195,7 @@ public abstract class MultipleGradientPaint implements Paint {
             len++;
             off++;
         }
-        if (fractions[fractions.length-1] != 1f) {
+        if (fractions[fractions.length - 1] != 1f) {
             // last stop is not equal to one, fix this condition
             fixLast = true;
             len++;
@@ -220,8 +211,8 @@ public abstract class MultipleGradientPaint implements Paint {
             this.colors[0] = colors[0];
         }
         if (fixLast) {
-            this.fractions[len-1] = 1f;
-            this.colors[len-1] = colors[colors.length - 1];
+            this.fractions[len - 1] = 1f;
+            this.colors[len - 1] = colors[colors.length - 1];
         }
 
         // copy some flags
@@ -233,7 +224,7 @@ public abstract class MultipleGradientPaint implements Paint {
 
         // determine transparency
         boolean opaque = true;
-        for (int i = 0; i < colors.length; i++){
+        for (int i = 0; i < colors.length; i++) {
             opaque = opaque && (colors[i].getAlpha() == 0xff);
         }
         this.transparency = opaque ? OPAQUE : TRANSLUCENT;
@@ -300,9 +291,9 @@ public abstract class MultipleGradientPaint implements Paint {
      * Returns the transparency mode for this {@code Paint} object.
      *
      * @return {@code OPAQUE} if all colors used by this
-     *         {@code Paint} object are opaque,
-     *         {@code TRANSLUCENT} if at least one of the
-     *         colors used by this {@code Paint} object is not opaque.
+     * {@code Paint} object are opaque,
+     * {@code TRANSLUCENT} if at least one of the
+     * colors used by this {@code Paint} object is not opaque.
      * @see java.awt.Transparency
      */
     public final int getTransparency() {

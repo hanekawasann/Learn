@@ -85,7 +85,7 @@ public interface Extension {
      * STRING tag and length.
      *
      * @return a copy of the extension's value, or <code>null</code> if no
-     *    extension value is present.
+     * extension value is present.
      */
     byte[] getValue();
 
@@ -94,8 +94,8 @@ public interface Extension {
      * stream.
      *
      * @param out the output stream
-     * @exception IOException on encoding or output error.
-     * @exception NullPointerException if <code>out</code> is <code>null</code>.
+     * @throws IOException          on encoding or output error.
+     * @throws NullPointerException if <code>out</code> is <code>null</code>.
      */
     void encode(OutputStream out) throws IOException;
 }

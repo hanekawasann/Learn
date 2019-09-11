@@ -51,7 +51,7 @@ import java.net.StandardSocketOptions;      // javadoc
  * href="http://www.ietf.org/rfc/rfc3810.txt"> <i>RFC&nbsp;3810: Multicast Listener
  * Discovery Version 2 (MLDv2) for IPv6</i></a>.
  *
- * <p> The {@link #join(InetAddress,NetworkInterface)} method is used to
+ * <p> The {@link #join(InetAddress, NetworkInterface)} method is used to
  * join a group and receive all multicast datagrams sent to the group. A channel
  * may join several multicast groups and may join the same group on several
  * {@link NetworkInterface interfaces}. Membership is dropped by invoking the {@link
@@ -60,7 +60,7 @@ import java.net.StandardSocketOptions;      // javadoc
  * block} and {@link MembershipKey#unblock unblock} methods can be used to block or
  * unblock multicast datagrams from particular source addresses.
  *
- * <p> The {@link #join(InetAddress,NetworkInterface,InetAddress)} method
+ * <p> The {@link #join(InetAddress, NetworkInterface, InetAddress)} method
  * is used to begin receiving datagrams sent to a group whose source address matches
  * a given source address. This method throws {@link UnsupportedOperationException}
  * if the underlying platform does not support source filtering.  Membership is
@@ -72,7 +72,7 @@ import java.net.StandardSocketOptions;      // javadoc
  * source address can no longer be received.
  *
  * <h4>Platform dependencies</h4>
- *
+ * <p>
  * The multicast implementation is intended to map directly to the native
  * multicasting facility. Consequently, the following items should be considered
  * when developing an application that receives IP multicast datagrams:
@@ -119,9 +119,7 @@ import java.net.StandardSocketOptions;      // javadoc
  * @since 1.7
  */
 
-public interface MulticastChannel
-    extends NetworkChannel
-{
+public interface MulticastChannel extends NetworkChannel {
     /**
      * Closes this channel.
      *
@@ -133,10 +131,10 @@ public interface MulticastChannel
      * <p> This method otherwise behaves exactly as specified by the {@link
      * Channel} interface.
      *
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
-    @Override void close() throws IOException;
+    @Override
+    void close() throws IOException;
 
     /**
      * Joins a multicast group to begin receiving all datagrams sent to the group,
@@ -152,33 +150,22 @@ public interface MulticastChannel
      * the same group on more than one interface. An implementation may impose a
      * limit on the number of groups that may be joined at the same time.
      *
-     * @param   group
-     *          The multicast address to join
-     * @param   interf
-     *          The network interface on which to join the group
-     *
-     * @return  The membership key
-     *
-     * @throws  IllegalArgumentException
-     *          If the group parameter is not a {@link InetAddress#isMulticastAddress
-     *          multicast} address, or the group parameter is an address type
-     *          that is not supported by this channel
-     * @throws  IllegalStateException
-     *          If the channel already has source-specific membership of the
-     *          group on the interface
-     * @throws  UnsupportedOperationException
-     *          If the channel's socket is not an Internet Protocol socket
-     * @throws  ClosedChannelException
-     *          If this channel is closed
-     * @throws  IOException
-     *          If an I/O error occurs
-     * @throws  SecurityException
-     *          If a security manager is set, and its
-     *          {@link SecurityManager#checkMulticast(InetAddress) checkMulticast}
-     *          method denies access to the multiast group
+     * @param group  The multicast address to join
+     * @param interf The network interface on which to join the group
+     * @return The membership key
+     * @throws IllegalArgumentException      If the group parameter is not a {@link InetAddress#isMulticastAddress
+     *                                       multicast} address, or the group parameter is an address type
+     *                                       that is not supported by this channel
+     * @throws IllegalStateException         If the channel already has source-specific membership of the
+     *                                       group on the interface
+     * @throws UnsupportedOperationException If the channel's socket is not an Internet Protocol socket
+     * @throws ClosedChannelException        If this channel is closed
+     * @throws IOException                   If an I/O error occurs
+     * @throws SecurityException             If a security manager is set, and its
+     *                                       {@link SecurityManager#checkMulticast(InetAddress) checkMulticast}
+     *                                       method denies access to the multiast group
      */
-    MembershipKey join(InetAddress group, NetworkInterface interf)
-        throws IOException;
+    MembershipKey join(InetAddress group, NetworkInterface interf) throws IOException;
 
     /**
      * Joins a multicast group to begin receiving datagrams sent to the group
@@ -195,36 +182,24 @@ public interface MulticastChannel
      * again with the same group and interface to allow receiving datagrams sent
      * by other source addresses to the group.
      *
-     * @param   group
-     *          The multicast address to join
-     * @param   interf
-     *          The network interface on which to join the group
-     * @param   source
-     *          The source address
-     *
-     * @return  The membership key
-     *
-     * @throws  IllegalArgumentException
-     *          If the group parameter is not a {@link
-     *          InetAddress#isMulticastAddress multicast} address, the
-     *          source parameter is not a unicast address, the group
-     *          parameter is an address type that is not supported by this channel,
-     *          or the source parameter is not the same address type as the group
-     * @throws  IllegalStateException
-     *          If the channel is currently a member of the group on the given
-     *          interface to receive all datagrams
-     * @throws  UnsupportedOperationException
-     *          If the channel's socket is not an Internet Protocol socket or
-     *          source filtering is not supported
-     * @throws  ClosedChannelException
-     *          If this channel is closed
-     * @throws  IOException
-     *          If an I/O error occurs
-     * @throws  SecurityException
-     *          If a security manager is set, and its
-     *          {@link SecurityManager#checkMulticast(InetAddress) checkMulticast}
-     *          method denies access to the multiast group
+     * @param group  The multicast address to join
+     * @param interf The network interface on which to join the group
+     * @param source The source address
+     * @return The membership key
+     * @throws IllegalArgumentException      If the group parameter is not a {@link
+     *                                       InetAddress#isMulticastAddress multicast} address, the
+     *                                       source parameter is not a unicast address, the group
+     *                                       parameter is an address type that is not supported by this channel,
+     *                                       or the source parameter is not the same address type as the group
+     * @throws IllegalStateException         If the channel is currently a member of the group on the given
+     *                                       interface to receive all datagrams
+     * @throws UnsupportedOperationException If the channel's socket is not an Internet Protocol socket or
+     *                                       source filtering is not supported
+     * @throws ClosedChannelException        If this channel is closed
+     * @throws IOException                   If an I/O error occurs
+     * @throws SecurityException             If a security manager is set, and its
+     *                                       {@link SecurityManager#checkMulticast(InetAddress) checkMulticast}
+     *                                       method denies access to the multiast group
      */
-    MembershipKey join(InetAddress group, NetworkInterface interf, InetAddress source)
-        throws IOException;
+    MembershipKey join(InetAddress group, NetworkInterface interf, InetAddress source) throws IOException;
 }

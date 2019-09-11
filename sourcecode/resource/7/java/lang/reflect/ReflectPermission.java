@@ -32,11 +32,11 @@ package java.lang.reflect;
  * which allows suppressing the standard Java language access checks
  * -- for public, default (package) access, protected, and private
  * members -- performed by reflected objects at their point of use.
- * <P>
+ * <p>
  * The following table
  * provides a summary description of what the permission allows,
  * and discusses the risks of granting code the permission.
- * <P>
+ * <p>
  *
  * <table border=1 cellpadding=5 summary="Table shows permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -63,11 +63,9 @@ package java.lang.reflect;
  * @see Field#set
  * @see Method#invoke
  * @see Constructor#newInstance
- *
  * @since 1.2
  */
-public final
-class ReflectPermission extends java.security.BasicPermission {
+public final class ReflectPermission extends java.security.BasicPermission {
 
     private static final long serialVersionUID = 7412737110241507485L;
 
@@ -75,8 +73,7 @@ class ReflectPermission extends java.security.BasicPermission {
      * Constructs a ReflectPermission with the specified name.
      *
      * @param name the name of the ReflectPermission
-     *
-     * @throws NullPointerException if {@code name} is {@code null}.
+     * @throws NullPointerException     if {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code name} is empty.
      */
     public ReflectPermission(String name) {
@@ -87,11 +84,9 @@ class ReflectPermission extends java.security.BasicPermission {
      * Constructs a ReflectPermission with the specified name and actions.
      * The actions should be null; they are ignored.
      *
-     * @param name the name of the ReflectPermission
-     *
+     * @param name    the name of the ReflectPermission
      * @param actions should be null
-     *
-     * @throws NullPointerException if {@code name} is {@code null}.
+     * @throws NullPointerException     if {@code name} is {@code null}.
      * @throws IllegalArgumentException if {@code name} is empty.
      */
     public ReflectPermission(String name, String actions) {

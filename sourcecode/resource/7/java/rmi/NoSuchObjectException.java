@@ -31,18 +31,18 @@ package java.rmi;
  * machine.  If a <code>NoSuchObjectException</code> occurs attempting to
  * invoke a method on a remote object, the call may be retransmitted and still
  * preserve RMI's "at most once" call semantics.
- *
+ * <p>
  * A <code>NoSuchObjectException</code> is also thrown by the method
  * <code>java.rmi.server.RemoteObject.toStub</code> and by the
  * <code>unexportObject</code> methods of
  * <code>java.rmi.server.UnicastRemoteObject</code> and
  * <code>java.rmi.activation.Activatable</code> and
  *
- * @author  Ann Wollrath
- * @since   JDK1.1
- * @see     java.rmi.server.RemoteObject#toStub(Remote)
- * @see     java.rmi.server.UnicastRemoteObject#unexportObject(Remote,boolean)
- * @see     java.rmi.activation.Activatable#unexportObject(Remote,boolean)
+ * @author Ann Wollrath
+ * @see java.rmi.server.RemoteObject#toStub(Remote)
+ * @see java.rmi.server.UnicastRemoteObject#unexportObject(Remote, boolean)
+ * @see java.rmi.activation.Activatable#unexportObject(Remote, boolean)
+ * @since JDK1.1
  */
 public class NoSuchObjectException extends RemoteException {
 
@@ -54,7 +54,7 @@ public class NoSuchObjectException extends RemoteException {
      * detail message.
      *
      * @param s the detail message
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public NoSuchObjectException(String s) {
         super(s);

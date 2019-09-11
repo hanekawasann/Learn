@@ -49,14 +49,15 @@ import java.security.*;
  * System.setSecurityManager(new SecurityManager());
  * </pre>
  *
- * @author  Roger Riggs
- * @author  Peter Jones
+ * @author Roger Riggs
+ * @author Peter Jones
  * @since JDK1.1
  **/
 public class RMISecurityManager extends SecurityManager {
 
     /**
      * Constructs a new <code>RMISecurityManager</code>.
+     *
      * @since JDK1.1
      */
     public RMISecurityManager() {

@@ -30,10 +30,10 @@ package java.net;
  * a socket address.
  * A <code>Proxy</code> is an immutable object.
  *
- * @see     java.net.ProxySelector
  * @author Yingxian Wang
  * @author Jean-Christophe Collet
- * @since   1.5
+ * @see java.net.ProxySelector
+ * @since 1.5
  */
 public class Proxy {
 
@@ -55,7 +55,9 @@ public class Proxy {
          * Represents a SOCKS (V4 or V5) proxy.
          */
         SOCKS
-    };
+    }
+
+    ;
 
     private Type type;
     private SocketAddress sa;
@@ -65,9 +67,9 @@ public class Proxy {
      * basically telling the protocol handler not to use any proxying.
      * Used, for instance, to create sockets bypassing any other global
      * proxy settings (like SOCKS):
-     * <P>
+     * <p>
      * <code>Socket s = new Socket(Proxy.NO_PROXY);</code><br>
-     * <P>
+     * <p>
      */
     public final static Proxy NO_PROXY = new Proxy();
 
@@ -81,18 +83,19 @@ public class Proxy {
      * Creates an entry representing a PROXY connection.
      * Certain combinations are illegal. For instance, for types Http, and
      * Socks, a SocketAddress <b>must</b> be provided.
-     * <P>
+     * <p>
      * Use the <code>Proxy.NO_PROXY</code> constant
      * for representing a direct connection.
      *
      * @param type the <code>Type</code> of the proxy
-     * @param sa the <code>SocketAddress</code> for that proxy
+     * @param sa   the <code>SocketAddress</code> for that proxy
      * @throws IllegalArgumentException when the type and the address are
-     * incompatible
+     *                                  incompatible
      */
     public Proxy(Type type, SocketAddress sa) {
-        if ((type == Type.DIRECT) || !(sa instanceof InetSocketAddress))
+        if ((type == Type.DIRECT) || !(sa instanceof InetSocketAddress)) {
             throw new IllegalArgumentException("type " + type + " is not compatible with address " + sa);
+        }
         this.type = type;
         this.sa = sa;
     }
@@ -111,7 +114,7 @@ public class Proxy {
      * <code>null</code> if its a direct connection.
      *
      * @return a <code>SocketAddress</code> representing the socket end
-     *         point of the proxy
+     * point of the proxy
      */
     public SocketAddress address() {
         return sa;
@@ -123,15 +126,14 @@ public class Proxy {
      * and concatenating " @ " and the toString() result from its address
      * if its type is not <code>DIRECT</code>.
      *
-     * @return  a string representation of this object.
+     * @return a string representation of this object.
      */
     public String toString() {
-        if (type() == Type.DIRECT)
-            return "DIRECT";
+        if (type() == Type.DIRECT) { return "DIRECT"; }
         return type() + " @ " + address();
     }
 
-        /**
+    /**
      * Compares this object against the specified object.
      * The result is <code>true</code> if and only if the argument is
      * not <code>null</code> and it represents the same proxy as
@@ -140,20 +142,18 @@ public class Proxy {
      * Two instances of <code>Proxy</code> represent the same
      * address if both the SocketAddresses and type are equal.
      *
-     * @param   obj   the object to compare against.
-     * @return  <code>true</code> if the objects are the same;
-     *          <code>false</code> otherwise.
+     * @param obj the object to compare against.
+     * @return <code>true</code> if the objects are the same;
+     * <code>false</code> otherwise.
      * @see java.net.InetSocketAddress#equals(java.lang.Object)
      */
     public final boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Proxy))
-            return false;
+        if (obj == null || !(obj instanceof Proxy)) { return false; }
         Proxy p = (Proxy) obj;
         if (p.type() == type()) {
             if (address() == null) {
                 return (p.address() == null);
-            } else
-                return address().equals(p.address());
+            } else { return address().equals(p.address()); }
         }
         return false;
     }
@@ -161,11 +161,10 @@ public class Proxy {
     /**
      * Returns a hashcode for this Proxy.
      *
-     * @return  a hash code value for this Proxy.
+     * @return a hash code value for this Proxy.
      */
     public final int hashCode() {
-        if (address() == null)
-            return type().hashCode();
+        if (address() == null) { return type().hashCode(); }
         return type().hashCode() + address().hashCode();
     }
 }

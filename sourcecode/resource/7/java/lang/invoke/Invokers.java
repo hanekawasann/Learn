@@ -26,10 +26,12 @@
 package java.lang.invoke;
 
 import sun.invoke.empty.Empty;
+
 import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
 
 /**
  * Construction and caching of often-used invokers.
+ *
  * @author jrose
  */
 class Invokers {
@@ -55,21 +57,23 @@ class Invokers {
     // invoker for an unbound callsite
     private /*lazy*/ MethodHandle uninitializedCallSite;
 
-    /** Compute and cache information common to all collecting adapters
-     *  that implement members of the erasure-family of the given erased type.
+    /**
+     * Compute and cache information common to all collecting adapters
+     * that implement members of the erasure-family of the given erased type.
      */
     /*non-public*/ Invokers(MethodType targetType) {
         this.targetType = targetType;
-        this.spreadInvokers = new MethodHandle[targetType.parameterCount()+1];
+        this.spreadInvokers = new MethodHandle[targetType.parameterCount() + 1];
     }
 
-    /*non-public*/ static MethodType invokerType(MethodType targetType) {
+    /*non-public*/
+    static MethodType invokerType(MethodType targetType) {
         return targetType.insertParameterTypes(0, MethodHandle.class);
     }
 
     /*non-public*/ MethodHandle exactInvoker() {
         MethodHandle invoker = exactInvoker;
-        if (invoker != null)  return invoker;
+        if (invoker != null) { return invoker; }
         invoker = lookupInvoker("invokeExact");
         exactInvoker = invoker;
         return invoker;
@@ -77,7 +81,7 @@ class Invokers {
 
     /*non-public*/ MethodHandle generalInvoker() {
         MethodHandle invoker = generalInvoker;
-        if (invoker != null)  return invoker;
+        if (invoker != null) { return invoker; }
         invoker = lookupInvoker("invoke");
         generalInvoker = invoker;
         return invoker;
@@ -88,17 +92,17 @@ class Invokers {
         try {
             invoker = IMPL_LOOKUP.findVirtual(MethodHandle.class, name, targetType);
         } catch (ReflectiveOperationException ex) {
-            throw new InternalError("JVM cannot find invoker for "+targetType);
+            throw new InternalError("JVM cannot find invoker for " + targetType);
         }
-        assert(invokerType(targetType) == invoker.type());
-        assert(!invoker.isVarargsCollector());
+        assert (invokerType(targetType) == invoker.type());
+        assert (!invoker.isVarargsCollector());
         return invoker;
     }
 
     /*non-public*/ MethodHandle erasedInvoker() {
         MethodHandle xinvoker = exactInvoker();
         MethodHandle invoker = erasedInvoker;
-        if (invoker != null)  return invoker;
+        if (invoker != null) { return invoker; }
         MethodType erasedType = targetType.erase();
         invoker = xinvoker.asType(invokerType(erasedType));
         erasedInvoker = invoker;
@@ -107,7 +111,7 @@ class Invokers {
 
     /*non-public*/ MethodHandle spreadInvoker(int leadingArgCount) {
         MethodHandle vaInvoker = spreadInvokers[leadingArgCount];
-        if (vaInvoker != null)  return vaInvoker;
+        if (vaInvoker != null) { return vaInvoker; }
         MethodHandle gInvoker = generalInvoker();
         int spreadArgCount = targetType.parameterCount() - leadingArgCount;
         vaInvoker = gInvoker.asSpreader(Object[].class, spreadArgCount);
@@ -117,7 +121,7 @@ class Invokers {
 
     /*non-public*/ MethodHandle varargsInvoker() {
         MethodHandle vaInvoker = varargsInvoker;
-        if (vaInvoker != null)  return vaInvoker;
+        if (vaInvoker != null) { return vaInvoker; }
         vaInvoker = spreadInvoker(0).asType(invokerType(MethodType.genericMethodType(0, true)));
         varargsInvoker = vaInvoker;
         return vaInvoker;
@@ -127,32 +131,30 @@ class Invokers {
 
     /*non-public*/ MethodHandle uninitializedCallSite() {
         MethodHandle invoker = uninitializedCallSite;
-        if (invoker != null)  return invoker;
+        if (invoker != null) { return invoker; }
         if (targetType.parameterCount() > 0) {
             MethodType type0 = targetType.dropParameterTypes(0, targetType.parameterCount());
             Invokers invokers0 = type0.invokers();
-            invoker = MethodHandles.dropArguments(invokers0.uninitializedCallSite(),
-                                                  0, targetType.parameterList());
-            assert(invoker.type().equals(targetType));
+            invoker = MethodHandles.dropArguments(invokers0.uninitializedCallSite(), 0, targetType.parameterList());
+            assert (invoker.type().equals(targetType));
             uninitializedCallSite = invoker;
             return invoker;
         }
         if (THROW_UCS == null) {
             try {
                 THROW_UCS = IMPL_LOOKUP
-                    .findStatic(CallSite.class, "uninitializedCallSite",
-                                MethodType.methodType(Empty.class));
+                    .findStatic(CallSite.class, "uninitializedCallSite", MethodType.methodType(Empty.class));
             } catch (ReflectiveOperationException ex) {
                 throw new RuntimeException(ex);
             }
         }
         invoker = AdapterMethodHandle.makeRetypeRaw(targetType, THROW_UCS);
-        assert(invoker.type().equals(targetType));
+        assert (invoker.type().equals(targetType));
         uninitializedCallSite = invoker;
         return invoker;
     }
 
     public String toString() {
-        return "Invokers"+targetType;
+        return "Invokers" + targetType;
     }
 }

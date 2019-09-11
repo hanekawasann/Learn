@@ -58,11 +58,12 @@ public interface Autoscroll {
      * This method returns the <code>Insets</code> describing
      * the autoscrolling region or border relative
      * to the geometry of the implementing Component.
-     * <P>
+     * <p>
      * This value is read once by the <code>DropTarget</code>
      * upon entry of the drag <code>Cursor</code>
      * into the associated <code>Component</code>.
-     * <P>
+     * <p>
+     *
      * @return the Insets
      */
 
@@ -70,9 +71,10 @@ public interface Autoscroll {
 
     /**
      * notify the <code>Component</code> to autoscroll
-     * <P>
+     * <p>
+     *
      * @param cursorLocn A <code>Point</code> indicating the
-     * location of the cursor that triggered this operation.
+     *                   location of the cursor that triggered this operation.
      */
 
     public void autoscroll(Point cursorLocn);

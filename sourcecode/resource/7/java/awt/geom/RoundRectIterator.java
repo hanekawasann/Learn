@@ -31,7 +31,7 @@ import java.util.*;
  * A utility class to iterate over the path segments of an rounded rectangle
  * through the PathIterator interface.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  */
 class RoundRectIterator implements PathIterator {
     double x, y, w, h, aw, ah;
@@ -55,6 +55,7 @@ class RoundRectIterator implements PathIterator {
     /**
      * Return the winding rule for determining the insideness of the
      * path.
+     *
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
      */
@@ -64,6 +65,7 @@ class RoundRectIterator implements PathIterator {
 
     /**
      * Tests if there are more points to read.
+     *
      * @return true if there are more points to read
      */
     public boolean isDone() {
@@ -90,34 +92,13 @@ class RoundRectIterator implements PathIterator {
     //     4 values for each point {v0, v1, v2, v3}:
     //         point = (x + v0 * w + v1 * arcWidth,
     //                  y + v2 * h + v3 * arcHeight);
-    private static double ctrlpts[][] = {
-        {  0.0,  0.0,  0.0,  0.5 },
-        {  0.0,  0.0,  1.0, -0.5 },
-        {  0.0,  0.0,  1.0, -acv,
-           0.0,  acv,  1.0,  0.0,
-           0.0,  0.5,  1.0,  0.0 },
-        {  1.0, -0.5,  1.0,  0.0 },
-        {  1.0, -acv,  1.0,  0.0,
-           1.0,  0.0,  1.0, -acv,
-           1.0,  0.0,  1.0, -0.5 },
-        {  1.0,  0.0,  0.0,  0.5 },
-        {  1.0,  0.0,  0.0,  acv,
-           1.0, -acv,  0.0,  0.0,
-           1.0, -0.5,  0.0,  0.0 },
-        {  0.0,  0.5,  0.0,  0.0 },
-        {  0.0,  acv,  0.0,  0.0,
-           0.0,  0.0,  0.0,  acv,
-           0.0,  0.0,  0.0,  0.5 },
-        {},
-    };
-    private static int types[] = {
-        SEG_MOVETO,
-        SEG_LINETO, SEG_CUBICTO,
-        SEG_LINETO, SEG_CUBICTO,
-        SEG_LINETO, SEG_CUBICTO,
-        SEG_LINETO, SEG_CUBICTO,
-        SEG_CLOSE,
-    };
+    private static double ctrlpts[][] = { { 0.0, 0.0, 0.0, 0.5 }, { 0.0, 0.0, 1.0, -0.5 },
+        { 0.0, 0.0, 1.0, -acv, 0.0, acv, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0 }, { 1.0, -0.5, 1.0, 0.0 },
+        { 1.0, -acv, 1.0, 0.0, 1.0, 0.0, 1.0, -acv, 1.0, 0.0, 1.0, -0.5 }, { 1.0, 0.0, 0.0, 0.5 },
+        { 1.0, 0.0, 0.0, acv, 1.0, -acv, 0.0, 0.0, 1.0, -0.5, 0.0, 0.0 }, { 0.0, 0.5, 0.0, 0.0 },
+        { 0.0, acv, 0.0, 0.0, 0.0, 0.0, 0.0, acv, 0.0, 0.0, 0.0, 0.5 }, {}, };
+    private static int types[] = { SEG_MOVETO, SEG_LINETO, SEG_CUBICTO, SEG_LINETO, SEG_CUBICTO, SEG_LINETO,
+        SEG_CUBICTO, SEG_LINETO, SEG_CUBICTO, SEG_CLOSE, };
 
     /**
      * Returns the coordinates and type of the current path segment in
@@ -131,6 +112,7 @@ class RoundRectIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO
@@ -165,6 +147,7 @@ class RoundRectIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO

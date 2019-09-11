@@ -32,8 +32,6 @@ import java.math.BigInteger;
  * using the <i>Chinese Remainder Theorem</i> (CRT) information values.
  *
  * @author Jan Luehe
- *
- *
  * @see RSAPrivateKey
  */
 
@@ -50,7 +48,7 @@ public interface RSAPrivateCrtKey extends RSAPrivateKey {
 
     /**
      * Returns the primeP.
-
+     *
      * @return the primeP
      */
     public BigInteger getPrimeP();

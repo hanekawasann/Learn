@@ -36,7 +36,7 @@ public class CRLException extends GeneralSecurityException {
 
     private static final long serialVersionUID = -6694728944094197147L;
 
-   /**
+    /**
      * Constructs a CRLException with no detail message. A
      * detail message is a String that describes this particular
      * exception.
@@ -61,10 +61,10 @@ public class CRLException extends GeneralSecurityException {
      * detail message and cause.
      *
      * @param message the detail message (which is saved for later retrieval
-     *        by the {@link #getMessage()} method).
-     * @param cause the cause (which is saved for later retrieval by the
-     *        {@link #getCause()} method).  (A <tt>null</tt> value is permitted,
-     *        and indicates that the cause is nonexistent or unknown.)
+     *                by the {@link #getMessage()} method).
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method).  (A <tt>null</tt> value is permitted,
+     *                and indicates that the cause is nonexistent or unknown.)
      * @since 1.5
      */
     public CRLException(String message, Throwable cause) {
@@ -78,8 +78,8 @@ public class CRLException extends GeneralSecurityException {
      * <tt>cause</tt>).
      *
      * @param cause the cause (which is saved for later retrieval by the
-     *        {@link #getCause()} method).  (A <tt>null</tt> value is permitted,
-     *        and indicates that the cause is nonexistent or unknown.)
+     *              {@link #getCause()} method).  (A <tt>null</tt> value is permitted,
+     *              and indicates that the cause is nonexistent or unknown.)
      * @since 1.5
      */
     public CRLException(Throwable cause) {

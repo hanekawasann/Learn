@@ -47,23 +47,20 @@ abstract class ModalEventFilter implements EventFilter {
             return FilterAction.ACCEPT;
         }
         int eventID = event.getID();
-        if ((eventID >= MouseEvent.MOUSE_FIRST &&
-             eventID <= MouseEvent.MOUSE_LAST) ||
-            (eventID >= ActionEvent.ACTION_FIRST &&
-             eventID <= ActionEvent.ACTION_LAST) ||
-            eventID == WindowEvent.WINDOW_CLOSING)
-        {
+        if ((eventID >= MouseEvent.MOUSE_FIRST && eventID <= MouseEvent.MOUSE_LAST) ||
+            (eventID >= ActionEvent.ACTION_FIRST && eventID <= ActionEvent.ACTION_LAST) ||
+            eventID == WindowEvent.WINDOW_CLOSING) {
             Object o = event.getSource();
             if (o instanceof sun.awt.ModalExclude) {
                 // Exclude this object from modality and
                 // continue to pump it's events.
             } else if (o instanceof Component) {
-                Component c = (Component)o;
+                Component c = (Component) o;
                 while ((c != null) && !(c instanceof Window)) {
                     c = c.getParent_NoClientCode();
                 }
                 if (c != null) {
-                    return acceptWindow((Window)c);
+                    return acceptWindow((Window) c);
                 }
             }
         }
@@ -120,9 +117,12 @@ abstract class ModalEventFilter implements EventFilter {
 
     static ModalEventFilter createFilterForDialog(Dialog modalDialog) {
         switch (modalDialog.getModalityType()) {
-            case DOCUMENT_MODAL: return new DocumentModalEventFilter(modalDialog);
-            case APPLICATION_MODAL: return new ApplicationModalEventFilter(modalDialog);
-            case TOOLKIT_MODAL: return new ToolkitModalEventFilter(modalDialog);
+            case DOCUMENT_MODAL:
+                return new DocumentModalEventFilter(modalDialog);
+            case APPLICATION_MODAL:
+                return new ApplicationModalEventFilter(modalDialog);
+            case TOOLKIT_MODAL:
+                return new ToolkitModalEventFilter(modalDialog);
         }
         return null;
     }

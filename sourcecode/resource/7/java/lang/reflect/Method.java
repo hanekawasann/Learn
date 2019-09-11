@@ -33,6 +33,7 @@ import sun.reflect.generics.factory.GenericsFactory;
 import sun.reflect.generics.scope.MethodScope;
 import sun.reflect.annotation.AnnotationType;
 import sun.reflect.annotation.AnnotationParser;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.AnnotationFormatError;
 import java.nio.ByteBuffer;
@@ -48,42 +49,39 @@ import java.util.Map;
  * parameters, but it throws an {@code IllegalArgumentException} if a
  * narrowing conversion would occur.
  *
+ * @author Kenneth Russell
+ * @author Nakul Saraiya
  * @see Member
  * @see java.lang.Class
  * @see java.lang.Class#getMethods()
  * @see java.lang.Class#getMethod(String, Class[])
  * @see java.lang.Class#getDeclaredMethods()
  * @see java.lang.Class#getDeclaredMethod(String, Class[])
- *
- * @author Kenneth Russell
- * @author Nakul Saraiya
  */
-public final
-    class Method extends AccessibleObject implements GenericDeclaration,
-                                                     Member {
-    private Class<?>            clazz;
-    private int                 slot;
+public final class Method extends AccessibleObject implements GenericDeclaration, Member {
+    private Class<?> clazz;
+    private int slot;
     // This is guaranteed to be interned by the VM in the 1.4
     // reflection implementation
-    private String              name;
-    private Class<?>            returnType;
-    private Class<?>[]          parameterTypes;
-    private Class<?>[]          exceptionTypes;
-    private int                 modifiers;
+    private String name;
+    private Class<?> returnType;
+    private Class<?>[] parameterTypes;
+    private Class<?>[] exceptionTypes;
+    private int modifiers;
     // Generics and annotations support
-    private transient String              signature;
+    private transient String signature;
     // generic info repository; lazily initialized
     private transient MethodRepository genericInfo;
-    private byte[]              annotations;
-    private byte[]              parameterAnnotations;
-    private byte[]              annotationDefault;
+    private byte[] annotations;
+    private byte[] parameterAnnotations;
+    private byte[] annotationDefault;
     private volatile MethodAccessor methodAccessor;
     // For sharing of MethodAccessors. This branching structure is
     // currently only two levels deep (i.e., one root Method and
     // potentially many Method objects pointing to it.)
-    private Method              root;
+    private Method root;
 
-   // Generics infrastructure
+    // Generics infrastructure
 
     private String getGenericSignature() {return signature;}
 
@@ -98,8 +96,7 @@ public final
         // lazily initialize repository if necessary
         if (genericInfo == null) {
             // create and cache generic info repository
-            genericInfo = MethodRepository.make(getGenericSignature(),
-                                                getFactory());
+            genericInfo = MethodRepository.make(getGenericSignature(), getFactory());
         }
         return genericInfo; //return cached repository
     }
@@ -109,18 +106,9 @@ public final
      * instantiation of these objects in Java code from the java.lang
      * package via sun.reflect.LangReflectAccess.
      */
-    Method(Class<?> declaringClass,
-           String name,
-           Class<?>[] parameterTypes,
-           Class<?> returnType,
-           Class<?>[] checkedExceptions,
-           int modifiers,
-           int slot,
-           String signature,
-           byte[] annotations,
-           byte[] parameterAnnotations,
-           byte[] annotationDefault)
-    {
+    Method(Class<?> declaringClass, String name, Class<?>[] parameterTypes, Class<?> returnType,
+        Class<?>[] checkedExceptions, int modifiers, int slot, String signature, byte[] annotations,
+        byte[] parameterAnnotations, byte[] annotationDefault) {
         this.clazz = declaringClass;
         this.name = name;
         this.parameterTypes = parameterTypes;
@@ -147,9 +135,8 @@ public final
         // which implicitly requires that new java.lang.reflect
         // objects be fabricated for each reflective call on Class
         // objects.)
-        Method res = new Method(clazz, name, parameterTypes, returnType,
-                                exceptionTypes, modifiers, slot, signature,
-                                annotations, parameterAnnotations, annotationDefault);
+        Method res = new Method(clazz, name, parameterTypes, returnType, exceptionTypes, modifiers, slot, signature,
+            annotations, parameterAnnotations, annotationDefault);
         res.root = this;
         // Might as well eagerly propagate this if already present
         res.methodAccessor = methodAccessor;
@@ -191,18 +178,17 @@ public final
      * variables.
      *
      * @return an array of {@code TypeVariable} objects that represent
-     *     the type variables declared by this generic declaration
+     * the type variables declared by this generic declaration
      * @throws GenericSignatureFormatError if the generic
-     *     signature of this generic declaration does not conform to
-     *     the format specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
+     *                                     signature of this generic declaration does not conform to
+     *                                     the format specified in
+     *                                     <cite>The Java&trade; Virtual Machine Specification</cite>
      * @since 1.5
      */
     public TypeVariable<Method>[] getTypeParameters() {
-        if (getGenericSignature() != null)
-            return (TypeVariable<Method>[])getGenericInfo().getTypeParameters();
-        else
-            return (TypeVariable<Method>[])new TypeVariable[0];
+        if (getGenericSignature() != null) {
+            return (TypeVariable<Method>[]) getGenericInfo().getTypeParameters();
+        } else { return (TypeVariable<Method>[]) new TypeVariable[0]; }
     }
 
     /**
@@ -226,23 +212,22 @@ public final
      * <p>If the return type is a type variable or a parameterized type, it
      * is created. Otherwise, it is resolved.
      *
-     * @return  a {@code Type} object that represents the formal return
-     *     type of the underlying  method
-     * @throws GenericSignatureFormatError
-     *     if the generic method signature does not conform to the format
-     *     specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
-     * @throws TypeNotPresentException if the underlying method's
-     *     return type refers to a non-existent type declaration
+     * @return a {@code Type} object that represents the formal return
+     * type of the underlying  method
+     * @throws GenericSignatureFormatError         if the generic method signature does not conform to the format
+     *                                             specified in
+     *                                             <cite>The Java&trade; Virtual Machine Specification</cite>
+     * @throws TypeNotPresentException             if the underlying method's
+     *                                             return type refers to a non-existent type declaration
      * @throws MalformedParameterizedTypeException if the
-     *     underlying method's return typed refers to a parameterized
-     *     type that cannot be instantiated for any reason
+     *                                             underlying method's return typed refers to a parameterized
+     *                                             type that cannot be instantiated for any reason
      * @since 1.5
      */
     public Type getGenericReturnType() {
-      if (getGenericSignature() != null) {
-        return getGenericInfo().getReturnType();
-      } else { return getReturnType();}
+        if (getGenericSignature() != null) {
+            return getGenericInfo().getReturnType();
+        } else { return getReturnType();}
     }
 
 
@@ -273,24 +258,22 @@ public final
      * type, it is created. Otherwise, it is resolved.
      *
      * @return an array of Types that represent the formal
-     *     parameter types of the underlying method, in declaration order
-     * @throws GenericSignatureFormatError
-     *     if the generic method signature does not conform to the format
-     *     specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
-     * @throws TypeNotPresentException if any of the parameter
-     *     types of the underlying method refers to a non-existent type
-     *     declaration
+     * parameter types of the underlying method, in declaration order
+     * @throws GenericSignatureFormatError         if the generic method signature does not conform to the format
+     *                                             specified in
+     *                                             <cite>The Java&trade; Virtual Machine Specification</cite>
+     * @throws TypeNotPresentException             if any of the parameter
+     *                                             types of the underlying method refers to a non-existent type
+     *                                             declaration
      * @throws MalformedParameterizedTypeException if any of
-     *     the underlying method's parameter types refer to a parameterized
-     *     type that cannot be instantiated for any reason
+     *                                             the underlying method's parameter types refer to a parameterized
+     *                                             type that cannot be instantiated for any reason
      * @since 1.5
      */
     public Type[] getGenericParameterTypes() {
-        if (getGenericSignature() != null)
-            return getGenericInfo().getParameterTypes();
-        else
+        if (getGenericSignature() != null) { return getGenericInfo().getParameterTypes(); } else {
             return getParameterTypes();
+        }
     }
 
 
@@ -318,26 +301,23 @@ public final
      * type, it is created. Otherwise, it is resolved.
      *
      * @return an array of Types that represent the exception types
-     *     thrown by the underlying method
-     * @throws GenericSignatureFormatError
-     *     if the generic method signature does not conform to the format
-     *     specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
-     * @throws TypeNotPresentException if the underlying method's
-     *     {@code throws} clause refers to a non-existent type declaration
+     * thrown by the underlying method
+     * @throws GenericSignatureFormatError         if the generic method signature does not conform to the format
+     *                                             specified in
+     *                                             <cite>The Java&trade; Virtual Machine Specification</cite>
+     * @throws TypeNotPresentException             if the underlying method's
+     *                                             {@code throws} clause refers to a non-existent type declaration
      * @throws MalformedParameterizedTypeException if
-     *     the underlying method's {@code throws} clause refers to a
-     *     parameterized type that cannot be instantiated for any reason
+     *                                             the underlying method's {@code throws} clause refers to a
+     *                                             parameterized type that cannot be instantiated for any reason
      * @since 1.5
      */
-      public Type[] getGenericExceptionTypes() {
-          Type[] result;
-          if (getGenericSignature() != null &&
-              ((result = getGenericInfo().getExceptionTypes()).length > 0))
-              return result;
-          else
-              return getExceptionTypes();
-      }
+    public Type[] getGenericExceptionTypes() {
+        Type[] result;
+        if (getGenericSignature() != null && ((result = getGenericInfo().getExceptionTypes()).length > 0)) {
+            return result;
+        } else { return getExceptionTypes(); }
+    }
 
     /**
      * Compares this {@code Method} against the specified object.  Returns
@@ -347,18 +327,15 @@ public final
      */
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Method) {
-            Method other = (Method)obj;
-            if ((getDeclaringClass() == other.getDeclaringClass())
-                && (getName() == other.getName())) {
-                if (!returnType.equals(other.getReturnType()))
-                    return false;
+            Method other = (Method) obj;
+            if ((getDeclaringClass() == other.getDeclaringClass()) && (getName() == other.getName())) {
+                if (!returnType.equals(other.getReturnType())) { return false; }
                 /* Avoid unnecessary cloning */
                 Class<?>[] params1 = parameterTypes;
                 Class<?>[] params2 = other.parameterTypes;
                 if (params1.length == params2.length) {
                     for (int i = 0; i < params1.length; i++) {
-                        if (params1[i] != params2[i])
-                            return false;
+                        if (params1[i] != params2[i]) { return false; }
                     }
                     return true;
                 }
@@ -411,8 +388,7 @@ public final
             Class<?>[] params = parameterTypes; // avoid clone
             for (int j = 0; j < params.length; j++) {
                 sb.append(Field.getTypeName(params[j]));
-                if (j < (params.length - 1))
-                    sb.append(',');
+                if (j < (params.length - 1)) { sb.append(','); }
             }
             sb.append(')');
             Class<?>[] exceptions = exceptionTypes; // avoid clone
@@ -420,8 +396,7 @@ public final
                 sb.append(" throws ");
                 for (int k = 0; k < exceptions.length; k++) {
                     sb.append(exceptions[k].getName());
-                    if (k < (exceptions.length - 1))
-                        sb.append(',');
+                    if (k < (exceptions.length - 1)) { sb.append(','); }
                 }
             }
             return sb.toString();
@@ -440,12 +415,12 @@ public final
      * a period, followed by the method name, followed by a
      * parenthesized, comma-separated list of the method's generic
      * formal parameter types.
-     *
+     * <p>
      * If this method was declared to take a variable number of
      * arguments, instead of denoting the last parameter as
      * "<tt><i>Type</i>[]</tt>", it is denoted as
      * "<tt><i>Type</i>...</tt>".
-     *
+     * <p>
      * A space is used to separate access modifiers from one another
      * and from the type parameters or return type.  If there are no
      * type parameters, the type parameter list is elided; if the type
@@ -465,7 +440,6 @@ public final
      *
      * @return a string describing this {@code Method},
      * include type parameters
-     *
      * @since 1.5
      */
     public String toGenericString() {
@@ -479,9 +453,8 @@ public final
             if (typeparms.length > 0) {
                 boolean first = true;
                 sb.append('<');
-                for(TypeVariable<?> typeparm: typeparms) {
-                    if (!first)
-                        sb.append(',');
+                for (TypeVariable<?> typeparm : typeparms) {
+                    if (!first) { sb.append(','); }
                     // Class objects can't occur here; no need to test
                     // and call Class.getName().
                     sb.append(typeparm.toString());
@@ -491,33 +464,29 @@ public final
             }
 
             Type genRetType = getGenericReturnType();
-            sb.append( ((genRetType instanceof Class<?>)?
-                        Field.getTypeName((Class<?>)genRetType):genRetType.toString()))
-                    .append(' ');
+            sb.append(
+                ((genRetType instanceof Class<?>) ? Field.getTypeName((Class<?>) genRetType) : genRetType.toString()))
+                .append(' ');
 
             sb.append(Field.getTypeName(getDeclaringClass())).append('.');
             sb.append(getName()).append('(');
             Type[] params = getGenericParameterTypes();
             for (int j = 0; j < params.length; j++) {
-                String param = (params[j] instanceof Class)?
-                    Field.getTypeName((Class)params[j]):
-                    (params[j].toString());
+                String param = (params[j] instanceof Class) ? Field.getTypeName((Class) params[j])
+                    : (params[j].toString());
                 if (isVarArgs() && (j == params.length - 1)) // replace T[] with T...
-                    param = param.replaceFirst("\\[\\]$", "...");
+                { param = param.replaceFirst("\\[\\]$", "..."); }
                 sb.append(param);
-                if (j < (params.length - 1))
-                    sb.append(',');
+                if (j < (params.length - 1)) { sb.append(','); }
             }
             sb.append(')');
             Type[] exceptions = getGenericExceptionTypes();
             if (exceptions.length > 0) {
                 sb.append(" throws ");
                 for (int k = 0; k < exceptions.length; k++) {
-                    sb.append((exceptions[k] instanceof Class)?
-                              ((Class)exceptions[k]).getName():
-                              exceptions[k].toString());
-                    if (k < (exceptions.length - 1))
-                        sb.append(',');
+                    sb.append((exceptions[k] instanceof Class) ? ((Class) exceptions[k]).getName()
+                        : exceptions[k].toString());
+                    if (k < (exceptions.length - 1)) { sb.append(','); }
                 }
             }
             return sb.toString();
@@ -562,31 +531,28 @@ public final
      * @return the result of dispatching the method represented by
      * this object on {@code obj} with parameters
      * {@code args}
-     *
-     * @exception IllegalAccessException    if this {@code Method} object
-     *              is enforcing Java language access control and the underlying
-     *              method is inaccessible.
-     * @exception IllegalArgumentException  if the method is an
-     *              instance method and the specified object argument
-     *              is not an instance of the class or interface
-     *              declaring the underlying method (or of a subclass
-     *              or implementor thereof); if the number of actual
-     *              and formal parameters differ; if an unwrapping
-     *              conversion for primitive arguments fails; or if,
-     *              after possible unwrapping, a parameter value
-     *              cannot be converted to the corresponding formal
-     *              parameter type by a method invocation conversion.
-     * @exception InvocationTargetException if the underlying method
-     *              throws an exception.
-     * @exception NullPointerException      if the specified object is null
-     *              and the method is an instance method.
-     * @exception ExceptionInInitializerError if the initialization
-     * provoked by this method fails.
+     * @throws IllegalAccessException      if this {@code Method} object
+     *                                     is enforcing Java language access control and the underlying
+     *                                     method is inaccessible.
+     * @throws IllegalArgumentException    if the method is an
+     *                                     instance method and the specified object argument
+     *                                     is not an instance of the class or interface
+     *                                     declaring the underlying method (or of a subclass
+     *                                     or implementor thereof); if the number of actual
+     *                                     and formal parameters differ; if an unwrapping
+     *                                     conversion for primitive arguments fails; or if,
+     *                                     after possible unwrapping, a parameter value
+     *                                     cannot be converted to the corresponding formal
+     *                                     parameter type by a method invocation conversion.
+     * @throws InvocationTargetException   if the underlying method
+     *                                     throws an exception.
+     * @throws NullPointerException        if the specified object is null
+     *                                     and the method is an instance method.
+     * @throws ExceptionInInitializerError if the initialization
+     *                                     provoked by this method fails.
      */
     public Object invoke(Object obj, Object... args)
-        throws IllegalAccessException, IllegalArgumentException,
-           InvocationTargetException
-    {
+        throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (!override) {
             if (!Reflection.quickCheckMemberAccess(clazz, modifiers)) {
                 Class<?> caller = Reflection.getCallerClass(1);
@@ -646,7 +612,7 @@ public final
         // First check to see if one has been created yet, and take it
         // if so
         MethodAccessor tmp = null;
-        if (root != null) tmp = root.getMethodAccessor();
+        if (root != null) { tmp = root.getMethodAccessor(); }
         if (tmp != null) {
             methodAccessor = tmp;
         } else {
@@ -679,8 +645,7 @@ public final
      * @since 1.5
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        if (annotationClass == null)
-            throw new NullPointerException();
+        if (annotationClass == null) { throw new NullPointerException(); }
 
         return (T) declaredAnnotations().get(annotationClass);
     }
@@ -688,18 +653,17 @@ public final
     /**
      * @since 1.5
      */
-    public Annotation[] getDeclaredAnnotations()  {
+    public Annotation[] getDeclaredAnnotations() {
         return AnnotationParser.toArray(declaredAnnotations());
     }
 
     private transient Map<Class<? extends Annotation>, Annotation> declaredAnnotations;
 
-    private synchronized  Map<Class<? extends Annotation>, Annotation> declaredAnnotations() {
+    private synchronized Map<Class<? extends Annotation>, Annotation> declaredAnnotations() {
         if (declaredAnnotations == null) {
-            declaredAnnotations = AnnotationParser.parseAnnotations(
-                annotations, sun.misc.SharedSecrets.getJavaLangAccess().
-                getConstantPool(getDeclaringClass()),
-                getDeclaringClass());
+            declaredAnnotations = AnnotationParser
+                .parseAnnotations(annotations, sun.misc.SharedSecrets.getJavaLangAccess().
+                    getConstantPool(getDeclaringClass()), getDeclaringClass());
         }
         return declaredAnnotations;
     }
@@ -712,24 +676,21 @@ public final
      * instance does not represent a declared member of an annotation type.
      *
      * @return the default value for the annotation member represented
-     *     by this {@code Method} instance.
+     * by this {@code Method} instance.
      * @throws TypeNotPresentException if the annotation is of type
-     *     {@link Class} and no definition can be found for the
-     *     default class value.
-     * @since  1.5
+     *                                 {@link Class} and no definition can be found for the
+     *                                 default class value.
+     * @since 1.5
      */
     public Object getDefaultValue() {
-        if  (annotationDefault == null)
-            return null;
-        Class<?> memberType = AnnotationType.invocationHandlerReturnType(
-            getReturnType());
-        Object result = AnnotationParser.parseMemberValue(
-            memberType, ByteBuffer.wrap(annotationDefault),
+        if (annotationDefault == null) { return null; }
+        Class<?> memberType = AnnotationType.invocationHandlerReturnType(getReturnType());
+        Object result = AnnotationParser.parseMemberValue(memberType, ByteBuffer.wrap(annotationDefault),
             sun.misc.SharedSecrets.getJavaLangAccess().
-                getConstantPool(getDeclaringClass()),
-            getDeclaringClass());
-        if (result instanceof sun.reflect.annotation.ExceptionProxy)
+                getConstantPool(getDeclaringClass()), getDeclaringClass());
+        if (result instanceof sun.reflect.annotation.ExceptionProxy) {
             throw new AnnotationFormatError("Invalid default: " + this);
+        }
         return result;
     }
 
@@ -745,23 +706,21 @@ public final
      * other callers.
      *
      * @return an array of arrays that represent the annotations on the formal
-     *    parameters, in declaration order, of the method represented by this
-     *    Method object
+     * parameters, in declaration order, of the method represented by this
+     * Method object
      * @since 1.5
      */
     public Annotation[][] getParameterAnnotations() {
         int numParameters = parameterTypes.length;
-        if (parameterAnnotations == null)
-            return new Annotation[numParameters][0];
+        if (parameterAnnotations == null) { return new Annotation[numParameters][0]; }
 
-        Annotation[][] result = AnnotationParser.parseParameterAnnotations(
-            parameterAnnotations,
-            sun.misc.SharedSecrets.getJavaLangAccess().
-                getConstantPool(getDeclaringClass()),
-            getDeclaringClass());
-        if (result.length != numParameters)
+        Annotation[][] result = AnnotationParser
+            .parseParameterAnnotations(parameterAnnotations, sun.misc.SharedSecrets.getJavaLangAccess().
+                getConstantPool(getDeclaringClass()), getDeclaringClass());
+        if (result.length != numParameters) {
             throw new java.lang.annotation.AnnotationFormatError(
                 "Parameter annotations don't match number of parameters");
+        }
         return result;
     }
 }

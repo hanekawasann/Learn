@@ -48,7 +48,7 @@ public interface ItemSelectable {
      * state is set programmatically.  If <code>l</code> is
      * <code>null</code>, no exception is thrown and no action is performed.
      *
-     * @param    l the listener to receive events
+     * @param l the listener to receive events
      * @see ItemEvent
      */
     public void addItemListener(ItemListener l);
@@ -58,7 +58,7 @@ public interface ItemSelectable {
      * If <code>l</code> is <code>null</code>,
      * no exception is thrown and no action is performed.
      *
-     * @param   l the listener being removed
+     * @param l the listener being removed
      * @see ItemEvent
      */
     public void removeItemListener(ItemListener l);

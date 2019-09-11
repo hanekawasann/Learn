@@ -26,6 +26,7 @@
 package java.lang.invoke;
 
 import java.lang.reflect.*;
+
 import sun.invoke.WrapperInstance;
 
 /**
@@ -103,13 +104,13 @@ public class MethodHandleProxies {
      * with one or more additional public "marker" interfaces.
      *
      * @param target the method handle to invoke from the wrapper
-     * @param intfc the desired type of the wrapper, a single-method interface
+     * @param intfc  the desired type of the wrapper, a single-method interface
      * @return a correctly-typed wrapper for the given target
-     * @throws NullPointerException if either argument is null
+     * @throws NullPointerException     if either argument is null
      * @throws IllegalArgumentException if the {@code intfc} is not a
-     *         valid argument to this method
+     *                                  valid argument to this method
      * @throws WrongMethodTypeException if the target cannot
-     *         be converted to the type required by the requested interface
+     *                                  be converted to the type required by the requested interface
      */
     // Other notes to implementors:
     // <p>
@@ -132,51 +133,44 @@ public class MethodHandleProxies {
     // entry points, must be covered by hand-written or automatically
     // generated adapter classes.
     //
-    public static
-    <T> T asInterfaceInstance(final Class<T> intfc, final MethodHandle target) {
+    public static <T> T asInterfaceInstance(final Class<T> intfc, final MethodHandle target) {
         // POC implementation only; violates the above contract several ways
         final Method sm = getSingleMethod(intfc);
-        if (sm == null)
-            throw new IllegalArgumentException("not a single-method interface: "+intfc.getName());
+        if (sm == null) { throw new IllegalArgumentException("not a single-method interface: " + intfc.getName()); }
         MethodType smMT = MethodType.methodType(sm.getReturnType(), sm.getParameterTypes());
         MethodHandle checkTarget = target.asType(smMT);  // make throw WMT
         checkTarget = checkTarget.asType(checkTarget.type().changeReturnType(Object.class));
         final MethodHandle vaTarget = checkTarget.asSpreader(Object[].class, smMT.parameterCount());
-        return intfc.cast(Proxy.newProxyInstance(
-                intfc.getClassLoader(),
-                new Class[]{ intfc, WrapperInstance.class },
-                new InvocationHandler() {
-                    private Object getArg(String name) {
-                        if ((Object)name == "getWrapperInstanceTarget")  return target;
-                        if ((Object)name == "getWrapperInstanceType")    return intfc;
-                        throw new AssertionError();
-                    }
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        if (method.getDeclaringClass() == WrapperInstance.class)
-                            return getArg(method.getName());
-                        if (method.equals(sm))
-                            return vaTarget.invokeExact(args);
-                        if (isObjectMethod(method))
-                            return callObjectMethod(this, method, args);
-                        throw new InternalError();
-                    }
-                }));
+        return intfc.cast(Proxy.newProxyInstance(intfc.getClassLoader(), new Class[] { intfc, WrapperInstance.class },
+            new InvocationHandler() {
+                private Object getArg(String name) {
+                    if ((Object) name == "getWrapperInstanceTarget") { return target; }
+                    if ((Object) name == "getWrapperInstanceType") { return intfc; }
+                    throw new AssertionError();
+                }
+
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    if (method.getDeclaringClass() == WrapperInstance.class) { return getArg(method.getName()); }
+                    if (method.equals(sm)) { return vaTarget.invokeExact(args); }
+                    if (isObjectMethod(method)) { return callObjectMethod(this, method, args); }
+                    throw new InternalError();
+                }
+            }));
     }
 
     /**
      * Determines if the given object was produced by a call to {@link #asInterfaceInstance asInterfaceInstance}.
+     *
      * @param x any reference
      * @return true if the reference is not null and points to an object produced by {@code asInterfaceInstance}
      */
-    public static
-    boolean isWrapperInstance(Object x) {
+    public static boolean isWrapperInstance(Object x) {
         return x instanceof WrapperInstance;
     }
 
     private static WrapperInstance asWrapperInstance(Object x) {
         try {
-            if (x != null)
-                return (WrapperInstance) x;
+            if (x != null) { return (WrapperInstance) x; }
         } catch (ClassCastException ex) {
         }
         throw new IllegalArgumentException("not a wrapper instance");
@@ -187,12 +181,12 @@ public class MethodHandleProxies {
      * equivalent to the unique method of this wrapper instance.
      * The object {@code x} must have been produced by a call to {@link #asInterfaceInstance asInterfaceInstance}.
      * This requirement may be tested via {@link #isWrapperInstance isWrapperInstance}.
+     *
      * @param x any reference
      * @return a method handle implementing the unique method
      * @throws IllegalArgumentException if the reference x is not to a wrapper instance
      */
-    public static
-    MethodHandle wrapperInstanceTarget(Object x) {
+    public static MethodHandle wrapperInstanceTarget(Object x) {
         return asWrapperInstance(x).getWrapperInstanceTarget();
     }
 
@@ -200,55 +194,50 @@ public class MethodHandleProxies {
      * Recovers the unique single-method interface type for which this wrapper instance was created.
      * The object {@code x} must have been produced by a call to {@link #asInterfaceInstance asInterfaceInstance}.
      * This requirement may be tested via {@link #isWrapperInstance isWrapperInstance}.
+     *
      * @param x any reference
      * @return the single-method interface type for which the wrapper was created
      * @throws IllegalArgumentException if the reference x is not to a wrapper instance
      */
-    public static
-    Class<?> wrapperInstanceType(Object x) {
+    public static Class<?> wrapperInstanceType(Object x) {
         return asWrapperInstance(x).getWrapperInstanceType();
     }
 
-    private static
-    boolean isObjectMethod(Method m) {
+    private static boolean isObjectMethod(Method m) {
         switch (m.getName()) {
-        case "toString":
-            return (m.getReturnType() == String.class
-                    && m.getParameterTypes().length == 0);
-        case "hashCode":
-            return (m.getReturnType() == int.class
-                    && m.getParameterTypes().length == 0);
-        case "equals":
-            return (m.getReturnType() == boolean.class
-                    && m.getParameterTypes().length == 1
-                    && m.getParameterTypes()[0] == Object.class);
+            case "toString":
+                return (m.getReturnType() == String.class && m.getParameterTypes().length == 0);
+            case "hashCode":
+                return (m.getReturnType() == int.class && m.getParameterTypes().length == 0);
+            case "equals":
+                return (m.getReturnType() == boolean.class && m.getParameterTypes().length == 1 &&
+                    m.getParameterTypes()[0] == Object.class);
         }
         return false;
     }
 
-    private static
-    Object callObjectMethod(Object self, Method m, Object[] args) {
-        assert(isObjectMethod(m)) : m;
+    private static Object callObjectMethod(Object self, Method m, Object[] args) {
+        assert (isObjectMethod(m)) : m;
         switch (m.getName()) {
-        case "toString":
-            return self.getClass().getName() + "@" + Integer.toHexString(self.hashCode());
-        case "hashCode":
-            return System.identityHashCode(self);
-        case "equals":
-            return (self == args[0]);
+            case "toString":
+                return self.getClass().getName() + "@" + Integer.toHexString(self.hashCode());
+            case "hashCode":
+                return System.identityHashCode(self);
+            case "equals":
+                return (self == args[0]);
         }
         return null;
     }
 
-    private static
-    Method getSingleMethod(Class<?> intfc) {
-        if (!intfc.isInterface())  return null;
+    private static Method getSingleMethod(Class<?> intfc) {
+        if (!intfc.isInterface()) { return null; }
         Method sm = null;
         for (Method m : intfc.getMethods()) {
             int mod = m.getModifiers();
             if (Modifier.isAbstract(mod)) {
-                if (sm != null && !isObjectMethod(sm))
+                if (sm != null && !isObjectMethod(sm)) {
                     return null;  // too many abstract methods
+                }
                 sm = m;
             }
         }

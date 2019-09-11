@@ -40,9 +40,9 @@ package java.security.cert;
  * provide the necessary locking. Multiple threads each manipulating
  * separate objects need not synchronize.
  *
- * @since       1.4
- * @author      Steve Hanna
- * @see         CertStore
+ * @author Steve Hanna
+ * @see CertStore
+ * @since 1.4
  */
 public class LDAPCertStoreParameters implements CertStoreParameters {
 
@@ -63,13 +63,12 @@ public class LDAPCertStoreParameters implements CertStoreParameters {
      * specified parameter values.
      *
      * @param serverName the DNS name of the LDAP server
-     * @param port the port number of the LDAP server
-     * @exception NullPointerException if <code>serverName</code> is
-     * <code>null</code>
+     * @param port       the port number of the LDAP server
+     * @throws NullPointerException if <code>serverName</code> is
+     *                              <code>null</code>
      */
     public LDAPCertStoreParameters(String serverName, int port) {
-        if (serverName == null)
-            throw new NullPointerException();
+        if (serverName == null) { throw new NullPointerException(); }
         this.serverName = serverName;
         this.port = port;
     }
@@ -79,8 +78,8 @@ public class LDAPCertStoreParameters implements CertStoreParameters {
      * specified server name and a default port of 389.
      *
      * @param serverName the DNS name of the LDAP server
-     * @exception NullPointerException if <code>serverName</code> is
-     * <code>null</code>
+     * @throws NullPointerException if <code>serverName</code> is
+     *                              <code>null</code>
      */
     public LDAPCertStoreParameters(String serverName) {
         this(serverName, LDAP_DEFAULT_PORT);

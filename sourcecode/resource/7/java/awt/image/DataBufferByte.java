@@ -57,8 +57,7 @@ import static sun.java2d.StateTrackable.State.*;
  * documentation for those methods.
  * </a>
  */
-public final class DataBufferByte extends DataBuffer
-{
+public final class DataBufferByte extends DataBuffer {
     /** The default data bank. */
     byte data[];
 
@@ -72,23 +71,23 @@ public final class DataBufferByte extends DataBuffer
      * @param size The size of the <CODE>DataBuffer</CODE>.
      */
     public DataBufferByte(int size) {
-      super(STABLE, TYPE_BYTE, size);
-      data = new byte[size];
-      bankdata = new byte[1][];
-      bankdata[0] = data;
+        super(STABLE, TYPE_BYTE, size);
+        data = new byte[size];
+        bankdata = new byte[1][];
+        bankdata[0] = data;
     }
 
     /**
      * Constructs a byte based <CODE>DataBuffer</CODE> with the specified number of
      * banks all of which are the specified size.
      *
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size     The size of the banks in the <CODE>DataBuffer</CODE>.
      * @param numBanks The number of banks in the a<CODE>DataBuffer</CODE>.
      */
     public DataBufferByte(int size, int numBanks) {
         super(STABLE, TYPE_BYTE, size, numBanks);
         bankdata = new byte[numBanks][];
-        for (int i= 0; i < numBanks; i++) {
+        for (int i = 0; i < numBanks; i++) {
             bankdata[i] = new byte[size];
         }
         data = bankdata[0];
@@ -107,7 +106,7 @@ public final class DataBufferByte extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The byte array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
      */
     public DataBufferByte(byte dataArray[], int size) {
         super(UNTRACKABLE, TYPE_BYTE, size);
@@ -129,11 +128,11 @@ public final class DataBufferByte extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The byte array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
-     * @param offset The offset into the <CODE>dataArray</CODE>. <CODE>dataArray</CODE>
-     * must have at least <CODE>offset</CODE> + <CODE>size</CODE> elements.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
+     * @param offset    The offset into the <CODE>dataArray</CODE>. <CODE>dataArray</CODE>
+     *                  must have at least <CODE>offset</CODE> + <CODE>size</CODE> elements.
      */
-    public DataBufferByte(byte dataArray[], int size, int offset){
+    public DataBufferByte(byte dataArray[], int size, int offset) {
         super(UNTRACKABLE, TYPE_BYTE, size, 1, offset);
         data = dataArray;
         bankdata = new byte[1][];
@@ -152,7 +151,7 @@ public final class DataBufferByte extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The byte arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
      */
     public DataBufferByte(byte dataArray[][], int size) {
         super(UNTRACKABLE, TYPE_BYTE, size, dataArray.length);
@@ -176,8 +175,8 @@ public final class DataBufferByte extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The byte arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
-     * @param offsets The offsets into each array.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param offsets   The offsets into each array.
      */
     public DataBufferByte(byte dataArray[][], int size, int offsets[]) {
         super(UNTRACKABLE, TYPE_BYTE, size, dataArray.length, offsets);
@@ -240,47 +239,48 @@ public final class DataBufferByte extends DataBuffer
      * @see #setElem(int, int, int)
      */
     public int getElem(int i) {
-        return (int)(data[i+offset]) & 0xff;
+        return (int) (data[i + offset]) & 0xff;
     }
 
     /**
      * Returns the requested data array element from the specified bank.
      *
      * @param bank The bank from which you want to get a data array element.
-     * @param i The data array element you want to get.
+     * @param i    The data array element you want to get.
      * @return The requested data array element as an integer.
      * @see #setElem(int, int)
      * @see #setElem(int, int, int)
      */
     public int getElem(int bank, int i) {
-        return (int)(bankdata[bank][i+offsets[bank]]) & 0xff;
+        return (int) (bankdata[bank][i + offsets[bank]]) & 0xff;
     }
 
     /**
      * Sets the requested data array element in the first (default) bank
      * to the specified value.
      *
-     * @param i The data array element you want to set.
+     * @param i   The data array element you want to set.
      * @param val The integer value to which you want to set the data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int i, int val) {
-        data[i+offset] = (byte)val;
+        data[i + offset] = (byte) val;
         theTrackable.markDirty();
     }
 
     /**
      * Sets the requested data array element in the specified bank
      * from the given integer.
+     *
      * @param bank The bank in which you want to set the data array element.
-     * @param i The data array element you want to set.
-     * @param val The integer value to which you want to set the specified data array element.
+     * @param i    The data array element you want to set.
+     * @param val  The integer value to which you want to set the specified data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int bank, int i, int val) {
-        bankdata[bank][i+offsets[bank]] = (byte)val;
+        bankdata[bank][i + offsets[bank]] = (byte) val;
         theTrackable.markDirty();
     }
 }

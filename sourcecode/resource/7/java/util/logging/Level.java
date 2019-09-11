@@ -24,6 +24,7 @@
  */
 
 package java.util.logging;
+
 import java.util.ResourceBundle;
 
 /**
@@ -63,12 +64,12 @@ public class Level implements java.io.Serializable {
     private static String defaultBundle = "sun.util.logging.resources.logging";
 
     /**
-     * @serial  The non-localized name of the level.
+     * @serial The non-localized name of the level.
      */
     private final String name;
 
     /**
-     * @serial  The integer value of the level.
+     * @serial The integer value of the level.
      */
     private final int value;
 
@@ -81,7 +82,7 @@ public class Level implements java.io.Serializable {
      * OFF is a special level that can be used to turn off logging.
      * This level is initialized to <CODE>Integer.MAX_VALUE</CODE>.
      */
-    public static final Level OFF = new Level("OFF",Integer.MAX_VALUE, defaultBundle);
+    public static final Level OFF = new Level("OFF", Integer.MAX_VALUE, defaultBundle);
 
     /**
      * SEVERE is a message level indicating a serious failure.
@@ -92,7 +93,7 @@ public class Level implements java.io.Serializable {
      * to end users and to system administrators.
      * This level is initialized to <CODE>1000</CODE>.
      */
-    public static final Level SEVERE = new Level("SEVERE",1000, defaultBundle);
+    public static final Level SEVERE = new Level("SEVERE", 1000, defaultBundle);
 
     /**
      * WARNING is a message level indicating a potential problem.
@@ -176,6 +177,7 @@ public class Level implements java.io.Serializable {
      * objects such as SEVERE or FINEST.  However, if clients need to
      * add new logging levels, they may subclass Level and define new
      * constants.
+     *
      * @param name  the name of the Level, for example "SEVERE".
      * @param value an integer value for the level.
      * @throws NullPointerException if the name is null
@@ -188,11 +190,12 @@ public class Level implements java.io.Serializable {
      * Create a named Level with a given integer value and a
      * given localization resource name.
      * <p>
-     * @param name  the name of the Level, for example "SEVERE".
-     * @param value an integer value for the level.
+     *
+     * @param name               the name of the Level, for example "SEVERE".
+     * @param value              an integer value for the level.
      * @param resourceBundleName name of a resource bundle to use in
-     *    localizing the given name. If the resourceBundleName is null
-     *    or an empty string, it is ignored.
+     *                           localizing the given name. If the resourceBundleName is null
+     *                           or an empty string, it is ignored.
      * @throws NullPointerException if the name is null
      */
     protected Level(String name, int value, String resourceBundleName) {
@@ -257,6 +260,7 @@ public class Level implements java.io.Serializable {
      * Get the integer value for this level.  This integer value
      * can be used for efficient ordering comparisons between
      * Level objects.
+     *
      * @return the integer value for this level.
      */
     public final int intValue() {
@@ -271,10 +275,9 @@ public class Level implements java.io.Serializable {
         synchronized (Level.class) {
             for (int i = 0; i < known.size(); i++) {
                 Level other = known.get(i);
-                if (this.name.equals(other.name) && this.value == other.value
-                        && (this.resourceBundleName == other.resourceBundleName ||
-                            (this.resourceBundleName != null &&
-                            this.resourceBundleName.equals(other.resourceBundleName)))) {
+                if (this.name.equals(other.name) && this.value == other.value &&
+                    (this.resourceBundleName == other.resourceBundleName || (this.resourceBundleName != null &&
+                        this.resourceBundleName.equals(other.resourceBundleName)))) {
                     return other;
                 }
             }
@@ -296,20 +299,20 @@ public class Level implements java.io.Serializable {
      * <li>     "SEVERE"
      * <li>     "1000"
      * </ul>
-     * @param  name   string to be parsed
-     * @throws NullPointerException if the name is null
-     * @throws IllegalArgumentException if the value is not valid.
-     * Valid values are integers between <CODE>Integer.MIN_VALUE</CODE>
-     * and <CODE>Integer.MAX_VALUE</CODE>, and all known level names.
-     * Known names are the levels defined by this class (e.g., <CODE>FINE</CODE>,
-     * <CODE>FINER</CODE>, <CODE>FINEST</CODE>), or created by this class with
-     * appropriate package access, or new levels defined or created
-     * by subclasses.
      *
+     * @param name string to be parsed
      * @return The parsed value. Passing an integer that corresponds to a known name
      * (e.g., 700) will return the associated name (e.g., <CODE>CONFIG</CODE>).
      * Passing an integer that does not (e.g., 1) will return a new level name
      * initialized to that value.
+     * @throws NullPointerException     if the name is null
+     * @throws IllegalArgumentException if the value is not valid.
+     *                                  Valid values are integers between <CODE>Integer.MIN_VALUE</CODE>
+     *                                  and <CODE>Integer.MAX_VALUE</CODE>, and all known level names.
+     *                                  Known names are the levels defined by this class (e.g., <CODE>FINE</CODE>,
+     *                                  <CODE>FINER</CODE>, <CODE>FINEST</CODE>), or created by this class with
+     *                                  appropriate package access, or new levels defined or created
+     *                                  by subclasses.
      */
     public static synchronized Level parse(String name) throws IllegalArgumentException {
         // Check that name is not null.
@@ -345,7 +348,7 @@ public class Level implements java.io.Serializable {
         // in the current default locale.
         // This is relatively expensive, but not excessively so.
         for (int i = 0; i < known.size(); i++) {
-            Level l =  known.get(i);
+            Level l = known.get(i);
             if (name.equals(l.getLocalizedName())) {
                 return l;
             }
@@ -357,11 +360,12 @@ public class Level implements java.io.Serializable {
 
     /**
      * Compare two objects for value equality.
+     *
      * @return true if and only if the two objects have the same level value.
      */
     public boolean equals(Object ox) {
         try {
-            Level lx = (Level)ox;
+            Level lx = (Level) ox;
             return (lx.value == this.value);
         } catch (Exception ex) {
             return false;
@@ -370,6 +374,7 @@ public class Level implements java.io.Serializable {
 
     /**
      * Generate a hashcode.
+     *
      * @return a hashcode based on the level value
      */
     public int hashCode() {

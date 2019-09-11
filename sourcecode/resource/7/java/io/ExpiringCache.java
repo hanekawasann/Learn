@@ -35,14 +35,14 @@ import java.util.Set;
 
 class ExpiringCache {
     private long millisUntilExpiration;
-    private Map  map;
+    private Map map;
     // Clear out old entries every few queries
     private int queryCount;
     private int queryOverflow = 300;
     private int MAX_ENTRIES = 200;
 
     static class Entry {
-        private long   timestamp;
+        private long timestamp;
         private String val;
 
         Entry(long timestamp, String val) {
@@ -50,11 +50,13 @@ class ExpiringCache {
             this.val = val;
         }
 
-        long   timestamp()                  { return timestamp;           }
-        void   setTimestamp(long timestamp) { this.timestamp = timestamp; }
+        long timestamp() { return timestamp; }
 
-        String val()                        { return val;                 }
-        void   setVal(String val)           { this.val = val;             }
+        void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+
+        String val() { return val; }
+
+        void setVal(String val) { this.val = val; }
     }
 
     ExpiringCache() {
@@ -65,9 +67,9 @@ class ExpiringCache {
         this.millisUntilExpiration = millisUntilExpiration;
         map = new LinkedHashMap() {
             protected boolean removeEldestEntry(Map.Entry eldest) {
-              return size() > MAX_ENTRIES;
+                return size() > MAX_ENTRIES;
             }
-          };
+        };
     }
 
     synchronized String get(String key) {

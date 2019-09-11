@@ -40,13 +40,11 @@ class CharacterName {
 
     private static synchronized byte[] initNamePool() {
         byte[] strPool = null;
-        if (refStrPool != null && (strPool = refStrPool.get()) != null)
-            return strPool;
+        if (refStrPool != null && (strPool = refStrPool.get()) != null) { return strPool; }
         DataInputStream dis = null;
         try {
-            dis = new DataInputStream(new InflaterInputStream(
-                AccessController.doPrivileged(new PrivilegedAction<InputStream>()
-                {
+            dis = new DataInputStream(
+                new InflaterInputStream(AccessController.doPrivileged(new PrivilegedAction<InputStream>() {
                     public InputStream run() {
                         return getClass().getResourceAsStream("uniName.dat");
                     }
@@ -66,17 +64,15 @@ class CharacterName {
                 if (len == 0) {
                     len = ba[cpOff++] & 0xff;
                     // always big-endian
-                    cp = ((ba[cpOff++] & 0xff) << 16) |
-                         ((ba[cpOff++] & 0xff) <<  8) |
-                         ((ba[cpOff++] & 0xff));
-                }  else {
+                    cp = ((ba[cpOff++] & 0xff) << 16) | ((ba[cpOff++] & 0xff) << 8) | ((ba[cpOff++] & 0xff));
+                } else {
                     cp++;
                 }
                 int hi = cp >> 8;
                 if (lookup[hi] == null) {
                     lookup[hi] = new int[0x100];
                 }
-                lookup[hi][cp&0xff] = (nameOff << 8) | len;
+                lookup[hi][cp & 0xff] = (nameOff << 8) | len;
                 nameOff += len;
             } while (cpOff < cpEnd);
             strPool = new byte[total - cpEnd];
@@ -86,8 +82,7 @@ class CharacterName {
             throw new InternalError(x.getMessage());
         } finally {
             try {
-                if (dis != null)
-                    dis.close();
+                if (dis != null) { dis.close(); }
             } catch (Exception xx) {}
         }
         return strPool;
@@ -95,12 +90,9 @@ class CharacterName {
 
     public static String get(int cp) {
         byte[] strPool = null;
-        if (refStrPool == null || (strPool = refStrPool.get()) == null)
-            strPool = initNamePool();
+        if (refStrPool == null || (strPool = refStrPool.get()) == null) { strPool = initNamePool(); }
         int off = 0;
-        if (lookup[cp>>8] == null ||
-            (off = lookup[cp>>8][cp&0xff]) == 0)
-            return null;
+        if (lookup[cp >> 8] == null || (off = lookup[cp >> 8][cp & 0xff]) == 0) { return null; }
         return new String(strPool, 0, off >>> 8, off & 0xff);  // ASCII
     }
 }

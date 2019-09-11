@@ -41,9 +41,10 @@ public class Operation {
 
     /**
      * Creates a new Operation object.
+     *
      * @param op method name
-     * @deprecated no replacement
      * @since JDK1.1
+     * @deprecated no replacement
      */
     @Deprecated
     public Operation(String op) {
@@ -52,9 +53,10 @@ public class Operation {
 
     /**
      * Returns the name of the method.
+     *
      * @return method name
-     * @deprecated no replacement
      * @since JDK1.1
+     * @deprecated no replacement
      */
     @Deprecated
     public String getOperation() {
@@ -63,8 +65,9 @@ public class Operation {
 
     /**
      * Returns the string representation of the operation.
-     * @deprecated no replacement
+     *
      * @since JDK1.1
+     * @deprecated no replacement
      */
     @Deprecated
     public String toString() {

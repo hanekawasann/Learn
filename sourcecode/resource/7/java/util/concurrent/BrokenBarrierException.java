@@ -40,11 +40,9 @@ package java.util.concurrent;
  * in a broken state, or which enters the broken state while the thread
  * is waiting.
  *
- * @see CyclicBarrier
- *
- * @since 1.5
  * @author Doug Lea
- *
+ * @see CyclicBarrier
+ * @since 1.5
  */
 public class BrokenBarrierException extends Exception {
     private static final long serialVersionUID = 7117394618823254244L;

@@ -30,6 +30,7 @@ package java.awt.print;
  * pages to be printed. The <code>Pageable</code> object returns
  * the total number of pages in the set as well as the
  * {@link PageFormat} and {@link Printable} for a specified page.
+ *
  * @see java.awt.print.PageFormat
  * @see java.awt.print.Printable
  */
@@ -50,6 +51,7 @@ public interface Pageable {
      * implementations return the true number of pages
      * rather than the
      * UNKNOWN_NUMBER_OF_PAGES constant.
+     *
      * @return the number of pages in this <code>Pageable</code>.
      */
     int getNumberOfPages();
@@ -57,27 +59,27 @@ public interface Pageable {
     /**
      * Returns the <code>PageFormat</code> of the page specified by
      * <code>pageIndex</code>.
+     *
      * @param pageIndex the zero based index of the page whose
-     *            <code>PageFormat</code> is being requested
+     *                  <code>PageFormat</code> is being requested
      * @return the <code>PageFormat</code> describing the size and
-     *          orientation.
+     * orientation.
      * @throws IndexOutOfBoundsException if
-     *          the <code>Pageable</code> does not contain the requested
-     *          page.
+     *                                   the <code>Pageable</code> does not contain the requested
+     *                                   page.
      */
-    PageFormat getPageFormat(int pageIndex)
-        throws IndexOutOfBoundsException;
+    PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException;
 
     /**
      * Returns the <code>Printable</code> instance responsible for
      * rendering the page specified by <code>pageIndex</code>.
+     *
      * @param pageIndex the zero based index of the page whose
-     *            <code>Printable</code> is being requested
+     *                  <code>Printable</code> is being requested
      * @return the <code>Printable</code> that renders the page.
      * @throws IndexOutOfBoundsException if
-     *            the <code>Pageable</code> does not contain the requested
-     *            page.
+     *                                   the <code>Pageable</code> does not contain the requested
+     *                                   page.
      */
-    Printable getPrintable(int pageIndex)
-        throws IndexOutOfBoundsException;
+    Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException;
 }

@@ -33,7 +33,6 @@ import java.math.BigInteger;
  * coordinates.
  *
  * @author Valerie Peng
- *
  * @since 1.5
  */
 public class ECPoint {
@@ -55,13 +54,14 @@ public class ECPoint {
     /**
      * Creates an ECPoint from the specified affine x-coordinate
      * <code>x</code> and affine y-coordinate <code>y</code>.
+     *
      * @param x the affine x-coordinate.
      * @param y the affine y-coordinate.
-     * @exception NullPointerException if <code>x</code> or
-     * <code>y</code> is null.
+     * @throws NullPointerException if <code>x</code> or
+     *                              <code>y</code> is null.
      */
     public ECPoint(BigInteger x, BigInteger y) {
-        if ((x==null) || (y==null)) {
+        if ((x == null) || (y == null)) {
             throw new NullPointerException("affine coordinate x or y is null");
         }
         this.x = x;
@@ -71,6 +71,7 @@ public class ECPoint {
     /**
      * Returns the affine x-coordinate <code>x</code>.
      * Note: POINT_INFINITY has a null affine x-coordinate.
+     *
      * @return the affine x-coordinate.
      */
     public BigInteger getAffineX() {
@@ -80,6 +81,7 @@ public class ECPoint {
     /**
      * Returns the affine y-coordinate <code>y</code>.
      * Note: POINT_INFINITY has a null affine y-coordinate.
+     *
      * @return the affine y-coordinate.
      */
     public BigInteger getAffineY() {
@@ -89,26 +91,27 @@ public class ECPoint {
     /**
      * Compares this elliptic curve point for equality with
      * the specified object.
+     *
      * @param obj the object to be compared.
      * @return true if <code>obj</code> is an instance of
      * ECPoint and the affine coordinates match, false otherwise.
      */
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (this == POINT_INFINITY) return false;
+        if (this == obj) { return true; }
+        if (this == POINT_INFINITY) { return false; }
         if (obj instanceof ECPoint) {
-            return ((x.equals(((ECPoint)obj).x)) &&
-                    (y.equals(((ECPoint)obj).y)));
+            return ((x.equals(((ECPoint) obj).x)) && (y.equals(((ECPoint) obj).y)));
         }
         return false;
     }
 
     /**
      * Returns a hash code value for this elliptic curve point.
+     *
      * @return a hash code value.
      */
     public int hashCode() {
-        if (this == POINT_INFINITY) return 0;
+        if (this == POINT_INFINITY) { return 0; }
         return x.hashCode() << 5 + y.hashCode();
     }
 }

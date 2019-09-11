@@ -36,10 +36,9 @@ import java.util.EventListener;
  * occurs, that object's <code>actionPerformed</code> method is
  * invoked.
  *
+ * @author Carl Quinn
  * @see ActionEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/eventmodel.html">Tutorial: Java 1.1 Event Model</a>
- *
- * @author Carl Quinn
  * @since 1.1
  */
 public interface ActionListener extends EventListener {

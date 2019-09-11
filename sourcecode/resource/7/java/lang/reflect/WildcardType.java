@@ -46,12 +46,12 @@ public interface WildcardType extends Type {
      * </ul>
      *
      * @return an array of Types representing the upper bound(s) of this
-     *     type variable
-     * @throws TypeNotPresentException if any of the
-     *     bounds refers to a non-existent type declaration
+     * type variable
+     * @throws TypeNotPresentException             if any of the
+     *                                             bounds refers to a non-existent type declaration
      * @throws MalformedParameterizedTypeException if any of the
-     *     bounds refer to a parameterized type that cannot be instantiated
-     *     for any reason
+     *                                             bounds refer to a parameterized type that cannot be instantiated
+     *                                             for any reason
      */
     Type[] getUpperBounds();
 
@@ -70,12 +70,12 @@ public interface WildcardType extends Type {
      * </ul>
      *
      * @return an array of Types representing the lower bound(s) of this
-     *     type variable
-     * @throws TypeNotPresentException if any of the
-     *     bounds refers to a non-existent type declaration
+     * type variable
+     * @throws TypeNotPresentException             if any of the
+     *                                             bounds refers to a non-existent type declaration
      * @throws MalformedParameterizedTypeException if any of the
-     *     bounds refer to a parameterized type that cannot be instantiated
-     *     for any reason
+     *                                             bounds refer to a parameterized type that cannot be instantiated
+     *                                             for any reason
      */
     Type[] getLowerBounds();
     // one or many? Up to language spec; currently only one, but this API

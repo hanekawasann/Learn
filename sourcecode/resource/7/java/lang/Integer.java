@@ -43,10 +43,10 @@ import java.util.Properties;
  * based on material from Henry S. Warren, Jr.'s <i>Hacker's
  * Delight</i>, (Addison Wesley, 2002).
  *
- * @author  Lee Boynton
- * @author  Arthur van Hoff
- * @author  Josh Bloch
- * @author  Joseph D. Darcy
+ * @author Lee Boynton
+ * @author Arthur van Hoff
+ * @author Josh Bloch
+ * @author Joseph D. Darcy
  * @since JDK1.0
  */
 public final class Integer extends Number implements Comparable<Integer> {
@@ -54,33 +54,27 @@ public final class Integer extends Number implements Comparable<Integer> {
      * A constant holding the minimum value an {@code int} can
      * have, -2<sup>31</sup>.
      */
-    public static final int   MIN_VALUE = 0x80000000;
+    public static final int MIN_VALUE = 0x80000000;
 
     /**
      * A constant holding the maximum value an {@code int} can
      * have, 2<sup>31</sup>-1.
      */
-    public static final int   MAX_VALUE = 0x7fffffff;
+    public static final int MAX_VALUE = 0x7fffffff;
 
     /**
      * The {@code Class} instance representing the primitive type
      * {@code int}.
      *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
-    public static final Class<Integer>  TYPE = (Class<Integer>) Class.getPrimitiveClass("int");
+    public static final Class<Integer> TYPE = (Class<Integer>) Class.getPrimitiveClass("int");
 
     /**
      * All possible chars for representing a number as a String
      */
-    final static char[] digits = {
-        '0' , '1' , '2' , '3' , '4' , '5' ,
-        '6' , '7' , '8' , '9' , 'a' , 'b' ,
-        'c' , 'd' , 'e' , 'f' , 'g' , 'h' ,
-        'i' , 'j' , 'k' , 'l' , 'm' , 'n' ,
-        'o' , 'p' , 'q' , 'r' , 's' , 't' ,
-        'u' , 'v' , 'w' , 'x' , 'y' , 'z'
-    };
+    final static char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
     /**
      * Returns a string representation of the first argument in the
@@ -103,9 +97,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      * character.  The following ASCII characters are used as digits:
      *
      * <blockquote>
-     *   {@code 0123456789abcdefghijklmnopqrstuvwxyz}
+     * {@code 0123456789abcdefghijklmnopqrstuvwxyz}
      * </blockquote>
-     *
+     * <p>
      * These are <code>'&#92;u0030'</code> through
      * <code>'&#92;u0039'</code> and <code>'&#92;u0061'</code> through
      * <code>'&#92;u007A'</code>. If {@code radix} is
@@ -117,19 +111,18 @@ public final class Integer extends Number implements Comparable<Integer> {
      * be called on the result:
      *
      * <blockquote>
-     *  {@code Integer.toString(n, 16).toUpperCase()}
+     * {@code Integer.toString(n, 16).toUpperCase()}
      * </blockquote>
      *
-     * @param   i       an integer to be converted to a string.
-     * @param   radix   the radix to use in the string representation.
-     * @return  a string representation of the argument in the specified radix.
-     * @see     java.lang.Character#MAX_RADIX
-     * @see     java.lang.Character#MIN_RADIX
+     * @param i     an integer to be converted to a string.
+     * @param radix the radix to use in the string representation.
+     * @return a string representation of the argument in the specified radix.
+     * @see java.lang.Character#MAX_RADIX
+     * @see java.lang.Character#MIN_RADIX
      */
     public static String toString(int i, int radix) {
 
-        if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
-            radix = 10;
+        if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX) { radix = 10; }
 
         /* Use the faster version */
         if (radix == 10) {
@@ -173,9 +166,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      * hexadecimal digits:
      *
      * <blockquote>
-     *  {@code 0123456789abcdef}
+     * {@code 0123456789abcdef}
      * </blockquote>
-     *
+     * <p>
      * These are the characters <code>'&#92;u0030'</code> through
      * <code>'&#92;u0039'</code> and <code>'&#92;u0061'</code> through
      * <code>'&#92;u0066'</code>. If uppercase letters are
@@ -183,13 +176,13 @@ public final class Integer extends Number implements Comparable<Integer> {
      * be called on the result:
      *
      * <blockquote>
-     *  {@code Integer.toHexString(n).toUpperCase()}
+     * {@code Integer.toHexString(n).toUpperCase()}
      * </blockquote>
      *
-     * @param   i   an integer to be converted to a string.
-     * @return  the string representation of the unsigned integer value
-     *          represented by the argument in hexadecimal (base&nbsp;16).
-     * @since   JDK1.0.2
+     * @param i an integer to be converted to a string.
+     * @return the string representation of the unsigned integer value
+     * represented by the argument in hexadecimal (base&nbsp;16).
+     * @since JDK1.0.2
      */
     public static String toHexString(int i) {
         return toUnsignedString(i, 4);
@@ -214,14 +207,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * <blockquote>
      * {@code 01234567}
      * </blockquote>
-     *
+     * <p>
      * These are the characters <code>'&#92;u0030'</code> through
      * <code>'&#92;u0037'</code>.
      *
-     * @param   i   an integer to be converted to a string.
-     * @return  the string representation of the unsigned integer value
-     *          represented by the argument in octal (base&nbsp;8).
-     * @since   JDK1.0.2
+     * @param i an integer to be converted to a string.
+     * @return the string representation of the unsigned integer value
+     * represented by the argument in octal (base&nbsp;8).
+     * @since JDK1.0.2
      */
     public static String toOctalString(int i) {
         return toUnsignedString(i, 3);
@@ -243,10 +236,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * (<code>'&#92;u0030'</code>) and {@code '1'}
      * (<code>'&#92;u0031'</code>) are used as binary digits.
      *
-     * @param   i   an integer to be converted to a string.
-     * @return  the string representation of the unsigned integer value
-     *          represented by the argument in binary (base&nbsp;2).
-     * @since   JDK1.0.2
+     * @param i an integer to be converted to a string.
+     * @return the string representation of the unsigned integer value
+     * represented by the argument in binary (base&nbsp;2).
+     * @since JDK1.0.2
      */
     public static String toBinaryString(int i) {
         return toUnsignedString(i, 1);
@@ -269,50 +262,36 @@ public final class Integer extends Number implements Comparable<Integer> {
     }
 
 
-    final static char [] DigitTens = {
-        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-        '1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
-        '2', '2', '2', '2', '2', '2', '2', '2', '2', '2',
-        '3', '3', '3', '3', '3', '3', '3', '3', '3', '3',
-        '4', '4', '4', '4', '4', '4', '4', '4', '4', '4',
-        '5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
-        '6', '6', '6', '6', '6', '6', '6', '6', '6', '6',
-        '7', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-        '8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
-        '9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
-        } ;
+    final static char[] DigitTens = { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '1',
+        '1', '1', '1', '1', '2', '2', '2', '2', '2', '2', '2', '2', '2', '2', '3', '3', '3', '3', '3', '3', '3', '3',
+        '3', '3', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5',
+        '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '8', '8',
+        '8', '8', '8', '8', '8', '8', '8', '8', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', };
 
-    final static char [] DigitOnes = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        } ;
+    final static char[] DigitOnes = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1',
+        '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', };
 
-        // I use the "invariant division by multiplication" trick to
-        // accelerate Integer.toString.  In particular we want to
-        // avoid division by 10.
-        //
-        // The "trick" has roughly the same performance characteristics
-        // as the "classic" Integer.toString code on a non-JIT VM.
-        // The trick avoids .rem and .div calls but has a longer code
-        // path and is thus dominated by dispatch overhead.  In the
-        // JIT case the dispatch overhead doesn't exist and the
-        // "trick" is considerably faster than the classic code.
-        //
-        // TODO-FIXME: convert (x * 52429) into the equiv shift-add
-        // sequence.
-        //
-        // RE:  Division by Invariant Integers using Multiplication
-        //      T Gralund, P Montgomery
-        //      ACM PLDI 1994
-        //
+    // I use the "invariant division by multiplication" trick to
+    // accelerate Integer.toString.  In particular we want to
+    // avoid division by 10.
+    //
+    // The "trick" has roughly the same performance characteristics
+    // as the "classic" Integer.toString code on a non-JIT VM.
+    // The trick avoids .rem and .div calls but has a longer code
+    // path and is thus dominated by dispatch overhead.  In the
+    // JIT case the dispatch overhead doesn't exist and the
+    // "trick" is considerably faster than the classic code.
+    //
+    // TODO-FIXME: convert (x * 52429) into the equiv shift-add
+    // sequence.
+    //
+    // RE:  Division by Invariant Integers using Multiplication
+    //      T Gralund, P Montgomery
+    //      ACM PLDI 1994
+    //
 
     /**
      * Returns a {@code String} object representing the
@@ -321,12 +300,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * argument and radix 10 were given as arguments to the {@link
      * #toString(int, int)} method.
      *
-     * @param   i   an integer to be converted.
-     * @return  a string representation of the argument in base&nbsp;10.
+     * @param i an integer to be converted.
+     * @return a string representation of the argument in base&nbsp;10.
      */
     public static String toString(int i) {
-        if (i == Integer.MIN_VALUE)
-            return "-2147483648";
+        if (i == Integer.MIN_VALUE) { return "-2147483648"; }
         int size = (i < 0) ? stringSize(-i) + 1 : stringSize(i);
         char[] buf = new char[size];
         getChars(i, size, buf);
@@ -339,7 +317,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * the buffer backwards starting with the least significant
      * digit at the specified index (exclusive), and working
      * backwards from there.
-     *
+     * <p>
      * Will fail if i == Integer.MIN_VALUE
      */
     static void getChars(int i, int index, char[] buf) {
@@ -355,35 +333,32 @@ public final class Integer extends Number implements Comparable<Integer> {
         // Generate two digits per iteration
         while (i >= 65536) {
             q = i / 100;
-        // really: r = i - (q * 100);
+            // really: r = i - (q * 100);
             r = i - ((q << 6) + (q << 5) + (q << 2));
             i = q;
-            buf [--charPos] = DigitOnes[r];
-            buf [--charPos] = DigitTens[r];
+            buf[--charPos] = DigitOnes[r];
+            buf[--charPos] = DigitTens[r];
         }
 
         // Fall thru to fast mode for smaller numbers
         // assert(i <= 65536, i);
-        for (;;) {
-            q = (i * 52429) >>> (16+3);
+        for (; ; ) {
+            q = (i * 52429) >>> (16 + 3);
             r = i - ((q << 3) + (q << 1));  // r = i-(q*10) ...
-            buf [--charPos] = digits [r];
+            buf[--charPos] = digits[r];
             i = q;
-            if (i == 0) break;
+            if (i == 0) { break; }
         }
         if (sign != 0) {
-            buf [--charPos] = sign;
+            buf[--charPos] = sign;
         }
     }
 
-    final static int [] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999,
-                                      99999999, 999999999, Integer.MAX_VALUE };
+    final static int[] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE };
 
     // Requires positive x
     static int stringSize(int x) {
-        for (int i=0; ; i++)
-            if (x <= sizeTable[i])
-                return i+1;
+        for (int i = 0; ; i++) { if (x <= sizeTable[i]) { return i + 1; } }
     }
 
     /**
@@ -433,17 +408,15 @@ public final class Integer extends Number implements Comparable<Integer> {
      * parseInt("Kona", 27) returns 411787
      * </pre></blockquote>
      *
-     * @param      s   the {@code String} containing the integer
-     *                  representation to be parsed
-     * @param      radix   the radix to be used while parsing {@code s}.
-     * @return     the integer represented by the string argument in the
-     *             specified radix.
-     * @exception  NumberFormatException if the {@code String}
-     *             does not contain a parsable {@code int}.
+     * @param s     the {@code String} containing the integer
+     *              representation to be parsed
+     * @param radix the radix to be used while parsing {@code s}.
+     * @return the integer represented by the string argument in the
+     * specified radix.
+     * @throws NumberFormatException if the {@code String}
+     *                               does not contain a parsable {@code int}.
      */
-    public static int parseInt(String s, int radix)
-                throws NumberFormatException
-    {
+    public static int parseInt(String s, int radix) throws NumberFormatException {
         /*
          * WARNING: This method may be invoked early during VM initialization
          * before IntegerCache is initialized. Care must be taken to not use
@@ -455,13 +428,11 @@ public final class Integer extends Number implements Comparable<Integer> {
         }
 
         if (radix < Character.MIN_RADIX) {
-            throw new NumberFormatException("radix " + radix +
-                                            " less than Character.MIN_RADIX");
+            throw new NumberFormatException("radix " + radix + " less than Character.MIN_RADIX");
         }
 
         if (radix > Character.MAX_RADIX) {
-            throw new NumberFormatException("radix " + radix +
-                                            " greater than Character.MAX_RADIX");
+            throw new NumberFormatException("radix " + radix + " greater than Character.MAX_RADIX");
         }
 
         int result = 0;
@@ -477,17 +448,16 @@ public final class Integer extends Number implements Comparable<Integer> {
                 if (firstChar == '-') {
                     negative = true;
                     limit = Integer.MIN_VALUE;
-                } else if (firstChar != '+')
-                    throw NumberFormatException.forInputString(s);
+                } else if (firstChar != '+') { throw NumberFormatException.forInputString(s); }
 
                 if (len == 1) // Cannot have lone "+" or "-"
-                    throw NumberFormatException.forInputString(s);
+                { throw NumberFormatException.forInputString(s); }
                 i++;
             }
             multmin = limit / radix;
             while (i < len) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
-                digit = Character.digit(s.charAt(i++),radix);
+                digit = Character.digit(s.charAt(i++), radix);
                 if (digit < 0) {
                     throw NumberFormatException.forInputString(s);
                 }
@@ -517,14 +487,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * given as arguments to the {@link #parseInt(java.lang.String,
      * int)} method.
      *
-     * @param s    a {@code String} containing the {@code int}
-     *             representation to be parsed
-     * @return     the integer value represented by the argument in decimal.
-     * @exception  NumberFormatException  if the string does not contain a
-     *               parsable integer.
+     * @param s a {@code String} containing the {@code int}
+     *          representation to be parsed
+     * @return the integer value represented by the argument in decimal.
+     * @throws NumberFormatException if the string does not contain a
+     *                               parsable integer.
      */
     public static int parseInt(String s) throws NumberFormatException {
-        return parseInt(s,10);
+        return parseInt(s, 10);
     }
 
     /**
@@ -541,19 +511,19 @@ public final class Integer extends Number implements Comparable<Integer> {
      * object equal to the value of:
      *
      * <blockquote>
-     *  {@code new Integer(Integer.parseInt(s, radix))}
+     * {@code new Integer(Integer.parseInt(s, radix))}
      * </blockquote>
      *
-     * @param      s   the string to be parsed.
-     * @param      radix the radix to be used in interpreting {@code s}
-     * @return     an {@code Integer} object holding the value
-     *             represented by the string argument in the specified
-     *             radix.
-     * @exception NumberFormatException if the {@code String}
-     *            does not contain a parsable {@code int}.
+     * @param s     the string to be parsed.
+     * @param radix the radix to be used in interpreting {@code s}
+     * @return an {@code Integer} object holding the value
+     * represented by the string argument in the specified
+     * radix.
+     * @throws NumberFormatException if the {@code String}
+     *                               does not contain a parsable {@code int}.
      */
     public static Integer valueOf(String s, int radix) throws NumberFormatException {
-        return Integer.valueOf(parseInt(s,radix));
+        return Integer.valueOf(parseInt(s, radix));
     }
 
     /**
@@ -569,14 +539,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * object equal to the value of:
      *
      * <blockquote>
-     *  {@code new Integer(Integer.parseInt(s))}
+     * {@code new Integer(Integer.parseInt(s))}
      * </blockquote>
      *
-     * @param      s   the string to be parsed.
-     * @return     an {@code Integer} object holding the value
-     *             represented by the string argument.
-     * @exception  NumberFormatException  if the string cannot be parsed
-     *             as an integer.
+     * @param s the string to be parsed.
+     * @return an {@code Integer} object holding the value
+     * represented by the string argument.
+     * @throws NumberFormatException if the string cannot be parsed
+     *                               as an integer.
      */
     public static Integer valueOf(String s) throws NumberFormatException {
         return Integer.valueOf(parseInt(s, 10));
@@ -585,7 +555,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Cache to support the object identity semantics of autoboxing for values between
      * -128 and 127 (inclusive) as required by JLS.
-     *
+     * <p>
      * The cache is initialized on first usage.  The size of the cache
      * may be controlled by the -XX:AutoBoxCacheMax=<size> option.
      * During VM initialization, java.lang.Integer.IntegerCache.high property
@@ -601,8 +571,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         static {
             // high value may be configured by property
             int h = 127;
-            String integerCacheHighPropValue =
-                sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+            String integerCacheHighPropValue = sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
             if (integerCacheHighPropValue != null) {
                 int i = parseInt(integerCacheHighPropValue);
                 i = Math.max(i, 127);
@@ -613,8 +582,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
             cache = new Integer[(high - low) + 1];
             int j = low;
-            for(int k = 0; k < cache.length; k++)
-                cache[k] = new Integer(j++);
+            for (int k = 0; k < cache.length; k++) { cache[k] = new Integer(j++); }
         }
 
         private IntegerCache() {}
@@ -627,18 +595,17 @@ public final class Integer extends Number implements Comparable<Integer> {
      * the constructor {@link #Integer(int)}, as this method is likely
      * to yield significantly better space and time performance by
      * caching frequently requested values.
-     *
+     * <p>
      * This method will always cache values in the range -128 to 127,
      * inclusive, and may cache other values outside of this range.
      *
-     * @param  i an {@code int} value.
+     * @param i an {@code int} value.
      * @return an {@code Integer} instance representing {@code i}.
-     * @since  1.5
+     * @since 1.5
      */
     public static Integer valueOf(int i) {
         assert IntegerCache.high >= 127;
-        if (i >= IntegerCache.low && i <= IntegerCache.high)
-            return IntegerCache.cache[i + (-IntegerCache.low)];
+        if (i >= IntegerCache.low && i <= IntegerCache.high) { return IntegerCache.cache[i + (-IntegerCache.low)]; }
         return new Integer(i);
     }
 
@@ -653,8 +620,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Constructs a newly allocated {@code Integer} object that
      * represents the specified {@code int} value.
      *
-     * @param   value   the value to be represented by the
-     *                  {@code Integer} object.
+     * @param value the value to be represented by the
+     *              {@code Integer} object.
      */
     public Integer(int value) {
         this.value = value;
@@ -667,11 +634,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code int} value in exactly the manner used by the
      * {@code parseInt} method for radix 10.
      *
-     * @param      s   the {@code String} to be converted to an
-     *                 {@code Integer}.
-     * @exception  NumberFormatException  if the {@code String} does not
-     *               contain a parsable integer.
-     * @see        java.lang.Integer#parseInt(java.lang.String, int)
+     * @param s the {@code String} to be converted to an
+     *          {@code Integer}.
+     * @throws NumberFormatException if the {@code String} does not
+     *                               contain a parsable integer.
+     * @see java.lang.Integer#parseInt(java.lang.String, int)
      */
     public Integer(String s) throws NumberFormatException {
         this.value = parseInt(s, 10);
@@ -682,7 +649,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code byte}.
      */
     public byte byteValue() {
-        return (byte)value;
+        return (byte) value;
     }
 
     /**
@@ -690,7 +657,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code short}.
      */
     public short shortValue() {
-        return (short)value;
+        return (short) value;
     }
 
     /**
@@ -706,7 +673,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code long}.
      */
     public long longValue() {
-        return (long)value;
+        return (long) value;
     }
 
     /**
@@ -714,7 +681,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code float}.
      */
     public float floatValue() {
-        return (float)value;
+        return (float) value;
     }
 
     /**
@@ -722,7 +689,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code double}.
      */
     public double doubleValue() {
-        return (double)value;
+        return (double) value;
     }
 
     /**
@@ -732,8 +699,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * the integer value were given as an argument to the {@link
      * java.lang.Integer#toString(int)} method.
      *
-     * @return  a string representation of the value of this object in
-     *          base&nbsp;10.
+     * @return a string representation of the value of this object in
+     * base&nbsp;10.
      */
     public String toString() {
         return toString(value);
@@ -742,9 +709,9 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a hash code for this {@code Integer}.
      *
-     * @return  a hash code value for this object, equal to the
-     *          primitive {@code int} value represented by this
-     *          {@code Integer} object.
+     * @return a hash code value for this object, equal to the
+     * primitive {@code int} value represented by this
+     * {@code Integer} object.
      */
     public int hashCode() {
         return value;
@@ -756,13 +723,13 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code null} and is an {@code Integer} object that
      * contains the same {@code int} value as this object.
      *
-     * @param   obj   the object to compare with.
-     * @return  {@code true} if the objects are the same;
-     *          {@code false} otherwise.
+     * @param obj the object to compare with.
+     * @return {@code true} if the objects are the same;
+     * {@code false} otherwise.
      */
     public boolean equals(Object obj) {
         if (obj instanceof Integer) {
-            return value == ((Integer)obj).intValue();
+            return value == ((Integer) obj).intValue();
         }
         return false;
     }
@@ -787,13 +754,13 @@ public final class Integer extends Number implements Comparable<Integer> {
      * object equal to the value of:
      *
      * <blockquote>
-     *  {@code getInteger(nm, null)}
+     * {@code getInteger(nm, null)}
      * </blockquote>
      *
-     * @param   nm   property name.
-     * @return  the {@code Integer} value of the property.
-     * @see     java.lang.System#getProperty(java.lang.String)
-     * @see     java.lang.System#getProperty(java.lang.String, java.lang.String)
+     * @param nm property name.
+     * @return the {@code Integer} value of the property.
+     * @see java.lang.System#getProperty(java.lang.String)
+     * @see java.lang.System#getProperty(java.lang.String, java.lang.String)
      */
     public static Integer getInteger(String nm) {
         return getInteger(nm, null);
@@ -821,24 +788,24 @@ public final class Integer extends Number implements Comparable<Integer> {
      * equal to the value of:
      *
      * <blockquote>
-     *  {@code getInteger(nm, new Integer(val))}
+     * {@code getInteger(nm, new Integer(val))}
      * </blockquote>
-     *
+     * <p>
      * but in practice it may be implemented in a manner such as:
      *
      * <blockquote><pre>
      * Integer result = getInteger(nm, null);
      * return (result == null) ? new Integer(val) : result;
      * </pre></blockquote>
-     *
+     * <p>
      * to avoid the unnecessary allocation of an {@code Integer}
      * object when the default value is not needed.
      *
-     * @param   nm   property name.
-     * @param   val   default value.
-     * @return  the {@code Integer} value of the property.
-     * @see     java.lang.System#getProperty(java.lang.String)
-     * @see     java.lang.System#getProperty(java.lang.String, java.lang.String)
+     * @param nm  property name.
+     * @param val default value.
+     * @return the {@code Integer} value of the property.
+     * @see java.lang.System#getProperty(java.lang.String)
+     * @see java.lang.System#getProperty(java.lang.String, java.lang.String)
      */
     public static Integer getInteger(String nm, int val) {
         Integer result = getInteger(nm, null);
@@ -874,10 +841,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * property does not have the correct numeric format, or if the
      * specified name is empty or {@code null}.
      *
-     * @param   nm   property name.
-     * @param   val   default value.
-     * @return  the {@code Integer} value of the property.
-     * @see     java.lang.System#getProperty(java.lang.String)
+     * @param nm  property name.
+     * @param val default value.
+     * @return the {@code Integer} value of the property.
+     * @see java.lang.System#getProperty(java.lang.String)
      * @see java.lang.System#getProperty(java.lang.String, java.lang.String)
      * @see java.lang.Integer#decode
      */
@@ -932,11 +899,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * String} is the minus sign.  No whitespace characters are
      * permitted in the {@code String}.
      *
-     * @param     nm the {@code String} to decode.
-     * @return    an {@code Integer} object holding the {@code int}
-     *             value represented by {@code nm}
-     * @exception NumberFormatException  if the {@code String} does not
-     *            contain a parsable integer.
+     * @param nm the {@code String} to decode.
+     * @return an {@code Integer} object holding the {@code int}
+     * value represented by {@code nm}
+     * @throws NumberFormatException if the {@code String} does not
+     *                               contain a parsable integer.
      * @see java.lang.Integer#parseInt(java.lang.String, int)
      */
     public static Integer decode(String nm) throws NumberFormatException {
@@ -945,32 +912,29 @@ public final class Integer extends Number implements Comparable<Integer> {
         boolean negative = false;
         Integer result;
 
-        if (nm.length() == 0)
-            throw new NumberFormatException("Zero length string");
+        if (nm.length() == 0) { throw new NumberFormatException("Zero length string"); }
         char firstChar = nm.charAt(0);
         // Handle sign, if present
         if (firstChar == '-') {
             negative = true;
             index++;
-        } else if (firstChar == '+')
-            index++;
+        } else if (firstChar == '+') { index++; }
 
         // Handle radix specifier, if present
         if (nm.startsWith("0x", index) || nm.startsWith("0X", index)) {
             index += 2;
             radix = 16;
-        }
-        else if (nm.startsWith("#", index)) {
-            index ++;
+        } else if (nm.startsWith("#", index)) {
+            index++;
             radix = 16;
-        }
-        else if (nm.startsWith("0", index) && nm.length() > 1 + index) {
-            index ++;
+        } else if (nm.startsWith("0", index) && nm.length() > 1 + index) {
+            index++;
             radix = 8;
         }
 
-        if (nm.startsWith("-", index) || nm.startsWith("+", index))
+        if (nm.startsWith("-", index) || nm.startsWith("+", index)) {
             throw new NumberFormatException("Sign character in wrong position");
+        }
 
         try {
             result = Integer.valueOf(nm.substring(index), radix);
@@ -979,8 +943,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             // If number is Integer.MIN_VALUE, we'll end up here. The next line
             // handles this case, and causes any genuine format error to be
             // rethrown.
-            String constant = negative ? ("-" + nm.substring(index))
-                                       : nm.substring(index);
+            String constant = negative ? ("-" + nm.substring(index)) : nm.substring(index);
             result = Integer.valueOf(constant, radix);
         }
         return result;
@@ -989,15 +952,15 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Compares two {@code Integer} objects numerically.
      *
-     * @param   anotherInteger   the {@code Integer} to be compared.
-     * @return  the value {@code 0} if this {@code Integer} is
-     *          equal to the argument {@code Integer}; a value less than
-     *          {@code 0} if this {@code Integer} is numerically less
-     *          than the argument {@code Integer}; and a value greater
-     *          than {@code 0} if this {@code Integer} is numerically
-     *           greater than the argument {@code Integer} (signed
-     *           comparison).
-     * @since   1.2
+     * @param anotherInteger the {@code Integer} to be compared.
+     * @return the value {@code 0} if this {@code Integer} is
+     * equal to the argument {@code Integer}; a value less than
+     * {@code 0} if this {@code Integer} is numerically less
+     * than the argument {@code Integer}; and a value greater
+     * than {@code 0} if this {@code Integer} is numerically
+     * greater than the argument {@code Integer} (signed
+     * comparison).
+     * @since 1.2
      */
     public int compareTo(Integer anotherInteger) {
         return compare(this.value, anotherInteger.value);
@@ -1010,11 +973,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      *    Integer.valueOf(x).compareTo(Integer.valueOf(y))
      * </pre>
      *
-     * @param  x the first {@code int} to compare
-     * @param  y the second {@code int} to compare
+     * @param x the first {@code int} to compare
+     * @param y the second {@code int} to compare
      * @return the value {@code 0} if {@code x == y};
-     *         a value less than {@code 0} if {@code x < y}; and
-     *         a value greater than {@code 0} if {@code x > y}
+     * a value less than {@code 0} if {@code x < y}; and
+     * a value greater than {@code 0} if {@code x > y}
      * @since 1.7
      */
     public static int compare(int x, int y) {
@@ -1040,16 +1003,16 @@ public final class Integer extends Number implements Comparable<Integer> {
      * is equal to zero.
      *
      * @return an {@code int} value with a single one-bit, in the position
-     *     of the highest-order one-bit in the specified value, or zero if
-     *     the specified value is itself equal to zero.
+     * of the highest-order one-bit in the specified value, or zero if
+     * the specified value is itself equal to zero.
      * @since 1.5
      */
     public static int highestOneBit(int i) {
         // HD, Figure 3-1
-        i |= (i >>  1);
-        i |= (i >>  2);
-        i |= (i >>  4);
-        i |= (i >>  8);
+        i |= (i >> 1);
+        i |= (i >> 2);
+        i |= (i >> 4);
+        i |= (i >> 8);
         i |= (i >> 16);
         return i - (i >>> 1);
     }
@@ -1062,8 +1025,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * is equal to zero.
      *
      * @return an {@code int} value with a single one-bit, in the position
-     *     of the lowest-order one-bit in the specified value, or zero if
-     *     the specified value is itself equal to zero.
+     * of the lowest-order one-bit in the specified value, or zero if
+     * the specified value is itself equal to zero.
      * @since 1.5
      */
     public static int lowestOneBit(int i) {
@@ -1086,20 +1049,31 @@ public final class Integer extends Number implements Comparable<Integer> {
      * </ul>
      *
      * @return the number of zero bits preceding the highest-order
-     *     ("leftmost") one-bit in the two's complement binary representation
-     *     of the specified {@code int} value, or 32 if the value
-     *     is equal to zero.
+     * ("leftmost") one-bit in the two's complement binary representation
+     * of the specified {@code int} value, or 32 if the value
+     * is equal to zero.
      * @since 1.5
      */
     public static int numberOfLeadingZeros(int i) {
         // HD, Figure 5-6
-        if (i == 0)
-            return 32;
+        if (i == 0) { return 32; }
         int n = 1;
-        if (i >>> 16 == 0) { n += 16; i <<= 16; }
-        if (i >>> 24 == 0) { n +=  8; i <<=  8; }
-        if (i >>> 28 == 0) { n +=  4; i <<=  4; }
-        if (i >>> 30 == 0) { n +=  2; i <<=  2; }
+        if (i >>> 16 == 0) {
+            n += 16;
+            i <<= 16;
+        }
+        if (i >>> 24 == 0) {
+            n += 8;
+            i <<= 8;
+        }
+        if (i >>> 28 == 0) {
+            n += 4;
+            i <<= 4;
+        }
+        if (i >>> 30 == 0) {
+            n += 2;
+            i <<= 2;
+        }
         n -= i >>> 31;
         return n;
     }
@@ -1112,20 +1086,36 @@ public final class Integer extends Number implements Comparable<Integer> {
      * equal to zero.
      *
      * @return the number of zero bits following the lowest-order ("rightmost")
-     *     one-bit in the two's complement binary representation of the
-     *     specified {@code int} value, or 32 if the value is equal
-     *     to zero.
+     * one-bit in the two's complement binary representation of the
+     * specified {@code int} value, or 32 if the value is equal
+     * to zero.
      * @since 1.5
      */
     public static int numberOfTrailingZeros(int i) {
         // HD, Figure 5-14
         int y;
-        if (i == 0) return 32;
+        if (i == 0) { return 32; }
         int n = 31;
-        y = i <<16; if (y != 0) { n = n -16; i = y; }
-        y = i << 8; if (y != 0) { n = n - 8; i = y; }
-        y = i << 4; if (y != 0) { n = n - 4; i = y; }
-        y = i << 2; if (y != 0) { n = n - 2; i = y; }
+        y = i << 16;
+        if (y != 0) {
+            n = n - 16;
+            i = y;
+        }
+        y = i << 8;
+        if (y != 0) {
+            n = n - 8;
+            i = y;
+        }
+        y = i << 4;
+        if (y != 0) {
+            n = n - 4;
+            i = y;
+        }
+        y = i << 2;
+        if (y != 0) {
+            n = n - 2;
+            i = y;
+        }
         return n - ((i << 1) >>> 31);
     }
 
@@ -1135,7 +1125,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * sometimes referred to as the <i>population count</i>.
      *
      * @return the number of one-bits in the two's complement binary
-     *     representation of the specified {@code int} value.
+     * representation of the specified {@code int} value.
      * @since 1.5
      */
     public static int bitCount(int i) {
@@ -1162,8 +1152,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * distance) == rotateLeft(val, distance & 0x1F)}.
      *
      * @return the value obtained by rotating the two's complement binary
-     *     representation of the specified {@code int} value left by the
-     *     specified number of bits.
+     * representation of the specified {@code int} value left by the
+     * specified number of bits.
      * @since 1.5
      */
     public static int rotateLeft(int i, int distance) {
@@ -1184,8 +1174,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * distance) == rotateRight(val, distance & 0x1F)}.
      *
      * @return the value obtained by rotating the two's complement binary
-     *     representation of the specified {@code int} value right by the
-     *     specified number of bits.
+     * representation of the specified {@code int} value right by the
+     * specified number of bits.
      * @since 1.5
      */
     public static int rotateRight(int i, int distance) {
@@ -1198,7 +1188,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * value.
      *
      * @return the value obtained by reversing order of the bits in the
-     *     specified {@code int} value.
+     * specified {@code int} value.
      * @since 1.5
      */
     public static int reverse(int i) {
@@ -1206,8 +1196,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         i = (i & 0x55555555) << 1 | (i >>> 1) & 0x55555555;
         i = (i & 0x33333333) << 2 | (i >>> 2) & 0x33333333;
         i = (i & 0x0f0f0f0f) << 4 | (i >>> 4) & 0x0f0f0f0f;
-        i = (i << 24) | ((i & 0xff00) << 8) |
-            ((i >>> 8) & 0xff00) | (i >>> 24);
+        i = (i << 24) | ((i & 0xff00) << 8) | ((i >>> 8) & 0xff00) | (i >>> 24);
         return i;
     }
 
@@ -1229,14 +1218,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * two's complement representation of the specified {@code int} value.
      *
      * @return the value obtained by reversing the bytes in the specified
-     *     {@code int} value.
+     * {@code int} value.
      * @since 1.5
      */
     public static int reverseBytes(int i) {
-        return ((i >>> 24)           ) |
-               ((i >>   8) &   0xFF00) |
-               ((i <<   8) & 0xFF0000) |
-               ((i << 24));
+        return ((i >>> 24)) | ((i >> 8) & 0xFF00) | ((i << 8) & 0xFF0000) | ((i << 24));
     }
 
     /** use serialVersionUID from JDK 1.0.2 for interoperability */

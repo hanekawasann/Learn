@@ -37,7 +37,7 @@ import java.io.IOException;
  * socket. The {@link #bind(SocketAddress) bind} method is used to bind the
  * socket to a local {@link SocketAddress address}, the {@link #getLocalAddress()
  * getLocalAddress} method returns the address that the socket is bound to, and
- * the {@link #setOption(SocketOption,Object) setOption} and {@link
+ * the {@link #setOption(SocketOption, Object) setOption} and {@link
  * #getOption(SocketOption) getOption} methods are used to set and query socket
  * options.  An implementation of this interface should specify the socket options
  * that it supports.
@@ -51,9 +51,7 @@ import java.io.IOException;
  * @since 1.7
  */
 
-public interface NetworkChannel
-    extends Channel
-{
+public interface NetworkChannel extends Channel {
     /**
      * Binds the channel's socket to a local address.
      *
@@ -63,25 +61,16 @@ public interface NetworkChannel
      * value {@code null} then the socket will be bound to an address that is
      * assigned automatically.
      *
-     * @param   local
-     *          The address to bind the socket, or {@code null} to bind the socket
-     *          to an automatically assigned socket address
-     *
-     * @return  This channel
-     *
-     * @throws  AlreadyBoundException
-     *          If the socket is already bound
-     * @throws  UnsupportedAddressTypeException
-     *          If the type of the given address is not supported
-     * @throws  ClosedChannelException
-     *          If the channel is closed
-     * @throws  IOException
-     *          If some other I/O error occurs
-     * @throws  SecurityException
-     *          If a security manager is installed and it denies an unspecified
-     *          permission. An implementation of this interface should specify
-     *          any required permissions.
-     *
+     * @param local The address to bind the socket, or {@code null} to bind the socket
+     *              to an automatically assigned socket address
+     * @return This channel
+     * @throws AlreadyBoundException           If the socket is already bound
+     * @throws UnsupportedAddressTypeException If the type of the given address is not supported
+     * @throws ClosedChannelException          If the channel is closed
+     * @throws IOException                     If some other I/O error occurs
+     * @throws SecurityException               If a security manager is installed and it denies an unspecified
+     *                                         permission. An implementation of this interface should specify
+     *                                         any required permissions.
      * @see #getLocalAddress
      */
     NetworkChannel bind(SocketAddress local) throws IOException;
@@ -94,36 +83,24 @@ public interface NetworkChannel
      * socket address then the return value from this method is of type {@link
      * java.net.InetSocketAddress}.
      *
-     * @return  The socket address that the socket is bound to, or {@code null}
-     *          if the channel's socket is not bound
-     *
-     * @throws  ClosedChannelException
-     *          If the channel is closed
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @return The socket address that the socket is bound to, or {@code null}
+     * if the channel's socket is not bound
+     * @throws ClosedChannelException If the channel is closed
+     * @throws IOException            If an I/O error occurs
      */
     SocketAddress getLocalAddress() throws IOException;
 
     /**
      * Sets the value of a socket option.
      *
-     * @param   name
-     *          The socket option
-     * @param   value
-     *          The value of the socket option. A value of {@code null} may be
-     *          a valid value for some socket options.
-     *
-     * @return  This channel
-     *
-     * @throws  UnsupportedOperationException
-     *          If the socket option is not supported by this channel
-     * @throws  IllegalArgumentException
-     *          If the value is not a valid value for this socket option
-     * @throws  ClosedChannelException
-     *          If this channel is closed
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
+     * @param name  The socket option
+     * @param value The value of the socket option. A value of {@code null} may be
+     *              a valid value for some socket options.
+     * @return This channel
+     * @throws UnsupportedOperationException If the socket option is not supported by this channel
+     * @throws IllegalArgumentException      If the value is not a valid value for this socket option
+     * @throws ClosedChannelException        If this channel is closed
+     * @throws IOException                   If an I/O error occurs
      * @see java.net.StandardSocketOptions
      */
     <T> NetworkChannel setOption(SocketOption<T> name, T value) throws IOException;
@@ -131,19 +108,12 @@ public interface NetworkChannel
     /**
      * Returns the value of a socket option.
      *
-     * @param   name
-     *          The socket option
-     *
-     * @return  The value of the socket option. A value of {@code null} may be
-     *          a valid value for some socket options.
-     *
-     * @throws  UnsupportedOperationException
-     *          If the socket option is not supported by this channel
-     * @throws  ClosedChannelException
-     *          If this channel is closed
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
+     * @param name The socket option
+     * @return The value of the socket option. A value of {@code null} may be
+     * a valid value for some socket options.
+     * @throws UnsupportedOperationException If the socket option is not supported by this channel
+     * @throws ClosedChannelException        If this channel is closed
+     * @throws IOException                   If an I/O error occurs
      * @see java.net.StandardSocketOptions
      */
     <T> T getOption(SocketOption<T> name) throws IOException;
@@ -154,7 +124,7 @@ public interface NetworkChannel
      * <p> This method will continue to return the set of options even after the
      * channel has been closed.
      *
-     * @return  A set of the socket options supported by this channel
+     * @return A set of the socket options supported by this channel
      */
     Set<SocketOption<?>> supportedOptions();
 }

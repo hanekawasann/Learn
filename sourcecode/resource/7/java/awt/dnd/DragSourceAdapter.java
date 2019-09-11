@@ -47,15 +47,13 @@ package java.awt.dnd;
  * adapter corresponds to that drop site and is not followed by a
  * <code>dragExit()</code> invocation on this adapter.
  *
+ * @author David Mendenhall
  * @see DragSourceEvent
  * @see DragSourceListener
  * @see DragSourceMotionListener
- *
- * @author David Mendenhall
  * @since 1.4
  */
-public abstract class DragSourceAdapter
-    implements DragSourceListener, DragSourceMotionListener {
+public abstract class DragSourceAdapter implements DragSourceListener, DragSourceMotionListener {
 
     /**
      * Called as the cursor's hotspot enters a platform-dependent drop site.

@@ -30,9 +30,8 @@ package java.awt;
  * It provides access to a print graphics object which renders
  * to an appropriate print device.
  *
+ * @author Amy Fowler
  * @see Toolkit#getPrintJob
- *
- * @author      Amy Fowler
  */
 public abstract class PrintJob {
 
@@ -41,6 +40,7 @@ public abstract class PrintJob {
      * The page is sent to the printer when the graphics
      * object is disposed.  This graphics object will also implement
      * the PrintGraphics interface.
+     *
      * @see PrintGraphics
      */
     public abstract Graphics getGraphics();
@@ -71,6 +71,7 @@ public abstract class PrintJob {
 
     /**
      * Ends this print job once it is no longer referenced.
+     *
      * @see #end
      */
     public void finalize() {

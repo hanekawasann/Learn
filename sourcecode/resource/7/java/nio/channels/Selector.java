@@ -70,7 +70,7 @@ import java.util.Set;
  * <p> All three sets are empty in a newly-created selector.
  *
  * <p> A key is added to a selector's key set as a side effect of registering a
- * channel via the channel's {@link SelectableChannel#register(Selector,int)
+ * channel via the channel's {@link SelectableChannel#register(Selector, int)
  * register} method.  Cancelled keys are removed from the key set during
  * selection operations.  The key set itself is not directly modifiable.
  *
@@ -127,7 +127,7 @@ import java.util.Set;
  *     bitwise-disjoined into the key's current ready set. </p></li>
  *
  *   </ol></li>
- *
+ * <p>
  *   If all of the keys in the key set at the start of this step have empty
  *   interest sets then neither the selected-key set nor any of the keys'
  *   ready-operation sets will be updated.
@@ -194,13 +194,11 @@ import java.util.Set;
  * iterator's own {@link java.util.Iterator#remove() remove} method, then a
  * {@link java.util.ConcurrentModificationException} will be thrown. </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
- * @since 1.4
- *
  * @see SelectableChannel
  * @see SelectionKey
+ * @since 1.4
  */
 
 public abstract class Selector implements Closeable {
@@ -218,10 +216,8 @@ public abstract class Selector implements Closeable {
      * of the system-wide default {@link
      * java.nio.channels.spi.SelectorProvider} object.  </p>
      *
-     * @return  A new selector
-     *
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @return A new selector
+     * @throws IOException If an I/O error occurs
      */
     public static Selector open() throws IOException {
         return SelectorProvider.provider().openSelector();
@@ -237,7 +233,7 @@ public abstract class Selector implements Closeable {
     /**
      * Returns the provider that created this channel.  </p>
      *
-     * @return  The provider that created this channel
+     * @return The provider that created this channel
      */
     public abstract SelectorProvider provider();
 
@@ -251,10 +247,8 @@ public abstract class Selector implements Closeable {
      *
      * <p> The key set is <a href="#ksc">not thread-safe</a>. </p>
      *
-     * @return  This selector's key set
-     *
-     * @throws  ClosedSelectorException
-     *          If this selector is closed
+     * @return This selector's key set
+     * @throws ClosedSelectorException If this selector is closed
      */
     public abstract Set<SelectionKey> keys();
 
@@ -267,10 +261,8 @@ public abstract class Selector implements Closeable {
      *
      * <p> The selected-key set is <a href="#ksc">not thread-safe</a>. </p>
      *
-     * @return  This selector's selected-key set
-     *
-     * @throws  ClosedSelectorException
-     *          If this selector is closed
+     * @return This selector's selected-key set
+     * @throws ClosedSelectorException If this selector is closed
      */
     public abstract Set<SelectionKey> selectedKeys();
 
@@ -285,14 +277,10 @@ public abstract class Selector implements Closeable {
      * <p> Invoking this method clears the effect of any previous invocations
      * of the {@link #wakeup wakeup} method.  </p>
      *
-     * @return  The number of keys, possibly zero, whose ready-operation sets
-     *          were updated by the selection operation
-     *
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
-     * @throws  ClosedSelectorException
-     *          If this selector is closed
+     * @return The number of keys, possibly zero, whose ready-operation sets
+     * were updated by the selection operation
+     * @throws IOException             If an I/O error occurs
+     * @throws ClosedSelectorException If this selector is closed
      */
     public abstract int selectNow() throws IOException;
 
@@ -309,25 +297,17 @@ public abstract class Selector implements Closeable {
      * <p> This method does not offer real-time guarantees: It schedules the
      * timeout as if by invoking the {@link Object#wait(long)} method. </p>
      *
-     * @param  timeout  If positive, block for up to <tt>timeout</tt>
-     *                  milliseconds, more or less, while waiting for a
-     *                  channel to become ready; if zero, block indefinitely;
-     *                  must not be negative
-     *
-     * @return  The number of keys, possibly zero,
-     *          whose ready-operation sets were updated
-     *
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
-     * @throws  ClosedSelectorException
-     *          If this selector is closed
-     *
-     * @throws  IllegalArgumentException
-     *          If the value of the timeout argument is negative
+     * @param timeout If positive, block for up to <tt>timeout</tt>
+     *                milliseconds, more or less, while waiting for a
+     *                channel to become ready; if zero, block indefinitely;
+     *                must not be negative
+     * @return The number of keys, possibly zero,
+     * whose ready-operation sets were updated
+     * @throws IOException              If an I/O error occurs
+     * @throws ClosedSelectorException  If this selector is closed
+     * @throws IllegalArgumentException If the value of the timeout argument is negative
      */
-    public abstract int select(long timeout)
-        throws IOException;
+    public abstract int select(long timeout) throws IOException;
 
     /**
      * Selects a set of keys whose corresponding channels are ready for I/O
@@ -338,14 +318,10 @@ public abstract class Selector implements Closeable {
      * this selector's {@link #wakeup wakeup} method is invoked, or the current
      * thread is interrupted, whichever comes first.  </p>
      *
-     * @return  The number of keys, possibly zero,
-     *          whose ready-operation sets were updated
-     *
-     * @throws  IOException
-     *          If an I/O error occurs
-     *
-     * @throws  ClosedSelectorException
-     *          If this selector is closed
+     * @return The number of keys, possibly zero,
+     * whose ready-operation sets were updated
+     * @throws IOException             If an I/O error occurs
+     * @throws ClosedSelectorException If this selector is closed
      */
     public abstract int select() throws IOException;
 
@@ -366,7 +342,7 @@ public abstract class Selector implements Closeable {
      * <p> Invoking this method more than once between two successive selection
      * operations has the same effect as invoking it just once.  </p>
      *
-     * @return  This selector
+     * @return This selector
      */
     public abstract Selector wakeup();
 
@@ -388,8 +364,7 @@ public abstract class Selector implements Closeable {
      * invoking this method or the {@link #wakeup wakeup} method, will cause a
      * {@link ClosedSelectorException} to be thrown. </p>
      *
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     public abstract void close() throws IOException;
 

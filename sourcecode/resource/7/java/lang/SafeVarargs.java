@@ -74,7 +74,7 @@ import java.lang.annotation.*;
  *   String s = stringLists[0].get(0); // Oh no, ClassCastException at runtime!
  * }
  * </pre></blockquote>
- *
+ * <p>
  * leads to a {@code ClassCastException} at runtime.
  *
  * <p>Future versions of the platform may mandate compiler errors for
@@ -87,5 +87,5 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
-public @interface SafeVarargs {}
+@Target( { ElementType.CONSTRUCTOR, ElementType.METHOD })
+public @interface SafeVarargs { }

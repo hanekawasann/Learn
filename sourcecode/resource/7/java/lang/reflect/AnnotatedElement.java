@@ -50,13 +50,13 @@ import java.lang.annotation.Annotation;
  * java.lang.annotation.AnnotationTypeMismatchException} or an
  * {@link java.lang.annotation.IncompleteAnnotationException}.
  *
+ * @author Josh Bloch
  * @see java.lang.EnumConstantNotPresentException
  * @see java.lang.TypeNotPresentException
  * @see java.lang.annotation.AnnotationFormatError
  * @see java.lang.annotation.AnnotationTypeMismatchException
  * @see java.lang.annotation.IncompleteAnnotationException
  * @since 1.5
- * @author Josh Bloch
  */
 public interface AnnotatedElement {
     /**
@@ -65,22 +65,22 @@ public interface AnnotatedElement {
      * is designed primarily for convenient access to marker annotations.
      *
      * @param annotationClass the Class object corresponding to the
-     *        annotation type
+     *                        annotation type
      * @return true if an annotation for the specified annotation
-     *     type is present on this element, else false
+     * type is present on this element, else false
      * @throws NullPointerException if the given annotation class is null
      * @since 1.5
      */
-     boolean isAnnotationPresent(Class<? extends Annotation> annotationClass);
+    boolean isAnnotationPresent(Class<? extends Annotation> annotationClass);
 
-   /**
+    /**
      * Returns this element's annotation for the specified type if
      * such an annotation is present, else null.
      *
      * @param annotationClass the Class object corresponding to the
-     *        annotation type
+     *                        annotation type
      * @return this element's annotation for the specified annotation type if
-     *     present on this element, else null
+     * present on this element, else null
      * @throws NullPointerException if the given annotation class is null
      * @since 1.5
      */

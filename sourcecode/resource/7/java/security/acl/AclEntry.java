@@ -31,7 +31,7 @@ import java.security.Principal;
 /**
  * This is the interface used for representing one entry in an Access
  * Control List (ACL).<p>
- *
+ * <p>
  * An ACL can be thought of as a data structure with multiple ACL entry
  * objects. Each ACL entry object contains a set of permissions associated
  * with a particular principal. (A principal represents an entity such as
@@ -41,15 +41,14 @@ import java.security.Principal;
  * are to be denied. Each principal can have at most one positive ACL entry
  * and one negative entry; that is, multiple positive or negative ACL
  * entries are not allowed for any principal.
- *
+ * <p>
  * Note: ACL entries are by default positive. An entry becomes a
  * negative entry only if the
  * {@link #setNegativePermissions() setNegativePermissions}
  * method is called on it.
  *
+ * @author Satish Dharmaraj
  * @see java.security.acl.Acl
- *
- * @author      Satish Dharmaraj
  */
 public interface AclEntry extends Cloneable {
 
@@ -59,10 +58,8 @@ public interface AclEntry extends Cloneable {
      * false is returned, otherwise true is returned.
      *
      * @param user the principal to be set for this entry.
-     *
      * @return true if the principal is set, false if there was
      * already a principal set for this entry.
-     *
      * @see #getPrincipal
      */
     public boolean setPrincipal(Principal user);
@@ -73,7 +70,6 @@ public interface AclEntry extends Cloneable {
      * entry yet.
      *
      * @return the principal associated with this entry.
-     *
      * @see #setPrincipal
      */
     public Principal getPrincipal();
@@ -82,7 +78,7 @@ public interface AclEntry extends Cloneable {
      * Sets this ACL entry to be a negative one. That is, the associated
      * principal (e.g., a user or a group) will be denied the permission set
      * specified in the entry.
-     *
+     * <p>
      * Note: ACL entries are by default positive. An entry becomes a
      * negative entry only if this <code>setNegativePermissions</code>
      * method is called on it.
@@ -103,8 +99,7 @@ public interface AclEntry extends Cloneable {
      * have multiple permissions.
      *
      * @param permission the permission to be associated with
-     * the principal in this entry.
-     *
+     *                   the principal in this entry.
      * @return true if the permission was added, false if the
      * permission was already part of this entry's permission set.
      */
@@ -114,7 +109,6 @@ public interface AclEntry extends Cloneable {
      * Removes the specified permission from this ACL entry.
      *
      * @param permission the permission to be removed from this entry.
-     *
      * @return true if the permission is removed, false if the
      * permission was not part of this entry's permission set.
      */
@@ -125,7 +119,6 @@ public interface AclEntry extends Cloneable {
      * permission set in this entry.
      *
      * @param permission the permission to be checked for.
-     *
      * @return true if the permission is part of the
      * permission set in this entry, false otherwise.
      */

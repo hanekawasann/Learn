@@ -58,17 +58,15 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * and finally a non-indexed writer method "setFred".
      *
      * @param propertyName The programmatic name of the property.
-     * @param beanClass The Class object for the target bean.
-     * @exception IntrospectionException if an exception occurs during
-     *              introspection.
+     * @param beanClass    The Class object for the target bean.
+     * @throws IntrospectionException if an exception occurs during
+     *                                introspection.
      */
-    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass)
-                throws IntrospectionException {
-        this(propertyName, beanClass,
-             Introspector.GET_PREFIX + NameGenerator.capitalize(propertyName),
-             Introspector.SET_PREFIX + NameGenerator.capitalize(propertyName),
-             Introspector.GET_PREFIX + NameGenerator.capitalize(propertyName),
-             Introspector.SET_PREFIX + NameGenerator.capitalize(propertyName));
+    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass) throws IntrospectionException {
+        this(propertyName, beanClass, Introspector.GET_PREFIX + NameGenerator.capitalize(propertyName),
+            Introspector.SET_PREFIX + NameGenerator.capitalize(propertyName),
+            Introspector.GET_PREFIX + NameGenerator.capitalize(propertyName),
+            Introspector.SET_PREFIX + NameGenerator.capitalize(propertyName));
     }
 
     /**
@@ -76,27 +74,26 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * names for reading and writing the property, both indexed
      * and non-indexed.
      *
-     * @param propertyName The programmatic name of the property.
-     * @param beanClass  The Class object for the target bean.
-     * @param readMethodName The name of the method used for reading the property
-     *           values as an array.  May be null if the property is write-only
-     *           or must be indexed.
-     * @param writeMethodName The name of the method used for writing the property
-     *           values as an array.  May be null if the property is read-only
-     *           or must be indexed.
-     * @param indexedReadMethodName The name of the method used for reading
-     *          an indexed property value.
-     *          May be null if the property is write-only.
+     * @param propertyName           The programmatic name of the property.
+     * @param beanClass              The Class object for the target bean.
+     * @param readMethodName         The name of the method used for reading the property
+     *                               values as an array.  May be null if the property is write-only
+     *                               or must be indexed.
+     * @param writeMethodName        The name of the method used for writing the property
+     *                               values as an array.  May be null if the property is read-only
+     *                               or must be indexed.
+     * @param indexedReadMethodName  The name of the method used for reading
+     *                               an indexed property value.
+     *                               May be null if the property is write-only.
      * @param indexedWriteMethodName The name of the method used for writing
-     *          an indexed property value.
-     *          May be null if the property is read-only.
-     * @exception IntrospectionException if an exception occurs during
-     *              introspection.
+     *                               an indexed property value.
+     *                               May be null if the property is read-only.
+     * @throws IntrospectionException if an exception occurs during
+     *                                introspection.
      */
-    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass,
-                String readMethodName, String writeMethodName,
-                String indexedReadMethodName, String indexedWriteMethodName)
-                throws IntrospectionException {
+    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass, String readMethodName,
+        String writeMethodName, String indexedReadMethodName, String indexedWriteMethodName)
+        throws IntrospectionException {
         super(propertyName, beanClass, readMethodName, writeMethodName);
 
         this.indexedReadMethodName = indexedReadMethodName;
@@ -116,21 +113,20 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * This constructor takes the name of a simple property, and Method
      * objects for reading and writing the property.
      *
-     * @param propertyName The programmatic name of the property.
-     * @param readMethod The method used for reading the property values as an array.
-     *          May be null if the property is write-only or must be indexed.
-     * @param writeMethod The method used for writing the property values as an array.
-     *          May be null if the property is read-only or must be indexed.
-     * @param indexedReadMethod The method used for reading an indexed property value.
-     *          May be null if the property is write-only.
+     * @param propertyName       The programmatic name of the property.
+     * @param readMethod         The method used for reading the property values as an array.
+     *                           May be null if the property is write-only or must be indexed.
+     * @param writeMethod        The method used for writing the property values as an array.
+     *                           May be null if the property is read-only or must be indexed.
+     * @param indexedReadMethod  The method used for reading an indexed property value.
+     *                           May be null if the property is write-only.
      * @param indexedWriteMethod The method used for writing an indexed property value.
-     *          May be null if the property is read-only.
-     * @exception IntrospectionException if an exception occurs during
-     *              introspection.
+     *                           May be null if the property is read-only.
+     * @throws IntrospectionException if an exception occurs during
+     *                                introspection.
      */
     public IndexedPropertyDescriptor(String propertyName, Method readMethod, Method writeMethod,
-                                            Method indexedReadMethod, Method indexedWriteMethod)
-                throws IntrospectionException {
+        Method indexedReadMethod, Method indexedWriteMethod) throws IntrospectionException {
         super(propertyName, readMethod, writeMethod);
 
         setIndexedReadMethod0(indexedReadMethod);
@@ -144,17 +140,17 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * Creates <code>PropertyDescriptor</code> for the specified bean
      * with the specified name and methods to read/write the property value.
      *
-     * @param bean          the type of the target bean
-     * @param base          the base name of the property (the rest of the method name)
-     * @param read          the method used for reading the property value
-     * @param write         the method used for writing the property value
-     * @param readIndexed   the method used for reading an indexed property value
-     * @param writeIndexed  the method used for writing an indexed property value
-     * @exception IntrospectionException if an exception occurs during introspection
-     *
+     * @param bean         the type of the target bean
+     * @param base         the base name of the property (the rest of the method name)
+     * @param read         the method used for reading the property value
+     * @param write        the method used for writing the property value
+     * @param readIndexed  the method used for reading an indexed property value
+     * @param writeIndexed the method used for writing an indexed property value
+     * @throws IntrospectionException if an exception occurs during introspection
      * @since 1.7
      */
-    IndexedPropertyDescriptor(Class<?> bean, String base, Method read, Method write, Method readIndexed, Method writeIndexed) throws IntrospectionException {
+    IndexedPropertyDescriptor(Class<?> bean, String base, Method read, Method write, Method readIndexed,
+        Method writeIndexed) throws IntrospectionException {
         super(bean, base, read, write);
 
         setIndexedReadMethod0(readIndexed);
@@ -176,8 +172,7 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
         Method indexedReadMethod = getIndexedReadMethod0();
         if (indexedReadMethod == null) {
             Class cls = getClass0();
-            if (cls == null ||
-                (indexedReadMethodName == null && indexedReadMethodRef == null)) {
+            if (cls == null || (indexedReadMethodName == null && indexedReadMethodRef == null)) {
                 // the Indexed readMethod was explicitly set to null.
                 return null;
             }
@@ -207,12 +202,10 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @param readMethod The new indexed read method.
      */
-    public synchronized void setIndexedReadMethod(Method readMethod)
-        throws IntrospectionException {
+    public synchronized void setIndexedReadMethod(Method readMethod) throws IntrospectionException {
 
         // the indexed property type is set by the reader.
-        setIndexedPropertyType(findIndexedPropertyType(readMethod,
-                                                       getIndexedWriteMethod0()));
+        setIndexedPropertyType(findIndexedPropertyType(readMethod, getIndexedWriteMethod0()));
         setIndexedReadMethod0(readMethod);
     }
 
@@ -241,8 +234,7 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
         Method indexedWriteMethod = getIndexedWriteMethod0();
         if (indexedWriteMethod == null) {
             Class cls = getClass0();
-            if (cls == null ||
-                (indexedWriteMethodName == null && indexedWriteMethodRef == null)) {
+            if (cls == null || (indexedWriteMethodName == null && indexedWriteMethodRef == null)) {
                 // the Indexed writeMethod was explicitly set to null.
                 return null;
             }
@@ -285,12 +277,10 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @param writeMethod The new indexed write method.
      */
-    public synchronized void setIndexedWriteMethod(Method writeMethod)
-        throws IntrospectionException {
+    public synchronized void setIndexedWriteMethod(Method writeMethod) throws IntrospectionException {
 
         // If the indexed property type has not been set, then set it.
-        Class type = findIndexedPropertyType(getIndexedReadMethod(),
-                                             writeMethod);
+        Class type = findIndexedPropertyType(getIndexedReadMethod(), writeMethod);
         setIndexedPropertyType(type);
         setIndexedWriteMethod0(writeMethod);
     }
@@ -316,14 +306,13 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * or is used as the parameter type of the indexed write method.
      *
      * @return the {@code Class} object that represents the Java type info,
-     *         or {@code null} if the type cannot be determined
+     * or {@code null} if the type cannot be determined
      */
     public synchronized Class<?> getIndexedPropertyType() {
         Class type = getIndexedPropertyType0();
         if (type == null) {
             try {
-                type = findIndexedPropertyType(getIndexedReadMethod(),
-                                               getIndexedWriteMethod());
+                type = findIndexedPropertyType(getIndexedReadMethod(), getIndexedWriteMethod());
                 setIndexedPropertyType(type);
             } catch (IntrospectionException ex) {
                 // fall
@@ -339,25 +328,18 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
     }
 
     private Class getIndexedPropertyType0() {
-        return (this.indexedPropertyTypeRef != null)
-                ? this.indexedPropertyTypeRef.get()
-                : null;
+        return (this.indexedPropertyTypeRef != null) ? this.indexedPropertyTypeRef.get() : null;
     }
 
     private Method getIndexedReadMethod0() {
-        return (this.indexedReadMethodRef != null)
-                ? this.indexedReadMethodRef.get()
-                : null;
+        return (this.indexedReadMethodRef != null) ? this.indexedReadMethodRef.get() : null;
     }
 
     private Method getIndexedWriteMethod0() {
-        return (this.indexedWriteMethodRef != null)
-                ? this.indexedWriteMethodRef.get()
-                : null;
+        return (this.indexedWriteMethodRef != null) ? this.indexedWriteMethodRef.get() : null;
     }
 
-    private Class findIndexedPropertyType(Method indexedReadMethod,
-                                          Method indexedWriteMethod)
+    private Class findIndexedPropertyType(Method indexedReadMethod, Method indexedWriteMethod)
         throws IntrospectionException {
         Class indexedPropertyType = null;
 
@@ -384,16 +366,14 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
             }
             if (indexedPropertyType != null && indexedPropertyType != params[1]) {
                 throw new IntrospectionException(
-                                                 "type mismatch between indexed read and indexed write methods: "
-                                                 + getName());
+                    "type mismatch between indexed read and indexed write methods: " + getName());
             }
             indexedPropertyType = params[1];
         }
         Class propertyType = getPropertyType();
-        if (propertyType != null && (!propertyType.isArray() ||
-                                     propertyType.getComponentType() != indexedPropertyType)) {
-            throw new IntrospectionException("type mismatch between indexed and non-indexed methods: "
-                                             + getName());
+        if (propertyType != null &&
+            (!propertyType.isArray() || propertyType.getComponentType() != indexedPropertyType)) {
+            throw new IntrospectionException("type mismatch between indexed and non-indexed methods: " + getName());
         }
         return indexedPropertyType;
     }
@@ -414,7 +394,7 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
         }
 
         if (obj != null && obj instanceof IndexedPropertyDescriptor) {
-            IndexedPropertyDescriptor other = (IndexedPropertyDescriptor)obj;
+            IndexedPropertyDescriptor other = (IndexedPropertyDescriptor) obj;
             Method otherIndexedReadMethod = other.getIndexedReadMethod();
             Method otherIndexedWriteMethod = other.getIndexedWriteMethod();
 
@@ -439,14 +419,14 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
      * Merge two property descriptors.  Where they conflict, give the
      * second argument (y) priority over the first argumnnt (x).
      *
-     * @param x  The first (lower priority) PropertyDescriptor
-     * @param y  The second (higher priority) PropertyDescriptor
+     * @param x The first (lower priority) PropertyDescriptor
+     * @param y The second (higher priority) PropertyDescriptor
      */
 
     IndexedPropertyDescriptor(PropertyDescriptor x, PropertyDescriptor y) {
-        super(x,y);
+        super(x, y);
         if (x instanceof IndexedPropertyDescriptor) {
-            IndexedPropertyDescriptor ix = (IndexedPropertyDescriptor)x;
+            IndexedPropertyDescriptor ix = (IndexedPropertyDescriptor) x;
             try {
                 Method xr = ix.getIndexedReadMethod();
                 if (xr != null) {
@@ -463,7 +443,7 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
             }
         }
         if (y instanceof IndexedPropertyDescriptor) {
-            IndexedPropertyDescriptor iy = (IndexedPropertyDescriptor)y;
+            IndexedPropertyDescriptor iy = (IndexedPropertyDescriptor) y;
             try {
                 Method yr = iy.getIndexedReadMethod();
                 if (yr != null && yr.getDeclaringClass() == getClass0()) {
@@ -504,12 +484,9 @@ public class IndexedPropertyDescriptor extends PropertyDescriptor {
     public int hashCode() {
         int result = super.hashCode();
 
-        result = 37 * result + ((indexedWriteMethodName == null) ? 0 :
-                                indexedWriteMethodName.hashCode());
-        result = 37 * result + ((indexedReadMethodName == null) ? 0 :
-                                indexedReadMethodName.hashCode());
-        result = 37 * result + ((getIndexedPropertyType() == null) ? 0 :
-                                getIndexedPropertyType().hashCode());
+        result = 37 * result + ((indexedWriteMethodName == null) ? 0 : indexedWriteMethodName.hashCode());
+        result = 37 * result + ((indexedReadMethodName == null) ? 0 : indexedReadMethodName.hashCode());
+        result = 37 * result + ((getIndexedPropertyType() == null) ? 0 : getIndexedPropertyType().hashCode());
 
         return result;
     }

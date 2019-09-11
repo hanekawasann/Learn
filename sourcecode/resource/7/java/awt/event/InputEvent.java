@@ -36,7 +36,7 @@ import sun.util.logging.PlatformLogger;
 
 /**
  * The root event class for all component-level input events.
- *
+ * <p>
  * Input events are delivered to listeners before they are
  * processed normally by the source where they originated.
  * This allows listeners and component subclasses to "consume"
@@ -46,13 +46,11 @@ import sun.util.logging.PlatformLogger;
  * activated.
  *
  * @author Carl Quinn
- *
  * @see KeyEvent
  * @see KeyAdapter
  * @see MouseEvent
  * @see MouseAdapter
  * @see MouseMotionAdapter
- *
  * @since 1.1
  */
 public abstract class InputEvent extends ComponentEvent {
@@ -110,85 +108,80 @@ public abstract class InputEvent extends ComponentEvent {
 
     /**
      * The Shift key extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int SHIFT_DOWN_MASK = 1 << 6;
 
     /**
      * The Control key extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int CTRL_DOWN_MASK = 1 << 7;
 
     /**
      * The Meta key extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int META_DOWN_MASK = 1 << 8;
 
     /**
      * The Alt key extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int ALT_DOWN_MASK = 1 << 9;
 
     /**
      * The Mouse Button1 extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int BUTTON1_DOWN_MASK = 1 << 10;
 
     /**
      * The Mouse Button2 extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int BUTTON2_DOWN_MASK = 1 << 11;
 
     /**
      * The Mouse Button3 extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int BUTTON3_DOWN_MASK = 1 << 12;
 
     /**
      * The AltGraph key extended modifier constant.
+     *
      * @since 1.4
      */
     public static final int ALT_GRAPH_DOWN_MASK = 1 << 13;
 
     /**
      * An array of extended modifiers for additional buttons.
+     *
      * @see getButtonDownMasks
      * There are twenty buttons fit into 4byte space.
      * one more bit is reserved for FIRST_HIGH_BIT.
      * @since 7.0
      */
-    private static final int [] BUTTON_DOWN_MASK = new int [] { BUTTON1_DOWN_MASK,
-                                                               BUTTON2_DOWN_MASK,
-                                                               BUTTON3_DOWN_MASK,
-                                                               1<<14, //4th phisical button (this is not a wheel!)
-                                                               1<<15, //(this is not a wheel!)
-                                                               1<<16,
-                                                               1<<17,
-                                                               1<<18,
-                                                               1<<19,
-                                                               1<<20,
-                                                               1<<21,
-                                                               1<<22,
-                                                               1<<23,
-                                                               1<<24,
-                                                               1<<25,
-                                                               1<<26,
-                                                               1<<27,
-                                                               1<<28,
-                                                               1<<29,
-                                                               1<<30};
+    private static final int[] BUTTON_DOWN_MASK = new int[] { BUTTON1_DOWN_MASK, BUTTON2_DOWN_MASK, BUTTON3_DOWN_MASK,
+        1 << 14, //4th phisical button (this is not a wheel!)
+        1 << 15, //(this is not a wheel!)
+        1 << 16, 1 << 17, 1 << 18, 1 << 19, 1 << 20, 1 << 21, 1 << 22, 1 << 23, 1 << 24, 1 << 25, 1 << 26, 1 << 27,
+        1 << 28, 1 << 29, 1 << 30 };
 
     /**
      * A method to access an array of extended modifiers for additional buttons.
+     *
      * @since 7.0
      */
-    private static int [] getButtonDownMasks(){
+    private static int[] getButtonDownMasks() {
         return Arrays.copyOf(BUTTON_DOWN_MASK, BUTTON_DOWN_MASK.length);
     }
 
@@ -202,44 +195,45 @@ public abstract class InputEvent extends ComponentEvent {
      * <li> as a {@code modifiers} parameter when creating a new {@link MouseEvent} instance
      * <li> to check {@link MouseEvent#getModifiersEx() modifiersEx} of existing {@code MouseEvent}
      * </ul>
+     *
      * @param button is a number to represent a button starting from 1.
-     * For example,
-     * <pre>
-     * int button = InputEvent.getMaskForButton(1);
-     * </pre>
-     * will have the same meaning as
-     * <pre>
-     * int button = InputEvent.getMaskForButton(MouseEvent.BUTTON1);
-     * </pre>
-     * because {@link MouseEvent#BUTTON1 MouseEvent.BUTTON1} equals to 1.
-     * If a mouse has three enabled buttons(see {@link java.awt.MouseInfo#getNumberOfButtons() MouseInfo.getNumberOfButtons()})
-     * then the values from the left column passed into the method will return
-     * corresponding values from the right column:
-     * <PRE>
-     *    <b>button </b>   <b>returned mask</b>
-     *    {@link MouseEvent#BUTTON1 BUTTON1}  {@link MouseEvent#BUTTON1_DOWN_MASK BUTTON1_DOWN_MASK}
-     *    {@link MouseEvent#BUTTON2 BUTTON2}  {@link MouseEvent#BUTTON2_DOWN_MASK BUTTON2_DOWN_MASK}
-     *    {@link MouseEvent#BUTTON3 BUTTON3}  {@link MouseEvent#BUTTON3_DOWN_MASK BUTTON3_DOWN_MASK}
-     * </PRE>
-     * If a mouse has more than three enabled buttons then more values
-     * are admissible (4, 5, etc.). There is no assigned constants for these extended buttons.
-     * The button masks for the extra buttons returned by this method have no assigned names like the
-     * first three button masks.
-     * <p>
-     * This method has the following implementation restriction.
-     * It returns masks for a limited number of buttons only. The maximum number is
-     * implementation dependent and may vary.
-     * This limit is defined by the relevant number
-     * of buttons that may hypothetically exist on the mouse but it is greater than the
-     * {@link java.awt.MouseInfo#getNumberOfButtons() MouseInfo.getNumberOfButtons()}.
-     * <p>
+     *               For example,
+     *               <pre>
+     *               int button = InputEvent.getMaskForButton(1);
+     *               </pre>
+     *               will have the same meaning as
+     *               <pre>
+     *               int button = InputEvent.getMaskForButton(MouseEvent.BUTTON1);
+     *               </pre>
+     *               because {@link MouseEvent#BUTTON1 MouseEvent.BUTTON1} equals to 1.
+     *               If a mouse has three enabled buttons(see {@link java.awt.MouseInfo#getNumberOfButtons() MouseInfo.getNumberOfButtons()})
+     *               then the values from the left column passed into the method will return
+     *               corresponding values from the right column:
+     *               <PRE>
+     *               <b>button </b>   <b>returned mask</b>
+     *               {@link MouseEvent#BUTTON1 BUTTON1}  {@link MouseEvent#BUTTON1_DOWN_MASK BUTTON1_DOWN_MASK}
+     *               {@link MouseEvent#BUTTON2 BUTTON2}  {@link MouseEvent#BUTTON2_DOWN_MASK BUTTON2_DOWN_MASK}
+     *               {@link MouseEvent#BUTTON3 BUTTON3}  {@link MouseEvent#BUTTON3_DOWN_MASK BUTTON3_DOWN_MASK}
+     *               </PRE>
+     *               If a mouse has more than three enabled buttons then more values
+     *               are admissible (4, 5, etc.). There is no assigned constants for these extended buttons.
+     *               The button masks for the extra buttons returned by this method have no assigned names like the
+     *               first three button masks.
+     *               <p>
+     *               This method has the following implementation restriction.
+     *               It returns masks for a limited number of buttons only. The maximum number is
+     *               implementation dependent and may vary.
+     *               This limit is defined by the relevant number
+     *               of buttons that may hypothetically exist on the mouse but it is greater than the
+     *               {@link java.awt.MouseInfo#getNumberOfButtons() MouseInfo.getNumberOfButtons()}.
+     *               <p>
      * @throws IllegalArgumentException if {@code button} is less than zero or greater than the number
-     *         of button masks reserved for buttons
-     * @since 7.0
+     *                                  of button masks reserved for buttons
      * @see java.awt.MouseInfo#getNumberOfButtons()
      * @see Toolkit#areExtraMouseButtonsEnabled()
      * @see MouseEvent#getModifiers()
      * @see MouseEvent#getModifiersEx()
+     * @since 7.0
      */
     public static int getMaskForButton(int button) {
         if (button <= 0 || button > BUTTON_DOWN_MASK.length) {
@@ -256,7 +250,7 @@ public abstract class InputEvent extends ComponentEvent {
     static final int FIRST_HIGH_BIT = 1 << 31;
 
     static final int JDK_1_3_MODIFIERS = SHIFT_DOWN_MASK - 1;
-    static final int HIGH_MODIFIERS = ~( FIRST_HIGH_BIT - 1 );
+    static final int HIGH_MODIFIERS = ~(FIRST_HIGH_BIT - 1);
 
     /**
      * The input event's Time stamp in UTC format.  The time stamp
@@ -291,17 +285,16 @@ public abstract class InputEvent extends ComponentEvent {
         if (!GraphicsEnvironment.isHeadless()) {
             initIDs();
         }
-        AWTAccessor.setInputEventAccessor(
-            new AWTAccessor.InputEventAccessor() {
-                public int[] getButtonDownMasks() {
-                    return InputEvent.getButtonDownMasks();
-                }
-            });
+        AWTAccessor.setInputEventAccessor(new AWTAccessor.InputEventAccessor() {
+            public int[] getButtonDownMasks() {
+                return InputEvent.getButtonDownMasks();
+            }
+        });
     }
 
     /**
      * Initialize JNI field and method IDs for fields that may be
-       accessed from C.
+     * accessed from C.
      */
     private static native void initIDs();
 
@@ -312,23 +305,23 @@ public abstract class InputEvent extends ComponentEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source the object where the event originated
-     * @param id           the integer that identifies the event type.
-     *                     It is allowed to pass as parameter any value that
-     *                     allowed for some subclass of {@code InputEvent} class.
-     *                     Passing in the value different from those values result
-     *                     in unspecified behavior
-     * @param when         a long int that gives the time the event occurred.
-     *                     Passing negative or zero value
-     *                     is not recommended
-     * @param modifiers    the modifier keys down during event (e.g. shift, ctrl,
-     *                     alt, meta)
-     *                     Passing negative parameter is not recommended.
-     *                     Zero value means no modifiers.
-     *                     Either extended _DOWN_MASK or old _MASK modifiers
-     *                     should be used, but both models should not be mixed
-     *                     in one event. Use of the extended modifiers is
-     *                     preferred
+     * @param source    the object where the event originated
+     * @param id        the integer that identifies the event type.
+     *                  It is allowed to pass as parameter any value that
+     *                  allowed for some subclass of {@code InputEvent} class.
+     *                  Passing in the value different from those values result
+     *                  in unspecified behavior
+     * @param when      a long int that gives the time the event occurred.
+     *                  Passing negative or zero value
+     *                  is not recommended
+     * @param modifiers the modifier keys down during event (e.g. shift, ctrl,
+     *                  alt, meta)
+     *                  Passing negative parameter is not recommended.
+     *                  Zero value means no modifiers.
+     *                  Either extended _DOWN_MASK or old _MASK modifiers
+     *                  should be used, but both models should not be mixed
+     *                  in one event. Use of the extended modifiers is
+     *                  preferred
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getSource()
      * @see #getID()
@@ -419,29 +412,29 @@ public abstract class InputEvent extends ComponentEvent {
      * Extended modifiers represent the state of all modal keys,
      * such as ALT, CTRL, META, and the mouse buttons just after
      * the event occurred
-     * <P>
+     * <p>
      * For example, if the user presses <b>button 1</b> followed by
      * <b>button 2</b>, and then releases them in the same order,
      * the following sequence of events is generated:
      * <PRE>
-     *    <code>MOUSE_PRESSED</code>:  <code>BUTTON1_DOWN_MASK</code>
-     *    <code>MOUSE_PRESSED</code>:  <code>BUTTON1_DOWN_MASK | BUTTON2_DOWN_MASK</code>
-     *    <code>MOUSE_RELEASED</code>: <code>BUTTON2_DOWN_MASK</code>
-     *    <code>MOUSE_CLICKED</code>:  <code>BUTTON2_DOWN_MASK</code>
-     *    <code>MOUSE_RELEASED</code>:
-     *    <code>MOUSE_CLICKED</code>:
+     * <code>MOUSE_PRESSED</code>:  <code>BUTTON1_DOWN_MASK</code>
+     * <code>MOUSE_PRESSED</code>:  <code>BUTTON1_DOWN_MASK | BUTTON2_DOWN_MASK</code>
+     * <code>MOUSE_RELEASED</code>: <code>BUTTON2_DOWN_MASK</code>
+     * <code>MOUSE_CLICKED</code>:  <code>BUTTON2_DOWN_MASK</code>
+     * <code>MOUSE_RELEASED</code>:
+     * <code>MOUSE_CLICKED</code>:
      * </PRE>
-     * <P>
+     * <p>
      * It is not recommended to compare the return value of this method
      * using <code>==</code> because new modifiers can be added in the future.
      * For example, the appropriate way to check that SHIFT and BUTTON1 are
      * down, but CTRL is up is demonstrated by the following code:
      * <PRE>
-     *    int onmask = SHIFT_DOWN_MASK | BUTTON1_DOWN_MASK;
-     *    int offmask = CTRL_DOWN_MASK;
-     *    if ((event.getModifiersEx() & (onmask | offmask)) == onmask) {
-     *        ...
-     *    }
+     * int onmask = SHIFT_DOWN_MASK | BUTTON1_DOWN_MASK;
+     * int offmask = CTRL_DOWN_MASK;
+     * if ((event.getModifiersEx() & (onmask | offmask)) == onmask) {
+     * ...
+     * }
      * </PRE>
      * The above code will work even if new modifiers are added.
      *
@@ -461,6 +454,7 @@ public abstract class InputEvent extends ComponentEvent {
 
     /**
      * Returns whether or not this event has been consumed.
+     *
      * @see #consume
      */
     public boolean isConsumed() {
@@ -482,10 +476,10 @@ public abstract class InputEvent extends ComponentEvent {
      * cause the returning an empty string.
      *
      * @param modifiers a modifier mask describing the extended
-     *                modifier keys and mouse buttons for the event
+     *                  modifier keys and mouse buttons for the event
      * @return a text description of the combination of extended
-     *         modifier keys and mouse buttons that were held down
-     *         during the event.
+     * modifier keys and mouse buttons that were held down
+     * during the event.
      * @since 1.4
      */
     public static String getModifiersExText(int modifiers) {
@@ -512,15 +506,15 @@ public abstract class InputEvent extends ComponentEvent {
         }
 
         int buttonNumber = 1;
-        for (int mask : InputEvent.BUTTON_DOWN_MASK){
+        for (int mask : InputEvent.BUTTON_DOWN_MASK) {
             if ((modifiers & mask) != 0) {
-                buf.append(Toolkit.getProperty("AWT.button"+buttonNumber, "Button"+buttonNumber));
+                buf.append(Toolkit.getProperty("AWT.button" + buttonNumber, "Button" + buttonNumber));
                 buf.append("+");
             }
             buttonNumber++;
         }
         if (buf.length() > 0) {
-            buf.setLength(buf.length()-1); // remove trailing '+'
+            buf.setLength(buf.length() - 1); // remove trailing '+'
         }
         return buf.toString();
     }

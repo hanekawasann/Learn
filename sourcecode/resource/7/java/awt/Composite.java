@@ -61,6 +61,7 @@ import java.awt.image.ColorModel;
  * {@link AWTPermission}.  The permission check will occur when such
  * a custom object is passed to the <code>setComposite</code> method
  * of a <code>Graphics2D</code> retrieved from a {@link Component}.
+ *
  * @see AlphaComposite
  * @see CompositeContext
  * @see Graphics2D#setComposite
@@ -72,15 +73,14 @@ public interface Composite {
      * the compositing operation.  In a multi-threaded environment,
      * several contexts can exist simultaneously for a single
      * <code>Composite</code> object.
-     * @param srcColorModel  the {@link ColorModel} of the source
-     * @param dstColorModel  the <code>ColorModel</code> of the destination
-     * @param hints the hint that the context object uses to choose between
-     * rendering alternatives
+     *
+     * @param srcColorModel the {@link ColorModel} of the source
+     * @param dstColorModel the <code>ColorModel</code> of the destination
+     * @param hints         the hint that the context object uses to choose between
+     *                      rendering alternatives
      * @return the <code>CompositeContext</code> object used to perform the
      * compositing operation.
      */
-    public CompositeContext createContext(ColorModel srcColorModel,
-                                          ColorModel dstColorModel,
-                                          RenderingHints hints);
+    public CompositeContext createContext(ColorModel srcColorModel, ColorModel dstColorModel, RenderingHints hints);
 
 }

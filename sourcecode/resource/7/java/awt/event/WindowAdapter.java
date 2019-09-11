@@ -29,13 +29,13 @@ package java.awt.event;
  * An abstract adapter class for receiving window events.
  * The methods in this class are empty. This class exists as
  * convenience for creating listener objects.
- * <P>
+ * <p>
  * Extend this class to create a <code>WindowEvent</code> listener
  * and override the methods for the events of interest. (If you implement the
  * <code>WindowListener</code> interface, you have to define all of
  * the methods in it. This abstract class defines null methods for them
  * all, so you can only have to define methods for events you care about.)
- * <P>
+ * <p>
  * Create a listener object using the extended class and then register it with
  * a Window using the window's <code>addWindowListener</code>
  * method. When the window's status changes by virtue of being opened,
@@ -43,18 +43,15 @@ package java.awt.event;
  * the relevant method in the listener
  * object is invoked, and the <code>WindowEvent</code> is passed to it.
  *
- * @see WindowEvent
- * @see WindowListener
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/windowlistener.html">Tutorial: Writing a Window Listener</a>
- *
  * @author Carl Quinn
  * @author Amy Fowler
  * @author David Mendenhall
+ * @see WindowEvent
+ * @see WindowListener
+ * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/windowlistener.html">Tutorial: Writing a Window Listener</a>
  * @since 1.1
  */
-public abstract class WindowAdapter
-    implements WindowListener, WindowStateListener, WindowFocusListener
-{
+public abstract class WindowAdapter implements WindowListener, WindowStateListener, WindowFocusListener {
     /**
      * Invoked when a window has been opened.
      */
@@ -93,6 +90,7 @@ public abstract class WindowAdapter
 
     /**
      * Invoked when a window state is changed.
+     *
      * @since 1.4
      */
     public void windowStateChanged(WindowEvent e) {}

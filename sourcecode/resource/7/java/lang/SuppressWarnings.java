@@ -41,10 +41,10 @@ import static java.lang.annotation.ElementType.*;
  * suppress a warning in a particular method, you should annotate that
  * method rather than its class.
  *
- * @since 1.5
  * @author Josh Bloch
+ * @since 1.5
  */
-@Target({TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE})
+@Target( { TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE })
 @Retention(RetentionPolicy.SOURCE)
 public @interface SuppressWarnings {
     /**

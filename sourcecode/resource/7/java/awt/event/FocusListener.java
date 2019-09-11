@@ -40,11 +40,10 @@ import java.util.EventListener;
  * the relevant method in the listener object
  * is invoked, and the <code>FocusEvent</code> is passed to it.
  *
+ * @author Carl Quinn
  * @see FocusAdapter
  * @see FocusEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/focuslistener.html">Tutorial: Writing a Focus Listener</a>
- *
- * @author Carl Quinn
  * @since 1.1
  */
 public interface FocusListener extends EventListener {

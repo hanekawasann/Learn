@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.beans.PropertyChangeListener;
 
 
-
-
 /**
  * Transforms a JAR file to or from a packed stream in Pack200 format.
  * Please refer to Network Transfer Format JSR 200 Specification at
@@ -110,6 +108,7 @@ public abstract class Pack200 {
     private Pack200() {} //prevent instantiation
 
     // Static methods of the Pack200 class.
+
     /**
      * Obtain new instance of a class that implements Packer.
      *
@@ -128,7 +127,7 @@ public abstract class Pack200 {
      * A multi-threaded application should either allocate multiple
      * packer engines, or else serialize use of one engine with a lock.
      *
-     * @return  A newly allocated Packer engine.
+     * @return A newly allocated Packer engine.
      */
     public synchronized static Packer newPacker() {
         return (Packer) newInstance(PACK_PROVIDER);
@@ -153,7 +152,7 @@ public abstract class Pack200 {
      * A multi-threaded application should either allocate multiple
      * unpacker engines, or else serialize use of one engine with a lock.
      *
-     * @return  A newly allocated Unpacker engine.
+     * @return A newly allocated Unpacker engine.
      */
 
     public static Unpacker newUnpacker() {
@@ -161,12 +160,13 @@ public abstract class Pack200 {
     }
 
     // Interfaces
+
     /**
      * The packer engine applies various transformations to the input JAR file,
      * making the pack stream highly compressible by a compressor such as
      * gzip or zip. An instance of the engine can be obtained
      * using {@link #newPacker}.
-
+     * <p>
      * The high degree of compression is achieved
      * by using a number of techniques described in the JSR 200 specification.
      * Some of the techniques are sorting, re-ordering and co-location of the
@@ -216,16 +216,17 @@ public abstract class Pack200 {
      * if the class file versions are also the oldest. For intermediate class
      * file versions the corresponding pack file version will be used.
      * For example:
-     *    If the input JAR-files are solely comprised of 1.5  (or  lesser)
+     * If the input JAR-files are solely comprised of 1.5  (or  lesser)
      * class files, a 1.5 compatible pack file is  produced. This will also be
      * the case for archives that have no class files.
-     *    If the input JAR-files contains a 1.6 class file, then the pack file
+     * If the input JAR-files contains a 1.6 class file, then the pack file
      * version will be set to 1.6.
      * <p>
      * Note: Unless otherwise noted, passing a <tt>null</tt> argument to a
      * constructor or method in this class will cause a {@link NullPointerException}
      * to be thrown.
      * <p>
+     *
      * @since 1.5
      */
     public interface Packer {
@@ -254,7 +255,7 @@ public abstract class Pack200 {
          * typically pack about 10% smaller, but the packer may require
          * a larger Java heap (about ten times the segment limit).
          */
-        String SEGMENT_LIMIT    = "pack.segment.limit";
+        String SEGMENT_LIMIT = "pack.segment.limit";
 
         /**
          * If this property is set to {@link #TRUE}, the packer will transmit
@@ -285,7 +286,7 @@ public abstract class Pack200 {
          * The default is 5, investing a modest amount of time to
          * produce reasonable compression.
          */
-        String EFFORT           = "pack.effort";
+        String EFFORT = "pack.effort";
 
         /**
          * If this property is set to {@link #TRUE} or {@link #FALSE}, the packer
@@ -306,7 +307,7 @@ public abstract class Pack200 {
          * The deflation hint of a ZIP or JAR element indicates
          * whether the element was deflated or stored directly.
          */
-        String DEFLATE_HINT     = "pack.deflate.hint";
+        String DEFLATE_HINT = "pack.deflate.hint";
 
         /**
          * If this property is set to the special string {@link #LATEST},
@@ -329,9 +330,10 @@ public abstract class Pack200 {
          * <p>
          * It is up to the unpacker implementation to take action to suitably
          * set the modification time of each element of its output file.
+         *
          * @see #SEGMENT_LIMIT
          */
-        String MODIFICATION_TIME        = "pack.modification.time";
+        String MODIFICATION_TIME = "pack.modification.time";
 
         /**
          * Indicates that a file should be passed through bytewise, with no
@@ -359,7 +361,7 @@ public abstract class Pack200 {
          *     p.put(PASS_FILE_PFX+3, "police/");
          * </pre></code>.
          */
-        String PASS_FILE_PFX            = "pack.pass.file.";
+        String PASS_FILE_PFX = "pack.pass.file.";
 
         /// Attribute control.
 
@@ -385,7 +387,7 @@ public abstract class Pack200 {
          *     p.put(UNKNOWN_ATTRIBUTE, PASS);
          * </pre></code>
          */
-        String UNKNOWN_ATTRIBUTE        = "pack.unknown.attribute";
+        String UNKNOWN_ATTRIBUTE = "pack.unknown.attribute";
 
         /**
          * When concatenated with a class attribute name,
@@ -417,7 +419,7 @@ public abstract class Pack200 {
          *     p.put(CLASS_ATTRIBUTE_PFX+"SourceFile",        STRIP);
          * </code></pre>
          */
-        String CLASS_ATTRIBUTE_PFX      = "pack.class.attribute.";
+        String CLASS_ATTRIBUTE_PFX = "pack.class.attribute.";
 
         /**
          * When concatenated with a field attribute name,
@@ -426,9 +428,10 @@ public abstract class Pack200 {
          * <code>pack.field.attribute.Deprecated=</code>.
          * The special strings {@link #ERROR}, {@link #STRIP}, and
          * {@link #PASS} are also allowed.
+         *
          * @see #CLASS_ATTRIBUTE_PFX
          */
-        String FIELD_ATTRIBUTE_PFX      = "pack.field.attribute.";
+        String FIELD_ATTRIBUTE_PFX = "pack.field.attribute.";
 
         /**
          * When concatenated with a method attribute name,
@@ -437,9 +440,10 @@ public abstract class Pack200 {
          * <code>pack.method.attribute.Exceptions=NH[RCH]</code>.
          * The special strings {@link #ERROR}, {@link #STRIP}, and {@link #PASS}
          * are also allowed.
+         *
          * @see #CLASS_ATTRIBUTE_PFX
          */
-        String METHOD_ATTRIBUTE_PFX     = "pack.method.attribute.";
+        String METHOD_ATTRIBUTE_PFX = "pack.method.attribute.";
 
         /**
          * When concatenated with a code attribute name,
@@ -448,9 +452,10 @@ public abstract class Pack200 {
          * <code>pack.code.attribute.LocalVariableTable=NH[PHOHRUHRSHH]</code>.
          * The special strings {@link #ERROR}, {@link #STRIP}, and {@link #PASS}
          * are also allowed.
+         *
          * @see #CLASS_ATTRIBUTE_PFX
          */
-        String CODE_ATTRIBUTE_PFX       = "pack.code.attribute.";
+        String CODE_ATTRIBUTE_PFX = "pack.code.attribute.";
 
         /**
          * The unpacker's progress as a percentage, as periodically
@@ -461,26 +466,33 @@ public abstract class Pack200 {
          * At a minimum, the unpacker must set progress to 0
          * at the beginning of a packing operation, and to 100
          * at the end.
-         * @see  #addPropertyChangeListener
+         *
+         * @see #addPropertyChangeListener
          */
-        String PROGRESS                 = "pack.progress";
+        String PROGRESS = "pack.progress";
 
-        /** The string "keep", a possible value for certain properties.
+        /**
+         * The string "keep", a possible value for certain properties.
+         *
          * @see #DEFLATE_HINT
          * @see #MODIFICATION_TIME
          */
-        String KEEP  = "keep";
+        String KEEP = "keep";
 
-        /** The string "pass", a possible value for certain properties.
+        /**
+         * The string "pass", a possible value for certain properties.
+         *
          * @see #UNKNOWN_ATTRIBUTE
          * @see #CLASS_ATTRIBUTE_PFX
          * @see #FIELD_ATTRIBUTE_PFX
          * @see #METHOD_ATTRIBUTE_PFX
          * @see #CODE_ATTRIBUTE_PFX
          */
-        String PASS  = "pass";
+        String PASS = "pass";
 
-        /** The string "strip", a possible value for certain properties.
+        /**
+         * The string "strip", a possible value for certain properties.
+         *
          * @see #UNKNOWN_ATTRIBUTE
          * @see #CLASS_ATTRIBUTE_PFX
          * @see #FIELD_ATTRIBUTE_PFX
@@ -489,7 +501,9 @@ public abstract class Pack200 {
          */
         String STRIP = "strip";
 
-        /** The string "error", a possible value for certain properties.
+        /**
+         * The string "error", a possible value for certain properties.
+         *
          * @see #UNKNOWN_ATTRIBUTE
          * @see #CLASS_ATTRIBUTE_PFX
          * @see #FIELD_ATTRIBUTE_PFX
@@ -498,19 +512,25 @@ public abstract class Pack200 {
          */
         String ERROR = "error";
 
-        /** The string "true", a possible value for certain properties.
+        /**
+         * The string "true", a possible value for certain properties.
+         *
          * @see #KEEP_FILE_ORDER
          * @see #DEFLATE_HINT
          */
         String TRUE = "true";
 
-        /** The string "false", a possible value for certain properties.
+        /**
+         * The string "false", a possible value for certain properties.
+         *
          * @see #KEEP_FILE_ORDER
          * @see #DEFLATE_HINT
          */
         String FALSE = "false";
 
-        /** The string "latest", a possible value for certain properties.
+        /**
+         * The string "latest", a possible value for certain properties.
+         *
          * @see #MODIFICATION_TIME
          */
         String LATEST = "latest";
@@ -539,20 +559,22 @@ public abstract class Pack200 {
          *
          * <p>
          * The returned map implements all optional {@link SortedMap} operations
+         *
          * @return A sorted association of property key strings to property
          * values.
          */
-        SortedMap<String,String> properties();
+        SortedMap<String, String> properties();
 
         /**
          * Takes a JarFile and converts it into a Pack200 archive.
          * <p>
          * Closes its input but not its output.  (Pack200 archives are appendable.)
-         * @param in a JarFile
+         *
+         * @param in  a JarFile
          * @param out an OutputStream
-         * @exception IOException if an error is encountered.
+         * @throws IOException if an error is encountered.
          */
-        void pack(JarFile in, OutputStream out) throws IOException ;
+        void pack(JarFile in, OutputStream out) throws IOException;
 
         /**
          * Takes a JarInputStream and converts it into a Pack200 archive.
@@ -562,30 +584,30 @@ public abstract class Pack200 {
          * The modification time and deflation hint attributes are not available,
          * for the JAR manifest file and its containing directory.
          *
+         * @param in  a JarInputStream
+         * @param out an OutputStream
+         * @throws IOException if an error is encountered.
          * @see #MODIFICATION_TIME
          * @see #DEFLATE_HINT
-         * @param in a JarInputStream
-         * @param out an OutputStream
-         * @exception IOException if an error is encountered.
          */
-        void pack(JarInputStream in, OutputStream out) throws IOException ;
+        void pack(JarInputStream in, OutputStream out) throws IOException;
 
         /**
          * Registers a listener for PropertyChange events on the properties map.
          * This is typically used by applications to update a progress bar.
          *
+         * @param listener An object to be invoked when a property is changed.
          * @see #properties
          * @see #PROGRESS
-         * @param listener  An object to be invoked when a property is changed.
          */
-        void addPropertyChangeListener(PropertyChangeListener listener) ;
+        void addPropertyChangeListener(PropertyChangeListener listener);
 
         /**
          * Remove a listener for PropertyChange events, added by
          * the {@link #addPropertyChangeListener}.
          *
+         * @param listener The PropertyChange listener to be removed.
          * @see #addPropertyChangeListener
-         * @param listener  The PropertyChange listener to be removed.
          */
         void removePropertyChangeListener(PropertyChangeListener listener);
 
@@ -605,21 +627,28 @@ public abstract class Pack200 {
      * to be thrown.
      * <p>
      * This version of the unpacker is compatible with all previous versions.
+     *
      * @since 1.5
      */
     public interface Unpacker {
 
-        /** The string "keep", a possible value for certain properties.
+        /**
+         * The string "keep", a possible value for certain properties.
+         *
          * @see #DEFLATE_HINT
          */
-        String KEEP  = "keep";
+        String KEEP = "keep";
 
-        /** The string "true", a possible value for certain properties.
+        /**
+         * The string "true", a possible value for certain properties.
+         *
          * @see #DEFLATE_HINT
          */
         String TRUE = "true";
 
-        /** The string "false", a possible value for certain properties.
+        /**
+         * The string "false", a possible value for certain properties.
+         *
          * @see #DEFLATE_HINT
          */
         String FALSE = "false";
@@ -632,8 +661,7 @@ public abstract class Pack200 {
          * which asks the unpacker to preserve all transmitted
          * deflation hints.
          */
-        String DEFLATE_HINT      = "unpack.deflate.hint";
-
+        String DEFLATE_HINT = "unpack.deflate.hint";
 
 
         /**
@@ -645,9 +673,10 @@ public abstract class Pack200 {
          * At a minimum, the unpacker must set progress to 0
          * at the beginning of a packing operation, and to 100
          * at the end.
+         *
          * @see #addPropertyChangeListener
          */
-        String PROGRESS         = "unpack.progress";
+        String PROGRESS = "unpack.progress";
 
         /**
          * Get the set of this engine's properties. This set is
@@ -673,7 +702,7 @@ public abstract class Pack200 {
          *
          * @return A sorted association of option key strings to option values.
          */
-        SortedMap<String,String> properties();
+        SortedMap<String, String> properties();
 
         /**
          * Read a Pack200 archive, and write the encoded JAR to
@@ -684,9 +713,10 @@ public abstract class Pack200 {
          * method described below.
          * <p>
          * Closes its input but not its output.  (The output can accumulate more elements.)
-         * @param in an InputStream.
+         *
+         * @param in  an InputStream.
          * @param out a JarOutputStream.
-         * @exception IOException if an error is encountered.
+         * @throws IOException if an error is encountered.
          */
         void unpack(InputStream in, JarOutputStream out) throws IOException;
 
@@ -695,9 +725,10 @@ public abstract class Pack200 {
          * a JarOutputStream.
          * <p>
          * Does not close its output.  (The output can accumulate more elements.)
-         * @param in a File.
+         *
+         * @param in  a File.
          * @param out a JarOutputStream.
-         * @exception IOException if an error is encountered.
+         * @throws IOException if an error is encountered.
          */
         void unpack(File in, JarOutputStream out) throws IOException;
 
@@ -705,18 +736,18 @@ public abstract class Pack200 {
          * Registers a listener for PropertyChange events on the properties map.
          * This is typically used by applications to update a progress bar.
          *
+         * @param listener An object to be invoked when a property is changed.
          * @see #properties
          * @see #PROGRESS
-         * @param listener  An object to be invoked when a property is changed.
          */
-        void addPropertyChangeListener(PropertyChangeListener listener) ;
+        void addPropertyChangeListener(PropertyChangeListener listener);
 
         /**
          * Remove a listener for PropertyChange events, added by
          * the {@link #addPropertyChangeListener}.
          *
+         * @param listener The PropertyChange listener to be removed.
          * @see #addPropertyChangeListener
-         * @param listener  The PropertyChange listener to be removed.
          */
         void removePropertyChangeListener(PropertyChangeListener listener);
     }
@@ -732,32 +763,27 @@ public abstract class Pack200 {
     private synchronized static Object newInstance(String prop) {
         String implName = "(unknown)";
         try {
-            Class impl = (PACK_PROVIDER.equals(prop))? packerImpl: unpackerImpl;
+            Class impl = (PACK_PROVIDER.equals(prop)) ? packerImpl : unpackerImpl;
             if (impl == null) {
                 // The first time, we must decide which class to use.
-                implName = java.security.AccessController.doPrivileged(
-                    new sun.security.action.GetPropertyAction(prop,""));
-                if (implName != null && !implName.equals(""))
-                    impl = Class.forName(implName);
-                else if (PACK_PROVIDER.equals(prop))
-                    impl = com.sun.java.util.jar.pack.PackerImpl.class;
-                else
+                implName = java.security.AccessController
+                    .doPrivileged(new sun.security.action.GetPropertyAction(prop, ""));
+                if (implName != null && !implName.equals("")) { impl = Class.forName(implName); } else if (PACK_PROVIDER
+                    .equals(prop)) { impl = com.sun.java.util.jar.pack.PackerImpl.class; } else {
                     impl = com.sun.java.util.jar.pack.UnpackerImpl.class;
+                }
             }
             // We have a class.  Now instantiate it.
             return impl.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new Error("Class not found: " + implName +
-                                ":\ncheck property " + prop +
-                                " in your properties file.", e);
+            throw new Error("Class not found: " + implName + ":\ncheck property " + prop + " in your properties file.",
+                e);
         } catch (InstantiationException e) {
-            throw new Error("Could not instantiate: " + implName +
-                                ":\ncheck property " + prop +
-                                " in your properties file.", e);
+            throw new Error(
+                "Could not instantiate: " + implName + ":\ncheck property " + prop + " in your properties file.", e);
         } catch (IllegalAccessException e) {
-            throw new Error("Cannot access class: " + implName +
-                                ":\ncheck property " + prop +
-                                " in your properties file.", e);
+            throw new Error(
+                "Cannot access class: " + implName + ":\ncheck property " + prop + " in your properties file.", e);
         }
     }
 

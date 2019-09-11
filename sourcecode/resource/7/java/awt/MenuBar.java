@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.peer.MenuBarPeer;
 import java.awt.event.KeyEvent;
+
 import javax.accessibility.*;
 
 /**
@@ -59,12 +60,12 @@ import javax.accessibility.*;
  * menu bar is managing.
  *
  * @author Sami Shaio
- * @see        java.awt.Frame
- * @see        java.awt.Frame#setMenuBar(java.awt.MenuBar)
- * @see        java.awt.Menu
- * @see        java.awt.MenuItem
- * @see        java.awt.MenuShortcut
- * @since      JDK1.0
+ * @see java.awt.Frame
+ * @see java.awt.Frame#setMenuBar(java.awt.MenuBar)
+ * @see java.awt.Menu
+ * @see java.awt.MenuItem
+ * @see java.awt.MenuShortcut
+ * @since JDK1.0
  */
 public class MenuBar extends MenuComponent implements MenuContainer, Accessible {
 
@@ -103,12 +104,13 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
     /*
      * JDK 1.1 serialVersionUID
      */
-     private static final long serialVersionUID = -4930327919388951260L;
+    private static final long serialVersionUID = -4930327919388951260L;
 
     /**
      * Creates a new menu bar.
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     *
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless()
+     *                           returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public MenuBar() throws HeadlessException {
@@ -131,11 +133,10 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      */
     public void addNotify() {
         synchronized (getTreeLock()) {
-            if (peer == null)
-                peer = Toolkit.getDefaultToolkit().createMenuBar(this);
+            if (peer == null) { peer = Toolkit.getDefaultToolkit().createMenuBar(this); }
 
             int nmenus = getMenuCount();
-            for (int i = 0 ; i < nmenus ; i++) {
+            for (int i = 0; i < nmenus; i++) {
                 getMenu(i).addNotify();
             }
         }
@@ -149,7 +150,7 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
     public void removeNotify() {
         synchronized (getTreeLock()) {
             int nmenus = getMenuCount();
-            for (int i = 0 ; i < nmenus ; i++) {
+            for (int i = 0; i < nmenus; i++) {
                 getMenu(i).removeNotify();
             }
             super.removeNotify();
@@ -158,7 +159,8 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
     /**
      * Gets the help menu on the menu bar.
-     * @return    the help menu on this menu bar.
+     *
+     * @return the help menu on this menu bar.
      */
     public Menu getHelpMenu() {
         return helpMenu;
@@ -168,7 +170,8 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * Sets the specified menu to be this menu bar's help menu.
      * If this menu bar has an existing help menu, the old help menu is
      * removed from the menu bar, and replaced with the specified menu.
-     * @param m    the menu to be set as the help menu
+     *
+     * @param m the menu to be set as the help menu
      */
     public void setHelpMenu(Menu m) {
         synchronized (getTreeLock()) {
@@ -185,7 +188,7 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
             if (m != null) {
                 m.isHelpMenu = true;
                 m.parent = this;
-                MenuBarPeer peer = (MenuBarPeer)this.peer;
+                MenuBarPeer peer = (MenuBarPeer) this.peer;
                 if (peer != null) {
                     if (m.peer == null) {
                         m.addNotify();
@@ -201,10 +204,10 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * If the menu has been part of another menu bar,
      * removes it from that menu bar.
      *
-     * @param        m   the menu to be added
-     * @return       the menu added
-     * @see          java.awt.MenuBar#remove(int)
-     * @see          java.awt.MenuBar#remove(java.awt.MenuComponent)
+     * @param m the menu to be added
+     * @return the menu added
+     * @see java.awt.MenuBar#remove(int)
+     * @see java.awt.MenuBar#remove(java.awt.MenuComponent)
      */
     public Menu add(Menu m) {
         synchronized (getTreeLock()) {
@@ -214,7 +217,7 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
             menus.addElement(m);
             m.parent = this;
 
-            MenuBarPeer peer = (MenuBarPeer)this.peer;
+            MenuBarPeer peer = (MenuBarPeer) this.peer;
             if (peer != null) {
                 if (m.peer == null) {
                     m.addNotify();
@@ -228,14 +231,15 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
     /**
      * Removes the menu located at the specified
      * index from this menu bar.
-     * @param        index   the position of the menu to be removed.
-     * @see          java.awt.MenuBar#add(java.awt.Menu)
+     *
+     * @param index the position of the menu to be removed.
+     * @see java.awt.MenuBar#add(java.awt.Menu)
      */
     public void remove(int index) {
         synchronized (getTreeLock()) {
             Menu m = getMenu(index);
             menus.removeElementAt(index);
-            MenuBarPeer peer = (MenuBarPeer)this.peer;
+            MenuBarPeer peer = (MenuBarPeer) this.peer;
             if (peer != null) {
                 m.removeNotify();
                 m.parent = null;
@@ -246,8 +250,9 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
     /**
      * Removes the specified menu component from this menu bar.
-     * @param        m the menu component to be removed.
-     * @see          java.awt.MenuBar#add(java.awt.Menu)
+     *
+     * @param m the menu component to be removed.
+     * @see java.awt.MenuBar#add(java.awt.Menu)
      */
     public void remove(MenuComponent m) {
         synchronized (getTreeLock()) {
@@ -260,8 +265,9 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
     /**
      * Gets the number of menus on the menu bar.
-     * @return     the number of menus on the menu bar.
-     * @since      JDK1.1
+     *
+     * @return the number of menus on the menu bar.
+     * @since JDK1.1
      */
     public int getMenuCount() {
         return countMenus();
@@ -286,8 +292,9 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
     /**
      * Gets the specified menu.
-     * @param      i the index position of the menu to be returned.
-     * @return     the menu at the specified index of this menu bar.
+     *
+     * @param i the index position of the menu to be returned.
+     * @return the menu at the specified index of this menu bar.
      */
     public Menu getMenu(int i) {
         return getMenuImpl(i);
@@ -298,21 +305,22 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * be called on the toolkit thread.
      */
     final Menu getMenuImpl(int i) {
-        return (Menu)menus.elementAt(i);
+        return (Menu) menus.elementAt(i);
     }
 
     /**
      * Gets an enumeration of all menu shortcuts this menu bar
      * is managing.
-     * @return      an enumeration of menu shortcuts that this
-     *                      menu bar is managing.
-     * @see         java.awt.MenuShortcut
-     * @since       JDK1.1
+     *
+     * @return an enumeration of menu shortcuts that this
+     * menu bar is managing.
+     * @see java.awt.MenuShortcut
+     * @since JDK1.1
      */
     public synchronized Enumeration<MenuShortcut> shortcuts() {
         Vector shortcuts = new Vector();
         int nmenus = getMenuCount();
-        for (int i = 0 ; i < nmenus ; i++) {
+        for (int i = 0; i < nmenus; i++) {
             Enumeration e = getMenu(i).shortcuts();
             while (e.hasMoreElements()) {
                 shortcuts.addElement(e.nextElement());
@@ -327,21 +335,22 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * or <code>null</code> if none of the menu items being managed
      * by this menu bar is associated with the specified menu
      * shortcut.
-     * @param        s the specified menu shortcut.
-     * @see          java.awt.MenuItem
-     * @see          java.awt.MenuShortcut
-     * @since        JDK1.1
+     *
+     * @param s the specified menu shortcut.
+     * @see java.awt.MenuItem
+     * @see java.awt.MenuShortcut
+     * @since JDK1.1
      */
-     public MenuItem getShortcutMenuItem(MenuShortcut s) {
+    public MenuItem getShortcutMenuItem(MenuShortcut s) {
         int nmenus = getMenuCount();
-        for (int i = 0 ; i < nmenus ; i++) {
+        for (int i = 0; i < nmenus; i++) {
             MenuItem mi = getMenu(i).getShortcutMenuItem(s);
             if (mi != null) {
                 return mi;
             }
         }
         return null;  // MenuShortcut wasn't found
-     }
+    }
 
     /*
      * Post an ACTION_EVENT to the target of the MenuPeer
@@ -364,7 +373,7 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
         // Pass MenuShortcut on to child menus.
         int nmenus = getMenuCount();
-        for (int i = 0 ; i < nmenus ; i++) {
+        for (int i = 0; i < nmenus; i++) {
             Menu m = getMenu(i);
             if (m.handleShortcut(e)) {
                 return true;
@@ -375,12 +384,13 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
 
     /**
      * Deletes the specified menu shortcut.
-     * @param     s the menu shortcut to delete.
-     * @since     JDK1.1
+     *
+     * @param s the menu shortcut to delete.
+     * @since JDK1.1
      */
     public void deleteShortcut(MenuShortcut s) {
         int nmenus = getMenuCount();
-        for (int i = 0 ; i < nmenus ; i++) {
+        for (int i = 0; i < nmenus; i++) {
             getMenu(i).deleteShortcut(s);
         }
     }
@@ -404,10 +414,8 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * @see #readObject(java.io.ObjectInputStream)
      */
     private void writeObject(java.io.ObjectOutputStream s)
-      throws java.lang.ClassNotFoundException,
-             java.io.IOException
-    {
-      s.defaultWriteObject();
+        throws java.lang.ClassNotFoundException, java.io.IOException {
+        s.defaultWriteObject();
     }
 
     /**
@@ -415,21 +423,19 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * Unrecognized keys or values will be ignored.
      *
      * @param s the <code>ObjectInputStream</code> to read
-     * @exception HeadlessException if
-     *   <code>GraphicsEnvironment.isHeadless</code> returns
-     *   <code>true</code>
+     * @throws HeadlessException if
+     *                           <code>GraphicsEnvironment.isHeadless</code> returns
+     *                           <code>true</code>
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see #writeObject(java.io.ObjectOutputStream)
      */
-    private void readObject(ObjectInputStream s)
-      throws ClassNotFoundException, IOException, HeadlessException
-    {
-      // HeadlessException will be thrown from MenuComponent's readObject
-      s.defaultReadObject();
-      for (int i = 0; i < menus.size(); i++) {
-        Menu m = (Menu)menus.elementAt(i);
-        m.parent = this;
-      }
+    private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException, HeadlessException {
+        // HeadlessException will be thrown from MenuComponent's readObject
+        s.defaultReadObject();
+        for (int i = 0; i < menus.size(); i++) {
+            Menu m = (Menu) menus.elementAt(i);
+            m.parent = this;
+        }
     }
 
     /**
@@ -438,9 +444,9 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
     private static native void initIDs();
 
 
-/////////////////
-// Accessibility support
-////////////////
+    /////////////////
+    // Accessibility support
+    ////////////////
 
     /**
      * Gets the AccessibleContext associated with this MenuBar.
@@ -449,7 +455,7 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * A new AccessibleAWTMenuBar instance is created if necessary.
      *
      * @return an AccessibleAWTMenuBar that serves as the
-     *         AccessibleContext of this MenuBar
+     * AccessibleContext of this MenuBar
      * @since 1.3
      */
     public AccessibleContext getAccessibleContext() {
@@ -475,10 +481,10 @@ public class MenuBar extends MenuComponent implements MenuContainer, Accessible 
      * This class implements accessibility support for the
      * <code>MenuBar</code> class.  It provides an implementation of the
      * Java Accessibility API appropriate to menu bar user-interface elements.
+     *
      * @since 1.3
      */
-    protected class AccessibleAWTMenuBar extends AccessibleAWTMenuComponent
-    {
+    protected class AccessibleAWTMenuBar extends AccessibleAWTMenuComponent {
         /*
          * JDK 1.3 serialVersionUID
          */

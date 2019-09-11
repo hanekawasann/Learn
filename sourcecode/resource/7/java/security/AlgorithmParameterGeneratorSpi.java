@@ -43,12 +43,9 @@ import java.security.spec.AlgorithmParameterSpec;
  * bits for the generation of DSA parameters.
  *
  * @author Jan Luehe
- *
- *
  * @see AlgorithmParameterGenerator
  * @see AlgorithmParameters
  * @see java.security.spec.AlgorithmParameterSpec
- *
  * @since 1.2
  */
 
@@ -58,7 +55,7 @@ public abstract class AlgorithmParameterGeneratorSpi {
      * Initializes this parameter generator for a certain size
      * and source of randomness.
      *
-     * @param size the size (number of bits).
+     * @param size   the size (number of bits).
      * @param random the source of randomness.
      */
     protected abstract void engineInit(int size, SecureRandom random);
@@ -68,13 +65,11 @@ public abstract class AlgorithmParameterGeneratorSpi {
      * algorithm-specific parameter generation values.
      *
      * @param genParamSpec the set of algorithm-specific parameter generation values.
-     * @param random the source of randomness.
-     *
-     * @exception InvalidAlgorithmParameterException if the given parameter
-     * generation values are inappropriate for this parameter generator.
+     * @param random       the source of randomness.
+     * @throws InvalidAlgorithmParameterException if the given parameter
+     *                                            generation values are inappropriate for this parameter generator.
      */
-    protected abstract void engineInit(AlgorithmParameterSpec genParamSpec,
-                                       SecureRandom random)
+    protected abstract void engineInit(AlgorithmParameterSpec genParamSpec, SecureRandom random)
         throws InvalidAlgorithmParameterException;
 
     /**

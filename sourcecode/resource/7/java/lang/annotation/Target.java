@@ -31,7 +31,7 @@ package java.lang.annotation;
  * annotation type declaration, the declared type may be used on any
  * program element.  If such a meta-annotation is present, the compiler
  * will enforce the specified usage restriction.
- *
+ * <p>
  * For example, this meta-annotation indicates that the declared type is
  * itself a meta-annotation type.  It can only be used on annotation type
  * declarations:

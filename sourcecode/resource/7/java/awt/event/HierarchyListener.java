@@ -42,9 +42,9 @@ import java.util.EventListener;
  * that GUI layout, displayability, and visibility work properly regardless
  * of whether a program registers a <code>HierarchyListener</code> or not.
  *
- * @author      David Mendenhall
- * @see         HierarchyEvent
- * @since       1.3
+ * @author David Mendenhall
+ * @see HierarchyEvent
+ * @since 1.3
  */
 public interface HierarchyListener extends EventListener {
     /**

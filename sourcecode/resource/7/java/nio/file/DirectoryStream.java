@@ -109,38 +109,30 @@ import java.io.IOException;
  *       return result;
  *   }
  * </pre>
- * @param   <T>     The type of element returned by the iterator
  *
- * @since 1.7
- *
+ * @param <T> The type of element returned by the iterator
  * @see Files#newDirectoryStream(Path)
+ * @since 1.7
  */
 
-public interface DirectoryStream<T>
-    extends Closeable, Iterable<T>
-{
+public interface DirectoryStream<T> extends Closeable, Iterable<T> {
     /**
      * An interface that is implemented by objects that decide if a directory
      * entry should be accepted or filtered. A {@code Filter} is passed as the
-     * parameter to the {@link Files#newDirectoryStream(Path,DirectoryStream.Filter)}
+     * parameter to the {@link Files#newDirectoryStream(Path, DirectoryStream.Filter)}
      * method when opening a directory to iterate over the entries in the
      * directory.
      *
-     * @param   <T>     the type of the directory entry
-     *
+     * @param <T> the type of the directory entry
      * @since 1.7
      */
     public static interface Filter<T> {
         /**
          * Decides if the given directory entry should be accepted or filtered.
          *
-         * @param   entry
-         *          the directory entry to be tested
-         *
-         * @return  {@code true} if the directory entry should be accepted
-         *
-         * @throws  IOException
-         *          If an I/O error occurs
+         * @param entry the directory entry to be tested
+         * @return {@code true} if the directory entry should be accepted
+         * @throws IOException If an I/O error occurs
          */
         boolean accept(T entry) throws IOException;
     }
@@ -148,11 +140,9 @@ public interface DirectoryStream<T>
     /**
      * Returns the iterator associated with this {@code DirectoryStream}.
      *
-     * @return  the iterator associated with this {@code DirectoryStream}
-     *
-     * @throws  IllegalStateException
-     *          if this directory stream is closed or the iterator has already
-     *          been returned
+     * @return the iterator associated with this {@code DirectoryStream}
+     * @throws IllegalStateException if this directory stream is closed or the iterator has already
+     *                               been returned
      */
     @Override
     Iterator<T> iterator();

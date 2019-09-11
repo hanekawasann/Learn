@@ -31,25 +31,25 @@ import java.util.ArrayList;
 
 /**
  * Logging is the implementation class of LoggingMXBean.
- *
+ * <p>
  * The <tt>LoggingMXBean</tt> interface provides a standard
  * method for management access to the individual
  * java.util.Logger objects available at runtime.
  *
  * @author Ron Mann
  * @author Mandy Chung
- * @since 1.5
- *
  * @see javax.management
  * @see java.util.Logger
  * @see java.util.LogManager
+ * @since 1.5
  */
 class Logging implements LoggingMXBean {
 
     private static LogManager logManager = LogManager.getLogManager();
 
-    /** Constructor of Logging which is the implementation class
-     *  of LoggingMXBean.
+    /**
+     * Constructor of Logging which is the implementation class
+     * of LoggingMXBean.
      */
     Logging() {
     }
@@ -58,13 +58,14 @@ class Logging implements LoggingMXBean {
         Enumeration loggers = logManager.getLoggerNames();
         ArrayList<String> array = new ArrayList<>();
 
-        for (; loggers.hasMoreElements();) {
+        for (; loggers.hasMoreElements(); ) {
             array.add((String) loggers.nextElement());
         }
         return array;
     }
 
     private static String EMPTY_STRING = "";
+
     public String getLoggerLevel(String loggerName) {
         Logger l = logManager.getLogger(loggerName);
         if (l == null) {
@@ -87,8 +88,7 @@ class Logging implements LoggingMXBean {
         Logger logger = logManager.getLogger(loggerName);
 
         if (logger == null) {
-            throw new IllegalArgumentException("Logger " + loggerName +
-                "does not exist");
+            throw new IllegalArgumentException("Logger " + loggerName + "does not exist");
         }
 
         Level level = null;
@@ -100,8 +100,8 @@ class Logging implements LoggingMXBean {
         logger.setLevel(level);
     }
 
-    public String getParentLoggerName( String loggerName ) {
-        Logger l = logManager.getLogger( loggerName );
+    public String getParentLoggerName(String loggerName) {
+        Logger l = logManager.getLogger(loggerName);
         if (l == null) {
             return null;
         }

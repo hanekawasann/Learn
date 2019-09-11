@@ -40,7 +40,7 @@ import java.io.IOException;
  * The BasicPermission class extends the Permission class, and
  * can be used as the base class for permissions that want to
  * follow the same naming convention as BasicPermission.
- * <P>
+ * <p>
  * The name for a BasicPermission is the name of the given permission
  * (for example, "exit",
  * "setFactory", "print.queueJob", etc). The naming
@@ -49,7 +49,7 @@ import java.io.IOException;
  * may appear at the end of the name, to signify a wildcard match.
  * For example, "*" and "java.*" are valid, while "*java", "a*b",
  * and "java*" are not valid.
- * <P>
+ * <p>
  * The action string (inherited from Permission) is unused.
  * Thus, BasicPermission is commonly used as the base class for
  * "named" permissions
@@ -58,19 +58,17 @@ import java.io.IOException;
  * Subclasses may implement actions on top of BasicPermission,
  * if desired.
  * <p>
- * <P>
+ * <p>
+ *
+ * @author Marianne Mueller
+ * @author Roland Schemers
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
- * @author Marianne Mueller
- * @author Roland Schemers
  */
 
-public abstract class BasicPermission extends Permission
-implements java.io.Serializable
-{
+public abstract class BasicPermission extends Permission implements java.io.Serializable {
 
     private static final long serialVersionUID = 6279438298436773498L;
 
@@ -85,12 +83,9 @@ implements java.io.Serializable
 
     /**
      * initialize a BasicPermission object. Common to all constructors.
-     *
      */
-    private void init(String name)
-    {
-        if (name == null)
-            throw new NullPointerException("name can't be null");
+    private void init(String name) {
+        if (name == null) { throw new NullPointerException("name can't be null"); }
 
         int len = name.length();
 
@@ -126,13 +121,11 @@ implements java.io.Serializable
      * "print.queueJob", or "topLevelWindow", etc.
      *
      * @param name the name of the BasicPermission.
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public BasicPermission(String name)
-    {
+    public BasicPermission(String name) {
         super(name);
         init(name);
     }
@@ -143,14 +136,12 @@ implements java.io.Serializable
      * The name is the symbolic name of the BasicPermission, and the
      * actions String is currently unused.
      *
-     * @param name the name of the BasicPermission.
+     * @param name    the name of the BasicPermission.
      * @param actions ignored.
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
-    public BasicPermission(String name, String actions)
-    {
+    public BasicPermission(String name, String actions) {
         super(name);
         init(name);
     }
@@ -158,7 +149,7 @@ implements java.io.Serializable
     /**
      * Checks if the specified permission is "implied" by
      * this object.
-     * <P>
+     * <p>
      * More specifically, this method returns true if:<p>
      * <ul>
      * <li> <i>p</i>'s class is the same as this object's class, and<p>
@@ -168,13 +159,11 @@ implements java.io.Serializable
      * </ul>
      *
      * @param p the permission to check against.
-     *
      * @return true if the passed permission is equal to or
      * implied by this permission, false otherwise.
      */
     public boolean implies(Permission p) {
-        if ((p == null) || (p.getClass() != getClass()))
-            return false;
+        if ((p == null) || (p.getClass() != getClass())) { return false; }
 
         BasicPermission that = (BasicPermission) p;
 
@@ -184,15 +173,13 @@ implements java.io.Serializable
                 return that.path.startsWith(path);
             } else {
                 // make sure ap.path is longer so a.b.* doesn't imply a.b
-                return (that.path.length() > this.path.length()) &&
-                    that.path.startsWith(this.path);
+                return (that.path.length() > this.path.length()) && that.path.startsWith(this.path);
             }
         } else {
             if (that.wildcard) {
                 // a non-wildcard can't imply a wildcard
                 return false;
-            }
-            else {
+            } else {
                 return this.path.equals(that.path);
             }
         }
@@ -202,17 +189,16 @@ implements java.io.Serializable
      * Checks two BasicPermission objects for equality.
      * Checks that <i>obj</i>'s class is the same as this object's class
      * and has the same name as this object.
-     * <P>
+     * <p>
+     *
      * @param obj the object we are testing for equality with this object.
      * @return true if <i>obj</i>'s class is the same as this object's class
-     *  and has the same name as this BasicPermission object, false otherwise.
+     * and has the same name as this BasicPermission object, false otherwise.
      */
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
+        if (obj == this) { return true; }
 
-        if ((obj == null) || (obj.getClass() != getClass()))
-            return false;
+        if ((obj == null) || (obj.getClass() != getClass())) { return false; }
 
         BasicPermission bp = (BasicPermission) obj;
 
@@ -239,8 +225,7 @@ implements java.io.Serializable
      *
      * @return the empty string "".
      */
-    public String getActions()
-    {
+    public String getActions() {
         return "";
     }
 
@@ -264,9 +249,7 @@ implements java.io.Serializable
      * readObject is called to restore the state of the BasicPermission from
      * a stream.
      */
-    private void readObject(ObjectInputStream s)
-         throws IOException, ClassNotFoundException
-    {
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
         // init is called to initialize the rest of the values.
         init(getName());
@@ -291,32 +274,26 @@ implements java.io.Serializable
  * must be stored in a manner that allows them to be inserted in any
  * order, but enable the implies function to evaluate the implies
  * method in an efficient (and consistent) manner.
- *
+ * <p>
  * A BasicPermissionCollection handles comparing a permission like "a.b.c.d.e"
  * with a Permission such as "a.b.*", or "*".
  *
+ * @author Roland Schemers
+ * @serial include
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionsImpl
- *
- *
- * @author Roland Schemers
- *
- * @serial include
  */
 
-final class BasicPermissionCollection
-extends PermissionCollection
-implements java.io.Serializable
-{
+final class BasicPermissionCollection extends PermissionCollection implements java.io.Serializable {
 
     private static final long serialVersionUID = 739301742472979399L;
 
     /**
-      * Key is name, value is permission. All permission objects in
-      * collection must be of the same type.
-      * Not serialized; see serialization section at end of class.
-      */
+     * Key is name, value is permission. All permission objects in
+     * collection must be of the same type.
+     * Not serialized; see serialization section at end of class.
+     */
     private transient Map<String, Permission> perms;
 
     /**
@@ -337,7 +314,6 @@ implements java.io.Serializable
 
     /**
      * Create an empty BasicPermissionCollection object.
-     *
      */
 
     public BasicPermissionCollection(Class clazz) {
@@ -351,24 +327,22 @@ implements java.io.Serializable
      * permission.path.
      *
      * @param permission the Permission object to add.
-     *
-     * @exception IllegalArgumentException - if the permission is not a
-     *                                       BasicPermission, or if
-     *                                       the permission is not of the
-     *                                       same Class as the other
-     *                                       permissions in this collection.
-     *
-     * @exception SecurityException - if this BasicPermissionCollection object
-     *                                has been marked readonly
+     * @throws IllegalArgumentException - if the permission is not a
+     *                                  BasicPermission, or if
+     *                                  the permission is not of the
+     *                                  same Class as the other
+     *                                  permissions in this collection.
+     * @throws SecurityException        - if this BasicPermissionCollection object
+     *                                  has been marked readonly
      */
 
-    public void add(Permission permission)
-    {
-        if (! (permission instanceof BasicPermission))
-            throw new IllegalArgumentException("invalid permission: "+
-                                               permission);
-        if (isReadOnly())
+    public void add(Permission permission) {
+        if (!(permission instanceof BasicPermission)) {
+            throw new IllegalArgumentException("invalid permission: " + permission);
+        }
+        if (isReadOnly()) {
             throw new SecurityException("attempt to add a Permission to a readonly PermissionCollection");
+        }
 
         BasicPermission bp = (BasicPermission) permission;
 
@@ -379,9 +353,7 @@ implements java.io.Serializable
             // adding first permission
             permClass = bp.getClass();
         } else {
-            if (bp.getClass() != permClass)
-                throw new IllegalArgumentException("invalid permission: " +
-                                                permission);
+            if (bp.getClass() != permClass) { throw new IllegalArgumentException("invalid permission: " + permission); }
         }
 
         synchronized (this) {
@@ -390,8 +362,7 @@ implements java.io.Serializable
 
         // No sync on all_allowed; staleness OK
         if (!all_allowed) {
-            if (bp.getCanonicalName().equals("*"))
-                all_allowed = true;
+            if (bp.getCanonicalName().equals("*")) { all_allowed = true; }
         }
     }
 
@@ -400,25 +371,20 @@ implements java.io.Serializable
      * expressed in "permission".
      *
      * @param p the Permission object to compare
-     *
      * @return true if "permission" is a proper subset of a permission in
      * the set, false if not.
      */
 
-    public boolean implies(Permission permission)
-    {
-        if (! (permission instanceof BasicPermission))
-                return false;
+    public boolean implies(Permission permission) {
+        if (!(permission instanceof BasicPermission)) { return false; }
 
         BasicPermission bp = (BasicPermission) permission;
 
         // random subclasses of BasicPermission do not imply each other
-        if (bp.getClass() != permClass)
-            return false;
+        if (bp.getClass() != permClass) { return false; }
 
         // short circuit if the "*" Permission was added
-        if (all_allowed)
-            return true;
+        if (all_allowed) { return true; }
 
         // strategy:
         // Check for full match first. Then work our way up the
@@ -441,11 +407,11 @@ implements java.io.Serializable
         // work our way up the tree...
         int last, offset;
 
-        offset = path.length()-1;
+        offset = path.length() - 1;
 
         while ((last = path.lastIndexOf(".", offset)) != -1) {
 
-            path = path.substring(0, last+1) + "*";
+            path = path.substring(0, last + 1) + "*";
             //System.out.println("check "+path);
 
             synchronized (this) {
@@ -455,7 +421,7 @@ implements java.io.Serializable
             if (x != null) {
                 return x.implies(permission);
             }
-            offset = last -1;
+            offset = last - 1;
         }
 
         // we don't have to check for "*" as it was already checked
@@ -485,22 +451,20 @@ implements java.io.Serializable
     // private Hashtable permissions;
     /**
      * @serialField permissions java.util.Hashtable
-     *    The BasicPermissions in this BasicPermissionCollection.
-     *    All BasicPermissions in the collection must belong to the same class.
-     *    The Hashtable is indexed by the BasicPermission name; the value
-     *    of the Hashtable entry is the permission.
+     * The BasicPermissions in this BasicPermissionCollection.
+     * All BasicPermissions in the collection must belong to the same class.
+     * The Hashtable is indexed by the BasicPermission name; the value
+     * of the Hashtable entry is the permission.
      * @serialField all_allowed boolean
-     *   This is set to <code>true</code> if this BasicPermissionCollection
-     *   contains a BasicPermission with '*' as its permission name.
+     * This is set to <code>true</code> if this BasicPermissionCollection
+     * contains a BasicPermission with '*' as its permission name.
      * @serialField permClass java.lang.Class
-     *   The class to which all BasicPermissions in this
-     *   BasicPermissionCollection belongs.
+     * The class to which all BasicPermissions in this
+     * BasicPermissionCollection belongs.
      */
     private static final ObjectStreamField[] serialPersistentFields = {
-        new ObjectStreamField("permissions", Hashtable.class),
-        new ObjectStreamField("all_allowed", Boolean.TYPE),
-        new ObjectStreamField("permClass", Class.class),
-    };
+        new ObjectStreamField("permissions", Hashtable.class), new ObjectStreamField("all_allowed", Boolean.TYPE),
+        new ObjectStreamField("permClass", Class.class), };
 
     /**
      * @serialData Default fields.
@@ -514,8 +478,7 @@ implements java.io.Serializable
         // Don't call out.defaultWriteObject()
 
         // Copy perms into a Hashtable
-        Hashtable<String, Permission> permissions =
-                new Hashtable<>(perms.size()*2);
+        Hashtable<String, Permission> permissions = new Hashtable<>(perms.size() * 2);
 
         synchronized (this) {
             permissions.putAll(perms);
@@ -533,18 +496,15 @@ implements java.io.Serializable
      * readObject is called to restore the state of the
      * BasicPermissionCollection from a stream.
      */
-    private void readObject(java.io.ObjectInputStream in)
-         throws IOException, ClassNotFoundException
-    {
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Don't call defaultReadObject()
 
         // Read in serialized fields
         ObjectInputStream.GetField gfields = in.readFields();
 
         // Get permissions
-        Hashtable<String, Permission> permissions =
-                (Hashtable<String, Permission>)gfields.get("permissions", null);
-        perms = new HashMap<String, Permission>(permissions.size()*2);
+        Hashtable<String, Permission> permissions = (Hashtable<String, Permission>) gfields.get("permissions", null);
+        perms = new HashMap<String, Permission>(permissions.size() * 2);
         perms.putAll(permissions);
 
         // Get all_allowed

@@ -29,6 +29,7 @@ import java.awt.image.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.io.File;
+
 import sun.util.logging.PlatformLogger;
 import sun.awt.image.SunWritableRaster;
 
@@ -42,7 +43,7 @@ import sun.awt.image.SunWritableRaster;
  * platform and implementation dependent.  The splash screen window is closed
  * automatically as soon as the first window is displayed by Swing/AWT (may be
  * also closed manually using the Java API, see below).
- * <P>
+ * <p>
  * If your application is packaged in a jar file, you can use the
  * "SplashScreen-Image" option in a manifest file to show a splash screen.
  * Place the image in the jar archive and specify the path in the option.
@@ -54,7 +55,7 @@ import sun.awt.image.SunWritableRaster;
  * Main-Class: Test
  * SplashScreen-Image: filename.gif
  * </PRE>
- * <P>
+ * <p>
  * If the Java implementation provides the command-line interface and you run
  * your application by using the command line or a shortcut, use the Java
  * application launcher option to show a splash screen. The Oracle reference
@@ -104,22 +105,21 @@ public final class SplashScreen {
      * Returns the {@code SplashScreen} object used for
      * Java startup splash screen control on systems that support display.
      *
-     * @throws UnsupportedOperationException if the splash screen feature is not
-     *         supported by the current toolkit
-     * @throws HeadlessException if {@code GraphicsEnvironment.isHeadless()}
-     *         returns true
      * @return the {@link SplashScreen} instance, or <code>null</code> if there is
-     *         none or it has already been closed
+     * none or it has already been closed
+     * @throws UnsupportedOperationException if the splash screen feature is not
+     *                                       supported by the current toolkit
+     * @throws HeadlessException             if {@code GraphicsEnvironment.isHeadless()}
+     *                                       returns true
      */
-    public static  SplashScreen getSplashScreen() {
+    public static SplashScreen getSplashScreen() {
         synchronized (SplashScreen.class) {
             if (GraphicsEnvironment.isHeadless()) {
                 throw new HeadlessException();
             }
             // SplashScreen class is now a singleton
             if (!wasClosed && theInstance == null) {
-                java.security.AccessController.doPrivileged(
-                        new sun.security.action.LoadLibraryAction("splashscreen"));
+                java.security.AccessController.doPrivileged(new sun.security.action.LoadLibraryAction("splashscreen"));
                 long ptr = _getInstance();
                 if (ptr != 0 && _isVisible(ptr)) {
                     theInstance = new SplashScreen(ptr);
@@ -138,11 +138,11 @@ public final class SplashScreen {
      * the image and is centered on the screen.
      *
      * @param imageURL the non-<code>null</code> URL for the new
-     *        splash screen image
-     * @throws NullPointerException if {@code imageURL} is <code>null</code>
-     * @throws IOException if there was an error while loading the image
+     *                 splash screen image
+     * @throws NullPointerException  if {@code imageURL} is <code>null</code>
+     * @throws IOException           if there was an error while loading the image
      * @throws IllegalStateException if the splash screen has already been
-     *         closed
+     *                               closed
      */
     public void setImageURL(URL imageURL) throws NullPointerException, IOException, IllegalStateException {
         checkVisible();
@@ -152,7 +152,7 @@ public final class SplashScreen {
         java.io.InputStream stream = connection.getInputStream();
         byte[] buf = new byte[length];
         int off = 0;
-        while(true) {
+        while (true) {
             // check for available data
             int available = stream.available();
             if (available <= 0) {
@@ -163,9 +163,9 @@ public final class SplashScreen {
             // check for enough room in buffer, realloc if needed
             // the buffer always grows in size 2x minimum
             if (off + available > length) {
-                length = off*2;
+                length = off * 2;
                 if (off + available > length) {
-                    length = available+off;
+                    length = available + off;
                 }
                 byte[] oldBuf = buf;
                 buf = new byte[length];
@@ -178,7 +178,7 @@ public final class SplashScreen {
             }
             off += result;
         }
-        synchronized(SplashScreen.class) {
+        synchronized (SplashScreen.class) {
             checkVisible();
             if (!_setImageData(splashPtr, buf)) {
                 throw new IOException("Bad image format or i/o error when loading image");
@@ -192,6 +192,7 @@ public final class SplashScreen {
             throw new IllegalStateException("no splash screen available");
         }
     }
+
     /**
      * Returns the current splash screen image.
      *
@@ -207,13 +208,12 @@ public final class SplashScreen {
                     String jarName = _getImageJarName(splashPtr);
                     if (fileName != null) {
                         if (jarName != null) {
-                            imageURL = new URL("jar:"+(new File(jarName).toURL().toString())+"!/"+fileName);
+                            imageURL = new URL("jar:" + (new File(jarName).toURL().toString()) + "!/" + fileName);
                         } else {
                             imageURL = new File(fileName).toURL();
                         }
                     }
-                }
-                catch(java.net.MalformedURLException e) {
+                } catch (java.net.MalformedURLException e) {
                     if (log.isLoggable(PlatformLogger.FINE)) {
                         log.fine("MalformedURLException caught in the getImageURL() method", e);
                     }
@@ -281,7 +281,7 @@ public final class SplashScreen {
      */
     public Graphics2D createGraphics() throws IllegalStateException {
         synchronized (SplashScreen.class) {
-            if (image==null) {
+            if (image == null) {
                 Dimension dim = getSize();
                 image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
             }
@@ -293,8 +293,8 @@ public final class SplashScreen {
      * Updates the splash window with current contents of the overlay image.
      *
      * @throws IllegalStateException if the overlay image does not exist;
-     *         for example, if {@code createGraphics} has never been called,
-     *         or if the splash screen has already been closed
+     *                               for example, if {@code createGraphics} has never been called,
+     *                               or if the splash screen has already been closed
      */
     public void update() throws IllegalStateException {
         BufferedImage image;
@@ -307,22 +307,23 @@ public final class SplashScreen {
         }
         DataBuffer buf = image.getRaster().getDataBuffer();
         if (!(buf instanceof DataBufferInt)) {
-            throw new AssertionError("Overlay image DataBuffer is of invalid type == "+buf.getClass().getName());
+            throw new AssertionError("Overlay image DataBuffer is of invalid type == " + buf.getClass().getName());
         }
         int numBanks = buf.getNumBanks();
-        if (numBanks!=1) {
-            throw new AssertionError("Invalid number of banks =="+numBanks+" in overlay image DataBuffer");
+        if (numBanks != 1) {
+            throw new AssertionError("Invalid number of banks ==" + numBanks + " in overlay image DataBuffer");
         }
         if (!(image.getSampleModel() instanceof SinglePixelPackedSampleModel)) {
-            throw new AssertionError("Overlay image has invalid sample model == "+image.getSampleModel().getClass().getName());
+            throw new AssertionError(
+                "Overlay image has invalid sample model == " + image.getSampleModel().getClass().getName());
         }
-        SinglePixelPackedSampleModel sm = (SinglePixelPackedSampleModel)image.getSampleModel();
+        SinglePixelPackedSampleModel sm = (SinglePixelPackedSampleModel) image.getSampleModel();
         int scanlineStride = sm.getScanlineStride();
         Rectangle rect = image.getRaster().getBounds();
         // Note that we steal the data array here, but just for reading
         // so we do not need to mark the DataBuffer dirty...
-        int[] data = SunWritableRaster.stealData((DataBufferInt)buf, 0);
-        synchronized(SplashScreen.class) {
+        int[] data = SunWritableRaster.stealData((DataBufferInt) buf, 0);
+        synchronized (SplashScreen.class) {
             checkVisible();
             _update(splashPtr, data, rect.x, rect.y, rect.width, rect.height, scanlineStride);
         }
@@ -362,7 +363,7 @@ public final class SplashScreen {
      * window have not occurred yet.
      *
      * @return true if the splash screen is visible (has not been closed yet),
-     *         false otherwise
+     * false otherwise
      */
     public boolean isVisible() {
         synchronized (SplashScreen.class) {
@@ -388,13 +389,21 @@ public final class SplashScreen {
 
     private static final PlatformLogger log = PlatformLogger.getLogger("java.awt.SplashScreen");
 
-    private native static void _update(long splashPtr, int[] data, int x, int y, int width, int height, int scanlineStride);
+    private native static void _update(long splashPtr, int[] data, int x, int y, int width, int height,
+        int scanlineStride);
+
     private native static boolean _isVisible(long splashPtr);
+
     private native static Rectangle _getBounds(long splashPtr);
+
     private native static long _getInstance();
+
     private native static void _close(long splashPtr);
+
     private native static String _getImageFileName(long splashPtr);
+
     private native static String _getImageJarName(long SplashPtr);
+
     private native static boolean _setImageData(long SplashPtr, byte[] data);
 
 };

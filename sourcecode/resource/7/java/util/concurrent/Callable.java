@@ -49,10 +49,10 @@ package java.util.concurrent;
  * <p> The {@link Executors} class contains utility methods to
  * convert from other common forms to <tt>Callable</tt> classes.
  *
+ * @param <V> the result type of method <tt>call</tt>
+ * @author Doug Lea
  * @see Executor
  * @since 1.5
- * @author Doug Lea
- * @param <V> the result type of method <tt>call</tt>
  */
 public interface Callable<V> {
     /**

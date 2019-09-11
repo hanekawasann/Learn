@@ -38,12 +38,9 @@ class SdpSocketImpl extends PlainSocketImpl {
 
     @Override
     protected void create(boolean stream) throws IOException {
-        if (!stream)
-            throw new UnsupportedOperationException("Must be a stream socket");
+        if (!stream) { throw new UnsupportedOperationException("Must be a stream socket"); }
         fd = SdpSupport.createSocket();
-        if (socket != null)
-            socket.setCreated();
-        if (serverSocket != null)
-            serverSocket.setCreated();
+        if (socket != null) { socket.setCreated(); }
+        if (serverSocket != null) { serverSocket.setCreated(); }
     }
 }

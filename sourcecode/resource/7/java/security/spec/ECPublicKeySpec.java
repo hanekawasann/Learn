@@ -28,12 +28,10 @@ package java.security.spec;
  * This immutable class specifies an elliptic curve public key with
  * its associated parameters.
  *
+ * @author Valerie Peng
  * @see KeySpec
  * @see ECPoint
  * @see ECParameterSpec
- *
- * @author Valerie Peng
- *
  * @since 1.5
  */
 public class ECPublicKeySpec implements KeySpec {
@@ -44,13 +42,14 @@ public class ECPublicKeySpec implements KeySpec {
     /**
      * Creates a new ECPublicKeySpec with the specified
      * parameter values.
-     * @param w the public point.
+     *
+     * @param w      the public point.
      * @param params the associated elliptic curve domain
-     * parameters.
-     * @exception NullPointerException if <code>w</code>
-     * or <code>params</code> is null.
-     * @exception IllegalArgumentException if <code>w</code>
-     * is point at infinity, i.e. ECPoint.POINT_INFINITY
+     *               parameters.
+     * @throws NullPointerException     if <code>w</code>
+     *                                  or <code>params</code> is null.
+     * @throws IllegalArgumentException if <code>w</code>
+     *                                  is point at infinity, i.e. ECPoint.POINT_INFINITY
      */
     public ECPublicKeySpec(ECPoint w, ECParameterSpec params) {
         if (w == null) {
@@ -68,6 +67,7 @@ public class ECPublicKeySpec implements KeySpec {
 
     /**
      * Returns the public point W.
+     *
      * @return the public point W.
      */
     public ECPoint getW() {
@@ -77,6 +77,7 @@ public class ECPublicKeySpec implements KeySpec {
     /**
      * Returns the associated elliptic curve domain
      * parameters.
+     *
      * @return the EC domain parameters.
      */
     public ECParameterSpec getParams() {

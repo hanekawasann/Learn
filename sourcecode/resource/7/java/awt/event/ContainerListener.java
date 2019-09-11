@@ -38,18 +38,17 @@ import java.util.EventListener;
  * method. When the container's contents change because a component
  * has been added or removed, the relevant method in the listener object
  * is invoked, and the <code>ContainerEvent</code> is passed to it.
- * <P>
+ * <p>
  * Container events are provided for notification purposes ONLY;
  * The AWT will automatically handle add and remove operations
  * internally so the program works properly regardless of
  * whether the program registers a <code>ComponentListener</code> or not.
  *
+ * @author Tim Prinzing
+ * @author Amy Fowler
  * @see ContainerAdapter
  * @see ContainerEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/containerlistener.html">Tutorial: Writing a Container Listener</a>
- *
- * @author Tim Prinzing
- * @author Amy Fowler
  * @since 1.1
  */
 public interface ContainerListener extends EventListener {

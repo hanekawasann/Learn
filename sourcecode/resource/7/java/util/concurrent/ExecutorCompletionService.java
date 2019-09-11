@@ -45,7 +45,7 @@ package java.util.concurrent;
  * <p>
  *
  * <b>Usage Examples.</b>
- *
+ * <p>
  * Suppose you have a set of solvers for a certain problem, each
  * returning a value of some type {@code Result}, and would like to
  * run them concurrently, processing the results of each of them that
@@ -67,7 +67,7 @@ package java.util.concurrent;
  *             use(r);
  *     }
  * }}</pre>
- *
+ * <p>
  * Suppose instead that you would like to use the first non-null result
  * of the set of tasks, ignoring any that encounter exceptions,
  * and cancelling all other tasks when the first one is ready:
@@ -117,22 +117,18 @@ public class ExecutorCompletionService<V> implements CompletionService<V> {
             super(task, null);
             this.task = task;
         }
+
         protected void done() { completionQueue.add(task); }
+
         private final Future<V> task;
     }
 
     private RunnableFuture<V> newTaskFor(Callable<V> task) {
-        if (aes == null)
-            return new FutureTask<V>(task);
-        else
-            return aes.newTaskFor(task);
+        if (aes == null) { return new FutureTask<V>(task); } else { return aes.newTaskFor(task); }
     }
 
     private RunnableFuture<V> newTaskFor(Runnable task, V result) {
-        if (aes == null)
-            return new FutureTask<V>(task, result);
-        else
-            return aes.newTaskFor(task, result);
+        if (aes == null) { return new FutureTask<V>(task, result); } else { return aes.newTaskFor(task, result); }
     }
 
     /**
@@ -144,11 +140,9 @@ public class ExecutorCompletionService<V> implements CompletionService<V> {
      * @throws NullPointerException if executor is {@code null}
      */
     public ExecutorCompletionService(Executor executor) {
-        if (executor == null)
-            throw new NullPointerException();
+        if (executor == null) { throw new NullPointerException(); }
         this.executor = executor;
-        this.aes = (executor instanceof AbstractExecutorService) ?
-            (AbstractExecutorService) executor : null;
+        this.aes = (executor instanceof AbstractExecutorService) ? (AbstractExecutorService) executor : null;
         this.completionQueue = new LinkedBlockingQueue<Future<V>>();
     }
 
@@ -157,33 +151,30 @@ public class ExecutorCompletionService<V> implements CompletionService<V> {
      * executor for base task execution and the supplied queue as its
      * completion queue.
      *
-     * @param executor the executor to use
+     * @param executor        the executor to use
      * @param completionQueue the queue to use as the completion queue
-     *        normally one dedicated for use by this service. This
-     *        queue is treated as unbounded -- failed attempted
-     *        {@code Queue.add} operations for completed taskes cause
-     *        them not to be retrievable.
+     *                        normally one dedicated for use by this service. This
+     *                        queue is treated as unbounded -- failed attempted
+     *                        {@code Queue.add} operations for completed taskes cause
+     *                        them not to be retrievable.
      * @throws NullPointerException if executor or completionQueue are {@code null}
      */
-    public ExecutorCompletionService(Executor executor,
-                                     BlockingQueue<Future<V>> completionQueue) {
-        if (executor == null || completionQueue == null)
-            throw new NullPointerException();
+    public ExecutorCompletionService(Executor executor, BlockingQueue<Future<V>> completionQueue) {
+        if (executor == null || completionQueue == null) { throw new NullPointerException(); }
         this.executor = executor;
-        this.aes = (executor instanceof AbstractExecutorService) ?
-            (AbstractExecutorService) executor : null;
+        this.aes = (executor instanceof AbstractExecutorService) ? (AbstractExecutorService) executor : null;
         this.completionQueue = completionQueue;
     }
 
     public Future<V> submit(Callable<V> task) {
-        if (task == null) throw new NullPointerException();
+        if (task == null) { throw new NullPointerException(); }
         RunnableFuture<V> f = newTaskFor(task);
         executor.execute(new QueueingFuture(f));
         return f;
     }
 
     public Future<V> submit(Runnable task, V result) {
-        if (task == null) throw new NullPointerException();
+        if (task == null) { throw new NullPointerException(); }
         RunnableFuture<V> f = newTaskFor(task, result);
         executor.execute(new QueueingFuture(f));
         return f;
@@ -197,8 +188,7 @@ public class ExecutorCompletionService<V> implements CompletionService<V> {
         return completionQueue.poll();
     }
 
-    public Future<V> poll(long timeout, TimeUnit unit)
-            throws InterruptedException {
+    public Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
         return completionQueue.poll(timeout, unit);
     }
 

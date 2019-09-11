@@ -36,7 +36,7 @@ import java.io.IOException;
  * How to Use Drag and Drop and Data Transfer</a>,
  * a section in <em>The Java Tutorial</em>, for more information.
  *
- * @author      Amy Fowler
+ * @author Amy Fowler
  */
 
 public interface Transferable {
@@ -45,6 +45,7 @@ public interface Transferable {
      * Returns an array of DataFlavor objects indicating the flavors the data
      * can be provided in.  The array should be ordered according to preference
      * for providing the data (from most richly descriptive to least descriptive).
+     *
      * @return an array of data flavors in which this data can be transferred
      */
     public DataFlavor[] getTransferDataFlavors();
@@ -52,6 +53,7 @@ public interface Transferable {
     /**
      * Returns whether or not the specified data flavor is supported for
      * this object.
+     *
      * @param flavor the requested flavor for the data
      * @return boolean indicating whether or not the data flavor is supported
      */
@@ -62,11 +64,11 @@ public interface Transferable {
      * of the object returned is defined by the representation class of the flavor.
      *
      * @param flavor the requested flavor for the data
+     * @throws IOException                if the data is no longer available
+     *                                    in the requested flavor.
+     * @throws UnsupportedFlavorException if the requested data flavor is
+     *                                    not supported.
      * @see DataFlavor#getRepresentationClass
-     * @exception IOException                if the data is no longer available
-     *              in the requested flavor.
-     * @exception UnsupportedFlavorException if the requested data flavor is
-     *              not supported.
      */
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException;
 

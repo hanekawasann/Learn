@@ -43,9 +43,8 @@ import java.lang.Character.Subset;
  * ({@link java.awt.im.InputContext#selectInputMethod InputContext.selectInputMethod})
  * or the user interface (the input method selection menu).
  *
- * @since 1.3
- *
  * @author JavaSoft International
+ * @since 1.3
  */
 
 public interface InputMethod {
@@ -59,7 +58,7 @@ public interface InputMethod {
      * method.
      *
      * @param context the input method context for this input method
-     * @exception NullPointerException if <code>context</code> is null
+     * @throws NullPointerException if <code>context</code> is null
      */
     public void setInputMethodContext(InputMethodContext context);
 
@@ -80,7 +79,7 @@ public interface InputMethod {
      *
      * @param locale locale to input
      * @return whether the specified locale is supported
-     * @exception NullPointerException if <code>locale</code> is null
+     * @throws NullPointerException if <code>locale</code> is null
      */
     public boolean setLocale(Locale locale);
 
@@ -111,7 +110,7 @@ public interface InputMethod {
      * </ul>
      *
      * @param subsets the subsets of the Unicode character set from which
-     * characters may be input
+     *                characters may be input
      */
     public void setCharacterSubsets(Subset[] subsets);
 
@@ -147,7 +146,7 @@ public interface InputMethod {
      *
      * @param enable whether to enable the input method for composition
      * @throws UnsupportedOperationException if this input method does not
-     * support the enabling/disabling operation
+     *                                       support the enabling/disabling operation
      * @see #isCompositionEnabled
      */
     public void setCompositionEnabled(boolean enable);
@@ -169,7 +168,7 @@ public interface InputMethod {
      * @return <code>true</code> if this input method is enabled for
      * composition; <code>false</code> otherwise.
      * @throws UnsupportedOperationException if this input method does not
-     * support checking whether it is enabled for composition
+     *                                       support checking whether it is enabled for composition
      * @see #setCompositionEnabled
      */
     public boolean isCompositionEnabled();
@@ -190,7 +189,7 @@ public interface InputMethod {
      * {@link java.awt.im.InputContext#reconvert() InputContext.reconvert}.
      *
      * @throws UnsupportedOperationException if the input method does not
-     * support the reconversion operation.
+     *                                       support the reconversion operation.
      */
     public void reconvert();
 
@@ -211,7 +210,7 @@ public interface InputMethod {
      * This method is called by {@link java.awt.im.InputContext#dispatchEvent InputContext.dispatchEvent}.
      *
      * @param event the event being dispatched to the input method
-     * @exception NullPointerException if <code>event</code> is null
+     * @throws NullPointerException if <code>event</code> is null
      */
     public void dispatchEvent(AWTEvent event);
 
@@ -246,9 +245,10 @@ public interface InputMethod {
      * after the input context's removeNotify method has been
      * called.</li>
      * </ul>
+     *
      * @param bounds client window's {@link
-     * java.awt.Component#getBounds bounds} on the screen; or null if
-     * the client window is iconified or invisible
+     *               java.awt.Component#getBounds bounds} on the screen; or null if
+     *               the client window is iconified or invisible
      */
     public void notifyClientWindowChange(Rectangle bounds);
 

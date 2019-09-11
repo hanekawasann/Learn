@@ -31,6 +31,7 @@ import java.security.PublicKey;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
 import javax.security.auth.x500.X500Principal;
 
 import sun.security.x509.X509CertImpl;
@@ -102,15 +103,12 @@ import sun.security.x509.X509CertImpl;
  * </pre>
  *
  * @author Hemma Prafullchandra
- *
- *
  * @see Certificate
  * @see CertificateFactory
  * @see X509Extension
  */
 
-public abstract class X509Certificate extends Certificate
-implements X509Extension {
+public abstract class X509Certificate extends Certificate implements X509Extension {
 
     private static final long serialVersionUID = -2491127588187038216L;
 
@@ -142,12 +140,11 @@ implements X509Extension {
      *     generalTime    GeneralizedTime }
      * </pre>
      *
-     * @exception CertificateExpiredException if the certificate has expired.
-     * @exception CertificateNotYetValidException if the certificate is not
-     * yet valid.
+     * @throws CertificateExpiredException     if the certificate has expired.
+     * @throws CertificateNotYetValidException if the certificate is not
+     *                                         yet valid.
      */
-    public abstract void checkValidity()
-        throws CertificateExpiredException, CertificateNotYetValidException;
+    public abstract void checkValidity() throws CertificateExpiredException, CertificateNotYetValidException;
 
     /**
      * Checks that the given date is within the certificate's
@@ -155,17 +152,14 @@ implements X509Extension {
      * certificate would be valid at the given date/time.
      *
      * @param date the Date to check against to see if this certificate
-     *        is valid at that date/time.
-     *
-     * @exception CertificateExpiredException if the certificate has expired
-     * with respect to the <code>date</code> supplied.
-     * @exception CertificateNotYetValidException if the certificate is not
-     * yet valid with respect to the <code>date</code> supplied.
-     *
+     *             is valid at that date/time.
+     * @throws CertificateExpiredException     if the certificate has expired
+     *                                         with respect to the <code>date</code> supplied.
+     * @throws CertificateNotYetValidException if the certificate is not
+     *                                         yet valid with respect to the <code>date</code> supplied.
      * @see #checkValidity()
      */
-    public abstract void checkValidity(Date date)
-        throws CertificateExpiredException, CertificateNotYetValidException;
+    public abstract void checkValidity(Date date) throws CertificateExpiredException, CertificateNotYetValidException;
 
     /**
      * Gets the <code>version</code> (version number) value from the
@@ -175,6 +169,7 @@ implements X509Extension {
      * version  [0] EXPLICIT Version DEFAULT v1<p>
      * Version ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
      * </pre>
+     *
      * @return the version number, i.e. 1, 2 or 3.
      */
     public abstract int getVersion();
@@ -244,7 +239,7 @@ implements X509Extension {
      * It is recommended that subclasses override this method.
      *
      * @return an <code>X500Principal</code> representing the issuer
-     *          distinguished name
+     * distinguished name
      * @since 1.4
      */
     public X500Principal getIssuerX500Principal() {
@@ -287,7 +282,7 @@ implements X509Extension {
      * It is recommended that subclasses override this method.
      *
      * @return an <code>X500Principal</code> representing the subject
-     *          distinguished name
+     * distinguished name
      * @since 1.4
      */
     public X500Principal getSubjectX500Principal() {
@@ -333,10 +328,9 @@ implements X509Extension {
      * This can be used to verify the signature independently.
      *
      * @return the DER-encoded certificate information.
-     * @exception CertificateEncodingException if an encoding error occurs.
+     * @throws CertificateEncodingException if an encoding error occurs.
      */
-    public abstract byte[] getTBSCertificate()
-        throws CertificateEncodingException;
+    public abstract byte[] getTBSCertificate() throws CertificateEncodingException;
 
     /**
      * Gets the <code>signature</code> value (the raw signature bits) from
@@ -402,7 +396,7 @@ implements X509Extension {
      * relevant ASN.1 definitions.
      *
      * @return the DER-encoded signature algorithm parameters, or
-     *         null if no parameters are present.
+     * null if no parameters are present.
      */
     public abstract byte[] getSigAlgParams();
 
@@ -485,7 +479,7 @@ implements X509Extension {
      *
      * KeyPurposeId ::= OBJECT IDENTIFIER<p>
      * </pre>
-     *
+     * <p>
      * Key purposes may be defined by any organization with a
      * need. Object identifiers used to identify key purposes shall be
      * assigned in accordance with IANA or ITU-T Rec. X.660 |
@@ -498,9 +492,9 @@ implements X509Extension {
      * should override this method with a correct implementation.
      *
      * @return the ExtendedKeyUsage extension of this certificate,
-     *         as an unmodifiable list of object identifiers represented
-     *         as Strings. Returns null if this certificate does not
-     *         contain an ExtendedKeyUsage extension.
+     * as an unmodifiable list of object identifiers represented
+     * as Strings. Returns null if this certificate does not
+     * contain an ExtendedKeyUsage extension.
      * @throws CertificateParsingException if the extension cannot be decoded
      * @since 1.4
      */
@@ -600,8 +594,7 @@ implements X509Extension {
      * @throws CertificateParsingException if the extension cannot be decoded
      * @since 1.4
      */
-    public Collection<List<?>> getSubjectAlternativeNames()
-        throws CertificateParsingException {
+    public Collection<List<?>> getSubjectAlternativeNames() throws CertificateParsingException {
         return X509CertImpl.getSubjectAlternativeNames(this);
     }
 
@@ -642,8 +635,7 @@ implements X509Extension {
      * @throws CertificateParsingException if the extension cannot be decoded
      * @since 1.4
      */
-    public Collection<List<?>> getIssuerAlternativeNames()
-        throws CertificateParsingException {
+    public Collection<List<?>> getIssuerAlternativeNames() throws CertificateParsingException {
         return X509CertImpl.getIssuerAlternativeNames(this);
     }
 }

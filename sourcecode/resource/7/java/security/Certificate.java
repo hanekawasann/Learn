@@ -56,11 +56,11 @@ import java.util.Date;
  * the certificate and satisfy itself of its validity.
  *
  * @author Benjamin Renaud
- * @deprecated A new certificate handling package is created in the Java platform.
- *             This Certificate interface is entirely deprecated and
- *             is here to allow for a smooth transition to the new
- *             package.
  * @see java.security.cert.Certificate
+ * @deprecated A new certificate handling package is created in the Java platform.
+ * This Certificate interface is entirely deprecated and
+ * is here to allow for a smooth transition to the new
+ * package.
  */
 @Deprecated
 public interface Certificate {
@@ -99,19 +99,15 @@ public interface Certificate {
      * be decoded by the <code>decode</code> method.
      *
      * @param stream the output stream to which to encode the
-     * certificate.
-     *
-     * @exception KeyException if the certificate is not
-     * properly initialized, or data is missing, etc.
-     *
-     * @exception IOException if a stream exception occurs while
-     * trying to output the encoded certificate to the output stream.
-     *
+     *               certificate.
+     * @throws KeyException if the certificate is not
+     *                      properly initialized, or data is missing, etc.
+     * @throws IOException  if a stream exception occurs while
+     *                      trying to output the encoded certificate to the output stream.
      * @see #decode
      * @see #getFormat
      */
-    public abstract void encode(OutputStream stream)
-        throws KeyException, IOException;
+    public abstract void encode(OutputStream stream) throws KeyException, IOException;
 
     /**
      * Decodes a certificate from an input stream. The format should be
@@ -119,19 +115,15 @@ public interface Certificate {
      * <code>encode</code>.
      *
      * @param stream the input stream from which to fetch the data
-     * being decoded.
-     *
-     * @exception KeyException if the certificate is not properly initialized,
-     * or data is missing, etc.
-     *
-     * @exception IOException if an exception occurs while trying to input
-     * the encoded certificate from the input stream.
-     *
+     *               being decoded.
+     * @throws KeyException if the certificate is not properly initialized,
+     *                      or data is missing, etc.
+     * @throws IOException  if an exception occurs while trying to input
+     *                      the encoded certificate from the input stream.
      * @see #encode
      * @see #getFormat
      */
-    public abstract void decode(InputStream stream)
-        throws KeyException, IOException;
+    public abstract void decode(InputStream stream) throws KeyException, IOException;
 
 
     /**
@@ -148,8 +140,7 @@ public interface Certificate {
      * Returns a string that represents the contents of the certificate.
      *
      * @param detailed whether or not to give detailed information
-     * about the certificate
-     *
+     *                 about the certificate
      * @return a string representing the contents of the certificate
      */
     public String toString(boolean detailed);

@@ -42,8 +42,7 @@ package java.util;
  * Java Collections Framework</a>.
  *
  * @param <E> the type of elements returned by this iterator
- *
- * @author  Josh Bloch
+ * @author Josh Bloch
  * @see Collection
  * @see ListIterator
  * @see Iterable
@@ -76,12 +75,11 @@ public interface Iterator<E> {
      * method.
      *
      * @throws UnsupportedOperationException if the {@code remove}
-     *         operation is not supported by this iterator
-     *
-     * @throws IllegalStateException if the {@code next} method has not
-     *         yet been called, or the {@code remove} method has already
-     *         been called after the last call to the {@code next}
-     *         method
+     *                                       operation is not supported by this iterator
+     * @throws IllegalStateException         if the {@code next} method has not
+     *                                       yet been called, or the {@code remove} method has already
+     *                                       been called after the last call to the {@code next}
+     *                                       method
      */
     void remove();
 }

@@ -29,7 +29,7 @@ import java.awt.Button;
 
 /**
  * The peer interface for {@link Button}.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -43,7 +43,6 @@ public interface ButtonPeer extends ComponentPeer {
      * when the button should not display a label.
      *
      * @param label the label string to set
-     *
      * @see Button#setLabel
      */
     void setLabel(String label);

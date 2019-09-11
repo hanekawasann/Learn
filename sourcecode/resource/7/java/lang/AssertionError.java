@@ -38,7 +38,7 @@ package java.lang;
  * <cite>The Java&trade; Language Specification</cite>),
  * regardless of the type of <i>expression</i>.
  *
- * @since   1.4
+ * @since 1.4
  */
 public class AssertionError extends Error {
     private static final long serialVersionUID = -5013299493970297370L;
@@ -63,17 +63,16 @@ public class AssertionError extends Error {
      * from the specified object, which is converted to a string as
      * defined in section 15.18.1.1 of
      * <cite>The Java&trade; Language Specification</cite>.
-     *<p>
+     * <p>
      * If the specified object is an instance of {@code Throwable}, it
      * becomes the <i>cause</i> of the newly constructed assertion error.
      *
      * @param detailMessage value to be used in constructing detail message
-     * @see   Throwable#getCause()
+     * @see Throwable#getCause()
      */
     public AssertionError(Object detailMessage) {
-        this("" +  detailMessage);
-        if (detailMessage instanceof Throwable)
-            initCause((Throwable) detailMessage);
+        this("" + detailMessage);
+        if (detailMessage instanceof Throwable) { initCause((Throwable) detailMessage); }
     }
 
     /**
@@ -85,7 +84,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(boolean detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -97,7 +96,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(char detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -109,7 +108,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(int detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -121,7 +120,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(long detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -133,7 +132,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(float detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -145,7 +144,7 @@ public class AssertionError extends Error {
      * @param detailMessage value to be used in constructing detail message
      */
     public AssertionError(double detailMessage) {
-        this("" +  detailMessage);
+        this("" + detailMessage);
     }
 
     /**
@@ -156,9 +155,8 @@ public class AssertionError extends Error {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this error's detail message.
      *
-     * @param  message the detail message, may be {@code null}
-     * @param  cause the cause, may be {@code null}
-     *
+     * @param message the detail message, may be {@code null}
+     * @param cause   the cause, may be {@code null}
      * @since 1.7
      */
     public AssertionError(String message, Throwable cause) {

@@ -31,9 +31,12 @@ import sun.reflect.generics.repository.ConstructorRepository;
 import sun.reflect.generics.factory.CoreReflectionFactory;
 import sun.reflect.generics.factory.GenericsFactory;
 import sun.reflect.generics.scope.ConstructorScope;
+
 import java.lang.annotation.Annotation;
 import java.util.Map;
+
 import sun.reflect.annotation.AnnotationParser;
+
 import java.lang.annotation.AnnotationFormatError;
 import java.lang.reflect.Modifier;
 
@@ -47,32 +50,27 @@ import java.lang.reflect.Modifier;
  * {@code IllegalArgumentException} if a narrowing conversion would occur.
  *
  * @param <T> the class in which the constructor is declared
- *
+ * @author Kenneth Russell
+ * @author Nakul Saraiya
  * @see Member
  * @see java.lang.Class
  * @see java.lang.Class#getConstructors()
  * @see java.lang.Class#getConstructor(Class[])
  * @see java.lang.Class#getDeclaredConstructors()
- *
- * @author      Kenneth Russell
- * @author      Nakul Saraiya
  */
-public final
-    class Constructor<T> extends AccessibleObject implements
-                                                    GenericDeclaration,
-                                                    Member {
+public final class Constructor<T> extends AccessibleObject implements GenericDeclaration, Member {
 
-    private Class<T>            clazz;
-    private int                 slot;
-    private Class<?>[]          parameterTypes;
-    private Class<?>[]          exceptionTypes;
-    private int                 modifiers;
+    private Class<T> clazz;
+    private int slot;
+    private Class<?>[] parameterTypes;
+    private Class<?>[] exceptionTypes;
+    private int modifiers;
     // Generics and annotations support
-    private transient String    signature;
+    private transient String signature;
     // generic info repository; lazily initialized
     private transient ConstructorRepository genericInfo;
-    private byte[]              annotations;
-    private byte[]              parameterAnnotations;
+    private byte[] annotations;
+    private byte[] parameterAnnotations;
 
     // Generics infrastructure
     // Accessor for factory
@@ -86,9 +84,7 @@ public final
         // lazily initialize repository if necessary
         if (genericInfo == null) {
             // create and cache generic info repository
-            genericInfo =
-                ConstructorRepository.make(getSignature(),
-                                           getFactory());
+            genericInfo = ConstructorRepository.make(getSignature(), getFactory());
         }
         return genericInfo; //return cached repository
     }
@@ -97,22 +93,15 @@ public final
     // For sharing of ConstructorAccessors. This branching structure
     // is currently only two levels deep (i.e., one root Constructor
     // and potentially many Constructor objects pointing to it.)
-    private Constructor<T>      root;
+    private Constructor<T> root;
 
     /**
      * Package-private constructor used by ReflectAccess to enable
      * instantiation of these objects in Java code from the java.lang
      * package via sun.reflect.LangReflectAccess.
      */
-    Constructor(Class<T> declaringClass,
-                Class<?>[] parameterTypes,
-                Class<?>[] checkedExceptions,
-                int modifiers,
-                int slot,
-                String signature,
-                byte[] annotations,
-                byte[] parameterAnnotations)
-    {
+    Constructor(Class<T> declaringClass, Class<?>[] parameterTypes, Class<?>[] checkedExceptions, int modifiers,
+        int slot, String signature, byte[] annotations, byte[] parameterAnnotations) {
         this.clazz = declaringClass;
         this.parameterTypes = parameterTypes;
         this.exceptionTypes = checkedExceptions;
@@ -136,12 +125,8 @@ public final
         // which implicitly requires that new java.lang.reflect
         // objects be fabricated for each reflective call on Class
         // objects.)
-        Constructor<T> res = new Constructor<>(clazz,
-                                                parameterTypes,
-                                                exceptionTypes, modifiers, slot,
-                                                signature,
-                                                annotations,
-                                                parameterAnnotations);
+        Constructor<T> res = new Constructor<>(clazz, parameterTypes, exceptionTypes, modifiers, slot, signature,
+            annotations, parameterAnnotations);
         res.root = this;
         // Might as well eagerly propagate this if already present
         res.constructorAccessor = constructorAccessor;
@@ -183,18 +168,17 @@ public final
      * variables.
      *
      * @return an array of {@code TypeVariable} objects that represent
-     *     the type variables declared by this generic declaration
+     * the type variables declared by this generic declaration
      * @throws GenericSignatureFormatError if the generic
-     *     signature of this generic declaration does not conform to
-     *     the format specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
+     *                                     signature of this generic declaration does not conform to
+     *                                     the format specified in
+     *                                     <cite>The Java&trade; Virtual Machine Specification</cite>
      * @since 1.5
      */
     public TypeVariable<Constructor<T>>[] getTypeParameters() {
-      if (getSignature() != null) {
-        return (TypeVariable<Constructor<T>>[])getGenericInfo().getTypeParameters();
-      } else
-          return (TypeVariable<Constructor<T>>[])new TypeVariable[0];
+        if (getSignature() != null) {
+            return (TypeVariable<Constructor<T>>[]) getGenericInfo().getTypeParameters();
+        } else { return (TypeVariable<Constructor<T>>[]) new TypeVariable[0]; }
     }
 
 
@@ -226,24 +210,22 @@ public final
      * type, it is created. Otherwise, it is resolved.
      *
      * @return an array of {@code Type}s that represent the formal
-     *     parameter types of the underlying method, in declaration order
-     * @throws GenericSignatureFormatError
-     *     if the generic method signature does not conform to the format
-     *     specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
-     * @throws TypeNotPresentException if any of the parameter
-     *     types of the underlying method refers to a non-existent type
-     *     declaration
+     * parameter types of the underlying method, in declaration order
+     * @throws GenericSignatureFormatError         if the generic method signature does not conform to the format
+     *                                             specified in
+     *                                             <cite>The Java&trade; Virtual Machine Specification</cite>
+     * @throws TypeNotPresentException             if any of the parameter
+     *                                             types of the underlying method refers to a non-existent type
+     *                                             declaration
      * @throws MalformedParameterizedTypeException if any of
-     *     the underlying method's parameter types refer to a parameterized
-     *     type that cannot be instantiated for any reason
+     *                                             the underlying method's parameter types refer to a parameterized
+     *                                             type that cannot be instantiated for any reason
      * @since 1.5
      */
     public Type[] getGenericParameterTypes() {
-        if (getSignature() != null)
-            return getGenericInfo().getParameterTypes();
-        else
+        if (getSignature() != null) { return getGenericInfo().getParameterTypes(); } else {
             return getParameterTypes();
+        }
     }
 
 
@@ -257,7 +239,7 @@ public final
      * constructor this object represents
      */
     public Class<?>[] getExceptionTypes() {
-        return (Class<?>[])exceptionTypes.clone();
+        return (Class<?>[]) exceptionTypes.clone();
     }
 
 
@@ -271,26 +253,23 @@ public final
      * type, it is created. Otherwise, it is resolved.
      *
      * @return an array of Types that represent the exception types
-     *     thrown by the underlying method
-     * @throws GenericSignatureFormatError
-     *     if the generic method signature does not conform to the format
-     *     specified in
-     *     <cite>The Java&trade; Virtual Machine Specification</cite>
-     * @throws TypeNotPresentException if the underlying method's
-     *     {@code throws} clause refers to a non-existent type declaration
+     * thrown by the underlying method
+     * @throws GenericSignatureFormatError         if the generic method signature does not conform to the format
+     *                                             specified in
+     *                                             <cite>The Java&trade; Virtual Machine Specification</cite>
+     * @throws TypeNotPresentException             if the underlying method's
+     *                                             {@code throws} clause refers to a non-existent type declaration
      * @throws MalformedParameterizedTypeException if
-     *     the underlying method's {@code throws} clause refers to a
-     *     parameterized type that cannot be instantiated for any reason
+     *                                             the underlying method's {@code throws} clause refers to a
+     *                                             parameterized type that cannot be instantiated for any reason
      * @since 1.5
      */
-      public Type[] getGenericExceptionTypes() {
-          Type[] result;
-          if (getSignature() != null &&
-              ( (result = getGenericInfo().getExceptionTypes()).length > 0  ))
-              return result;
-          else
-              return getExceptionTypes();
-      }
+    public Type[] getGenericExceptionTypes() {
+        Type[] result;
+        if (getSignature() != null && ((result = getGenericInfo().getExceptionTypes()).length > 0)) {
+            return result;
+        } else { return getExceptionTypes(); }
+    }
 
     /**
      * Compares this {@code Constructor} against the specified object.
@@ -300,15 +279,14 @@ public final
      */
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Constructor) {
-            Constructor<?> other = (Constructor<?>)obj;
+            Constructor<?> other = (Constructor<?>) obj;
             if (getDeclaringClass() == other.getDeclaringClass()) {
                 /* Avoid unnecessary cloning */
                 Class<?>[] params1 = parameterTypes;
                 Class<?>[] params2 = other.parameterTypes;
                 if (params1.length == params2.length) {
                     for (int i = 0; i < params1.length; i++) {
-                        if (params1[i] != params2[i])
-                            return false;
+                        if (params1[i] != params2[i]) { return false; }
                     }
                     return true;
                 }
@@ -353,8 +331,7 @@ public final
             Class<?>[] params = parameterTypes; // avoid clone
             for (int j = 0; j < params.length; j++) {
                 sb.append(Field.getTypeName(params[j]));
-                if (j < (params.length - 1))
-                    sb.append(",");
+                if (j < (params.length - 1)) { sb.append(","); }
             }
             sb.append(")");
             Class<?>[] exceptions = exceptionTypes; // avoid clone
@@ -362,8 +339,7 @@ public final
                 sb.append(" throws ");
                 for (int k = 0; k < exceptions.length; k++) {
                     sb.append(exceptions[k].getName());
-                    if (k < (exceptions.length - 1))
-                        sb.append(",");
+                    if (k < (exceptions.length - 1)) { sb.append(","); }
                 }
             }
             return sb.toString();
@@ -380,12 +356,12 @@ public final
      * parameters, if any, followed by the fully-qualified name of the
      * declaring class, followed by a parenthesized, comma-separated
      * list of the constructor's generic formal parameter types.
-     *
+     * <p>
      * If this constructor was declared to take a variable number of
      * arguments, instead of denoting the last parameter as
      * "<tt><i>Type</i>[]</tt>", it is denoted as
      * "<tt><i>Type</i>...</tt>".
-     *
+     * <p>
      * A space is used to separate access modifiers from one another
      * and from the type parameters or return type.  If there are no
      * type parameters, the type parameter list is elided; if the type
@@ -402,7 +378,6 @@ public final
      *
      * @return a string describing this {@code Constructor},
      * include type parameters
-     *
      * @since 1.5
      */
     public String toGenericString() {
@@ -416,9 +391,8 @@ public final
             if (typeparms.length > 0) {
                 boolean first = true;
                 sb.append("<");
-                for(TypeVariable<?> typeparm: typeparms) {
-                    if (!first)
-                        sb.append(",");
+                for (TypeVariable<?> typeparm : typeparms) {
+                    if (!first) { sb.append(","); }
                     // Class objects can't occur here; no need to test
                     // and call Class.getName().
                     sb.append(typeparm.toString());
@@ -430,25 +404,21 @@ public final
             sb.append("(");
             Type[] params = getGenericParameterTypes();
             for (int j = 0; j < params.length; j++) {
-                String param = (params[j] instanceof Class<?>)?
-                    Field.getTypeName((Class<?>)params[j]):
-                    (params[j].toString());
+                String param = (params[j] instanceof Class<?>) ? Field.getTypeName((Class<?>) params[j])
+                    : (params[j].toString());
                 if (isVarArgs() && (j == params.length - 1)) // replace T[] with T...
-                    param = param.replaceFirst("\\[\\]$", "...");
+                { param = param.replaceFirst("\\[\\]$", "..."); }
                 sb.append(param);
-                if (j < (params.length - 1))
-                    sb.append(",");
+                if (j < (params.length - 1)) { sb.append(","); }
             }
             sb.append(")");
             Type[] exceptions = getGenericExceptionTypes();
             if (exceptions.length > 0) {
                 sb.append(" throws ");
                 for (int k = 0; k < exceptions.length; k++) {
-                    sb.append((exceptions[k] instanceof Class)?
-                              ((Class<?>)exceptions[k]).getName():
-                              exceptions[k].toString());
-                    if (k < (exceptions.length - 1))
-                        sb.append(",");
+                    sb.append((exceptions[k] instanceof Class) ? ((Class<?>) exceptions[k]).getName()
+                        : exceptions[k].toString());
+                    if (k < (exceptions.length - 1)) { sb.append(","); }
                 }
             }
             return sb.toString();
@@ -481,34 +451,30 @@ public final
      * created and initialized instance.
      *
      * @param initargs array of objects to be passed as arguments to
-     * the constructor call; values of primitive types are wrapped in
-     * a wrapper object of the appropriate type (e.g. a {@code float}
-     * in a {@link java.lang.Float Float})
-     *
+     *                 the constructor call; values of primitive types are wrapped in
+     *                 a wrapper object of the appropriate type (e.g. a {@code float}
+     *                 in a {@link java.lang.Float Float})
      * @return a new object created by calling the constructor
      * this object represents
-     *
-     * @exception IllegalAccessException    if this {@code Constructor} object
-     *              is enforcing Java language access control and the underlying
-     *              constructor is inaccessible.
-     * @exception IllegalArgumentException  if the number of actual
-     *              and formal parameters differ; if an unwrapping
-     *              conversion for primitive arguments fails; or if,
-     *              after possible unwrapping, a parameter value
-     *              cannot be converted to the corresponding formal
-     *              parameter type by a method invocation conversion; if
-     *              this constructor pertains to an enum type.
-     * @exception InstantiationException    if the class that declares the
-     *              underlying constructor represents an abstract class.
-     * @exception InvocationTargetException if the underlying constructor
-     *              throws an exception.
-     * @exception ExceptionInInitializerError if the initialization provoked
-     *              by this method fails.
+     * @throws IllegalAccessException      if this {@code Constructor} object
+     *                                     is enforcing Java language access control and the underlying
+     *                                     constructor is inaccessible.
+     * @throws IllegalArgumentException    if the number of actual
+     *                                     and formal parameters differ; if an unwrapping
+     *                                     conversion for primitive arguments fails; or if,
+     *                                     after possible unwrapping, a parameter value
+     *                                     cannot be converted to the corresponding formal
+     *                                     parameter type by a method invocation conversion; if
+     *                                     this constructor pertains to an enum type.
+     * @throws InstantiationException      if the class that declares the
+     *                                     underlying constructor represents an abstract class.
+     * @throws InvocationTargetException   if the underlying constructor
+     *                                     throws an exception.
+     * @throws ExceptionInInitializerError if the initialization provoked
+     *                                     by this method fails.
      */
-    public T newInstance(Object ... initargs)
-        throws InstantiationException, IllegalAccessException,
-               IllegalArgumentException, InvocationTargetException
-    {
+    public T newInstance(Object... initargs)
+        throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (!override) {
             if (!Reflection.quickCheckMemberAccess(clazz, modifiers)) {
                 Class<?> caller = Reflection.getCallerClass(2);
@@ -516,8 +482,9 @@ public final
                 checkAccess(caller, clazz, null, modifiers);
             }
         }
-        if ((clazz.getModifiers() & Modifier.ENUM) != 0)
+        if ((clazz.getModifiers() & Modifier.ENUM) != 0) {
             throw new IllegalArgumentException("Cannot reflectively create enum objects");
+        }
         ConstructorAccessor ca = constructorAccessor;   // read volatile
         if (ca == null) {
             ca = acquireConstructorAccessor();
@@ -560,7 +527,7 @@ public final
         // First check to see if one has been created yet, and take it
         // if so.
         ConstructorAccessor tmp = null;
-        if (root != null) tmp = root.getConstructorAccessor();
+        if (root != null) { tmp = root.getConstructorAccessor(); }
         if (tmp != null) {
             constructorAccessor = tmp;
         } else {
@@ -592,9 +559,9 @@ public final
         return slot;
     }
 
-   String getSignature() {
-            return signature;
-   }
+    String getSignature() {
+        return signature;
+    }
 
     byte[] getRawAnnotations() {
         return annotations;
@@ -609,8 +576,7 @@ public final
      * @since 1.5
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        if (annotationClass == null)
-            throw new NullPointerException();
+        if (annotationClass == null) { throw new NullPointerException(); }
 
         return (T) declaredAnnotations().get(annotationClass);
     }
@@ -618,18 +584,17 @@ public final
     /**
      * @since 1.5
      */
-    public Annotation[] getDeclaredAnnotations()  {
+    public Annotation[] getDeclaredAnnotations() {
         return AnnotationParser.toArray(declaredAnnotations());
     }
 
     private transient Map<Class<? extends Annotation>, Annotation> declaredAnnotations;
 
-    private synchronized  Map<Class<? extends Annotation>, Annotation> declaredAnnotations() {
+    private synchronized Map<Class<? extends Annotation>, Annotation> declaredAnnotations() {
         if (declaredAnnotations == null) {
-            declaredAnnotations = AnnotationParser.parseAnnotations(
-                annotations, sun.misc.SharedSecrets.getJavaLangAccess().
-                getConstantPool(getDeclaringClass()),
-                getDeclaringClass());
+            declaredAnnotations = AnnotationParser
+                .parseAnnotations(annotations, sun.misc.SharedSecrets.getJavaLangAccess().
+                    getConstantPool(getDeclaringClass()), getDeclaringClass());
         }
         return declaredAnnotations;
     }
@@ -646,35 +611,28 @@ public final
      * other callers.
      *
      * @return an array of arrays that represent the annotations on the formal
-     *    parameters, in declaration order, of the method represented by this
-     *    Constructor object
+     * parameters, in declaration order, of the method represented by this
+     * Constructor object
      * @since 1.5
      */
     public Annotation[][] getParameterAnnotations() {
         int numParameters = parameterTypes.length;
-        if (parameterAnnotations == null)
-            return new Annotation[numParameters][0];
+        if (parameterAnnotations == null) { return new Annotation[numParameters][0]; }
 
-        Annotation[][] result = AnnotationParser.parseParameterAnnotations(
-            parameterAnnotations,
-            sun.misc.SharedSecrets.getJavaLangAccess().
-                getConstantPool(getDeclaringClass()),
-            getDeclaringClass());
+        Annotation[][] result = AnnotationParser
+            .parseParameterAnnotations(parameterAnnotations, sun.misc.SharedSecrets.getJavaLangAccess().
+                getConstantPool(getDeclaringClass()), getDeclaringClass());
         if (result.length != numParameters) {
             Class<?> declaringClass = getDeclaringClass();
-            if (declaringClass.isEnum() ||
-                declaringClass.isAnonymousClass() ||
-                declaringClass.isLocalClass() )
+            if (declaringClass.isEnum() || declaringClass.isAnonymousClass() || declaringClass.isLocalClass()) {
                 ; // Can't do reliable parameter counting
-            else {
+            } else {
                 if (!declaringClass.isMemberClass() || // top-level
                     // Check for the enclosing instance parameter for
                     // non-static member classes
-                    (declaringClass.isMemberClass() &&
-                     ((declaringClass.getModifiers() & Modifier.STATIC) == 0)  &&
-                     result.length + 1 != numParameters) ) {
-                    throw new AnnotationFormatError(
-                              "Parameter annotations don't match number of parameters");
+                    (declaringClass.isMemberClass() && ((declaringClass.getModifiers() & Modifier.STATIC) == 0) &&
+                        result.length + 1 != numParameters)) {
+                    throw new AnnotationFormatError("Parameter annotations don't match number of parameters");
                 }
             }
         }

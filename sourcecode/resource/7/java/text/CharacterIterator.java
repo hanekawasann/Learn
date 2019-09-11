@@ -60,7 +60,7 @@ package java.text;
  * outside this range.
  *
  * <P>Examples:<P>
- *
+ * <p>
  * Traverse the text from start to finish
  * <pre>
  * public void traverseForward(CharacterIterator iter) {
@@ -69,7 +69,7 @@ package java.text;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * Traverse the text backwards, from end to start
  * <pre>
  * public void traverseBackward(CharacterIterator iter) {
@@ -78,7 +78,7 @@ package java.text;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * Traverse both forward and backward from a given position in the text.
  * Calls to notBoundary() in this example represents some
  * additional stopping criteria.
@@ -102,8 +102,7 @@ package java.text;
  * @see AttributedCharacterIterator
  */
 
-public interface CharacterIterator extends Cloneable
-{
+public interface CharacterIterator extends Cloneable {
 
     /**
      * Constant that is returned when the iterator has reached either the end
@@ -115,6 +114,7 @@ public interface CharacterIterator extends Cloneable
     /**
      * Sets the position to getBeginIndex() and returns the character at that
      * position.
+     *
      * @return the first character in the text, or DONE if the text is empty
      * @see #getBeginIndex()
      */
@@ -123,6 +123,7 @@ public interface CharacterIterator extends Cloneable
     /**
      * Sets the position to getEndIndex()-1 (getEndIndex() if the text is empty)
      * and returns the character at that position.
+     *
      * @return the last character in the text, or DONE if the text is empty
      * @see #getEndIndex()
      */
@@ -130,6 +131,7 @@ public interface CharacterIterator extends Cloneable
 
     /**
      * Gets the character at the current position (as returned by getIndex()).
+     *
      * @return the character at the current position or DONE if the current
      * position is off the end of the text.
      * @see #getIndex()
@@ -141,6 +143,7 @@ public interface CharacterIterator extends Cloneable
      * at the new index.  If the resulting index is greater or equal
      * to getEndIndex(), the current index is reset to getEndIndex() and
      * a value of DONE is returned.
+     *
      * @return the character at the new position or DONE if the new
      * position is off the end of the text range.
      */
@@ -150,6 +153,7 @@ public interface CharacterIterator extends Cloneable
      * Decrements the iterator's index by one and returns the character
      * at the new index. If the current index is getBeginIndex(), the index
      * remains at getBeginIndex() and a value of DONE is returned.
+     *
      * @return the character at the new position or DONE if the current
      * position is equal to getBeginIndex().
      */
@@ -158,15 +162,17 @@ public interface CharacterIterator extends Cloneable
     /**
      * Sets the position to the specified position in the text and returns that
      * character.
+     *
      * @param position the position within the text.  Valid values range from
-     * getBeginIndex() to getEndIndex().  An IllegalArgumentException is thrown
-     * if an invalid value is supplied.
+     *                 getBeginIndex() to getEndIndex().  An IllegalArgumentException is thrown
+     *                 if an invalid value is supplied.
      * @return the character at the specified position or DONE if the specified position is equal to getEndIndex()
      */
     public char setIndex(int position);
 
     /**
      * Returns the start index of the text.
+     *
      * @return the index at which the text begins.
      */
     public int getBeginIndex();
@@ -174,18 +180,21 @@ public interface CharacterIterator extends Cloneable
     /**
      * Returns the end index of the text.  This index is the index of the first
      * character following the end of the text.
+     *
      * @return the index after the last character in the text
      */
     public int getEndIndex();
 
     /**
      * Returns the current index.
+     *
      * @return the current index.
      */
     public int getIndex();
 
     /**
      * Create a copy of this iterator
+     *
      * @return A copy of this
      */
     public Object clone();

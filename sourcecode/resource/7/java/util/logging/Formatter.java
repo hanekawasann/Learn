@@ -68,8 +68,8 @@ public abstract class Formatter {
      * This base class returns an empty string, but this may be
      * overridden by subclasses.
      *
-     * @param   h  The target handler (can be null)
-     * @return  header string
+     * @param h The target handler (can be null)
+     * @return header string
      */
     public String getHead(Handler h) {
         return "";
@@ -81,8 +81,8 @@ public abstract class Formatter {
      * This base class returns an empty string, but this may be
      * overridden by subclasses.
      *
-     * @param   h  The target handler (can be null)
-     * @return  tail string
+     * @param h The target handler (can be null)
+     * @return tail string
      */
     public String getTail(Handler h) {
         return "";
@@ -107,8 +107,8 @@ public abstract class Formatter {
      * </ul>
      * <p>
      *
-     * @param  record  the log record containing the raw message
-     * @return   a localized and formatted message
+     * @param record the log record containing the raw message
+     * @return a localized and formatted message
      */
     public synchronized String formatMessage(LogRecord record) {
         String format = record.getMessage();
@@ -133,8 +133,8 @@ public abstract class Formatter {
             // Pattern.compile("\\{\\d").matcher(format).find())
             // However the cost is 14% higher, so we cheaply check for
             // 1 of the first 4 parameters
-            if (format.indexOf("{0") >= 0 || format.indexOf("{1") >=0 ||
-                        format.indexOf("{2") >=0|| format.indexOf("{3") >=0) {
+            if (format.indexOf("{0") >= 0 || format.indexOf("{1") >= 0 || format.indexOf("{2") >= 0 ||
+                format.indexOf("{3") >= 0) {
                 return java.text.MessageFormat.format(format, parameters);
             }
             return format;

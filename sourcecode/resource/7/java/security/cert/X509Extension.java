@@ -81,7 +81,7 @@ public interface X509Extension {
      * Gets a Set of the OID strings for the extension(s) marked
      * CRITICAL in the certificate/CRL managed by the object
      * implementing this interface.
-     *
+     * <p>
      * Here is sample code to get a Set of critical extensions from an
      * X509Certificate and print the OIDs:
      * <pre><code>
@@ -105,6 +105,7 @@ public interface X509Extension {
      *     }
      * }
      * </code></pre>
+     *
      * @return a Set (or an empty Set if none are marked critical) of
      * the extension OID strings for extensions that are marked critical.
      * If there are no extensions present at all, then this method returns
@@ -116,7 +117,7 @@ public interface X509Extension {
      * Gets a Set of the OID strings for the extension(s) marked
      * NON-CRITICAL in the certificate/CRL managed by the object
      * implementing this interface.
-     *
+     * <p>
      * Here is sample code to get a Set of non-critical extensions from an
      * X509CRL revoked certificate entry and print the OIDs:
      * <pre><code>

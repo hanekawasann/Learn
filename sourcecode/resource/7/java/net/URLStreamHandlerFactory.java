@@ -32,20 +32,20 @@ package java.net;
  * It is used by the <code>URL</code> class to create a
  * <code>URLStreamHandler</code> for a specific protocol.
  *
- * @author  Arthur van Hoff
- * @see     java.net.URL
- * @see     java.net.URLStreamHandler
- * @since   JDK1.0
+ * @author Arthur van Hoff
+ * @see java.net.URL
+ * @see java.net.URLStreamHandler
+ * @since JDK1.0
  */
 public interface URLStreamHandlerFactory {
     /**
      * Creates a new <code>URLStreamHandler</code> instance with the specified
      * protocol.
      *
-     * @param   protocol   the protocol ("<code>ftp</code>",
-     *                     "<code>http</code>", "<code>nntp</code>", etc.).
-     * @return  a <code>URLStreamHandler</code> for the specific protocol.
-     * @see     java.net.URLStreamHandler
+     * @param protocol the protocol ("<code>ftp</code>",
+     *                 "<code>http</code>", "<code>nntp</code>", etc.).
+     * @return a <code>URLStreamHandler</code> for the specific protocol.
+     * @see java.net.URLStreamHandler
      */
     URLStreamHandler createURLStreamHandler(String protocol);
 }

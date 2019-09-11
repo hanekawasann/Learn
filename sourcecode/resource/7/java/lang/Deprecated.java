@@ -34,11 +34,10 @@ import static java.lang.annotation.ElementType.*;
  * or because a better alternative exists.  Compilers warn when a
  * deprecated program element is used or overridden in non-deprecated code.
  *
- * @author  Neal Gafter
+ * @author Neal Gafter
  * @since 1.5
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value={CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE})
-public @interface Deprecated {
-}
+@Target(value = { CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE })
+public @interface Deprecated { }

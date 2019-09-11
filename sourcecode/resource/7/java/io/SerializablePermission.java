@@ -36,14 +36,14 @@ import java.util.StringTokenizer;
  * no actions list; you either have the named permission
  * or you don't.
  *
- * <P>
+ * <p>
  * The target name is the name of the Serializable permission (see below).
  *
- * <P>
+ * <p>
  * The following table lists all the possible SerializablePermission target names,
  * and for each provides a description of what the permission allows
  * and a discussion of the risks of granting code the permission.
- * <P>
+ * <p>
  *
  * <table border=1 cellpadding=5 summary="Permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -76,14 +76,12 @@ import java.util.StringTokenizer;
  *
  * </table>
  *
+ * @author Joe Fialli
  * @see java.security.BasicPermission
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
- *
- * @author Joe Fialli
  * @since 1.2
  */
 
@@ -104,12 +102,10 @@ public final class SerializablePermission extends BasicPermission {
      * "enableSubstitution", etc.
      *
      * @param name the name of the SerializablePermission.
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
-    public SerializablePermission(String name)
-    {
+    public SerializablePermission(String name) {
         super(name);
     }
 
@@ -118,15 +114,13 @@ public final class SerializablePermission extends BasicPermission {
      * The name is the symbolic name of the SerializablePermission, and the
      * actions String is currently unused and should be null.
      *
-     * @param name the name of the SerializablePermission.
+     * @param name    the name of the SerializablePermission.
      * @param actions currently unused and must be set to null
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public SerializablePermission(String name, String actions)
-    {
+    public SerializablePermission(String name, String actions) {
         super(name, actions);
     }
 }

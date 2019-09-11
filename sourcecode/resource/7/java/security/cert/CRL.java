@@ -35,11 +35,8 @@ package java.security.cert;
  * class.
  *
  * @author Hemma Prafullchandra
- *
- *
  * @see X509CRL
  * @see CertificateFactory
- *
  * @since 1.2
  */
 
@@ -52,10 +49,10 @@ public abstract class CRL {
      * Creates a CRL of the specified type.
      *
      * @param type the standard name of the CRL type.
-     * See Appendix A in the <a href=
-     * "../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
-     * Java Cryptography Architecture API Specification &amp; Reference </a>
-     * for information about standard CRL types.
+     *             See Appendix A in the <a href=
+     *             "../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+     *             Java Cryptography Architecture API Specification &amp; Reference </a>
+     *             for information about standard CRL types.
      */
     protected CRL(String type) {
         this.type = type;

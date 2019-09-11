@@ -28,7 +28,6 @@ package java.security.cert;
 import java.security.InvalidAlgorithmParameterException;
 
 /**
- *
  * The <i>Service Provider Interface</i> (<b>SPI</b>)
  * for the {@link CertPathValidator CertPathValidator} class. All
  * <code>CertPathValidator</code> implementations must include a class (the
@@ -50,8 +49,8 @@ import java.security.InvalidAlgorithmParameterException;
  * manipulating a different <code>CertPathValidatorSpi</code> instance need not
  * synchronize.
  *
- * @since       1.4
- * @author      Yassir Elley
+ * @author Yassir Elley
+ * @since 1.4
  */
 public abstract class CertPathValidatorSpi {
 
@@ -71,15 +70,14 @@ public abstract class CertPathValidatorSpi {
      * algorithm validates <code>CertPath</code> objects of type X.509.
      *
      * @param certPath the <code>CertPath</code> to be validated
-     * @param params the algorithm parameters
+     * @param params   the algorithm parameters
      * @return the result of the validation algorithm
-     * @exception CertPathValidatorException if the <code>CertPath</code>
-     * does not validate
-     * @exception InvalidAlgorithmParameterException if the specified
-     * parameters or the type of the specified <code>CertPath</code> are
-     * inappropriate for this <code>CertPathValidator</code>
+     * @throws CertPathValidatorException         if the <code>CertPath</code>
+     *                                            does not validate
+     * @throws InvalidAlgorithmParameterException if the specified
+     *                                            parameters or the type of the specified <code>CertPath</code> are
+     *                                            inappropriate for this <code>CertPathValidator</code>
      */
-    public abstract CertPathValidatorResult
-        engineValidate(CertPath certPath, CertPathParameters params)
+    public abstract CertPathValidatorResult engineValidate(CertPath certPath, CertPathParameters params)
         throws CertPathValidatorException, InvalidAlgorithmParameterException;
 }

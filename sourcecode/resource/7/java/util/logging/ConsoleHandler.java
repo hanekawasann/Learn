@@ -52,6 +52,7 @@ import java.net.*;
  *        the default platform encoding).
  * </ul>
  * <p>
+ *
  * @since 1.4
  */
 
@@ -63,11 +64,11 @@ public class ConsoleHandler extends StreamHandler {
         LogManager manager = LogManager.getLogManager();
         String cname = getClass().getName();
 
-        setLevel(manager.getLevelProperty(cname +".level", Level.INFO));
-        setFilter(manager.getFilterProperty(cname +".filter", null));
-        setFormatter(manager.getFormatterProperty(cname +".formatter", new SimpleFormatter()));
+        setLevel(manager.getLevelProperty(cname + ".level", Level.INFO));
+        setFilter(manager.getFilterProperty(cname + ".filter", null));
+        setFormatter(manager.getFormatterProperty(cname + ".formatter", new SimpleFormatter()));
         try {
-            setEncoding(manager.getStringProperty(cname +".encoding", null));
+            setEncoding(manager.getStringProperty(cname + ".encoding", null));
         } catch (Exception ex) {
             try {
                 setEncoding(null);
@@ -83,7 +84,6 @@ public class ConsoleHandler extends StreamHandler {
      * <p>
      * The <tt>ConsoleHandler</tt> is configured based on
      * <tt>LogManager</tt> properties (or their default values).
-     *
      */
     public ConsoleHandler() {
         sealed = false;
@@ -98,8 +98,9 @@ public class ConsoleHandler extends StreamHandler {
      * The logging request was made initially to a <tt>Logger</tt> object,
      * which initialized the <tt>LogRecord</tt> and forwarded it here.
      * <p>
-     * @param  record  description of the log event. A null record is
-     *                 silently ignored and is not published
+     *
+     * @param record description of the log event. A null record is
+     *               silently ignored and is not published
      */
     public void publish(LogRecord record) {
         super.publish(record);

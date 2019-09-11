@@ -28,11 +28,11 @@ package java.util.prefs;
 /**
  * A listener for receiving preference node change events.
  *
- * @author  Josh Bloch
- * @see     Preferences
- * @see     NodeChangeEvent
- * @see     PreferenceChangeListener
- * @since   1.4
+ * @author Josh Bloch
+ * @see Preferences
+ * @see NodeChangeEvent
+ * @see PreferenceChangeListener
+ * @since 1.4
  */
 
 public interface NodeChangeListener extends java.util.EventListener {

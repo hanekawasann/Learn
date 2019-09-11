@@ -30,12 +30,12 @@ import java.util.EventListener;
 /**
  * The listener interface for receiving mouse motion events on a component.
  * (For clicks and other mouse events, use the <code>MouseListener</code>.)
- * <P>
+ * <p>
  * The class that is interested in processing a mouse motion event
  * either implements this interface (and all the methods it
  * contains) or extends the abstract <code>MouseMotionAdapter</code> class
  * (overriding only the methods of interest).
- * <P>
+ * <p>
  * The listener object created from that class is then registered with a
  * component using the component's <code>addMouseMotionListener</code>
  * method. A mouse motion event is generated when the mouse is moved
@@ -44,11 +44,9 @@ import java.util.EventListener;
  * the <code>MouseEvent</code> is passed to it.
  *
  * @author Amy Fowler
- *
  * @see MouseMotionAdapter
  * @see MouseEvent
  * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/mousemotionlistener.html">Tutorial: Writing a Mouse Motion Listener</a>
- *
  * @since 1.1
  */
 public interface MouseMotionListener extends EventListener {

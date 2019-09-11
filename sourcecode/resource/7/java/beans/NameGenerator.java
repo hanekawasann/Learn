@@ -65,10 +65,10 @@ class NameGenerator {
      */
     public static String unqualifiedClassName(Class type) {
         if (type.isArray()) {
-            return unqualifiedClassName(type.getComponentType())+"Array";
+            return unqualifiedClassName(type.getComponentType()) + "Array";
         }
         String name = type.getName();
-        return name.substring(name.lastIndexOf('.')+1);
+        return name.substring(name.lastIndexOf('.') + 1);
     }
 
     /**
@@ -94,10 +94,9 @@ class NameGenerator {
             return "null";
         }
         if (instance instanceof Class) {
-            return unqualifiedClassName((Class)instance);
-        }
-        else {
-            String result = (String)valueToName.get(instance);
+            return unqualifiedClassName((Class) instance);
+        } else {
+            String result = (String) valueToName.get(instance);
             if (result != null) {
                 return result;
             }
@@ -105,7 +104,7 @@ class NameGenerator {
             String className = unqualifiedClassName(type);
 
             Object size = nameToCount.get(className);
-            int instanceNumber = (size == null) ? 0 : ((Integer)size).intValue() + 1;
+            int instanceNumber = (size == null) ? 0 : ((Integer) size).intValue() + 1;
             nameToCount.put(className, new Integer(instanceNumber));
 
             result = className + instanceNumber;

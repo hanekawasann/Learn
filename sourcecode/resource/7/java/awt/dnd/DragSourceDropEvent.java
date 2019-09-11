@@ -36,8 +36,9 @@ package java.awt.dnd;
  * originator of the operation
  * to provide appropriate feedback to the end user
  * when the operation completes.
- * <P>
- * <P>
+ * <p>
+ * <p>
+ *
  * @since 1.2
  */
 
@@ -58,13 +59,11 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * that represents a single action.
      * This constructor does not throw any exception for invalid <code>action</code>.
      *
-     * @param dsc the <code>DragSourceContext</code>
-     * associated with this <code>DragSourceDropEvent</code>
-     * @param action the drop action
+     * @param dsc     the <code>DragSourceContext</code>
+     *                associated with this <code>DragSourceDropEvent</code>
+     * @param action  the drop action
      * @param success a boolean indicating if the drop was successful
-     *
      * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
-     *
      * @see DragSourceEvent#getLocation
      */
 
@@ -72,7 +71,7 @@ public class DragSourceDropEvent extends DragSourceEvent {
         super(dsc);
 
         dropSuccess = success;
-        dropAction  = action;
+        dropAction = action;
     }
 
     /**
@@ -84,23 +83,20 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * that represents a single action.
      * This constructor does not throw any exception for invalid <code>action</code>.
      *
-     * @param dsc the <code>DragSourceContext</code>
-     * associated with this <code>DragSourceDropEvent</code>
-     * @param action the drop action
+     * @param dsc     the <code>DragSourceContext</code>
+     *                associated with this <code>DragSourceDropEvent</code>
+     * @param action  the drop action
      * @param success a boolean indicating if the drop was successful
-     * @param x   the horizontal coordinate for the cursor location
-     * @param y   the vertical coordinate for the cursor location
-     *
+     * @param x       the horizontal coordinate for the cursor location
+     * @param y       the vertical coordinate for the cursor location
      * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
-     *
      * @since 1.4
      */
-    public DragSourceDropEvent(DragSourceContext dsc, int action,
-                               boolean success, int x, int y) {
+    public DragSourceDropEvent(DragSourceContext dsc, int action, boolean success, int x, int y) {
         super(dsc, x, y);
 
         dropSuccess = success;
-        dropAction  = action;
+        dropAction = action;
     }
 
     /**
@@ -111,9 +107,7 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * <code>null</code> for this event.
      *
      * @param dsc the <code>DragSourceContext</code>
-     *
      * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
-     *
      * @see DragSourceEvent#getLocation
      */
 
@@ -128,10 +122,10 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * if the drop was successful.
      *
      * @return <code>true</code> if the drop target accepted the drop and
-     *         successfully performed a drop action;
-     *         <code>false</code> if the drop target rejected the drop or
-     *         if the drop target accepted the drop, but failed to perform
-     *         a drop action.
+     * successfully performed a drop action;
+     * <code>false</code> if the drop target rejected the drop or
+     * if the drop target accepted the drop, but failed to perform
+     * a drop action.
      */
 
     public boolean getDropSuccess() { return dropSuccess; }
@@ -141,9 +135,9 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * the action performed by the target on the subject of the drop.
      *
      * @return the action performed by the target on the subject of the drop
-     *         if the drop target accepted the drop and the target drop action
-     *         is supported by the drag source; otherwise,
-     *         <code>DnDConstants.ACTION_NONE</code>.
+     * if the drop target accepted the drop and the target drop action
+     * is supported by the drag source; otherwise,
+     * <code>DnDConstants.ACTION_NONE</code>.
      */
 
     public int getDropAction() { return dropAction; }
@@ -164,5 +158,5 @@ public class DragSourceDropEvent extends DragSourceEvent {
      *
      * @serial
      */
-    private int     dropAction   = DnDConstants.ACTION_NONE;
+    private int dropAction = DnDConstants.ACTION_NONE;
 }

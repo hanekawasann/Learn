@@ -31,12 +31,9 @@ import java.security.GeneralSecurityException;
  * This is the exception for invalid parameter specifications.
  *
  * @author Jan Luehe
- *
- *
  * @see java.security.AlgorithmParameters
  * @see AlgorithmParameterSpec
  * @see DSAParameterSpec
- *
  * @since 1.2
  */
 

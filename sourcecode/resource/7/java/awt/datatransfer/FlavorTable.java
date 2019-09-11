@@ -35,7 +35,6 @@ import java.util.List;
  * symmetric, but typically are.
  *
  * @author David Mendenhall
- *
  * @since 1.4
  */
 public interface FlavorTable extends FlavorMap {
@@ -50,12 +49,12 @@ public interface FlavorTable extends FlavorMap {
      * the <code>List</code> without affecting this object.
      *
      * @param flav the <code>DataFlavor</code> whose corresponding natives
-     *        should be returned. If <code>null</code> is specified, all
-     *        natives currently known to this <code>FlavorTable</code> are
-     *        returned in a non-deterministic order.
+     *             should be returned. If <code>null</code> is specified, all
+     *             natives currently known to this <code>FlavorTable</code> are
+     *             returned in a non-deterministic order.
      * @return a <code>java.util.List</code> of <code>java.lang.String</code>
-     *         objects which are platform-specific representations of platform-
-     *         specific data formats
+     * objects which are platform-specific representations of platform-
+     * specific data formats
      */
     List<String> getNativesForFlavor(DataFlavor flav);
 
@@ -70,13 +69,13 @@ public interface FlavorTable extends FlavorMap {
      * this object.
      *
      * @param nat the native whose corresponding <code>DataFlavor</code>s
-     *        should be returned. If <code>null</code> is specified, all
-     *        <code>DataFlavor</code>s currently known to this
-     *        <code>FlavorTable</code> are returned in a non-deterministic
-     *        order.
+     *            should be returned. If <code>null</code> is specified, all
+     *            <code>DataFlavor</code>s currently known to this
+     *            <code>FlavorTable</code> are returned in a non-deterministic
+     *            order.
      * @return a <code>java.util.List</code> of <code>DataFlavor</code>
-     *         objects into which platform-specific data in the specified,
-     *         platform-specific native can be translated
+     * objects into which platform-specific data in the specified,
+     * platform-specific native can be translated
      */
     List<DataFlavor> getFlavorsForNative(String nat);
 }

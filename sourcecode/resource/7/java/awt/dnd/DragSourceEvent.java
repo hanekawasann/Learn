@@ -95,9 +95,7 @@ public class DragSourceEvent extends EventObject {
      * <code>null</code> for this event.
      *
      * @param dsc the <code>DragSourceContext</code>
-     *
      * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
-     *
      * @see #getLocation
      */
 
@@ -116,9 +114,7 @@ public class DragSourceEvent extends EventObject {
      * @param dsc the <code>DragSourceContext</code>
      * @param x   the horizontal coordinate for the cursor location
      * @param y   the vertical coordinate for the cursor location
-     *
      * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
-     *
      * @since 1.4
      */
     public DragSourceEvent(DragSourceContext dsc, int x, int y) {
@@ -131,12 +127,13 @@ public class DragSourceEvent extends EventObject {
     /**
      * This method returns the <code>DragSourceContext</code> that
      * originated the event.
-     * <P>
+     * <p>
+     *
      * @return the <code>DragSourceContext</code> that originated the event
      */
 
     public DragSourceContext getDragSourceContext() {
-        return (DragSourceContext)getSource();
+        return (DragSourceContext) getSource();
     }
 
     /**
@@ -146,7 +143,7 @@ public class DragSourceEvent extends EventObject {
      * event.
      *
      * @return the <code>Point</code> indicating the cursor location
-     *         or <code>null</code> if the cursor location is not specified
+     * or <code>null</code> if the cursor location is not specified
      * @since 1.4
      */
     public Point getLocation() {
@@ -163,7 +160,7 @@ public class DragSourceEvent extends EventObject {
      * cursor location is not specified for this event.
      *
      * @return an integer indicating the horizontal coordinate of the cursor
-     *         location or zero if the cursor location is not specified
+     * location or zero if the cursor location is not specified
      * @since 1.4
      */
     public int getX() {
@@ -176,7 +173,7 @@ public class DragSourceEvent extends EventObject {
      * cursor location is not specified for this event.
      *
      * @return an integer indicating the vertical coordinate of the cursor
-     *         location or zero if the cursor location is not specified
+     * location or zero if the cursor location is not specified
      * @since 1.4
      */
     public int getY() {

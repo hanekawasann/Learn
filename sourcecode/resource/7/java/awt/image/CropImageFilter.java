@@ -38,10 +38,9 @@ import java.awt.Rectangle;
  * be used in conjunction with a FilteredImageSource object to produce
  * cropped versions of existing images.
  *
+ * @author Jim Graham
  * @see FilteredImageSource
  * @see ImageFilter
- *
- * @author      Jim Graham
  */
 public class CropImageFilter extends ImageFilter {
     int cropX;
@@ -53,6 +52,7 @@ public class CropImageFilter extends ImageFilter {
      * Constructs a CropImageFilter that extracts the absolute rectangular
      * region of pixels from its source Image as specified by the x, y,
      * w, and h parameters.
+     *
      * @param x the x location of the top of the rectangle to be extracted
      * @param y the y location of the top of the rectangle to be extracted
      * @param w the width of the rectangle to be extracted
@@ -78,8 +78,8 @@ public class CropImageFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setProperties(Hashtable<?,?> props) {
-        Hashtable<Object,Object> p = (Hashtable<Object,Object>)props.clone();
+    public void setProperties(Hashtable<?, ?> props) {
+        Hashtable<Object, Object> p = (Hashtable<Object, Object>) props.clone();
         p.put("croprect", new Rectangle(cropX, cropY, cropW, cropH));
         super.setProperties(p);
     }
@@ -94,6 +94,7 @@ public class CropImageFilter extends ImageFilter {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer
      */
     public void setDimensions(int w, int h) {
@@ -112,14 +113,12 @@ public class CropImageFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, byte pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, byte pixels[], int off, int scansize) {
         int x1 = x;
         if (x1 < cropX) {
             x1 = cropX;
         }
-    int x2 = addWithoutOverflow(x, w);
+        int x2 = addWithoutOverflow(x, w);
         if (x2 > cropX + cropW) {
             x2 = cropX + cropW;
         }
@@ -128,16 +127,15 @@ public class CropImageFilter extends ImageFilter {
             y1 = cropY;
         }
 
-    int y2 = addWithoutOverflow(y, h);
+        int y2 = addWithoutOverflow(y, h);
         if (y2 > cropY + cropH) {
             y2 = cropY + cropH;
         }
         if (x1 >= x2 || y1 >= y2) {
             return;
         }
-        consumer.setPixels(x1 - cropX, y1 - cropY, (x2 - x1), (y2 - y1),
-                           model, pixels,
-                           off + (y1 - y) * scansize + (x1 - x), scansize);
+        consumer.setPixels(x1 - cropX, y1 - cropY, (x2 - x1), (y2 - y1), model, pixels,
+            off + (y1 - y) * scansize + (x1 - x), scansize);
     }
 
     /**
@@ -152,14 +150,12 @@ public class CropImageFilter extends ImageFilter {
      * this method directly since that operation could interfere
      * with the filtering operation.
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, int pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, int pixels[], int off, int scansize) {
         int x1 = x;
         if (x1 < cropX) {
             x1 = cropX;
         }
-    int x2 = addWithoutOverflow(x, w);
+        int x2 = addWithoutOverflow(x, w);
         if (x2 > cropX + cropW) {
             x2 = cropX + cropW;
         }
@@ -168,24 +164,23 @@ public class CropImageFilter extends ImageFilter {
             y1 = cropY;
         }
 
-    int y2 = addWithoutOverflow(y, h);
+        int y2 = addWithoutOverflow(y, h);
         if (y2 > cropY + cropH) {
             y2 = cropY + cropH;
         }
         if (x1 >= x2 || y1 >= y2) {
             return;
         }
-        consumer.setPixels(x1 - cropX, y1 - cropY, (x2 - x1), (y2 - y1),
-                           model, pixels,
-                           off + (y1 - y) * scansize + (x1 - x), scansize);
+        consumer.setPixels(x1 - cropX, y1 - cropY, (x2 - x1), (y2 - y1), model, pixels,
+            off + (y1 - y) * scansize + (x1 - x), scansize);
     }
 
     //check for potential overflow (see bug 4801285)
     private int addWithoutOverflow(int x, int w) {
         int x2 = x + w;
-        if ( x > 0 && w > 0 && x2 < 0 ) {
+        if (x > 0 && w > 0 && x2 < 0) {
             x2 = Integer.MAX_VALUE;
-        } else if( x < 0 && w < 0 && x2 > 0 ) {
+        } else if (x < 0 && w < 0 && x2 > 0) {
             x2 = Integer.MIN_VALUE;
         }
         return x2;

@@ -41,12 +41,13 @@ import java.awt.geom.Rectangle2D;
  * these objects when they are set as an attribute with the
  * <code>setPaint</code> method or when the <code>Graphics2D</code>
  * object is itself cloned.
+ *
+ * @version 1.36, 06/05/07
  * @see PaintContext
  * @see Color
  * @see GradientPaint
  * @see TexturePaint
  * @see Graphics2D#setPaint
- * @version 1.36, 06/05/07
  */
 
 public interface Paint extends Transparency {
@@ -67,31 +68,31 @@ public interface Paint extends Transparency {
      * any {@code null} argument other than the {@code ColorModel} argument,
      * but are not required to do so.
      *
-     * @param cm the preferred {@link ColorModel} which represents the most convenient
-     *           format for the caller to receive the pixel data, or {@code null}
-     *           if there is no preference.
+     * @param cm           the preferred {@link ColorModel} which represents the most convenient
+     *                     format for the caller to receive the pixel data, or {@code null}
+     *                     if there is no preference.
      * @param deviceBounds the device space bounding box
      *                     of the graphics primitive being rendered.
      *                     Implementations of the {@code Paint} interface
      *                     are allowed to throw {@code NullPointerException}
      *                     for a {@code null} {@code deviceBounds}.
-     * @param userBounds the user space bounding box
-     *                   of the graphics primitive being rendered.
+     * @param userBounds   the user space bounding box
+     *                     of the graphics primitive being rendered.
      *                     Implementations of the {@code Paint} interface
      *                     are allowed to throw {@code NullPointerException}
      *                     for a {@code null} {@code userBounds}.
-     * @param xform the {@link AffineTransform} from user
-     *              space into device space.
+     * @param xform        the {@link AffineTransform} from user
+     *                     space into device space.
      *                     Implementations of the {@code Paint} interface
      *                     are allowed to throw {@code NullPointerException}
      *                     for a {@code null} {@code xform}.
-     * @param hints the set of hints that the context object can use to
-     *              choose between rendering alternatives.
+     * @param hints        the set of hints that the context object can use to
+     *                     choose between rendering alternatives.
      *                     Implementations of the {@code Paint} interface
      *                     are allowed to throw {@code NullPointerException}
      *                     for a {@code null} {@code hints}.
      * @return the {@code PaintContext} for
-     *         generating color patterns.
+     * generating color patterns.
      * @see PaintContext
      * @see ColorModel
      * @see Rectangle
@@ -99,10 +100,7 @@ public interface Paint extends Transparency {
      * @see AffineTransform
      * @see RenderingHints
      */
-    public PaintContext createContext(ColorModel cm,
-                                      Rectangle deviceBounds,
-                                      Rectangle2D userBounds,
-                                      AffineTransform xform,
-                                      RenderingHints hints);
+    public PaintContext createContext(ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds,
+        AffineTransform xform, RenderingHints hints);
 
 }

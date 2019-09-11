@@ -31,7 +31,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.RenderingHints;
+
 import sun.awt.image.ImagingLib;
+
 import java.util.Arrays;
 
 /**
@@ -57,7 +59,7 @@ import java.util.Arrays;
  * <p>
  * Note that the source and destination can be the same object.
  */
-public class BandCombineOp implements  RasterOp {
+public class BandCombineOp implements RasterOp {
     float[][] matrix;
     int nrows = 0;
     int ncols = 0;
@@ -78,25 +80,25 @@ public class BandCombineOp implements  RasterOp {
      * null.
      *
      * @param matrix The matrix to use for the band combine operation.
-     * @param hints The <CODE>RenderingHints</CODE> object for this operation.
-     * Not currently used so it can be null.
+     * @param hints  The <CODE>RenderingHints</CODE> object for this operation.
+     *               Not currently used so it can be null.
      */
-    public BandCombineOp (float[][] matrix, RenderingHints hints) {
+    public BandCombineOp(float[][] matrix, RenderingHints hints) {
         nrows = matrix.length;
         ncols = matrix[0].length;
         this.matrix = new float[nrows][];
-        for (int i=0; i < nrows; i++) {
+        for (int i = 0; i < nrows; i++) {
             /* Arrays.copyOf is forgiving of the source array being
              * too short, but it is also faster than other cloning
              * methods, so we provide our own protection for short
              * matrix rows.
              */
             if (ncols > matrix[i].length) {
-                throw new IndexOutOfBoundsException("row "+i+" too short");
+                throw new IndexOutOfBoundsException("row " + i + " too short");
             }
             this.matrix[i] = Arrays.copyOf(matrix[i], ncols);
         }
-        this.hints  = hints;
+        this.hints = hints;
     }
 
     /**
@@ -124,31 +126,24 @@ public class BandCombineOp implements  RasterOp {
      *
      * @param src The <CODE>Raster</CODE> to be filtered.
      * @param dst The <CODE>Raster</CODE> in which to store the results
-     * of the filter operation.
-     *
+     *            of the filter operation.
      * @return The filtered <CODE>Raster</CODE>.
-     *
      * @throws IllegalArgumentException If the number of bands in the
-     * source or destination is incompatible with the matrix.
+     *                                  source or destination is incompatible with the matrix.
      */
     public WritableRaster filter(Raster src, WritableRaster dst) {
         int nBands = src.getNumBands();
-        if (ncols != nBands && ncols != (nBands+1)) {
-            throw new IllegalArgumentException("Number of columns in the "+
-                                               "matrix ("+ncols+
-                                               ") must be equal to the number"+
-                                               " of bands ([+1]) in src ("+
-                                               nBands+").");
+        if (ncols != nBands && ncols != (nBands + 1)) {
+            throw new IllegalArgumentException(
+                "Number of columns in the " + "matrix (" + ncols + ") must be equal to the number" +
+                    " of bands ([+1]) in src (" + nBands + ").");
         }
         if (dst == null) {
             dst = createCompatibleDestRaster(src);
-        }
-        else if (nrows != dst.getNumBands()) {
-            throw new IllegalArgumentException("Number of rows in the "+
-                                               "matrix ("+nrows+
-                                               ") must be equal to the number"+
-                                               " of bands ([+1]) in dst ("+
-                                               nBands+").");
+        } else if (nrows != dst.getNumBands()) {
+            throw new IllegalArgumentException(
+                "Number of rows in the " + "matrix (" + nrows + ") must be equal to the number" +
+                    " of bands ([+1]) in dst (" + nBands + ").");
         }
 
         if (ImagingLib.filter(this, src, dst) != null) {
@@ -165,35 +160,34 @@ public class BandCombineOp implements  RasterOp {
         int sX;
         int dX;
         if (ncols == nBands) {
-            for (int y=0; y < src.getHeight(); y++, sY++, dY++) {
+            for (int y = 0; y < src.getHeight(); y++, sY++, dY++) {
                 dX = dminX;
                 sX = sminX;
-                for (int x=0; x < src.getWidth(); x++, sX++, dX++) {
+                for (int x = 0; x < src.getWidth(); x++, sX++, dX++) {
                     pixel = src.getPixel(sX, sY, pixel);
-                    for (int r=0; r < nrows; r++) {
+                    for (int r = 0; r < nrows; r++) {
                         accum = 0.f;
-                        for (int c=0; c < ncols; c++) {
-                            accum += matrix[r][c]*pixel[c];
+                        for (int c = 0; c < ncols; c++) {
+                            accum += matrix[r][c] * pixel[c];
                         }
                         dstPixel[r] = (int) accum;
                     }
                     dst.setPixel(dX, dY, dstPixel);
                 }
             }
-        }
-        else {
+        } else {
             // Need to add constant
-            for (int y=0; y < src.getHeight(); y++, sY++, dY++) {
+            for (int y = 0; y < src.getHeight(); y++, sY++, dY++) {
                 dX = dminX;
                 sX = sminX;
-                for (int x=0; x < src.getWidth(); x++, sX++, dX++) {
+                for (int x = 0; x < src.getWidth(); x++, sX++, dX++) {
                     pixel = src.getPixel(sX, sY, pixel);
-                    for (int r=0; r < nrows; r++) {
+                    for (int r = 0; r < nrows; r++) {
                         accum = 0.f;
-                        for (int c=0; c < nBands; c++) {
-                            accum += matrix[r][c]*pixel[c];
+                        for (int c = 0; c < nBands; c++) {
+                            accum += matrix[r][c] * pixel[c];
                         }
-                        dstPixel[r] = (int) (accum+matrix[r][nBands]);
+                        dstPixel[r] = (int) (accum + matrix[r][nBands]);
                     }
                     dst.setPixel(dX, dY, dstPixel);
                 }
@@ -212,14 +206,12 @@ public class BandCombineOp implements  RasterOp {
      * the class comments for more details.
      *
      * @param src The <CODE>Raster</CODE> to be filtered.
-     *
      * @return The <CODE>Rectangle2D</CODE> representing the destination
      * image's bounding box.
-     *
      * @throws IllegalArgumentException If the number of bands in the source
-     * is incompatible with the matrix.
+     *                                  is incompatible with the matrix.
      */
-    public final Rectangle2D getBounds2D (Raster src) {
+    public final Rectangle2D getBounds2D(Raster src) {
         return src.getBounds();
     }
 
@@ -232,25 +224,20 @@ public class BandCombineOp implements  RasterOp {
      * the class comments for more details.
      *
      * @param src The <CODE>Raster</CODE> to be filtered.
-     *
      * @return The zeroed destination <CODE>Raster</CODE>.
      */
-    public WritableRaster createCompatibleDestRaster (Raster src) {
+    public WritableRaster createCompatibleDestRaster(Raster src) {
         int nBands = src.getNumBands();
-        if ((ncols != nBands) && (ncols != (nBands+1))) {
-            throw new IllegalArgumentException("Number of columns in the "+
-                                               "matrix ("+ncols+
-                                               ") must be equal to the number"+
-                                               " of bands ([+1]) in src ("+
-                                               nBands+").");
+        if ((ncols != nBands) && (ncols != (nBands + 1))) {
+            throw new IllegalArgumentException(
+                "Number of columns in the " + "matrix (" + ncols + ") must be equal to the number" +
+                    " of bands ([+1]) in src (" + nBands + ").");
         }
         if (src.getNumBands() == nrows) {
             return src.createCompatibleWritableRaster();
-        }
-        else {
-            throw new IllegalArgumentException("Don't know how to create a "+
-                                               " compatible Raster with "+
-                                               nrows+" bands.");
+        } else {
+            throw new IllegalArgumentException(
+                "Don't know how to create a " + " compatible Raster with " + nrows + " bands.");
         }
     }
 
@@ -264,11 +251,10 @@ public class BandCombineOp implements  RasterOp {
      * @param srcPt The <code>Point2D</code> that represents the point in
      *              the source <code>Raster</code>
      * @param dstPt The <CODE>Point2D</CODE> in which to store the result.
-     *
      * @return The <CODE>Point2D</CODE> in the destination image that
      * corresponds to the specified point in the source image.
      */
-    public final Point2D getPoint2D (Point2D srcPt, Point2D dstPt) {
+    public final Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
         if (dstPt == null) {
             dstPt = new Point2D.Float();
         }

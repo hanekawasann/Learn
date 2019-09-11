@@ -29,7 +29,7 @@ import java.awt.List;
 
 /**
  * The peer interface for {@link List}.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -44,7 +44,6 @@ public interface ListPeer extends ComponentPeer {
      * method already make sure it is not modified.
      *
      * @return the indices of the list items that are currently selected
-     *
      * @see List#getSelectedIndexes()
      */
     int[] getSelectedIndexes();
@@ -52,9 +51,8 @@ public interface ListPeer extends ComponentPeer {
     /**
      * Adds an item to the list at the specified index.
      *
-     * @param item the item to add to the list
+     * @param item  the item to add to the list
      * @param index the index where to add the item into the list
-     *
      * @see List#add(String, int)
      */
     void add(String item, int index);
@@ -64,7 +62,7 @@ public interface ListPeer extends ComponentPeer {
      * deleted, including the item at the start and end indices.
      *
      * @param start the first item to be deleted
-     * @param end the last item to be deleted
+     * @param end   the last item to be deleted
      */
     void delItems(int start, int end);
 
@@ -79,7 +77,6 @@ public interface ListPeer extends ComponentPeer {
      * Selects the item at the specified {@code index}.
      *
      * @param index the index of the item to select
-     *
      * @see List#select(int)
      */
     void select(int index);
@@ -88,7 +85,6 @@ public interface ListPeer extends ComponentPeer {
      * De-selects the item at the specified {@code index}.
      *
      * @param index the index of the item to de-select
-     *
      * @see List#deselect(int)
      */
     void deselect(int index);
@@ -98,7 +94,6 @@ public interface ListPeer extends ComponentPeer {
      * by scrolling the list or similar.
      *
      * @param index the index of the item to make visible
-     *
      * @see List#makeVisible(int)
      */
     void makeVisible(int index);
@@ -107,8 +102,7 @@ public interface ListPeer extends ComponentPeer {
      * Toggles multiple selection mode on or off.
      *
      * @param m {@code true} for multiple selection mode,
-     *        {@code false} for single selection mode
-     *
+     *          {@code false} for single selection mode
      * @see List#setMultipleMode(boolean)
      */
     void setMultipleMode(boolean m);
@@ -117,9 +111,7 @@ public interface ListPeer extends ComponentPeer {
      * Returns the preferred size for a list with the specified number of rows.
      *
      * @param rows the number of rows
-     *
      * @return the preferred size of the list
-     *
      * @see List#getPreferredSize(int)
      */
     Dimension getPreferredSize(int rows);
@@ -128,9 +120,7 @@ public interface ListPeer extends ComponentPeer {
      * Returns the minimum size for a list with the specified number of rows.
      *
      * @param rows the number of rows
-     *
      * @return the minimum size of the list
-     *
      * @see List#getMinimumSize(int)
      */
     Dimension getMinimumSize(int rows);

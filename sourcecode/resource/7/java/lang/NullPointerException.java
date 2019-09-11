@@ -40,17 +40,16 @@ package java.lang;
  * <p>
  * Applications should throw instances of this class to indicate
  * other illegal uses of the {@code null} object.
- *
+ * <p>
  * {@code NullPointerException} objects may be constructed by the
  * virtual machine as if {@linkplain Throwable#Throwable(String,
  * Throwable, boolean, boolean) suppression were disabled and/or the
  * stack trace was not writable}.
  *
- * @author  unascribed
- * @since   JDK1.0
+ * @author unascribed
+ * @since JDK1.0
  */
-public
-class NullPointerException extends RuntimeException {
+public class NullPointerException extends RuntimeException {
     private static final long serialVersionUID = 5162710183389028792L;
 
     /**
@@ -64,7 +63,7 @@ class NullPointerException extends RuntimeException {
      * Constructs a {@code NullPointerException} with the specified
      * detail message.
      *
-     * @param   s   the detail message.
+     * @param s the detail message.
      */
     public NullPointerException(String s) {
         super(s);

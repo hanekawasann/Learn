@@ -56,8 +56,7 @@ import static sun.java2d.StateTrackable.State.*;
  * documentation for those methods.
  * </a>
  */
-public final class DataBufferInt extends DataBuffer
-{
+public final class DataBufferInt extends DataBuffer {
     /** The default data bank. */
     int data[];
 
@@ -81,13 +80,13 @@ public final class DataBufferInt extends DataBuffer
      * Constructs an integer-based <CODE>DataBuffer</CODE> with the specified number of
      * banks, all of which are the specified size.
      *
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size     The size of the banks in the <CODE>DataBuffer</CODE>.
      * @param numBanks The number of banks in the a<CODE>DataBuffer</CODE>.
      */
     public DataBufferInt(int size, int numBanks) {
         super(STABLE, TYPE_INT, size, numBanks);
         bankdata = new int[numBanks][];
-        for (int i= 0; i < numBanks; i++) {
+        for (int i = 0; i < numBanks; i++) {
             bankdata[i] = new int[size];
         }
         data = bankdata[0];
@@ -106,7 +105,7 @@ public final class DataBufferInt extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The integer array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
      */
     public DataBufferInt(int dataArray[], int size) {
         super(UNTRACKABLE, TYPE_INT, size);
@@ -128,8 +127,8 @@ public final class DataBufferInt extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The integer array for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the <CODE>DataBuffer</CODE> bank.
-     * @param offset The offset into the <CODE>dataArray</CODE>.
+     * @param size      The size of the <CODE>DataBuffer</CODE> bank.
+     * @param offset    The offset into the <CODE>dataArray</CODE>.
      */
     public DataBufferInt(int dataArray[], int size, int offset) {
         super(UNTRACKABLE, TYPE_INT, size, 1, offset);
@@ -150,11 +149,11 @@ public final class DataBufferInt extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The integer arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
      */
     public DataBufferInt(int dataArray[][], int size) {
         super(UNTRACKABLE, TYPE_INT, size, dataArray.length);
-        bankdata = (int [][]) dataArray.clone();
+        bankdata = (int[][]) dataArray.clone();
         data = bankdata[0];
     }
 
@@ -174,12 +173,12 @@ public final class DataBufferInt extends DataBuffer
      * an associated image in video memory).
      *
      * @param dataArray The integer arrays for the <CODE>DataBuffer</CODE>.
-     * @param size The size of the banks in the <CODE>DataBuffer</CODE>.
-     * @param offsets The offsets into each array.
+     * @param size      The size of the banks in the <CODE>DataBuffer</CODE>.
+     * @param offsets   The offsets into each array.
      */
     public DataBufferInt(int dataArray[][], int size, int offsets[]) {
         super(UNTRACKABLE, TYPE_INT, size, dataArray.length, offsets);
-        bankdata = (int [][]) dataArray.clone();
+        bankdata = (int[][]) dataArray.clone();
         data = bankdata[0];
     }
 
@@ -226,7 +225,7 @@ public final class DataBufferInt extends DataBuffer
      */
     public int[][] getBankData() {
         theTrackable.setUntrackable();
-        return (int [][]) bankdata.clone();
+        return (int[][]) bankdata.clone();
     }
 
     /**
@@ -238,47 +237,48 @@ public final class DataBufferInt extends DataBuffer
      * @see #setElem(int, int, int)
      */
     public int getElem(int i) {
-        return data[i+offset];
+        return data[i + offset];
     }
 
     /**
      * Returns the requested data array element from the specified bank.
      *
      * @param bank The bank from which you want to get a data array element.
-     * @param i The data array element you want to get.
+     * @param i    The data array element you want to get.
      * @return The requested data array element as an integer.
      * @see #setElem(int, int)
      * @see #setElem(int, int, int)
      */
     public int getElem(int bank, int i) {
-        return bankdata[bank][i+offsets[bank]];
+        return bankdata[bank][i + offsets[bank]];
     }
 
     /**
      * Sets the requested data array element in the first (default) bank
      * to the specified value.
      *
-     * @param i The data array element you want to set.
+     * @param i   The data array element you want to set.
      * @param val The integer value to which you want to set the data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int i, int val) {
-        data[i+offset] = val;
+        data[i + offset] = val;
         theTrackable.markDirty();
     }
 
     /**
      * Sets the requested data array element in the specified bank
      * to the integer value <CODE>i</CODE>.
+     *
      * @param bank The bank in which you want to set the data array element.
-     * @param i The data array element you want to set.
-     * @param val The integer value to which you want to set the specified data array element.
+     * @param i    The data array element you want to set.
+     * @param val  The integer value to which you want to set the specified data array element.
      * @see #getElem(int)
      * @see #getElem(int, int)
      */
     public void setElem(int bank, int i, int val) {
-        bankdata[bank][i+offsets[bank]] = (int)val;
+        bankdata[bank][i + offsets[bank]] = (int) val;
         theTrackable.markDirty();
     }
 }

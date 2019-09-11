@@ -40,6 +40,7 @@ public interface BeanContextServicesListener extends BeanContextServiceRevokedLi
     /**
      * The service named has been registered. getService requests for
      * this service may now be made.
+     *
      * @param bcsae the <code>BeanContextServiceAvailableEvent</code>
      */
     void serviceAvailable(BeanContextServiceAvailableEvent bcsae);

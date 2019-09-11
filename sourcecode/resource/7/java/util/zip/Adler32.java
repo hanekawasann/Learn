@@ -30,11 +30,10 @@ package java.util.zip;
  * stream. An Adler-32 checksum is almost as reliable as a CRC-32 but
  * can be computed much faster.
  *
- * @see         Checksum
- * @author      David Connelly
+ * @author David Connelly
+ * @see Checksum
  */
-public
-class Adler32 implements Checksum {
+public class Adler32 implements Checksum {
     private int adler = 1;
 
     /**
@@ -86,10 +85,10 @@ class Adler32 implements Checksum {
      * Returns the checksum value.
      */
     public long getValue() {
-        return (long)adler & 0xffffffffL;
+        return (long) adler & 0xffffffffL;
     }
 
     private native static int update(int adler, int b);
-    private native static int updateBytes(int adler, byte[] b, int off,
-                                          int len);
+
+    private native static int updateBytes(int adler, byte[] b, int off, int len);
 }

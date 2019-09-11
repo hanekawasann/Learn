@@ -76,7 +76,7 @@ import java.awt.Transparency;
  * Component.createVolatileImage} or
  * {@link java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int)
  * GraphicsConfiguration.createCompatibleVolatileImage(int, int)} methods.
- * <P>
+ * <p>
  * An example of using a VolatileImage object follows:
  * <pre>
  * // image creation
@@ -116,7 +116,7 @@ import java.awt.Transparency;
  *      gScreen.drawImage(vImg, 0, 0, this);
  * } while (vImg.contentsLost());
  * </pre>
- * <P>
+ * <p>
  * Note that this class subclasses from the {@link Image} class, which
  * includes methods that take an {@link ImageObserver} parameter for
  * asynchronous notifications as information is received from
@@ -128,10 +128,10 @@ import java.awt.Transparency;
  * will never indicate that the information is not yet available and
  * the <code>ImageObserver</code> used in such methods will never
  * need to be recorded for an asynchronous callback notification.
+ *
  * @since 1.4
  */
-public abstract class VolatileImage extends Image implements Transparency
-{
+public abstract class VolatileImage extends Image implements Transparency {
 
     // Return codes for validate() method
 
@@ -161,20 +161,23 @@ public abstract class VolatileImage extends Image implements Transparency
      * the <code>VolatileImage</code> at the time of the request
      * and will not be updated with any future changes to the
      * <code>VolatileImage</code>.
+     *
      * @return a {@link BufferedImage} representation of this
-     *          <code>VolatileImage</code>
+     * <code>VolatileImage</code>
      * @see BufferedImage
      */
     public abstract BufferedImage getSnapshot();
 
     /**
      * Returns the width of the <code>VolatileImage</code>.
+     *
      * @return the width of this <code>VolatileImage</code>.
      */
     public abstract int getWidth();
 
     /**
      * Returns the height of the <code>VolatileImage</code>.
+     *
      * @return the height of this <code>VolatileImage</code>.
      */
     public abstract int getHeight();
@@ -197,6 +200,7 @@ public abstract class VolatileImage extends Image implements Transparency
      * that static snapshot image, not the original VolatileImage.
      * Calling getSource()
      * is equivalent to calling getSnapshot().getSource().
+     *
      * @return an {@link ImageProducer} that can be used to produce the
      * pixels for a <code>BufferedImage</code> representation of
      * this Image.
@@ -226,8 +230,9 @@ public abstract class VolatileImage extends Image implements Transparency
      * for backwards compatibility.  {@link #createGraphics() createGraphics} is more
      * convenient, since it is declared to return a
      * <code>Graphics2D</code>.
+     *
      * @return a <code>Graphics2D</code>, which can be used to draw into
-     *          this image.
+     * this image.
      */
     public Graphics getGraphics() {
         return createGraphics();
@@ -236,8 +241,9 @@ public abstract class VolatileImage extends Image implements Transparency
     /**
      * Creates a <code>Graphics2D</code>, which can be used to draw into
      * this <code>VolatileImage</code>.
+     *
      * @return a <code>Graphics2D</code>, used for drawing into this
-     *          image.
+     * image.
      */
     public abstract Graphics2D createGraphics();
 
@@ -259,26 +265,26 @@ public abstract class VolatileImage extends Image implements Transparency
      * value for gc may cause incorrect values to be returned from
      * <code>validate</code> and may cause later problems with rendering.
      *
-     * @param   gc   a <code>GraphicsConfiguration</code> object for this
-     *          image to be validated against.  A null gc implies that the
-     *          validate method should skip the compatibility test.
-     * @return  <code>IMAGE_OK</code> if the image did not need validation<BR>
-     *          <code>IMAGE_RESTORED</code> if the image needed restoration.
-     *          Restoration implies that the contents of the image may have
-     *          been affected and the image may need to be re-rendered.<BR>
-     *          <code>IMAGE_INCOMPATIBLE</code> if the image is incompatible
-     *          with the <code>GraphicsConfiguration</code> object passed
-     *          into the <code>validate</code> method.  Incompatibility
-     *          implies that the image may need to be recreated with a
-     *          new <code>Component</code> or
-     *          <code>GraphicsConfiguration</code> in order to get an image
-     *          that can be used successfully with this
-     *          <code>GraphicsConfiguration</code>.
-     *          An incompatible image is not checked for whether restoration
-     *          was necessary, so the state of the image is unchanged
-     *          after a return value of <code>IMAGE_INCOMPATIBLE</code>
-     *          and this return value implies nothing about whether the
-     *          image needs to be restored.
+     * @param gc a <code>GraphicsConfiguration</code> object for this
+     *           image to be validated against.  A null gc implies that the
+     *           validate method should skip the compatibility test.
+     * @return <code>IMAGE_OK</code> if the image did not need validation<BR>
+     * <code>IMAGE_RESTORED</code> if the image needed restoration.
+     * Restoration implies that the contents of the image may have
+     * been affected and the image may need to be re-rendered.<BR>
+     * <code>IMAGE_INCOMPATIBLE</code> if the image is incompatible
+     * with the <code>GraphicsConfiguration</code> object passed
+     * into the <code>validate</code> method.  Incompatibility
+     * implies that the image may need to be recreated with a
+     * new <code>Component</code> or
+     * <code>GraphicsConfiguration</code> in order to get an image
+     * that can be used successfully with this
+     * <code>GraphicsConfiguration</code>.
+     * An incompatible image is not checked for whether restoration
+     * was necessary, so the state of the image is unchanged
+     * after a return value of <code>IMAGE_INCOMPATIBLE</code>
+     * and this return value implies nothing about whether the
+     * image needs to be restored.
      * @see java.awt.GraphicsConfiguration
      * @see java.awt.Component
      * @see #IMAGE_OK
@@ -293,6 +299,7 @@ public abstract class VolatileImage extends Image implements Transparency
      * application at the end of any series of rendering operations to
      * or from the image to see whether
      * the image needs to be validated and the rendering redone.
+     *
      * @return <code>true</code> if the drawing surface needs to be restored;
      * <code>false</code> otherwise.
      */
@@ -310,18 +317,20 @@ public abstract class VolatileImage extends Image implements Transparency
      * not as accelerated as other VolatileImage objects on
      * this platform might be.  The user might want that
      * information to find other solutions to their problem.
+     *
      * @return an <code>ImageCapabilities</code> object that contains
-     *         the capabilities of this <code>VolatileImage</code>.
+     * the capabilities of this <code>VolatileImage</code>.
      * @since 1.4
      */
     public abstract ImageCapabilities getCapabilities();
 
     /**
      * The transparency value with which this image was created.
+     *
      * @see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int,
-     *      int,int)
+     * int, int)
      * @see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int,
-     *      int,ImageCapabilities,int)
+     * int, ImageCapabilities, int)
      * @see Transparency
      * @since 1.5
      */
@@ -330,6 +339,7 @@ public abstract class VolatileImage extends Image implements Transparency
     /**
      * Returns the transparency.  Returns either OPAQUE, BITMASK,
      * or TRANSLUCENT.
+     *
      * @return the transparency of this <code>VolatileImage</code>.
      * @see Transparency#OPAQUE
      * @see Transparency#BITMASK

@@ -54,11 +54,9 @@ import java.io.ByteArrayInputStream;
  * retain a handle onto the digest object, and clone it for each
  * digest to be computed, leaving the orginal digest untouched.
  *
- * @see MessageDigest
- *
- * @see DigestOutputStream
- *
  * @author Benjamin Renaud
+ * @see MessageDigest
+ * @see DigestOutputStream
  */
 
 public class DigestInputStream extends FilterInputStream {
@@ -78,7 +76,6 @@ public class DigestInputStream extends FilterInputStream {
      * and message digest.
      *
      * @param stream the input stream.
-     *
      * @param digest the message digest to associate with this stream.
      */
     public DigestInputStream(InputStream stream, MessageDigest digest) {
@@ -115,15 +112,13 @@ public class DigestInputStream extends FilterInputStream {
      * with this stream, passing it the byte read.
      *
      * @return the byte read.
-     *
-     * @exception IOException if an I/O error occurs.
-     *
+     * @throws IOException if an I/O error occurs.
      * @see MessageDigest#update(byte)
      */
     public int read() throws IOException {
         int ch = in.read();
         if (on && ch != -1) {
-            digest.update((byte)ch);
+            digest.update((byte) ch);
         }
         return ch;
     }
@@ -139,22 +134,17 @@ public class DigestInputStream extends FilterInputStream {
      * on the message digest associated with this stream, passing it
      * the data.
      *
-     * @param b the array into which the data is read.
-     *
+     * @param b   the array into which the data is read.
      * @param off the starting offset into <code>b</code> of where the
-     * data should be placed.
-     *
+     *            data should be placed.
      * @param len the maximum number of bytes to be read from the input
-     * stream into b, starting at offset <code>off</code>.
-     *
-     * @return  the actual number of bytes read. This is less than
+     *            stream into b, starting at offset <code>off</code>.
+     * @return the actual number of bytes read. This is less than
      * <code>len</code> if the end of the stream is reached prior to
      * reading <code>len</code> bytes. -1 is returned if no bytes were
      * read because the end of the stream had already been reached when
      * the call was made.
-     *
-     * @exception IOException if an I/O error occurs.
-     *
+     * @throws IOException if an I/O error occurs.
      * @see MessageDigest#update(byte[], int, int)
      */
     public int read(byte[] b, int off, int len) throws IOException {
@@ -172,7 +162,7 @@ public class DigestInputStream extends FilterInputStream {
      * digest is not updated.
      *
      * @param on true to turn the digest function on, false to turn
-     * it off.
+     *           it off.
      */
     public void on(boolean on) {
         this.on = on;
@@ -182,7 +172,7 @@ public class DigestInputStream extends FilterInputStream {
      * Prints a string representation of this digest input stream and
      * its associated message digest object.
      */
-     public String toString() {
-         return "[Digest Input Stream] " + digest.toString();
-     }
+    public String toString() {
+        return "[Digest Input Stream] " + digest.toString();
+    }
 }

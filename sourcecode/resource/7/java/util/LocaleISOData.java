@@ -29,8 +29,7 @@ class LocaleISOData {
     /**
      * The 2- and 3-letter ISO 639 language codes.
      */
-    static final String isoLanguageTable =
-          "aa" + "aar"  // Afar
+    static final String isoLanguageTable = "aa" + "aar"  // Afar
         + "ab" + "abk"  // Abkhazian
         + "ae" + "ave"  // Avestan
         + "af" + "afr"  // Afrikaans
@@ -223,8 +222,7 @@ class LocaleISOData {
     /**
      * The 2- and 3-letter ISO 3166 country codes.
      */
-    static final String isoCountryTable =
-          "AD" + "AND"  // Andorra, Principality of
+    static final String isoCountryTable = "AD" + "AND"  // Andorra, Principality of
         + "AE" + "ARE"  // United Arab Emirates
         + "AF" + "AFG"  // Afghanistan
         + "AG" + "ATG"  // Antigua and Barbuda
@@ -274,7 +272,7 @@ class LocaleISOData {
         + "CN" + "CHN"  // China, People's Republic of
         + "CO" + "COL"  // Colombia, Republic of
         + "CR" + "CRI"  // Costa Rica, Republic of
-//      + "CS" + "SCG"  // Serbia and Montenegro
+        //      + "CS" + "SCG"  // Serbia and Montenegro
         + "CU" + "CUB"  // Cuba, Republic of
         + "CV" + "CPV"  // Cape Verde, Republic of
         + "CX" + "CXR"  // Christmas Island

@@ -34,9 +34,7 @@ package java.nio.charset;
  * @since 1.4
  */
 
-public class UnmappableCharacterException
-    extends CharacterCodingException
-{
+public class UnmappableCharacterException extends CharacterCodingException {
 
     private static final long serialVersionUID = -7026962371537706123L;
 

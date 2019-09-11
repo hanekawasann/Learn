@@ -36,10 +36,10 @@ import java.io.*;
  * <code>GraphicsConfigTemplate</code>.  A valid
  * <code>GraphicsConfiguration</code> is returned that meets or exceeds
  * what was requested in the <code>GraphicsConfigTemplate</code>.
+ *
  * @see GraphicsDevice
  * @see GraphicsConfiguration
- *
- * @since       1.2
+ * @since 1.2
  */
 public abstract class GraphicsConfigTemplate implements Serializable {
     /*
@@ -60,7 +60,7 @@ public abstract class GraphicsConfigTemplate implements Serializable {
      * object.  If this feature is not available, do not select the
      * <code>GraphicsConfiguration</code> object.
      */
-    public static final int REQUIRED    = 1;
+    public static final int REQUIRED = 1;
 
     /**
      * Value used for "Enum" (Integer) type.  States that this
@@ -69,7 +69,7 @@ public abstract class GraphicsConfigTemplate implements Serializable {
      * selection that does not include this feature, although both
      * selections can be considered valid matches.
      */
-    public static final int PREFERRED   = 2;
+    public static final int PREFERRED = 2;
 
     /**
      * Value used for "Enum" (Integer) type.  States that this
@@ -83,20 +83,21 @@ public abstract class GraphicsConfigTemplate implements Serializable {
     /**
      * Returns the "best" configuration possible that passes the
      * criteria defined in the <code>GraphicsConfigTemplate</code>.
+     *
      * @param gc the array of <code>GraphicsConfiguration</code>
-     * objects to choose from.
+     *           objects to choose from.
      * @return a <code>GraphicsConfiguration</code> object that is
      * the best configuration possible.
      * @see GraphicsConfiguration
      */
-    public abstract GraphicsConfiguration
-      getBestConfiguration(GraphicsConfiguration[] gc);
+    public abstract GraphicsConfiguration getBestConfiguration(GraphicsConfiguration[] gc);
 
     /**
      * Returns a <code>boolean</code> indicating whether or
      * not the specified <code>GraphicsConfiguration</code> can be
      * used to create a drawing surface that supports the indicated
      * features.
+     *
      * @param gc the <code>GraphicsConfiguration</code> object to test
      * @return <code>true</code> if this
      * <code>GraphicsConfiguration</code> object can be used to create
@@ -105,7 +106,6 @@ public abstract class GraphicsConfigTemplate implements Serializable {
      * not be used to create a drawing surface usable by this Java(tm)
      * API.
      */
-    public abstract boolean
-      isGraphicsConfigSupported(GraphicsConfiguration gc);
+    public abstract boolean isGraphicsConfigSupported(GraphicsConfiguration gc);
 
 }

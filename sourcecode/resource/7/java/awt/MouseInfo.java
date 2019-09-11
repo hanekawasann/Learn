@@ -26,11 +26,12 @@
 package java.awt;
 
 import sun.security.util.SecurityConstants;
+
 /**
  * <code>MouseInfo</code>  provides methods for getting information about the mouse,
  * such as mouse pointer location and the number of mouse buttons.
  *
- * @author     Roman Poborchiy
+ * @author Roman Poborchiy
  * @since 1.5
  */
 
@@ -60,14 +61,14 @@ public class MouseInfo {
      * permission before creating and returning a <code>PointerInfo</code>
      * object. This may result in a <code>SecurityException</code>.
      *
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless() returns true
-     * @exception SecurityException if a security manager exists and its
-     *            <code>checkPermission</code> method doesn't allow the operation
-     * @see       GraphicsConfiguration
-     * @see       SecurityManager#checkPermission
-     * @see       java.awt.AWTPermission
-     * @return    location of the mouse pointer
-     * @since     1.5
+     * @return location of the mouse pointer
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true
+     * @throws SecurityException if a security manager exists and its
+     *                           <code>checkPermission</code> method doesn't allow the operation
+     * @see GraphicsConfiguration
+     * @see SecurityManager#checkPermission
+     * @see java.awt.AWTPermission
+     * @since 1.5
      */
     public static PointerInfo getPointerInfo() throws HeadlessException {
         if (GraphicsEnvironment.isHeadless()) {
@@ -82,7 +83,7 @@ public class MouseInfo {
         Point point = new Point(0, 0);
         int deviceNum = Toolkit.getDefaultToolkit().getMouseInfoPeer().fillPointWithCoords(point);
         GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                                   getScreenDevices();
+            getScreenDevices();
         PointerInfo retval = null;
         if (areScreenDevicesIndependent(gds)) {
             retval = new PointerInfo(gds[deviceNum], point);
@@ -113,8 +114,8 @@ public class MouseInfo {
      * Returns the number of buttons on the mouse.
      * On systems without a mouse, returns <code>-1</code>.
      *
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless() returns true
      * @return number of buttons on the mouse
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true
      * @since 1.5
      */
     public static int getNumberOfButtons() throws HeadlessException {
@@ -122,9 +123,9 @@ public class MouseInfo {
             throw new HeadlessException();
         }
         Object prop = Toolkit.getDefaultToolkit().
-                              getDesktopProperty("awt.mouse.numButtons");
+            getDesktopProperty("awt.mouse.numButtons");
         if (prop instanceof Integer) {
-            return ((Integer)prop).intValue();
+            return ((Integer) prop).intValue();
         }
 
         // This should never happen.

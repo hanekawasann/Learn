@@ -35,10 +35,10 @@ package java.lang;
  * {@code short}, as well as other constants and methods useful when
  * dealing with a {@code short}.
  *
- * @author  Nakul Saraiya
- * @author  Joseph D. Darcy
- * @see     java.lang.Number
- * @since   JDK1.1
+ * @author Nakul Saraiya
+ * @author Joseph D. Darcy
+ * @see java.lang.Number
+ * @since JDK1.1
  */
 public final class Short extends Number implements Comparable<Short> {
 
@@ -46,19 +46,19 @@ public final class Short extends Number implements Comparable<Short> {
      * A constant holding the minimum value a {@code short} can
      * have, -2<sup>15</sup>.
      */
-    public static final short   MIN_VALUE = -32768;
+    public static final short MIN_VALUE = -32768;
 
     /**
      * A constant holding the maximum value a {@code short} can
      * have, 2<sup>15</sup>-1.
      */
-    public static final short   MAX_VALUE = 32767;
+    public static final short MAX_VALUE = 32767;
 
     /**
      * The {@code Class} instance representing the primitive type
      * {@code short}.
      */
-    public static final Class<Short>    TYPE = (Class<Short>) Class.getPrimitiveClass("short");
+    public static final Class<Short> TYPE = (Class<Short>) Class.getPrimitiveClass("short");
 
     /**
      * Returns a new {@code String} object representing the
@@ -69,7 +69,7 @@ public final class Short extends Number implements Comparable<Short> {
      * @see java.lang.Integer#toString(int)
      */
     public static String toString(short s) {
-        return Integer.toString((int)s, 10);
+        return Integer.toString((int) s, 10);
     }
 
     /**
@@ -104,21 +104,20 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code short}.
      * </ul>
      *
-     * @param s         the {@code String} containing the
-     *                  {@code short} representation to be parsed
-     * @param radix     the radix to be used while parsing {@code s}
-     * @return          the {@code short} represented by the string
-     *                  argument in the specified radix.
-     * @throws          NumberFormatException If the {@code String}
-     *                  does not contain a parsable {@code short}.
+     * @param s     the {@code String} containing the
+     *              {@code short} representation to be parsed
+     * @param radix the radix to be used while parsing {@code s}
+     * @return the {@code short} represented by the string
+     * argument in the specified radix.
+     * @throws NumberFormatException If the {@code String}
+     *                               does not contain a parsable {@code short}.
      */
-    public static short parseShort(String s, int radix)
-        throws NumberFormatException {
+    public static short parseShort(String s, int radix) throws NumberFormatException {
         int i = Integer.parseInt(s, radix);
-        if (i < MIN_VALUE || i > MAX_VALUE)
-            throw new NumberFormatException(
-                "Value out of range. Value:\"" + s + "\" Radix:" + radix);
-        return (short)i;
+        if (i < MIN_VALUE || i > MAX_VALUE) {
+            throw new NumberFormatException("Value out of range. Value:\"" + s + "\" Radix:" + radix);
+        }
+        return (short) i;
     }
 
     /**
@@ -134,10 +133,10 @@ public final class Short extends Number implements Comparable<Short> {
      *
      * @param s a {@code String} containing the {@code short}
      *          representation to be parsed
-     * @return  the {@code short} value represented by the
-     *          argument in decimal.
-     * @throws  NumberFormatException If the string does not
-     *          contain a parsable {@code short}.
+     * @return the {@code short} value represented by the
+     * argument in decimal.
+     * @throws NumberFormatException If the string does not
+     *                               contain a parsable {@code short}.
      */
     public static short parseShort(String s) throws NumberFormatException {
         return parseShort(s, 10);
@@ -157,19 +156,18 @@ public final class Short extends Number implements Comparable<Short> {
      * equal to the value of:
      *
      * <blockquote>
-     *  {@code new Short(Short.parseShort(s, radix))}
+     * {@code new Short(Short.parseShort(s, radix))}
      * </blockquote>
      *
-     * @param s         the string to be parsed
-     * @param radix     the radix to be used in interpreting {@code s}
-     * @return          a {@code Short} object holding the value
-     *                  represented by the string argument in the
-     *                  specified radix.
-     * @throws          NumberFormatException If the {@code String} does
-     *                  not contain a parsable {@code short}.
+     * @param s     the string to be parsed
+     * @param radix the radix to be used in interpreting {@code s}
+     * @return a {@code Short} object holding the value
+     * represented by the string argument in the
+     * specified radix.
+     * @throws NumberFormatException If the {@code String} does
+     *                               not contain a parsable {@code short}.
      */
-    public static Short valueOf(String s, int radix)
-        throws NumberFormatException {
+    public static Short valueOf(String s, int radix) throws NumberFormatException {
         return valueOf(parseShort(s, radix));
     }
 
@@ -186,27 +184,26 @@ public final class Short extends Number implements Comparable<Short> {
      * equal to the value of:
      *
      * <blockquote>
-     *  {@code new Short(Short.parseShort(s))}
+     * {@code new Short(Short.parseShort(s))}
      * </blockquote>
      *
      * @param s the string to be parsed
-     * @return  a {@code Short} object holding the value
-     *          represented by the string argument
-     * @throws  NumberFormatException If the {@code String} does
-     *          not contain a parsable {@code short}.
+     * @return a {@code Short} object holding the value
+     * represented by the string argument
+     * @throws NumberFormatException If the {@code String} does
+     *                               not contain a parsable {@code short}.
      */
     public static Short valueOf(String s) throws NumberFormatException {
         return valueOf(s, 10);
     }
 
     private static class ShortCache {
-        private ShortCache(){}
+        private ShortCache() {}
 
         static final Short cache[] = new Short[-(-128) + 127 + 1];
 
         static {
-            for(int i = 0; i < cache.length; i++)
-                cache[i] = new Short((short)(i - 128));
+            for (int i = 0; i < cache.length; i++) { cache[i] = new Short((short) (i - 128)); }
         }
     }
 
@@ -218,13 +215,13 @@ public final class Short extends Number implements Comparable<Short> {
      * {@link #Short(short)}, as this method is likely to yield
      * significantly better space and time performance by caching
      * frequently requested values.
-     *
+     * <p>
      * This method will always cache values in the range -128 to 127,
      * inclusive, and may cache other values outside of this range.
      *
-     * @param  s a short value.
+     * @param s a short value.
      * @return a {@code Short} instance representing {@code s}.
-     * @since  1.5
+     * @since 1.5
      */
     public static Short valueOf(short s) {
         final int offset = 128;
@@ -270,19 +267,19 @@ public final class Short extends Number implements Comparable<Short> {
      * String} is the minus sign.  No whitespace characters are
      * permitted in the {@code String}.
      *
-     * @param     nm the {@code String} to decode.
-     * @return    a {@code Short} object holding the {@code short}
-     *            value represented by {@code nm}
-     * @throws    NumberFormatException  if the {@code String} does not
-     *            contain a parsable {@code short}.
+     * @param nm the {@code String} to decode.
+     * @return a {@code Short} object holding the {@code short}
+     * value represented by {@code nm}
+     * @throws NumberFormatException if the {@code String} does not
+     *                               contain a parsable {@code short}.
      * @see java.lang.Short#parseShort(java.lang.String, int)
      */
     public static Short decode(String nm) throws NumberFormatException {
         int i = Integer.decode(nm);
-        if (i < MIN_VALUE || i > MAX_VALUE)
-            throw new NumberFormatException(
-                    "Value " + i + " out of range from input " + nm);
-        return valueOf((short)i);
+        if (i < MIN_VALUE || i > MAX_VALUE) {
+            throw new NumberFormatException("Value " + i + " out of range from input " + nm);
+        }
+        return valueOf((short) i);
     }
 
     /**
@@ -296,8 +293,8 @@ public final class Short extends Number implements Comparable<Short> {
      * Constructs a newly allocated {@code Short} object that
      * represents the specified {@code short} value.
      *
-     * @param value     the value to be represented by the
-     *                  {@code Short}.
+     * @param value the value to be represented by the
+     *              {@code Short}.
      */
     public Short(short value) {
         this.value = value;
@@ -312,9 +309,9 @@ public final class Short extends Number implements Comparable<Short> {
      *
      * @param s the {@code String} to be converted to a
      *          {@code Short}
-     * @throws  NumberFormatException If the {@code String}
-     *          does not contain a parsable {@code short}.
-     * @see     java.lang.Short#parseShort(java.lang.String, int)
+     * @throws NumberFormatException If the {@code String}
+     *                               does not contain a parsable {@code short}.
+     * @see java.lang.Short#parseShort(java.lang.String, int)
      */
     public Short(String s) throws NumberFormatException {
         this.value = parseShort(s, 10);
@@ -325,7 +322,7 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code byte}.
      */
     public byte byteValue() {
-        return (byte)value;
+        return (byte) value;
     }
 
     /**
@@ -341,7 +338,7 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code int}.
      */
     public int intValue() {
-        return (int)value;
+        return (int) value;
     }
 
     /**
@@ -349,7 +346,7 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code long}.
      */
     public long longValue() {
-        return (long)value;
+        return (long) value;
     }
 
     /**
@@ -357,7 +354,7 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code float}.
      */
     public float floatValue() {
-        return (float)value;
+        return (float) value;
     }
 
     /**
@@ -365,7 +362,7 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code double}.
      */
     public double doubleValue() {
-        return (double)value;
+        return (double) value;
     }
 
     /**
@@ -375,11 +372,11 @@ public final class Short extends Number implements Comparable<Short> {
      * the {@code short} value were given as an argument to the
      * {@link java.lang.Short#toString(short)} method.
      *
-     * @return  a string representation of the value of this object in
-     *          base&nbsp;10.
+     * @return a string representation of the value of this object in
+     * base&nbsp;10.
      */
     public String toString() {
-        return Integer.toString((int)value);
+        return Integer.toString((int) value);
     }
 
     /**
@@ -389,7 +386,7 @@ public final class Short extends Number implements Comparable<Short> {
      * @return a hash code value for this {@code Short}
      */
     public int hashCode() {
-        return (int)value;
+        return (int) value;
     }
 
     /**
@@ -398,13 +395,13 @@ public final class Short extends Number implements Comparable<Short> {
      * {@code null} and is a {@code Short} object that
      * contains the same {@code short} value as this object.
      *
-     * @param obj       the object to compare with
-     * @return          {@code true} if the objects are the same;
-     *                  {@code false} otherwise.
+     * @param obj the object to compare with
+     * @return {@code true} if the objects are the same;
+     * {@code false} otherwise.
      */
     public boolean equals(Object obj) {
         if (obj instanceof Short) {
-            return value == ((Short)obj).shortValue();
+            return value == ((Short) obj).shortValue();
         }
         return false;
     }
@@ -412,15 +409,15 @@ public final class Short extends Number implements Comparable<Short> {
     /**
      * Compares two {@code Short} objects numerically.
      *
-     * @param   anotherShort   the {@code Short} to be compared.
-     * @return  the value {@code 0} if this {@code Short} is
-     *          equal to the argument {@code Short}; a value less than
-     *          {@code 0} if this {@code Short} is numerically less
-     *          than the argument {@code Short}; and a value greater than
-     *           {@code 0} if this {@code Short} is numerically
-     *           greater than the argument {@code Short} (signed
-     *           comparison).
-     * @since   1.2
+     * @param anotherShort the {@code Short} to be compared.
+     * @return the value {@code 0} if this {@code Short} is
+     * equal to the argument {@code Short}; a value less than
+     * {@code 0} if this {@code Short} is numerically less
+     * than the argument {@code Short}; and a value greater than
+     * {@code 0} if this {@code Short} is numerically
+     * greater than the argument {@code Short} (signed
+     * comparison).
+     * @since 1.2
      */
     public int compareTo(Short anotherShort) {
         return compare(this.value, anotherShort.value);
@@ -433,11 +430,11 @@ public final class Short extends Number implements Comparable<Short> {
      *    Short.valueOf(x).compareTo(Short.valueOf(y))
      * </pre>
      *
-     * @param  x the first {@code short} to compare
-     * @param  y the second {@code short} to compare
+     * @param x the first {@code short} to compare
+     * @param y the second {@code short} to compare
      * @return the value {@code 0} if {@code x == y};
-     *         a value less than {@code 0} if {@code x < y}; and
-     *         a value greater than {@code 0} if {@code x > y}
+     * a value less than {@code 0} if {@code x < y}; and
+     * a value greater than {@code 0} if {@code x > y}
      * @since 1.7
      */
     public static int compare(short x, short y) {
@@ -447,6 +444,7 @@ public final class Short extends Number implements Comparable<Short> {
     /**
      * The number of bits used to represent a {@code short} value in two's
      * complement binary form.
+     *
      * @since 1.5
      */
     public static final int SIZE = 16;
@@ -456,7 +454,7 @@ public final class Short extends Number implements Comparable<Short> {
      * two's complement representation of the specified {@code short} value.
      *
      * @return the value obtained by reversing (or, equivalently, swapping)
-     *     the bytes in the specified {@code short} value.
+     * the bytes in the specified {@code short} value.
      * @since 1.5
      */
     public static short reverseBytes(short i) {

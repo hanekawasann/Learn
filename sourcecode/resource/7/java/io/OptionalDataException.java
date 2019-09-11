@@ -42,8 +42,8 @@ package java.io;
  *       is set to 0.
  * </ul>
  *
- * @author  unascribed
- * @since   JDK1.1
+ * @author unascribed
+ * @since JDK1.1
  */
 public class OptionalDataException extends ObjectStreamException {
 

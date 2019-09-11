@@ -27,23 +27,26 @@ package java.lang.invoke;
 
 import sun.invoke.util.VerifyType;
 import sun.invoke.util.Wrapper;
+
 import static java.lang.invoke.MethodHandleStatics.*;
 
 /**
  * The flavor of method handle which emulates an invoke instruction
  * on a predetermined argument.  The JVM dispatches to the correct method
  * when the handle is created, not when it is invoked.
+ *
  * @author jrose
  */
 class BoundMethodHandle extends MethodHandle {
     //MethodHandle vmtarget;           // next BMH or final DMH or methodOop
     private final Object argument;     // argument to insert
-    private final int    vmargslot;    // position at which it is inserted
+    private final int vmargslot;    // position at which it is inserted
 
     // Constructors in this class *must* be package scoped or private.
 
-    /** Bind a direct MH to its receiver (or first ref. argument).
-     *  The JVM will pre-dispatch the MH if it is not already static.
+    /**
+     * Bind a direct MH to its receiver (or first ref. argument).
+     * The JVM will pre-dispatch the MH if it is not already static.
      */
     /*non-public*/ BoundMethodHandle(DirectMethodHandle mh, Object argument) {
         super(mh.type().dropParameterTypes(0, 1));
@@ -53,23 +56,24 @@ class BoundMethodHandle extends MethodHandle {
         initTarget(mh, 0);
     }
 
-    /** Insert an argument into an arbitrary method handle.
-     *  If argnum is zero, inserts the first argument, etc.
-     *  The argument type must be a reference.
+    /**
+     * Insert an argument into an arbitrary method handle.
+     * If argnum is zero, inserts the first argument, etc.
+     * The argument type must be a reference.
      */
     /*non-public*/ BoundMethodHandle(MethodHandle mh, Object argument, int argnum) {
-        this(mh.type().dropParameterTypes(argnum, argnum+1),
-             mh, argument, argnum);
+        this(mh.type().dropParameterTypes(argnum, argnum + 1), mh, argument, argnum);
     }
 
-    /** Insert an argument into an arbitrary method handle.
-     *  If argnum is zero, inserts the first argument, etc.
+    /**
+     * Insert an argument into an arbitrary method handle.
+     * If argnum is zero, inserts the first argument, etc.
      */
     /*non-public*/ BoundMethodHandle(MethodType type, MethodHandle mh, Object argument, int argnum) {
         super(type);
-        if (mh.type().parameterType(argnum).isPrimitive())
+        if (mh.type().parameterType(argnum).isPrimitive()) {
             this.argument = bindPrimitiveArgument(argument, mh, argnum);
-        else {
+        } else {
             this.argument = checkReferenceArgument(argument, mh, argnum);
         }
         this.vmargslot = type.parameterSlotDepth(argnum);
@@ -81,20 +85,22 @@ class BoundMethodHandle extends MethodHandle {
         MethodHandleNatives.init(this, mh, argnum);
     }
 
-    /** For the AdapterMethodHandle subclass.
+    /**
+     * For the AdapterMethodHandle subclass.
      */
     /*non-public*/ BoundMethodHandle(MethodType type, Object argument, int vmargslot) {
         super(type);
         this.argument = argument;
         this.vmargslot = vmargslot;
-        assert(this instanceof AdapterMethodHandle);
+        assert (this instanceof AdapterMethodHandle);
     }
 
-    /** Initialize the current object as a self-bound method handle, binding it
-     *  as the first argument of the method handle {@code entryPoint}.
-     *  The invocation type of the resulting method handle will be the
-     *  same as {@code entryPoint},  except that the first argument
-     *  type will be dropped.
+    /**
+     * Initialize the current object as a self-bound method handle, binding it
+     * as the first argument of the method handle {@code entryPoint}.
+     * The invocation type of the resulting method handle will be the
+     * same as {@code entryPoint},  except that the first argument
+     * type will be dropped.
      */
     /*non-public*/ BoundMethodHandle(MethodHandle entryPoint) {
         super(entryPoint.type().dropParameterTypes(0, 1));
@@ -103,12 +109,13 @@ class BoundMethodHandle extends MethodHandle {
         initTarget(entryPoint, 0);
     }
 
-    /** Make sure the given {@code argument} can be used as {@code argnum}-th
-     *  parameter of the given method handle {@code mh}, which must be a reference.
-     *  <p>
-     *  If this fails, throw a suitable {@code WrongMethodTypeException},
-     *  which will prevent the creation of an illegally typed bound
-     *  method handle.
+    /**
+     * Make sure the given {@code argument} can be used as {@code argnum}-th
+     * parameter of the given method handle {@code mh}, which must be a reference.
+     * <p>
+     * If this fails, throw a suitable {@code WrongMethodTypeException},
+     * which will prevent the creation of an illegally typed bound
+     * method handle.
      */
     final static Object checkReferenceArgument(Object argument, MethodHandle mh, int argnum) {
         Class<?> ptype = mh.type().parameterType(argnum);
@@ -122,36 +129,34 @@ class BoundMethodHandle extends MethodHandle {
         throw badBoundArgumentException(argument, mh, argnum);
     }
 
-    /** Make sure the given {@code argument} can be used as {@code argnum}-th
-     *  parameter of the given method handle {@code mh}, which must be a primitive.
-     *  <p>
-     *  If this fails, throw a suitable {@code WrongMethodTypeException},
-     *  which will prevent the creation of an illegally typed bound
-     *  method handle.
+    /**
+     * Make sure the given {@code argument} can be used as {@code argnum}-th
+     * parameter of the given method handle {@code mh}, which must be a primitive.
+     * <p>
+     * If this fails, throw a suitable {@code WrongMethodTypeException},
+     * which will prevent the creation of an illegally typed bound
+     * method handle.
      */
     final static Object bindPrimitiveArgument(Object argument, MethodHandle mh, int argnum) {
         Class<?> ptype = mh.type().parameterType(argnum);
-        Wrapper  wrap = Wrapper.forPrimitiveType(ptype);
-        Object   zero  = wrap.zero();
+        Wrapper wrap = Wrapper.forPrimitiveType(ptype);
+        Object zero = wrap.zero();
         if (zero == null) {
             // fail
         } else if (argument == null) {
-            if (ptype != int.class && wrap.isSubwordOrInt())
-                return Integer.valueOf(0);
-            else
-                return zero;
+            if (ptype != int.class && wrap.isSubwordOrInt()) { return Integer.valueOf(0); } else { return zero; }
         } else if (VerifyType.isNullReferenceConversion(argument.getClass(), zero.getClass())) {
-            if (ptype != int.class && wrap.isSubwordOrInt())
-                return Wrapper.INT.wrap(argument);
-            else
+            if (ptype != int.class && wrap.isSubwordOrInt()) { return Wrapper.INT.wrap(argument); } else {
                 return argument;
+            }
         }
         throw badBoundArgumentException(argument, mh, argnum);
     }
 
     final static RuntimeException badBoundArgumentException(Object argument, MethodHandle mh, int argnum) {
         String atype = (argument == null) ? "null" : argument.getClass().toString();
-        return new ClassCastException("cannot bind "+atype+" argument to parameter #"+argnum+" of "+mh.type());
+        return new ClassCastException(
+            "cannot bind " + atype + " argument to parameter #" + argnum + " of " + mh.type());
     }
 
     @Override
@@ -168,21 +173,19 @@ class BoundMethodHandle extends MethodHandle {
                 mh = (MethodHandle) info;
             } else {
                 String name = null;
-                if (info instanceof MemberName)
-                    name = ((MemberName)info).getName();
-                if (name != null)
-                    return name;
-                else
+                if (info instanceof MemberName) { name = ((MemberName) info).getName(); }
+                if (name != null) { return name; } else {
                     return noParens(super.toString()); // "invoke", probably
+                }
             }
-            assert(mh != this);
+            assert (mh != this);
         }
         return noParens(mh.toString());
     }
 
     private static String noParens(String str) {
         int paren = str.indexOf('(');
-        if (paren >= 0) str = str.substring(0, paren);
+        if (paren >= 0) { str = str.substring(0, paren); }
         return str;
     }
 }

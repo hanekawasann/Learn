@@ -64,9 +64,9 @@ import java.security.SecureRandom;
  * constructed by pairing a <code>UID</code> instance with a unique host
  * identifier, such as an IP address.
  *
- * @author      Ann Wollrath
- * @author      Peter Jones
- * @since       JDK1.1
+ * @author Ann Wollrath
+ * @author Peter Jones
+ * @since JDK1.1
  */
 public final class UID implements Serializable {
 
@@ -83,6 +83,7 @@ public final class UID implements Serializable {
     /**
      * number that uniquely identifies the VM that this <code>UID</code>
      * was generated in with respect to its host and at the given time
+     *
      * @serial
      */
     private final int unique;
@@ -90,6 +91,7 @@ public final class UID implements Serializable {
     /**
      * a time (as returned by {@link System#currentTimeMillis()}) at which
      * the VM that this <code>UID</code> was generated in was alive
+     *
      * @serial
      */
     private final long time;
@@ -97,6 +99,7 @@ public final class UID implements Serializable {
     /**
      * 16-bit number to distinguish <code>UID</code> instances created
      * in the same VM with the same time value
+     *
      * @serial
      */
     private final short count;
@@ -142,14 +145,14 @@ public final class UID implements Serializable {
 
     /**
      * Creates a "well-known" <code>UID</code>.
-     *
+     * <p>
      * There are 2<sup>16</sup> possible such well-known ids.
      *
      * <p>A <code>UID</code> created via this constructor will not
      * clash with any <code>UID</code>s generated via the no-arg
      * constructor.
      *
-     * @param   num number for well-known <code>UID</code>
+     * @param num number for well-known <code>UID</code>
      */
     public UID(short num) {
         unique = 0;
@@ -169,7 +172,7 @@ public final class UID implements Serializable {
     /**
      * Returns the hash code value for this <code>UID</code>.
      *
-     * @return  the hash code value for this <code>UID</code>
+     * @return the hash code value for this <code>UID</code>
      */
     public int hashCode() {
         return (int) time + (int) count;
@@ -178,23 +181,20 @@ public final class UID implements Serializable {
     /**
      * Compares the specified object with this <code>UID</code> for
      * equality.
-     *
+     * <p>
      * This method returns <code>true</code> if and only if the
      * specified object is a <code>UID</code> instance with the same
      * <code>unique</code>, <code>time</code>, and <code>count</code>
      * values as this one.
      *
-     * @param   obj the object to compare this <code>UID</code> to
-     *
-     * @return  <code>true</code> if the given object is equivalent to
+     * @param obj the object to compare this <code>UID</code> to
+     * @return <code>true</code> if the given object is equivalent to
      * this one, and <code>false</code> otherwise
      */
     public boolean equals(Object obj) {
         if (obj instanceof UID) {
             UID uid = (UID) obj;
-            return (unique == uid.unique &&
-                    count == uid.count &&
-                    time == uid.time);
+            return (unique == uid.unique && count == uid.count && time == uid.time);
         } else {
             return false;
         }
@@ -203,12 +203,10 @@ public final class UID implements Serializable {
     /**
      * Returns a string representation of this <code>UID</code>.
      *
-     * @return  a string representation of this <code>UID</code>
+     * @return a string representation of this <code>UID</code>
      */
     public String toString() {
-        return Integer.toString(unique,16) + ":" +
-            Long.toString(time,16) + ":" +
-            Integer.toString(count,16);
+        return Integer.toString(unique, 16) + ":" + Long.toString(time, 16) + ":" + Integer.toString(count, 16);
     }
 
     /**
@@ -223,11 +221,10 @@ public final class UID implements Serializable {
      * {@link DataOutput#writeShort(int)} method with this <code>UID</code>'s
      * <code>count</code> value.
      *
-     * @param   out the <code>DataOutput</code> instance to write
-     * this <code>UID</code> to
-     *
-     * @throws  IOException if an I/O error occurs while performing
-     * this operation
+     * @param out the <code>DataOutput</code> instance to write
+     *            this <code>UID</code> to
+     * @throws IOException if an I/O error occurs while performing
+     *                     this operation
      */
     public void write(DataOutput out) throws IOException {
         out.writeInt(unique);
@@ -250,13 +247,11 @@ public final class UID implements Serializable {
      * that contains the <code>unique</code>, <code>time</code>, and
      * <code>count</code> values that were read from the stream.
      *
-     * @param   in the <code>DataInput</code> instance to read
-     * <code>UID</code> from
-     *
-     * @return  unmarshalled <code>UID</code> instance
-     *
-     * @throws  IOException if an I/O error occurs while performing
-     * this operation
+     * @param in the <code>DataInput</code> instance to read
+     *           <code>UID</code> from
+     * @return unmarshalled <code>UID</code> instance
+     * @throws IOException if an I/O error occurs while performing
+     *                     this operation
      */
     public static UID read(DataInput in) throws IOException {
         int unique = in.readInt();

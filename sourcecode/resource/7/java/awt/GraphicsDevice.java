@@ -79,7 +79,7 @@ public abstract class GraphicsDevice {
 
     private Window fullScreenWindow;
     private AppContext fullScreenAppContext; // tracks which AppContext
-                                             // created the FS window
+    // created the FS window
     // this lock is used for making synchronous changes to the AppContext's
     // current full screen window
     private final Object fsAppContextLock = new Object();
@@ -89,6 +89,7 @@ public abstract class GraphicsDevice {
     /**
      * This is an abstract class that cannot be instantiated directly.
      * Instances must be obtained from a suitable factory or query method.
+     *
      * @see GraphicsEnvironment#getScreenDevices
      * @see GraphicsEnvironment#getDefaultScreenDevice
      * @see GraphicsConfiguration#getDevice
@@ -99,24 +100,23 @@ public abstract class GraphicsDevice {
     /**
      * Device is a raster screen.
      */
-    public final static int TYPE_RASTER_SCREEN          = 0;
+    public final static int TYPE_RASTER_SCREEN = 0;
 
     /**
      * Device is a printer.
      */
-    public final static int TYPE_PRINTER                = 1;
+    public final static int TYPE_PRINTER = 1;
 
     /**
      * Device is an image buffer.  This buffer can reside in device
      * or system memory but it is not physically viewable by the user.
      */
-    public final static int TYPE_IMAGE_BUFFER           = 2;
+    public final static int TYPE_IMAGE_BUFFER = 2;
 
     /**
      * Kinds of translucency supported by the underlying system.
      *
      * @see #isWindowTranslucencySupported
-     *
      * @since 1.7
      */
     public static enum WindowTranslucency {
@@ -143,6 +143,7 @@ public abstract class GraphicsDevice {
 
     /**
      * Returns the type of this <code>GraphicsDevice</code>.
+     *
      * @return the type of this <code>GraphicsDevice</code>, which can
      * either be TYPE_RASTER_SCREEN, TYPE_PRINTER or TYPE_IMAGE_BUFFER.
      * @see #TYPE_RASTER_SCREEN
@@ -169,6 +170,7 @@ public abstract class GraphicsDevice {
      * your program, call the
      * {@link System#getProperty(String) getProperty} method of the
      * System class with "java.vendor".
+     *
      * @return a <code>String</code> that is the identification
      * of this <code>GraphicsDevice</code>.
      */
@@ -177,6 +179,7 @@ public abstract class GraphicsDevice {
     /**
      * Returns all of the <code>GraphicsConfiguration</code>
      * objects associated with this <code>GraphicsDevice</code>.
+     *
      * @return an array of <code>GraphicsConfiguration</code>
      * objects that are associated with this
      * <code>GraphicsDevice</code>.
@@ -186,6 +189,7 @@ public abstract class GraphicsDevice {
     /**
      * Returns the default <code>GraphicsConfiguration</code>
      * associated with this <code>GraphicsDevice</code>.
+     *
      * @return the default <code>GraphicsConfiguration</code>
      * of this <code>GraphicsDevice</code>.
      */
@@ -194,15 +198,15 @@ public abstract class GraphicsDevice {
     /**
      * Returns the "best" configuration possible that passes the
      * criteria defined in the {@link GraphicsConfigTemplate}.
+     *
      * @param gct the <code>GraphicsConfigTemplate</code> object
-     * used to obtain a valid <code>GraphicsConfiguration</code>
+     *            used to obtain a valid <code>GraphicsConfiguration</code>
      * @return a <code>GraphicsConfiguration</code> that passes
      * the criteria defined in the specified
      * <code>GraphicsConfigTemplate</code>.
      * @see GraphicsConfigTemplate
      */
-    public GraphicsConfiguration
-           getBestConfiguration(GraphicsConfigTemplate gct) {
+    public GraphicsConfiguration getBestConfiguration(GraphicsConfigTemplate gct) {
         GraphicsConfiguration[] configs = getConfigurations();
         return gct.getBestConfiguration(configs);
     }
@@ -215,6 +219,7 @@ public abstract class GraphicsDevice {
      * with <code>AWTPermission("fullScreenExclusive")</code>.
      * <code>isFullScreenSupported</code> returns true only if
      * that permission is granted.
+     *
      * @return whether full-screen exclusive mode is available for
      * this graphics device
      * @see java.awt.AWTPermission
@@ -267,11 +272,10 @@ public abstract class GraphicsDevice {
      * automatically restored to their original state.
      *
      * @param w a window to use as the full-screen window; {@code null}
-     * if returning to windowed mode.  Some platforms expect the
-     * fullscreen window to be a top-level component (i.e., a {@code Frame});
-     * therefore it is preferable to use a {@code Frame} here rather than a
-     * {@code Window}.
-     *
+     *          if returning to windowed mode.  Some platforms expect the
+     *          fullscreen window to be a top-level component (i.e., a {@code Frame});
+     *          therefore it is preferable to use a {@code Frame} here rather than a
+     *          {@code Window}.
      * @see #isFullScreenSupported
      * @see #getFullScreenWindow
      * @see #setDisplayMode
@@ -279,7 +283,6 @@ public abstract class GraphicsDevice {
      * @see Component#setVisible
      * @see Frame#setUndecorated
      * @see Dialog#setUndecorated
-     *
      * @since 1.4
      */
     public void setFullScreenWindow(Window w) {
@@ -292,16 +295,15 @@ public abstract class GraphicsDevice {
             }
             if (!w.isOpaque()) {
                 Color bgColor = w.getBackground();
-                bgColor = new Color(bgColor.getRed(), bgColor.getGreen(),
-                                    bgColor.getBlue(), 255);
+                bgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 255);
                 w.setBackground(bgColor);
             }
         }
         if (fullScreenWindow != null && windowedModeBounds != null) {
             // if the window went into fs mode before it was realized it may
             // have (0,0) dimensions
-            if (windowedModeBounds.width  == 0) windowedModeBounds.width  = 1;
-            if (windowedModeBounds.height == 0) windowedModeBounds.height = 1;
+            if (windowedModeBounds.width == 0) { windowedModeBounds.width = 1; }
+            if (windowedModeBounds.height == 0) { windowedModeBounds.height = 1; }
             fullScreenWindow.setBounds(windowedModeBounds);
         }
         // Set the full screen window
@@ -320,8 +322,7 @@ public abstract class GraphicsDevice {
             // not the window's, because we're setting the fs window for
             // this device.
             Rectangle screenBounds = getDefaultConfiguration().getBounds();
-            fullScreenWindow.setBounds(screenBounds.x, screenBounds.y,
-                                       screenBounds.width, screenBounds.height);
+            fullScreenWindow.setBounds(screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
             fullScreenWindow.setVisible(true);
             fullScreenWindow.toFront();
         }
@@ -355,6 +356,7 @@ public abstract class GraphicsDevice {
      * full-screen exclusive mode (i.e., if {@link #isFullScreenSupported()}
      * returns {@code true} and the application has already entered
      * full-screen mode using {@link #setFullScreenWindow}).
+     *
      * @return whether low-level display changes are supported for this
      * graphics device.
      * @see #isFullScreenSupported
@@ -374,7 +376,7 @@ public abstract class GraphicsDevice {
      * supported (i.e., {@link #isFullScreenSupported()} returns
      * {@code true}).
      * <p>
-     *
+     * <p>
      * The display mode must be one of the display modes returned by
      * {@link #getDisplayModes()}, with one exception: passing a display mode
      * with {@link DisplayMode#REFRESH_RATE_UNKNOWN} refresh rate will result in
@@ -407,11 +409,11 @@ public abstract class GraphicsDevice {
      * </code></pre>
      *
      * @param dm The new display mode of this graphics device.
-     * @exception IllegalArgumentException if the <code>DisplayMode</code>
-     * supplied is <code>null</code>, or is not available in the array returned
-     * by <code>getDisplayModes</code>
-     * @exception UnsupportedOperationException if
-     * <code>isDisplayChangeSupported</code> returns <code>false</code>
+     * @throws IllegalArgumentException      if the <code>DisplayMode</code>
+     *                                       supplied is <code>null</code>, or is not available in the array returned
+     *                                       by <code>getDisplayModes</code>
+     * @throws UnsupportedOperationException if
+     *                                       <code>isDisplayChangeSupported</code> returns <code>false</code>
      * @see #getDisplayMode
      * @see #getDisplayModes
      * @see #isDisplayChangeSupported
@@ -429,6 +431,7 @@ public abstract class GraphicsDevice {
      * Likewise, the returned display mode is allowed to have a bit depth
      * {@link DisplayMode#BIT_DEPTH_MULTI} if it is indeterminate or if multiple
      * bit depths are supported.
+     *
      * @return the current display mode of this graphics device.
      * @see #setDisplayMode(DisplayMode)
      * @since 1.4
@@ -448,6 +451,7 @@ public abstract class GraphicsDevice {
      * Likewise, the returned display modes are allowed to have a bit depth
      * {@link DisplayMode#BIT_DEPTH_MULTI} if it is indeterminate or if multiple
      * bit depths are supported.
+     *
      * @return all of the display modes available for this graphics device.
      * @since 1.4
      */
@@ -476,6 +480,7 @@ public abstract class GraphicsDevice {
      * associated with a VolatileImage that can be used to determine
      * whether a particular VolatileImage has been created in accelerated
      * memory.
+     *
      * @return number of bytes available in accelerated memory.
      * A negative return value indicates that the amount of accelerated memory
      * on this GraphicsDevice is indeterminate.
@@ -493,7 +498,6 @@ public abstract class GraphicsDevice {
      *
      * @param translucencyKind a kind of translucency support
      * @return whether the given translucency kind is supported
-     *
      * @since 1.7
      */
     public boolean isWindowTranslucencySupported(WindowTranslucency translucencyKind) {
@@ -520,7 +524,7 @@ public abstract class GraphicsDevice {
         if (!(curToolkit instanceof SunToolkit)) {
             return false;
         }
-        return ((SunToolkit)curToolkit).isWindowShapingSupported();
+        return ((SunToolkit) curToolkit).isWindowShapingSupported();
     }
 
     /**
@@ -535,7 +539,7 @@ public abstract class GraphicsDevice {
         if (!(curToolkit instanceof SunToolkit)) {
             return false;
         }
-        return ((SunToolkit)curToolkit).isWindowOpacitySupported();
+        return ((SunToolkit) curToolkit).isWindowOpacitySupported();
     }
 
     boolean isWindowPerpixelTranslucencySupported() {
@@ -551,7 +555,7 @@ public abstract class GraphicsDevice {
         if (!(curToolkit instanceof SunToolkit)) {
             return false;
         }
-        if (!((SunToolkit)curToolkit).isWindowTranslucencySupported()) {
+        if (!((SunToolkit) curToolkit).isWindowTranslucencySupported()) {
             return false;
         }
 

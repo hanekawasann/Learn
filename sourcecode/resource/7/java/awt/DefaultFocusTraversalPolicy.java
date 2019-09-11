@@ -61,15 +61,12 @@ import java.awt.peer.ComponentPeer;
  * for more information.
  *
  * @author David Mendenhall
- *
  * @see Container#getComponents
  * @see Component#isFocusable
  * @see Component#setFocusable
  * @since 1.4
  */
-public class DefaultFocusTraversalPolicy
-    extends ContainerOrderFocusTraversalPolicy
-{
+public class DefaultFocusTraversalPolicy extends ContainerOrderFocusTraversalPolicy {
     /*
      * serialVersionUID
      */
@@ -89,14 +86,12 @@ public class DefaultFocusTraversalPolicy
      * rejected.
      *
      * @param aComponent the Component whose fitness as a focus owner is to
-     *        be tested
+     *                   be tested
      * @return <code>true</code> if aComponent meets the above requirements;
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     protected boolean accept(Component aComponent) {
-        if (!(aComponent.isVisible() && aComponent.isDisplayable() &&
-              aComponent.isEnabled()))
-        {
+        if (!(aComponent.isVisible() && aComponent.isDisplayable() && aComponent.isEnabled())) {
             return false;
         }
 
@@ -105,9 +100,7 @@ public class DefaultFocusTraversalPolicy
         // a lightweight Container does not.
         if (!(aComponent instanceof Window)) {
             for (Container enableTest = aComponent.getParent();
-                 enableTest != null;
-                 enableTest = enableTest.getParent())
-            {
+                enableTest != null; enableTest = enableTest.getParent()) {
                 if (!(enableTest.isEnabled() || enableTest.isLightweight())) {
                     return false;
                 }

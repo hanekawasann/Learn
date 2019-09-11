@@ -94,6 +94,7 @@ import java.awt.Graphics;
  * for each page index. Calculations of page breaks must account for this.
  * </ul>
  * <p>
+ *
  * @see java.awt.print.Pageable
  * @see java.awt.print.PageFormat
  * @see java.awt.print.PrinterJob
@@ -128,16 +129,15 @@ public interface Printable {
      * {@link PrinterGraphics} interface to provide additional
      * information.  If the <code>Printable</code> object
      * aborts the print job then it throws a {@link PrinterException}.
-     * @param graphics the context into which the page is drawn
+     *
+     * @param graphics   the context into which the page is drawn
      * @param pageFormat the size and orientation of the page being drawn
-     * @param pageIndex the zero based index of the page to be drawn
+     * @param pageIndex  the zero based index of the page to be drawn
      * @return PAGE_EXISTS if the page is rendered successfully
-     *         or NO_SUCH_PAGE if <code>pageIndex</code> specifies a
-     *         non-existent page.
-     * @exception java.awt.print.PrinterException
-     *         thrown when the print job is terminated.
+     * or NO_SUCH_PAGE if <code>pageIndex</code> specifies a
+     * non-existent page.
+     * @throws java.awt.print.PrinterException thrown when the print job is terminated.
      */
-    int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-                 throws PrinterException;
+    int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException;
 
 }

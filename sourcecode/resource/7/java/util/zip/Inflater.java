@@ -66,12 +66,10 @@ package java.util.zip;
  * }
  * </pre></blockquote>
  *
- * @see         Deflater
- * @author      David Connelly
- *
+ * @author David Connelly
+ * @see Deflater
  */
-public
-class Inflater {
+public class Inflater {
 
     private final ZStreamRef zsRef;
     private byte[] buf = defaultBuf;
@@ -112,7 +110,8 @@ class Inflater {
      * Sets input data for decompression. Should be called whenever
      * needsInput() returns true indicating that more input data is
      * required.
-     * @param b the input data bytes
+     *
+     * @param b   the input data bytes
      * @param off the start offset of the input data
      * @param len the length of the input data
      * @see Inflater#needsInput
@@ -135,6 +134,7 @@ class Inflater {
      * Sets input data for decompression. Should be called whenever
      * needsInput() returns true indicating that more input data is
      * required.
+     *
      * @param b the input data bytes
      * @see Inflater#needsInput
      */
@@ -147,7 +147,8 @@ class Inflater {
      * called when inflate() returns 0 and needsDictionary() returns true
      * indicating that a preset dictionary is required. The method getAdler()
      * can be used to get the Adler-32 value of the dictionary needed.
-     * @param b the dictionary data bytes
+     *
+     * @param b   the dictionary data bytes
      * @param off the start offset of the data
      * @param len the length of the data
      * @see Inflater#needsDictionary
@@ -172,6 +173,7 @@ class Inflater {
      * called when inflate() returns 0 and needsDictionary() returns true
      * indicating that a preset dictionary is required. The method getAdler()
      * can be used to get the Adler-32 value of the dictionary needed.
+     *
      * @param b the dictionary data bytes
      * @see Inflater#needsDictionary
      * @see Inflater#getAdler
@@ -184,6 +186,7 @@ class Inflater {
      * Returns the total number of bytes remaining in the input buffer.
      * This can be used to find out what bytes still remain in the input
      * buffer after decompression has finished.
+     *
      * @return the total number of bytes remaining in the input buffer
      */
     public int getRemaining() {
@@ -196,6 +199,7 @@ class Inflater {
      * Returns true if no data remains in the input buffer. This can
      * be used to determine if #setInput should be called in order
      * to provide more input.
+     *
      * @return true if no data remains in the input buffer
      */
     public boolean needsInput() {
@@ -206,6 +210,7 @@ class Inflater {
 
     /**
      * Returns true if a preset dictionary is needed for decompression.
+     *
      * @return true if a preset dictionary is needed for decompression
      * @see Inflater#setDictionary
      */
@@ -218,6 +223,7 @@ class Inflater {
     /**
      * Returns true if the end of the compressed data stream has been
      * reached.
+     *
      * @return true if the end of the compressed data stream has been
      * reached
      */
@@ -234,17 +240,16 @@ class Inflater {
      * determine if more input data or a preset dictionary is required.
      * In the latter case, getAdler() can be used to get the Adler-32
      * value of the dictionary required.
-     * @param b the buffer for the uncompressed data
+     *
+     * @param b   the buffer for the uncompressed data
      * @param off the start offset of the data
      * @param len the maximum number of uncompressed bytes
      * @return the actual number of uncompressed bytes
-     * @exception DataFormatException if the compressed data format is invalid
+     * @throws DataFormatException if the compressed data format is invalid
      * @see Inflater#needsInput
      * @see Inflater#needsDictionary
      */
-    public int inflate(byte[] b, int off, int len)
-        throws DataFormatException
-    {
+    public int inflate(byte[] b, int off, int len) throws DataFormatException {
         if (b == null) {
             throw new NullPointerException();
         }
@@ -264,9 +269,10 @@ class Inflater {
      * determine if more input data or a preset dictionary is required.
      * In the latter case, getAdler() can be used to get the Adler-32
      * value of the dictionary required.
+     *
      * @param b the buffer for the uncompressed data
      * @return the actual number of uncompressed bytes
-     * @exception DataFormatException if the compressed data format is invalid
+     * @throws DataFormatException if the compressed data format is invalid
      * @see Inflater#needsInput
      * @see Inflater#needsDictionary
      */
@@ -276,6 +282,7 @@ class Inflater {
 
     /**
      * Returns the ADLER-32 value of the uncompressed data.
+     *
      * @return the ADLER-32 value of the uncompressed data
      */
     public int getAdler() {
@@ -376,10 +383,9 @@ class Inflater {
         end();
     }
 
-    private void ensureOpen () {
+    private void ensureOpen() {
         assert Thread.holdsLock(zsRef);
-        if (zsRef.address() == 0)
-            throw new NullPointerException("Inflater has been closed");
+        if (zsRef.address() == 0) { throw new NullPointerException("Inflater has been closed"); }
     }
 
     boolean ended() {
@@ -389,14 +395,20 @@ class Inflater {
     }
 
     private native static void initIDs();
+
     private native static long init(boolean nowrap);
-    private native static void setDictionary(long addr, byte[] b, int off,
-                                             int len);
-    private native int inflateBytes(long addr, byte[] b, int off, int len)
-            throws DataFormatException;
+
+    private native static void setDictionary(long addr, byte[] b, int off, int len);
+
+    private native int inflateBytes(long addr, byte[] b, int off, int len) throws DataFormatException;
+
     private native static int getAdler(long addr);
+
     private native static long getBytesRead(long addr);
+
     private native static long getBytesWritten(long addr);
+
     private native static void reset(long addr);
+
     private native static void end(long addr);
 }

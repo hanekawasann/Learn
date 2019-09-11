@@ -37,10 +37,9 @@ import java.util.Hashtable;
  * subclass this class and override the methods which deal with the
  * data that needs to be filtered and modify it as necessary.
  *
+ * @author Jim Graham
  * @see FilteredImageSource
  * @see ImageConsumer
- *
- * @author      Jim Graham
  */
 public class ImageFilter implements ImageConsumer, Cloneable {
     /**
@@ -50,6 +49,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * getFilterInstance() method call when the FilteredImageSource
      * is creating a unique instance of this object for a particular
      * image data stream.
+     *
      * @see #getFilterInstance
      * @see ImageConsumer
      */
@@ -65,9 +65,10 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @param ic the specified <code>ImageConsumer</code>
      * @return an <code>ImageFilter</code> used to perform the
-     *         filtering for the specified <code>ImageConsumer</code>.
+     * filtering for the specified <code>ImageConsumer</code>.
      */
     public ImageFilter getFilterInstance(ImageConsumer ic) {
         ImageFilter instance = (ImageFilter) clone();
@@ -84,6 +85,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#setDimensions
      */
     public void setDimensions(int width, int height) {
@@ -101,15 +103,15 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * with the filtering operation.
      *
      * @param props the properties from the source object
-     * @exception NullPointerException if <code>props</code> is null
+     * @throws NullPointerException if <code>props</code> is null
      */
-    public void setProperties(Hashtable<?,?> props) {
-        Hashtable<Object,Object> p = (Hashtable<Object,Object>)props.clone();
+    public void setProperties(Hashtable<?, ?> props) {
+        Hashtable<Object, Object> p = (Hashtable<Object, Object>) props.clone();
         Object o = p.get("filters");
         if (o == null) {
             p.put("filters", toString());
         } else if (o instanceof String) {
-            p.put("filters", ((String) o)+toString());
+            p.put("filters", ((String) o) + toString());
         }
         consumer.setProperties(p);
     }
@@ -123,6 +125,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#setColorModel
      */
     public void setColorModel(ColorModel model) {
@@ -138,6 +141,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#setHints
      */
     public void setHints(int hints) {
@@ -153,11 +157,10 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#setPixels
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, byte pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, byte pixels[], int off, int scansize) {
         consumer.setPixels(x, y, w, h, model, pixels, off, scansize);
     }
 
@@ -170,11 +173,10 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#setPixels
      */
-    public void setPixels(int x, int y, int w, int h,
-                          ColorModel model, int pixels[], int off,
-                          int scansize) {
+    public void setPixels(int x, int y, int w, int h, ColorModel model, int pixels[], int off, int scansize) {
         consumer.setPixels(x, y, w, h, model, pixels, off, scansize);
     }
 
@@ -187,6 +189,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * this class to filter pixels from an image should avoid calling
      * this method directly since that operation could interfere
      * with the filtering operation.
+     *
      * @see ImageConsumer#imageComplete
      */
     public void imageComplete(int status) {
@@ -203,7 +206,7 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * invokes this method of the <code>ImageFilter</code>.
      *
      * <p>
-     *
+     * <p>
      * An <code>ImageFilter</code> subclass might override this method or not,
      * depending on if and how it can send data in TDLR order.
      * Three possibilities exist:
@@ -234,11 +237,11 @@ public class ImageFilter implements ImageConsumer, Cloneable {
      * if the filter cannot produce filtered data in TDLR order.
      * </ul>
      *
-     * @see ImageProducer#requestTopDownLeftRightResend
      * @param ip the ImageProducer that is feeding this instance of
-     * the filter - also the ImageProducer that the request should be
-     * forwarded to if necessary
-     * @exception NullPointerException if <code>ip</code> is null
+     *           the filter - also the ImageProducer that the request should be
+     *           forwarded to if necessary
+     * @throws NullPointerException if <code>ip</code> is null
+     * @see ImageProducer#requestTopDownLeftRightResend
      */
     public void resendTopDownLeftRight(ImageProducer ip) {
         ip.requestTopDownLeftRightResend(this);

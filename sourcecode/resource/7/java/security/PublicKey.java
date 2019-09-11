@@ -29,7 +29,7 @@ package java.security;
  * <p>A public key. This interface contains no methods or constants.
  * It merely serves to group (and provide type safety for) all public key
  * interfaces.
- *
+ * <p>
  * Note: The specialized public key interfaces extend this interface.
  * See, for example, the DSAPublicKey interface in
  * <code>java.security.interfaces</code>.
@@ -40,7 +40,6 @@ package java.security;
  * @see Signature#initVerify
  * @see java.security.interfaces.DSAPublicKey
  * @see java.security.interfaces.RSAPublicKey
- *
  */
 
 public interface PublicKey extends Key {

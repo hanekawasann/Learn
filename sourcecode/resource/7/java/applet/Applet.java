@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Locale;
+
 import javax.accessibility.*;
 
 /**
@@ -43,9 +44,9 @@ import javax.accessibility.*;
  * Applet Viewer. The <code>Applet</code> class provides a standard
  * interface between applets and their environment.
  *
- * @author      Arthur van Hoff
- * @author      Chris Warth
- * @since       JDK1.0
+ * @author Arthur van Hoff
+ * @author Chris Warth
+ * @since JDK1.0
  */
 public class Applet extends Panel {
 
@@ -57,8 +58,8 @@ public class Applet extends Panel {
      * fully constructed; applet should avoid calling methods
      * in <code>java.applet.Applet</code> in the constructor.
      *
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless()
+     *                           returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @since 1.4
      */
@@ -70,10 +71,10 @@ public class Applet extends Panel {
 
     /**
      * Applets can be serialized but the following conventions MUST be followed:
-     *
+     * <p>
      * Before Serialization:
      * An applet must be in STOPPED state.
-     *
+     * <p>
      * After Deserialization:
      * The applet will be restored in STOPPED state (and most clients will
      * likely move it into RUNNING state).
@@ -86,15 +87,15 @@ public class Applet extends Panel {
 
     /**
      * Read an applet from an object input stream.
-     * @exception HeadlessException if
-     * <code>GraphicsEnvironment.isHeadless()</code> returns
-     * <code>true</code>
+     *
+     * @throws HeadlessException if
+     *                           <code>GraphicsEnvironment.isHeadless()</code> returns
+     *                           <code>true</code>
      * @serial
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @since 1.4
      */
-    private void readObject(ObjectInputStream s)
-        throws ClassNotFoundException, IOException, HeadlessException {
+    private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException, HeadlessException {
         if (GraphicsEnvironment.isHeadless()) {
             throw new HeadlessException();
         }
@@ -107,8 +108,9 @@ public class Applet extends Panel {
      * method is called with the
      * <code>AWTPermission("setAppletStub")</code>
      * permission if a stub has already been set.
-     * @param   stub   the new stub.
-     * @exception SecurityException if the caller cannot set the stub
+     *
+     * @param stub the new stub.
+     * @throws SecurityException if the caller cannot set the stub
      */
     public final void setStub(AppletStub stub) {
         if (this.stub != null) {
@@ -117,7 +119,7 @@ public class Applet extends Panel {
                 s.checkPermission(new AWTPermission("setAppletStub"));
             }
         }
-        this.stub = (AppletStub)stub;
+        this.stub = (AppletStub) stub;
     }
 
     /**
@@ -125,10 +127,10 @@ public class Applet extends Panel {
      * just before its <code>start</code> method is called. It becomes
      * inactive just before its <code>stop</code> method is called.
      *
-     * @return  <code>true</code> if the applet is active;
-     *          <code>false</code> otherwise.
-     * @see     java.applet.Applet#start()
-     * @see     java.applet.Applet#stop()
+     * @return <code>true</code> if the applet is active;
+     * <code>false</code> otherwise.
+     * @see java.applet.Applet#start()
+     * @see java.applet.Applet#stop()
      */
     public boolean isActive() {
         if (stub != null) {
@@ -150,9 +152,9 @@ public class Applet extends Panel {
      *    http://java.sun.com/products/jdk/1.2/index.html
      * </pre></blockquote>
      *
-     * @return  the {@link java.net.URL} of the document that contains this
-     *          applet.
-     * @see     java.applet.Applet#getCodeBase()
+     * @return the {@link java.net.URL} of the document that contains this
+     * applet.
+     * @see java.applet.Applet#getCodeBase()
      */
     public URL getDocumentBase() {
         return stub.getDocumentBase();
@@ -161,9 +163,9 @@ public class Applet extends Panel {
     /**
      * Gets the base URL. This is the URL of the directory which contains this applet.
      *
-     * @return  the base {@link java.net.URL} of
-     *          the directory which contains this applet.
-     * @see     java.applet.Applet#getDocumentBase()
+     * @return the base {@link java.net.URL} of
+     * the directory which contains this applet.
+     * @see java.applet.Applet#getDocumentBase()
      */
     public URL getCodeBase() {
         return stub.getCodeBase();
@@ -183,13 +185,13 @@ public class Applet extends Panel {
      * <p>
      * The <code>name</code> argument is case insensitive.
      *
-     * @param   name   a parameter name.
-     * @return  the value of the named parameter,
-     *          or <code>null</code> if not set.
+     * @param name a parameter name.
+     * @return the value of the named parameter,
+     * or <code>null</code> if not set.
      */
-     public String getParameter(String name) {
-         return stub.getParameter(name);
-     }
+    public String getParameter(String name) {
+        return stub.getParameter(name);
+    }
 
     /**
      * Determines this applet's context, which allows the applet to
@@ -198,7 +200,7 @@ public class Applet extends Panel {
      * This environment of an applet represents the document that
      * contains the applet.
      *
-     * @return  the applet's context.
+     * @return the applet's context.
      */
     public AppletContext getAppletContext() {
         return stub.getAppletContext();
@@ -207,8 +209,8 @@ public class Applet extends Panel {
     /**
      * Requests that this applet be resized.
      *
-     * @param   width    the new requested width for the applet.
-     * @param   height   the new requested height for the applet.
+     * @param width  the new requested width for the applet.
+     * @param height the new requested height for the applet.
      */
     public void resize(int width, int height) {
         Dimension d = size();
@@ -223,7 +225,7 @@ public class Applet extends Panel {
     /**
      * Requests that this applet be resized.
      *
-     * @param   d   an object giving the new width and height.
+     * @param d an object giving the new width and height.
      */
     public void resize(Dimension d) {
         resize(d.width, d.height);
@@ -236,8 +238,8 @@ public class Applet extends Panel {
      * override this method to return {@code true}.
      *
      * @return {@code true}
-     * @since 1.7
      * @see java.awt.Container#isValidateRoot
+     * @since 1.7
      */
     @Override
     public boolean isValidateRoot() {
@@ -250,7 +252,7 @@ public class Applet extends Panel {
      * provide such a window, where the application can inform users of
      * its current state.
      *
-     * @param   msg   a string to display in the status window.
+     * @param msg a string to display in the status window.
      */
     public void showStatus(String msg) {
         getAppletContext().showStatus(msg);
@@ -266,9 +268,9 @@ public class Applet extends Panel {
      * the data will be loaded. The graphics primitives that draw the
      * image will incrementally paint on the screen.
      *
-     * @param   url   an absolute URL giving the location of the image.
-     * @return  the image at the specified URL.
-     * @see     java.awt.Image
+     * @param url an absolute URL giving the location of the image.
+     * @return the image at the specified URL.
+     * @see java.awt.Image
      */
     public Image getImage(URL url) {
         return getAppletContext().getImage(url);
@@ -285,11 +287,11 @@ public class Applet extends Panel {
      * the data will be loaded. The graphics primitives that draw the
      * image will incrementally paint on the screen.
      *
-     * @param   url    an absolute URL giving the base location of the image.
-     * @param   name   the location of the image, relative to the
-     *                 <code>url</code> argument.
-     * @return  the image at the specified URL.
-     * @see     java.awt.Image
+     * @param url  an absolute URL giving the base location of the image.
+     * @param name the location of the image, relative to the
+     *             <code>url</code> argument.
+     * @return the image at the specified URL.
+     * @see java.awt.Image
      */
     public Image getImage(URL url, String name) {
         try {
@@ -304,8 +306,7 @@ public class Applet extends Panel {
      *
      * @param url points to the audio clip
      * @return the audio clip at the specified URL.
-     *
-     * @since       1.2
+     * @since 1.2
      */
     public final static AudioClip newAudioClip(URL url) {
         return new sun.applet.AppletAudioClip(url);
@@ -319,9 +320,9 @@ public class Applet extends Panel {
      * clip exists. When this applet attempts to play the audio clip, the
      * data will be loaded.
      *
-     * @param   url  an absolute URL giving the location of the audio clip.
-     * @return  the audio clip at the specified URL.
-     * @see     java.applet.AudioClip
+     * @param url an absolute URL giving the location of the audio clip.
+     * @return the audio clip at the specified URL.
+     * @see java.applet.AudioClip
      */
     public AudioClip getAudioClip(URL url) {
         return getAppletContext().getAudioClip(url);
@@ -335,12 +336,12 @@ public class Applet extends Panel {
      * clip exists. When this applet attempts to play the audio clip, the
      * data will be loaded.
      *
-     * @param   url    an absolute URL giving the base location of the
-     *                 audio clip.
-     * @param   name   the location of the audio clip, relative to the
-     *                 <code>url</code> argument.
-     * @return  the audio clip at the specified URL.
-     * @see     java.applet.AudioClip
+     * @param url  an absolute URL giving the base location of the
+     *             audio clip.
+     * @param name the location of the audio clip, relative to the
+     *             <code>url</code> argument.
+     * @return the audio clip at the specified URL.
+     * @see java.applet.AudioClip
      */
     public AudioClip getAudioClip(URL url, String name) {
         try {
@@ -358,8 +359,8 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class returns <code>null</code>.
      *
-     * @return  a string containing information about the author, version, and
-     *          copyright of the applet.
+     * @return a string containing information about the author, version, and
+     * copyright of the applet.
      */
     public String getAppletInfo() {
         return null;
@@ -370,16 +371,16 @@ public class Applet extends Panel {
      * to maintain its own locale separated from the locale
      * of the browser or appletviewer.
      *
-     * @return  the locale of the applet; if no locale has
-     *          been set, the default locale is returned.
-     * @since   JDK1.1
+     * @return the locale of the applet; if no locale has
+     * been set, the default locale is returned.
+     * @since JDK1.1
      */
     public Locale getLocale() {
-      Locale locale = super.getLocale();
-      if (locale == null) {
-        return Locale.getDefault();
-      }
-      return locale;
+        Locale locale = super.getLocale();
+        if (locale == null) {
+            return Locale.getDefault();
+        }
+        return locale;
     }
 
     /**
@@ -401,7 +402,7 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class returns <code>null</code>.
      *
-     * @return  an array describing the parameters this applet looks for.
+     * @return an array describing the parameters this applet looks for.
      */
     public String[][] getParameterInfo() {
         return null;
@@ -411,7 +412,7 @@ public class Applet extends Panel {
      * Plays the audio clip at the specified absolute URL. Nothing
      * happens if the audio clip cannot be found.
      *
-     * @param   url   an absolute URL giving the location of the audio clip.
+     * @param url an absolute URL giving the location of the audio clip.
      */
     public void play(URL url) {
         AudioClip clip = getAudioClip(url);
@@ -424,10 +425,10 @@ public class Applet extends Panel {
      * Plays the audio clip given the URL and a specifier that is
      * relative to it. Nothing happens if the audio clip cannot be found.
      *
-     * @param   url    an absolute URL giving the base location of the
-     *                 audio clip.
-     * @param   name   the location of the audio clip, relative to the
-     *                 <code>url</code> argument.
+     * @param url  an absolute URL giving the base location of the
+     *             audio clip.
+     * @param name the location of the audio clip, relative to the
+     *             <code>url</code> argument.
      */
     public void play(URL url, String name) {
         AudioClip clip = getAudioClip(url, name);
@@ -450,9 +451,9 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class does nothing.
      *
-     * @see     java.applet.Applet#destroy()
-     * @see     java.applet.Applet#start()
-     * @see     java.applet.Applet#stop()
+     * @see java.applet.Applet#destroy()
+     * @see java.applet.Applet#start()
+     * @see java.applet.Applet#stop()
      */
     public void init() {
     }
@@ -480,11 +481,11 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class does nothing.
      *
-     * @see     java.applet.Applet#destroy()
-     * @see     java.applet.Applet#init()
-     * @see     java.applet.Applet#stop()
-     * @see     java.awt.Component#isShowing()
-     * @see     java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
+     * @see java.applet.Applet#destroy()
+     * @see java.applet.Applet#init()
+     * @see java.applet.Applet#stop()
+     * @see java.awt.Component#isShowing()
+     * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
      */
     public void start() {
     }
@@ -505,8 +506,8 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class does nothing.
      *
-     * @see     java.applet.Applet#destroy()
-     * @see     java.applet.Applet#init()
+     * @see java.applet.Applet#destroy()
+     * @see java.applet.Applet#init()
      */
     public void stop() {
     }
@@ -526,9 +527,9 @@ public class Applet extends Panel {
      * The implementation of this method provided by the
      * <code>Applet</code> class does nothing.
      *
-     * @see     java.applet.Applet#init()
-     * @see     java.applet.Applet#start()
-     * @see     java.applet.Applet#stop()
+     * @see java.applet.Applet#init()
+     * @see java.applet.Applet#start()
+     * @see java.applet.Applet#stop()
      */
     public void destroy() {
     }
@@ -546,7 +547,7 @@ public class Applet extends Panel {
      * A new AccessibleApplet instance is created if necessary.
      *
      * @return an AccessibleApplet that serves as the
-     *         AccessibleContext of this Applet
+     * AccessibleContext of this Applet
      * @since 1.3
      */
     public AccessibleContext getAccessibleContext() {
@@ -560,6 +561,7 @@ public class Applet extends Panel {
      * This class implements accessibility support for the
      * <code>Applet</code> class.  It provides an implementation of the
      * Java Accessibility API appropriate to applet user-interface elements.
+     *
      * @since 1.3
      */
     protected class AccessibleApplet extends AccessibleAWTPanel {

@@ -34,7 +34,7 @@ import java.util.spi.LocaleServiceProvider;
  * provide concrete implementations of the
  * {@link java.text.NumberFormat NumberFormat} class.
  *
- * @since        1.6
+ * @since 1.6
  */
 public abstract class NumberFormatProvider extends LocaleServiceProvider {
 
@@ -50,12 +50,12 @@ public abstract class NumberFormatProvider extends LocaleServiceProvider {
      * monetary values for the specified locale.
      *
      * @param locale the desired locale.
-     * @exception NullPointerException if <code>locale</code> is null
-     * @exception IllegalArgumentException if <code>locale</code> isn't
-     *     one of the locales returned from
-     *     {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
-     *     getAvailableLocales()}.
      * @return a currency formatter
+     * @throws NullPointerException     if <code>locale</code> is null
+     * @throws IllegalArgumentException if <code>locale</code> isn't
+     *                                  one of the locales returned from
+     *                                  {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
+     *                                  getAvailableLocales()}.
      * @see java.text.NumberFormat#getCurrencyInstance(java.util.Locale)
      */
     public abstract NumberFormat getCurrencyInstance(Locale locale);
@@ -71,12 +71,12 @@ public abstract class NumberFormatProvider extends LocaleServiceProvider {
      * java.text.NumberFormat#isParseIntegerOnly isParseIntegerOnly}).
      *
      * @param locale the desired locale
-     * @exception NullPointerException if <code>locale</code> is null
-     * @exception IllegalArgumentException if <code>locale</code> isn't
-     *     one of the locales returned from
-     *     {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
-     *     getAvailableLocales()}.
      * @return a number format for integer values
+     * @throws NullPointerException     if <code>locale</code> is null
+     * @throws IllegalArgumentException if <code>locale</code> isn't
+     *                                  one of the locales returned from
+     *                                  {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
+     *                                  getAvailableLocales()}.
      * @see java.text.NumberFormat#getIntegerInstance(java.util.Locale)
      */
     public abstract NumberFormat getIntegerInstance(Locale locale);
@@ -86,12 +86,12 @@ public abstract class NumberFormatProvider extends LocaleServiceProvider {
      * the specified locale.
      *
      * @param locale the desired locale
-     * @exception NullPointerException if <code>locale</code> is null
-     * @exception IllegalArgumentException if <code>locale</code> isn't
-     *     one of the locales returned from
-     *     {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
-     *     getAvailableLocales()}.
      * @return a general-purpose number formatter
+     * @throws NullPointerException     if <code>locale</code> is null
+     * @throws IllegalArgumentException if <code>locale</code> isn't
+     *                                  one of the locales returned from
+     *                                  {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
+     *                                  getAvailableLocales()}.
      * @see java.text.NumberFormat#getNumberInstance(java.util.Locale)
      */
     public abstract NumberFormat getNumberInstance(Locale locale);
@@ -101,12 +101,12 @@ public abstract class NumberFormatProvider extends LocaleServiceProvider {
      * percentage values for the specified locale.
      *
      * @param locale the desired locale
-     * @exception NullPointerException if <code>locale</code> is null
-     * @exception IllegalArgumentException if <code>locale</code> isn't
-     *     one of the locales returned from
-     *     {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
-     *     getAvailableLocales()}.
      * @return a percent formatter
+     * @throws NullPointerException     if <code>locale</code> is null
+     * @throws IllegalArgumentException if <code>locale</code> isn't
+     *                                  one of the locales returned from
+     *                                  {@link java.util.spi.LocaleServiceProvider#getAvailableLocales()
+     *                                  getAvailableLocales()}.
      * @see java.text.NumberFormat#getPercentInstance(java.util.Locale)
      */
     public abstract NumberFormat getPercentInstance(Locale locale);

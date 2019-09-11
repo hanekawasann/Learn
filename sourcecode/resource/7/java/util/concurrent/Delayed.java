@@ -45,8 +45,8 @@ import java.util.*;
  * <tt>compareTo</tt> method that provides an ordering consistent with
  * its <tt>getDelay</tt> method.
  *
- * @since 1.5
  * @author Doug Lea
+ * @since 1.5
  */
 public interface Delayed extends Comparable<Delayed> {
 

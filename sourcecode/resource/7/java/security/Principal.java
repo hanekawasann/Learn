@@ -30,9 +30,8 @@ package java.security;
  * can be used to represent any entity, such as an individual, a
  * corporation, and a login id.
  *
- * @see java.security.cert.X509Certificate
- *
  * @author Li Gong
+ * @see java.security.cert.X509Certificate
  */
 public interface Principal {
 
@@ -42,10 +41,8 @@ public interface Principal {
      * the implementation of this interface.
      *
      * @param another principal to compare with.
-     *
      * @return true if the principal passed in is the same as that
      * encapsulated by this principal, and false otherwise.
-
      */
     public boolean equals(Object another);
 

@@ -41,7 +41,7 @@ public class DriverPropertyInfo {
      * are intialized to <code>null</code> and <code>required</code> is initialized
      * to <code>false</code>.
      *
-     * @param name the name of the property
+     * @param name  the name of the property
      * @param value the current value, which may be null
      */
     public DriverPropertyInfo(String name, String value) {
@@ -61,15 +61,15 @@ public class DriverPropertyInfo {
 
     /**
      * The <code>required</code> field is <code>true</code> if a value must be
-         * supplied for this property
+     * supplied for this property
      * during <code>Driver.connect</code> and <code>false</code> otherwise.
      */
     public boolean required = false;
 
     /**
      * The <code>value</code> field specifies the current value of
-         * the property, based on a combination of the information
-         * supplied to the method <code>getPropertyInfo</code>, the
+     * the property, based on a combination of the information
+     * supplied to the method <code>getPropertyInfo</code>, the
      * Java environment, and the driver-supplied default values.  This field
      * may be null if no value is known.
      */
@@ -77,8 +77,8 @@ public class DriverPropertyInfo {
 
     /**
      * An array of possible values if the value for the field
-         * <code>DriverPropertyInfo.value</code> may be selected
-         * from a particular set of values; otherwise null.
+     * <code>DriverPropertyInfo.value</code> may be selected
+     * from a particular set of values; otherwise null.
      */
     public String[] choices = null;
 }

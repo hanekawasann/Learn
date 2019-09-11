@@ -52,10 +52,9 @@ package java.awt.geom;
  * on the same coordinate as the beginning coordinate results in line
  * "CAP" decorations being used at the ends.
  *
+ * @author Jim Graham
  * @see java.awt.Shape
  * @see java.awt.BasicStroke
- *
- * @author Jim Graham
  */
 public interface PathIterator {
     /**
@@ -65,7 +64,7 @@ public interface PathIterator {
      * path if a ray drawn in any direction from that point to
      * infinity is crossed by path segments an odd number of times.
      */
-    public static final int WIND_EVEN_ODD       = 0;
+    public static final int WIND_EVEN_ODD = 0;
 
     /**
      * The winding rule constant for specifying a non-zero rule
@@ -76,20 +75,20 @@ public interface PathIterator {
      * of times in the counter-clockwise direction than the
      * clockwise direction.
      */
-    public static final int WIND_NON_ZERO       = 1;
+    public static final int WIND_NON_ZERO = 1;
 
     /**
      * The segment type constant for a point that specifies the
      * starting location for a new subpath.
      */
-    public static final int SEG_MOVETO          = 0;
+    public static final int SEG_MOVETO = 0;
 
     /**
      * The segment type constant for a point that specifies the
      * end point of a line to be drawn from the most recently
      * specified point.
      */
-    public static final int SEG_LINETO          = 1;
+    public static final int SEG_LINETO = 1;
 
     /**
      * The segment type constant for the pair of points that specify
@@ -111,7 +110,7 @@ public interface PathIterator {
      *               = n! / (m! * (n-m)!)
      * </pre>
      */
-    public static final int SEG_QUADTO          = 2;
+    public static final int SEG_QUADTO = 2;
 
     /**
      * The segment type constant for the set of 3 points that specify
@@ -135,18 +134,19 @@ public interface PathIterator {
      * </pre>
      * This form of curve is commonly known as a B&eacute;zier curve.
      */
-    public static final int SEG_CUBICTO         = 3;
+    public static final int SEG_CUBICTO = 3;
 
     /**
      * The segment type constant that specifies that
      * the preceding subpath should be closed by appending a line segment
      * back to the point corresponding to the most recent SEG_MOVETO.
      */
-    public static final int SEG_CLOSE           = 4;
+    public static final int SEG_CLOSE = 4;
 
     /**
      * Returns the winding rule for determining the interior of the
      * path.
+     *
      * @return the winding rule.
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
@@ -155,6 +155,7 @@ public interface PathIterator {
 
     /**
      * Tests if the iteration is complete.
+     *
      * @return <code>true</code> if all the segments have
      * been read; <code>false</code> otherwise.
      */
@@ -179,8 +180,9 @@ public interface PathIterator {
      * SEG_QUADTO returns two points,
      * SEG_CUBICTO returns 3 points
      * and SEG_CLOSE does not return any points.
+     *
      * @param coords an array that holds the data returned from
-     * this method
+     *               this method
      * @return the path-segment type of the current path segment.
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
@@ -202,8 +204,9 @@ public interface PathIterator {
      * SEG_QUADTO returns two points,
      * SEG_CUBICTO returns 3 points
      * and SEG_CLOSE does not return any points.
+     *
      * @param coords an array that holds the data returned from
-     * this method
+     *               this method
      * @return the path-segment type of the current path segment.
      * @see #SEG_MOVETO
      * @see #SEG_LINETO

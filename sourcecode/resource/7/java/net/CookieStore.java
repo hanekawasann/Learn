@@ -54,15 +54,12 @@ public interface CookieStore {
      * <p>If a cookie corresponding to the given URI already exists,
      * then it is replaced with the new one.
      *
-     * @param uri       the uri this cookie associated with.
-     *                  if <tt>null</tt>, this cookie will not be associated
-     *                  with an URI
-     * @param cookie    the cookie to store
-     *
+     * @param uri    the uri this cookie associated with.
+     *               if <tt>null</tt>, this cookie will not be associated
+     *               with an URI
+     * @param cookie the cookie to store
      * @throws NullPointerException if <tt>cookie</tt> is <tt>null</tt>
-     *
      * @see #get
-     *
      */
     public void add(URI uri, HttpCookie cookie);
 
@@ -72,13 +69,10 @@ public interface CookieStore {
      * given URI. Only cookies that have not expired are returned.
      * This is called for every outgoing HTTP request.
      *
-     * @return          an immutable list of HttpCookie,
-     *                  return empty list if no cookies match the given URI
-     *
+     * @return an immutable list of HttpCookie,
+     * return empty list if no cookies match the given URI
      * @throws NullPointerException if <tt>uri</tt> is <tt>null</tt>
-     *
      * @see #add
-     *
      */
     public List<HttpCookie> get(URI uri);
 
@@ -86,8 +80,8 @@ public interface CookieStore {
     /**
      * Get all not-expired cookies in cookie store.
      *
-     * @return          an immutable list of http cookies;
-     *                  return empty list if there's no http cookie in store
+     * @return an immutable list of http cookies;
+     * return empty list if there's no http cookie in store
      */
     public List<HttpCookie> getCookies();
 
@@ -95,9 +89,9 @@ public interface CookieStore {
     /**
      * Get all URIs which identify the cookies in this cookie store.
      *
-     * @return          an immutable list of URIs;
-     *                  return empty list if no cookie in this cookie store
-     *                  is associated with an URI
+     * @return an immutable list of URIs;
+     * return empty list if no cookie in this cookie store
+     * is associated with an URI
      */
     public List<URI> getURIs();
 
@@ -105,14 +99,12 @@ public interface CookieStore {
     /**
      * Remove a cookie from store.
      *
-     * @param uri       the uri this cookie associated with.
-     *                  if <tt>null</tt>, the cookie to be removed is not associated
-     *                  with an URI when added; if not <tt>null</tt>, the cookie
-     *                  to be removed is associated with the given URI when added.
-     * @param cookie    the cookie to remove
-     *
-     * @return          <tt>true</tt> if this store contained the specified cookie
-     *
+     * @param uri    the uri this cookie associated with.
+     *               if <tt>null</tt>, the cookie to be removed is not associated
+     *               with an URI when added; if not <tt>null</tt>, the cookie
+     *               to be removed is associated with the given URI when added.
+     * @param cookie the cookie to remove
+     * @return <tt>true</tt> if this store contained the specified cookie
      * @throws NullPointerException if <tt>cookie</tt> is <tt>null</tt>
      */
     public boolean remove(URI uri, HttpCookie cookie);
@@ -121,7 +113,7 @@ public interface CookieStore {
     /**
      * Remove all cookies in this cookie store.
      *
-     * @return          <tt>true</tt> if this store changed as a result of the call
+     * @return <tt>true</tt> if this store changed as a result of the call
      */
     public boolean removeAll();
 }

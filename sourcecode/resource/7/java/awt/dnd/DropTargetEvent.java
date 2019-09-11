@@ -37,7 +37,6 @@ import java.awt.dnd.DropTargetContext;
  * <code>DropTargetContext</code>.
  *
  * @since 1.2
- *
  */
 
 public class DropTargetEvent extends java.util.EventObject {
@@ -47,7 +46,8 @@ public class DropTargetEvent extends java.util.EventObject {
     /**
      * Construct a <code>DropTargetEvent</code> object with
      * the specified <code>DropTargetContext</code>.
-     * <P>
+     * <p>
+     *
      * @param dtc The <code>DropTargetContext</code>
      * @throws NullPointerException if {@code dtc} equals {@code null}.
      * @see #getSource()
@@ -57,13 +57,14 @@ public class DropTargetEvent extends java.util.EventObject {
     public DropTargetEvent(DropTargetContext dtc) {
         super(dtc.getDropTarget());
 
-        context  = dtc;
+        context = dtc;
     }
 
     /**
      * This method returns the <code>DropTargetContext</code>
      * associated with this <code>DropTargetEvent</code>.
-     * <P>
+     * <p>
+     *
      * @return the <code>DropTargetContext</code>
      */
 
@@ -77,5 +78,5 @@ public class DropTargetEvent extends java.util.EventObject {
      *
      * @serial
      */
-    protected DropTargetContext   context;
+    protected DropTargetContext context;
 }

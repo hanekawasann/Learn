@@ -37,18 +37,19 @@
  */
 
 package java.text;
+
 /**
  * CollationRules contains the default en_US collation rules as a base
  * for building other collation tables.
  * <p>Note that decompositions are done before these rules are used,
  * so they do not have to contain accented characters, such as A-grave.
- * @see                RuleBasedCollator
- * @see                LocaleElements
- * @author             Helena Shih, Mark Davis
+ *
+ * @author Helena Shih, Mark Davis
+ * @see RuleBasedCollator
+ * @see LocaleElements
  */
 final class CollationRules {
-    final static String DEFAULTRULES = new String(
-        "" // no FRENCH accent order by default, add in French Delta
+    final static String DEFAULTRULES = new String("" // no FRENCH accent order by default, add in French Delta
         // IGNORABLES (up to first < character)
         // COMPLETELY IGNORE format characters
         + "='\u200B'=\u200C=\u200D=\u200E=\u200F"
@@ -61,12 +62,9 @@ final class CollationRules {
         + "=\u0019 =\u001a =\u001b =\u001c =\u001d" //em, sub, esc, fs, gs
         + "=\u001e =\u001f =\u007f"                   //rs, us, del
         //....then the C1 Latin 1 reserved control codes
-        + "=\u0080 =\u0081 =\u0082 =\u0083 =\u0084 =\u0085"
-        + "=\u0086 =\u0087 =\u0088 =\u0089 =\u008a =\u008b"
-        + "=\u008c =\u008d =\u008e =\u008f =\u0090 =\u0091"
-        + "=\u0092 =\u0093 =\u0094 =\u0095 =\u0096 =\u0097"
-        + "=\u0098 =\u0099 =\u009a =\u009b =\u009c =\u009d"
-        + "=\u009e =\u009f"
+        + "=\u0080 =\u0081 =\u0082 =\u0083 =\u0084 =\u0085" + "=\u0086 =\u0087 =\u0088 =\u0089 =\u008a =\u008b" +
+        "=\u008c =\u008d =\u008e =\u008f =\u0090 =\u0091" + "=\u0092 =\u0093 =\u0094 =\u0095 =\u0096 =\u0097" +
+        "=\u0098 =\u0099 =\u009a =\u009b =\u009c =\u009d" + "=\u009e =\u009f"
         // IGNORE except for secondary, tertiary difference
         // Spaces
         + ";'\u0020';'\u00A0'"                  // spaces
@@ -234,41 +232,14 @@ final class CollationRules {
 
         // NUMERICS
 
-        + "<0<1<2<3<4<5<6<7<8<9"
-        + "<\u00bc<\u00bd<\u00be"   // 1/4,1/2,3/4 fractions
+        + "<0<1<2<3<4<5<6<7<8<9" + "<\u00bc<\u00bd<\u00be"   // 1/4,1/2,3/4 fractions
 
         // NON-IGNORABLES
-        + "<a,A"
-        + "<b,B"
-        + "<c,C"
-        + "<d,D"
-        + "<\u00F0,\u00D0"                  // eth
-        + "<e,E"
-        + "<f,F"
-        + "<g,G"
-        + "<h,H"
-        + "<i,I"
-        + "<j,J"
-        + "<k,K"
-        + "<l,L"
-        + "<m,M"
-        + "<n,N"
-        + "<o,O"
-        + "<p,P"
-        + "<q,Q"
-        + "<r,R"
-        + "<s, S & SS,\u00DF"             // s-zet
-        + "<t,T"
-        + "& TH, \u00DE &TH, \u00FE "     // thorn
-        + "<u,U"
-        + "<v,V"
-        + "<w,W"
-        + "<x,X"
-        + "<y,Y"
-        + "<z,Z"
-        + "&AE,\u00C6"                    // ae & AE ligature
-        + "&AE,\u00E6"
-        + "&OE,\u0152"                    // oe & OE ligature
-        + "&OE,\u0153"
-    );
+        + "<a,A" + "<b,B" + "<c,C" + "<d,D" + "<\u00F0,\u00D0"                  // eth
+        + "<e,E" + "<f,F" + "<g,G" + "<h,H" + "<i,I" + "<j,J" + "<k,K" + "<l,L" + "<m,M" + "<n,N" + "<o,O" + "<p,P" +
+        "<q,Q" + "<r,R" + "<s, S & SS,\u00DF"             // s-zet
+        + "<t,T" + "& TH, \u00DE &TH, \u00FE "     // thorn
+        + "<u,U" + "<v,V" + "<w,W" + "<x,X" + "<y,Y" + "<z,Z" + "&AE,\u00C6"                    // ae & AE ligature
+        + "&AE,\u00E6" + "&OE,\u0152"                    // oe & OE ligature
+        + "&OE,\u0153");
 }

@@ -51,13 +51,12 @@ import sun.reflect.misc.MethodUtil;
  * with its environment as a simple set of values:
  * the target and an array of argument values.
  *
- * @since 1.4
- *
  * @author Philip Milne
+ * @since 1.4
  */
 public class Statement {
 
-    private static Object[] emptyArray = new Object[]{};
+    private static Object[] emptyArray = new Object[] {};
 
     static ExceptionListener defaultExceptionListener = new ExceptionListener() {
         public void exceptionThrown(Exception e) {
@@ -84,11 +83,11 @@ public class Statement {
      * If the {@code arguments} value is {@code null},
      * an empty array is used as the value of the {@code arguments} property.
      *
-     * @param target  the target object of this statement
-     * @param methodName  the name of the method to invoke on the specified target
+     * @param target     the target object of this statement
+     * @param methodName the name of the method to invoke on the specified target
      * @param arguments  the array of arguments to invoke the specified method
      */
-    @ConstructorProperties({"target", "methodName", "arguments"})
+    @ConstructorProperties( { "target", "methodName", "arguments" })
     public Statement(Object target, String methodName, Object[] arguments) {
         this.target = target;
         this.methodName = methodName;
@@ -135,7 +134,7 @@ public class Statement {
      * The {@code execute} method finds a method whose name is the same
      * as the {@code methodName} property, and invokes the method on
      * the target.
-     *
+     * <p>
      * When the target's class defines many methods with the given name
      * the implementation should choose the most specific method using
      * the algorithm specified in the Java Language Specification
@@ -160,13 +159,12 @@ public class Statement {
      * the static methods of the same name in the {@code Array} class.
      * </ul>
      *
-     * @throws NullPointerException if the value of the {@code target} or
-     *                              {@code methodName} property is {@code null}
+     * @throws NullPointerException  if the value of the {@code target} or
+     *                               {@code methodName} property is {@code null}
      * @throws NoSuchMethodException if a matching method is not found
-     * @throws SecurityException if a security manager exists and
-     *                           it denies the method invocation
-     * @throws Exception that is thrown by the invoked method
-     *
+     * @throws SecurityException     if a security manager exists and
+     *                               it denies the method invocation
+     * @throws Exception             that is thrown by the invoked method
      * @see java.lang.reflect.Method
      */
     public void execute() throws Exception {
@@ -179,16 +177,12 @@ public class Statement {
             throw new SecurityException("AccessControlContext is not set");
         }
         try {
-            return AccessController.doPrivileged(
-                    new PrivilegedExceptionAction<Object>() {
-                        public Object run() throws Exception {
-                            return invokeInternal();
-                        }
-                    },
-                    acc
-            );
-        }
-        catch (PrivilegedActionException exception) {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                public Object run() throws Exception {
+                    return invokeInternal();
+                }
+            }, acc);
+        } catch (PrivilegedActionException exception) {
             throw exception.getException();
         }
     }
@@ -198,8 +192,7 @@ public class Statement {
         String methodName = getMethodName();
 
         if (target == null || methodName == null) {
-            throw new NullPointerException((target == null ? "target" :
-                                            "methodName") + " should not be null");
+            throw new NullPointerException((target == null ? "target" : "methodName") + " should not be null");
         }
 
         Object[] arguments = getArguments();
@@ -210,10 +203,10 @@ public class Statement {
         // of core from a class inside core. Special
         // case this method.
         if (target == Class.class && methodName.equals("forName")) {
-            return ClassFinder.resolveClass((String)arguments[0], this.loader);
+            return ClassFinder.resolveClass((String) arguments[0], this.loader);
         }
         Class[] argClasses = new Class[arguments.length];
-        for(int i = 0; i < arguments.length; i++) {
+        for (int i = 0; i < arguments.length; i++) {
             argClasses[i] = (arguments[i] == null) ? null : arguments[i].getClass();
         }
 
@@ -233,9 +226,9 @@ public class Statement {
                 methodName = "newInstance";
             }
             // Provide a short form for array instantiation by faking an nary-constructor.
-            if (methodName.equals("newInstance") && ((Class)target).isArray()) {
-                Object result = Array.newInstance(((Class)target).getComponentType(), arguments.length);
-                for(int i = 0; i < arguments.length; i++) {
+            if (methodName.equals("newInstance") && ((Class) target).isArray()) {
+                Object result = Array.newInstance(((Class) target).getComponentType(), arguments.length);
+                for (int i = 0; i < arguments.length; i++) {
                     Array.set(result, i, arguments[i]);
                 }
                 return result;
@@ -246,25 +239,22 @@ public class Statement {
                 // for Java's primitive types have a String constructor so we
                 // fake such a constructor here so that this special case can be
                 // ignored elsewhere.
-                if (target == Character.class && arguments.length == 1 &&
-                    argClasses[0] == String.class) {
-                    return new Character(((String)arguments[0]).charAt(0));
+                if (target == Character.class && arguments.length == 1 && argClasses[0] == String.class) {
+                    return new Character(((String) arguments[0]).charAt(0));
                 }
                 try {
-                    m = ConstructorFinder.findConstructor((Class)target, argClasses);
-                }
-                catch (NoSuchMethodException exception) {
+                    m = ConstructorFinder.findConstructor((Class) target, argClasses);
+                } catch (NoSuchMethodException exception) {
                     m = null;
                 }
             }
             if (m == null && target != Class.class) {
-                m = getMethod((Class)target, methodName, argClasses);
+                m = getMethod((Class) target, methodName, argClasses);
             }
             if (m == null) {
                 m = getMethod(Class.class, methodName, argClasses);
             }
-        }
-        else {
+        } else {
             /*
             This special casing of arrays is not necessary, but makes files
             involving arrays much shorter and simplifies the archiving infrastrcure.
@@ -273,13 +263,11 @@ public class Statement {
             effects on objects are instance methods of the objects themselves
             and we reinstate this rule (perhaps temporarily) by special-casing arrays.
             */
-            if (target.getClass().isArray() &&
-                (methodName.equals("set") || methodName.equals("get"))) {
-                int index = ((Integer)arguments[0]).intValue();
+            if (target.getClass().isArray() && (methodName.equals("set") || methodName.equals("get"))) {
+                int index = ((Integer) arguments[0]).intValue();
                 if (methodName.equals("get")) {
                     return Array.get(target, index);
-                }
-                else {
+                } else {
                     Array.set(target, index, arguments[1]);
                     return null;
                 }
@@ -289,23 +277,17 @@ public class Statement {
         if (m != null) {
             try {
                 if (m instanceof Method) {
-                    return MethodUtil.invoke((Method)m, target, arguments);
+                    return MethodUtil.invoke((Method) m, target, arguments);
+                } else {
+                    return ((Constructor) m).newInstance(arguments);
                 }
-                else {
-                    return ((Constructor)m).newInstance(arguments);
-                }
-            }
-            catch (IllegalAccessException iae) {
-                throw new Exception("Statement cannot invoke: " +
-                                    methodName + " on " + target.getClass(),
-                                    iae);
-            }
-            catch (InvocationTargetException ite) {
+            } catch (IllegalAccessException iae) {
+                throw new Exception("Statement cannot invoke: " + methodName + " on " + target.getClass(), iae);
+            } catch (InvocationTargetException ite) {
                 Throwable te = ite.getTargetException();
                 if (te instanceof Exception) {
-                    throw (Exception)te;
-                }
-                else {
+                    throw (Exception) te;
+                } else {
                     throw ite;
                 }
             }
@@ -317,7 +299,7 @@ public class Statement {
         if (instance == null) {
             return "null";
         } else if (instance.getClass() == String.class) {
-            return "\""+(String)instance + "\"";
+            return "\"" + (String) instance + "\"";
         } else {
             // Note: there is a minor problem with using the non-caching
             // NameGenerator method. The return value will not have
@@ -342,9 +324,9 @@ public class Statement {
         }
         StringBuffer result = new StringBuffer(instanceName(target) + "." + methodName + "(");
         int n = arguments.length;
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             result.append(instanceName(arguments[i]));
-            if (i != n -1) {
+            if (i != n - 1) {
                 result.append(", ");
             }
         }
@@ -355,8 +337,7 @@ public class Statement {
     static Method getMethod(Class<?> type, String name, Class<?>... args) {
         try {
             return MethodFinder.findMethod(type, name, args);
-        }
-        catch (NoSuchMethodException exception) {
+        } catch (NoSuchMethodException exception) {
             return null;
         }
     }

@@ -36,14 +36,13 @@ package java.lang;
  * <li> the class object represents an abstract class, an interface,
  *      an array class, a primitive type, or {@code void}
  * <li> the class has no nullary constructor
- *</ul>
+ * </ul>
  *
- * @author  unascribed
- * @see     java.lang.Class#newInstance()
- * @since   JDK1.0
+ * @author unascribed
+ * @see java.lang.Class#newInstance()
+ * @since JDK1.0
  */
-public
-class InstantiationException extends ReflectiveOperationException {
+public class InstantiationException extends ReflectiveOperationException {
     private static final long serialVersionUID = -8441929162975509110L;
 
     /**
@@ -57,7 +56,7 @@ class InstantiationException extends ReflectiveOperationException {
      * Constructs an {@code InstantiationException} with the
      * specified detail message.
      *
-     * @param   s   the detail message.
+     * @param s the detail message.
      */
     public InstantiationException(String s) {
         super(s);

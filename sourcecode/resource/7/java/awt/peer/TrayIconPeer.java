@@ -45,7 +45,6 @@ public interface TrayIconPeer {
      * Sets the tool tip for the tray icon.
      *
      * @param tooltip the tooltip to set
-     *
      * @see TrayIcon#setToolTip(String)
      */
     void setToolTip(String tooltip);
@@ -62,10 +61,9 @@ public interface TrayIconPeer {
     /**
      * Displays a message at the tray icon.
      *
-     * @param caption the message caption
-     * @param text the actual message text
+     * @param caption     the message caption
+     * @param text        the actual message text
      * @param messageType the message type
-     *
      * @see TrayIcon#displayMessage(String, String, java.awt.TrayIcon.MessageType)
      */
     void displayMessage(String caption, String text, String messageType);

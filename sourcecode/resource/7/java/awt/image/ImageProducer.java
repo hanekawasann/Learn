@@ -32,9 +32,8 @@ package java.awt.image;
  * Image is scaled, or when the width or height of the Image is being
  * requested.
  *
+ * @author Jim Graham
  * @see ImageConsumer
- *
- * @author      Jim Graham
  */
 public interface ImageProducer {
     /**
@@ -46,6 +45,7 @@ public interface ImageProducer {
      * using the <code>ImageConsumer</code> interface immediately,
      * or when the next available image reconstruction is triggered
      * by a call to the <code>startProduction</code> method.
+     *
      * @param ic the specified <code>ImageConsumer</code>
      * @see #startProduction
      */
@@ -55,11 +55,12 @@ public interface ImageProducer {
      * Determines if a specified <code>ImageConsumer</code>
      * object is currently registered with this
      * <code>ImageProducer</code> as one of its consumers.
+     *
      * @param ic the specified <code>ImageConsumer</code>
      * @return <code>true</code> if the specified
-     *         <code>ImageConsumer</code> is registered with
-     *         this <code>ImageProducer</code>;
-     *         <code>false</code> otherwise.
+     * <code>ImageConsumer</code> is registered with
+     * this <code>ImageProducer</code>;
+     * <code>false</code> otherwise.
      */
     public boolean isConsumer(ImageConsumer ic);
 
@@ -70,6 +71,7 @@ public interface ImageProducer {
      * to remove a consumer that is not currently registered.
      * The <code>ImageProducer</code> should stop sending data
      * to this consumer as soon as is feasible.
+     *
      * @param ic the specified <code>ImageConsumer</code>
      */
     public void removeConsumer(ImageConsumer ic);
@@ -82,6 +84,7 @@ public interface ImageProducer {
      * been registered with the producer.  This method differs
      * from the addConsumer method in that a reproduction of
      * the image data should be triggered as soon as possible.
+     *
      * @param ic the specified <code>ImageConsumer</code>
      * @see #addConsumer
      */
@@ -105,6 +108,7 @@ public interface ImageProducer {
      *  ic.setPixels(...);      // As many times as needed
      *  ic.imageComplete();
      * </pre>
+     *
      * @param ic the specified <code>ImageConsumer</code>
      * @see ImageConsumer#setHints
      */

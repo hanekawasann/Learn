@@ -26,7 +26,9 @@
 package java.net;
 
 import java.security.cert.Certificate;
+
 import javax.net.ssl.SSLPeerUnverifiedException;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -52,8 +54,8 @@ public abstract class SecureCacheResponse extends CacheResponse {
      * when using certificate-based cipher suites.
      *
      * @return an immutable List of Certificate representing the
-     *           certificate chain that was sent to the server. If no
-     *           certificate chain was sent, null will be returned.
+     * certificate chain that was sent to the server. If no
+     * certificate chain was sent, null will be returned.
      * @see #getLocalPrincipal()
      */
     public abstract List<Certificate> getLocalCertificateChain();
@@ -67,12 +69,11 @@ public abstract class SecureCacheResponse extends CacheResponse {
      * Kerberos, will throw an SSLPeerUnverifiedException.
      *
      * @return an immutable List of Certificate representing the server's
-     *         certificate chain.
+     * certificate chain.
      * @throws SSLPeerUnverifiedException if the peer is not verified.
      * @see #getPeerPrincipal()
      */
-    public abstract List<Certificate> getServerCertificateChain()
-        throws SSLPeerUnverifiedException;
+    public abstract List<Certificate> getServerCertificateChain() throws SSLPeerUnverifiedException;
 
     /**
      * Returns the server's principal which was established as part of
@@ -82,27 +83,23 @@ public abstract class SecureCacheResponse extends CacheResponse {
      * @return the server's principal. Returns an X500Principal of the
      * end-entity certiticate for X509-based cipher suites, and
      * KerberosPrincipal for Kerberos cipher suites.
-     *
      * @throws SSLPeerUnverifiedException if the peer was not verified.
-     *
      * @see #getServerCertificateChain()
      * @see #getLocalPrincipal()
      */
-     public abstract Principal getPeerPrincipal()
-             throws SSLPeerUnverifiedException;
+    public abstract Principal getPeerPrincipal() throws SSLPeerUnverifiedException;
 
     /**
-      * Returns the principal that was sent to the server during
-      * handshaking in the original connection that retrieved the
-      * network resource.
-      *
-      * @return the principal sent to the server. Returns an X500Principal
-      * of the end-entity certificate for X509-based cipher suites, and
-      * KerberosPrincipal for Kerberos cipher suites. If no principal was
-      * sent, then null is returned.
-      *
-      * @see #getLocalCertificateChain()
-      * @see #getPeerPrincipal()
-      */
-     public abstract Principal getLocalPrincipal();
+     * Returns the principal that was sent to the server during
+     * handshaking in the original connection that retrieved the
+     * network resource.
+     *
+     * @return the principal sent to the server. Returns an X500Principal
+     * of the end-entity certificate for X509-based cipher suites, and
+     * KerberosPrincipal for Kerberos cipher suites. If no principal was
+     * sent, then null is returned.
+     * @see #getLocalCertificateChain()
+     * @see #getPeerPrincipal()
+     */
+    public abstract Principal getLocalPrincipal();
 }

@@ -32,9 +32,8 @@ package java.nio.file.attribute;
  * java.nio.file.Files#createDirectory createDirectory} methods.
  *
  * @param <T> The type of the file attribute value
- *
- * @since 1.7
  * @see PosixFilePermissions#asFileAttribute
+ * @since 1.7
  */
 
 public interface FileAttribute<T> {

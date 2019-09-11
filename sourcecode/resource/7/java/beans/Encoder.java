@@ -40,9 +40,8 @@ import java.util.Map;
  * A subclass typically provides a syntax for these expressions
  * using some human readable form - like Java source code or XML.
  *
- * @since 1.4
- *
  * @author Philip Milne
+ * @since 1.4
  */
 
 public class Encoder {
@@ -63,7 +62,6 @@ public class Encoder {
      * returned by the Introspector.
      *
      * @param o The object to be written to the stream.
-     *
      * @see XMLDecoder#readObject
      */
     protected void writeObject(Object o) {
@@ -80,8 +78,7 @@ public class Encoder {
      * exceptions.
      *
      * @param exceptionListener The exception handler for this stream;
-     *       if <code>null</code> the default exception listener will be used.
-     *
+     *                          if <code>null</code> the default exception listener will be used.
      * @see #getExceptionListener
      */
     public void setExceptionListener(ExceptionListener exceptionListener) {
@@ -92,8 +89,7 @@ public class Encoder {
      * Gets the exception handler for this stream.
      *
      * @return The exception handler for this stream;
-     *    Will return the default exception listener if this has not explicitly been set.
-     *
+     * Will return the default exception listener if this has not explicitly been set.
      * @see #setExceptionListener
      */
     public ExceptionListener getExceptionListener() {
@@ -103,8 +99,7 @@ public class Encoder {
     Object getValue(Expression exp) {
         try {
             return (exp == null) ? null : exp.getValue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             getExceptionListener().exceptionThrown(e);
             throw new RuntimeException("failed to evaluate: " + exp.toString());
         }
@@ -186,9 +181,8 @@ public class Encoder {
      * }</pre>
      * </ol>
      *
-     * @param type  the class of the objects
+     * @param type the class of the objects
      * @return the persistence delegate for the given type
-     *
      * @see #setPersistenceDelegate
      * @see java.beans.Introspector#getBeanInfo
      * @see java.beans.BeanInfo#getBeanDescriptor
@@ -201,9 +195,8 @@ public class Encoder {
     /**
      * Associates the specified persistence delegate with the given type.
      *
-     * @param type  the class of objects that the specified persistence delegate applies to
-     * @param delegate  the persistence delegate for instances of the given type
-     *
+     * @param type     the class of objects that the specified persistence delegate applies to
+     * @param delegate the persistence delegate for instances of the given type
      * @see #getPersistenceDelegate
      * @see java.beans.Introspector#getBeanInfo
      * @see java.beans.BeanInfo#getBeanDescriptor
@@ -217,11 +210,10 @@ public class Encoder {
      *
      * @param oldInstance The entry that should be removed.
      * @return The entry that was removed.
-     *
      * @see #get
      */
     public Object remove(Object oldInstance) {
-        Expression exp = (Expression)bindings.remove(oldInstance);
+        Expression exp = (Expression) bindings.remove(oldInstance);
         return getValue(exp);
     }
 
@@ -234,15 +226,14 @@ public class Encoder {
      * a new object must be instantiated afresh. If the
      * stream has not yet seen this value, null is returned.
      *
-     * @param  oldInstance The instance to be looked up.
+     * @param oldInstance The instance to be looked up.
      * @return The object, null if the object has not been seen before.
      */
     public Object get(Object oldInstance) {
-        if (oldInstance == null || oldInstance == this ||
-            oldInstance.getClass() == String.class) {
+        if (oldInstance == null || oldInstance == this || oldInstance.getClass() == String.class) {
             return oldInstance;
         }
-        Expression exp = (Expression)bindings.get(oldInstance);
+        Expression exp = (Expression) bindings.get(oldInstance);
         return getValue(exp);
     }
 
@@ -264,9 +255,8 @@ public class Encoder {
         for (int i = 0; i < oldArgs.length; i++) {
             newArgs[i] = writeObject1(oldArgs[i]);
         }
-        Statement newExp = Statement.class.equals(oldExp.getClass())
-                ? new Statement(newTarget, oldExp.getMethodName(), newArgs)
-                : new Expression(newTarget, oldExp.getMethodName(), newArgs);
+        Statement newExp = Statement.class.equals(oldExp.getClass()) ? new Statement(newTarget, oldExp.getMethodName(),
+            newArgs) : new Expression(newTarget, oldExp.getMethodName(), newArgs);
         newExp.loader = oldExp.loader;
         return newExp;
     }
@@ -297,8 +287,7 @@ public class Encoder {
             try {
                 newStm.execute();
             } catch (Exception e) {
-                getExceptionListener().exceptionThrown(new Exception("Encoder: discarding statement "
-                                                                     + newStm, e));
+                getExceptionListener().exceptionThrown(new Exception("Encoder: discarding statement " + newStm, e));
             }
         }
     }
@@ -320,7 +309,7 @@ public class Encoder {
         if (get(oldValue) != null) {
             return;
         }
-        bindings.put(oldValue, (Expression)cloneStatement(oldExp));
+        bindings.put(oldValue, (Expression) cloneStatement(oldExp));
         writeObject(oldValue);
     }
 

@@ -29,7 +29,7 @@ import java.awt.*;
 /**
  * The peer interface for {@link Container}. This is the parent interface
  * for all container like widgets.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers

@@ -54,56 +54,65 @@ public interface Adjustable {
 
     /**
      * Gets the orientation of the adjustable object.
+     *
      * @return the orientation of the adjustable object;
-     *   either <code>HORIZONTAL</code>, <code>VERTICAL</code>,
-     *   or <code>NO_ORIENTATION</code>
+     * either <code>HORIZONTAL</code>, <code>VERTICAL</code>,
+     * or <code>NO_ORIENTATION</code>
      */
     int getOrientation();
 
     /**
      * Sets the minimum value of the adjustable object.
+     *
      * @param min the minimum value
      */
     void setMinimum(int min);
 
     /**
      * Gets the minimum value of the adjustable object.
+     *
      * @return the minimum value of the adjustable object
      */
     int getMinimum();
 
     /**
      * Sets the maximum value of the adjustable object.
+     *
      * @param max the maximum value
      */
     void setMaximum(int max);
 
     /**
      * Gets the maximum value of the adjustable object.
+     *
      * @return the maximum value of the adjustable object
      */
     int getMaximum();
 
     /**
      * Sets the unit value increment for the adjustable object.
+     *
      * @param u the unit increment
      */
     void setUnitIncrement(int u);
 
     /**
      * Gets the unit value increment for the adjustable object.
+     *
      * @return the unit value increment for the adjustable object
      */
     int getUnitIncrement();
 
     /**
      * Sets the block value increment for the adjustable object.
+     *
      * @param b the block increment
      */
     void setBlockIncrement(int b);
 
     /**
      * Gets the block value increment for the adjustable object.
+     *
      * @return the block value increment for the adjustable object
      */
     int getBlockIncrement();
@@ -111,12 +120,14 @@ public interface Adjustable {
     /**
      * Sets the length of the proportional indicator of the
      * adjustable object.
+     *
      * @param v the length of the indicator
      */
     void setVisibleAmount(int v);
 
     /**
      * Gets the length of the proportional indicator.
+     *
      * @return the length of the proportional indicator
      */
     int getVisibleAmount();
@@ -131,12 +142,13 @@ public interface Adjustable {
      * <code>AdjustmentEvent</code>.
      *
      * @param v the current value, between <code>minimum</code>
-     *    and <code>maximum</code> - <code>visibleAmount</code>
+     *          and <code>maximum</code> - <code>visibleAmount</code>
      */
     void setValue(int v);
 
     /**
      * Gets the current value of the adjustable object.
+     *
      * @return the current value of the adjustable object
      */
     int getValue();
@@ -144,6 +156,7 @@ public interface Adjustable {
     /**
      * Adds a listener to receive adjustment events when the value of
      * the adjustable object changes.
+     *
      * @param l the listener to receive events
      * @see AdjustmentEvent
      */
@@ -151,6 +164,7 @@ public interface Adjustable {
 
     /**
      * Removes an adjustment listener.
+     *
      * @param l the listener being removed
      * @see AdjustmentEvent
      */

@@ -33,7 +33,7 @@ package java.lang.annotation;
  * <p>These constants are used with the {@link Target} meta-annotation type
  * to specify where it is legal to use an annotation type.
  *
- * @author  Joshua Bloch
+ * @author Joshua Bloch
  * @since 1.5
  */
 public enum ElementType {

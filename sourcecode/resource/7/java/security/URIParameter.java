@@ -32,8 +32,7 @@ package java.security;
  *
  * @since 1.6
  */
-public class URIParameter implements
-        Policy.Parameters, javax.security.auth.login.Configuration.Parameters {
+public class URIParameter implements Policy.Parameters, javax.security.auth.login.Configuration.Parameters {
 
     private java.net.URI uri;
 
@@ -42,8 +41,7 @@ public class URIParameter implements
      * data intended for an SPI implementation.
      *
      * @param uri the URI pointing to the data.
-     *
-     * @exception NullPointerException if the specified URI is null.
+     * @throws NullPointerException if the specified URI is null.
      */
     public URIParameter(java.net.URI uri) {
         if (uri == null) {

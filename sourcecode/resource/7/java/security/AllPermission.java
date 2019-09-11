@@ -29,6 +29,7 @@ import java.security.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import sun.security.util.SecurityConstants;
 
 /**
@@ -43,16 +44,13 @@ import sun.security.util.SecurityConstants;
  * completely trusted and adding the necessary permissions to the policy
  * is prohibitively cumbersome.
  *
+ * @author Roland Schemers
+ * @serial exclude
  * @see java.security.Permission
  * @see java.security.AccessController
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
- *
- * @author Roland Schemers
- *
- * @serial exclude
  */
 
 public final class AllPermission extends Permission {
@@ -63,8 +61,7 @@ public final class AllPermission extends Permission {
      * Creates a new AllPermission object.
      */
 
-    public AllPermission()
-    {
+    public AllPermission() {
         super("<all permissions>");
     }
 
@@ -74,11 +71,10 @@ public final class AllPermission extends Permission {
      * constructor exists for use by the <code>Policy</code> object
      * to instantiate new Permission objects.
      *
-     * @param name ignored
+     * @param name    ignored
      * @param actions ignored.
      */
-    public AllPermission(String name, String actions)
-    {
+    public AllPermission(String name, String actions) {
         this();
     }
 
@@ -87,11 +83,10 @@ public final class AllPermission extends Permission {
      * this object. This method always returns true.
      *
      * @param p the permission to check against.
-     *
      * @return return
      */
     public boolean implies(Permission p) {
-         return true;
+        return true;
     }
 
     /**
@@ -120,8 +115,7 @@ public final class AllPermission extends Permission {
      *
      * @return the actions.
      */
-    public String getActions()
-    {
+    public String getActions() {
         return "<all actions>";
     }
 
@@ -147,19 +141,13 @@ public final class AllPermission extends Permission {
  * order, but enable the implies function to evaluate the implies
  * method in an efficient (and consistent) manner.
  *
+ * @author Roland Schemers
+ * @serial include
  * @see java.security.Permission
  * @see java.security.Permissions
- *
- *
- * @author Roland Schemers
- *
- * @serial include
  */
 
-final class AllPermissionCollection
-extends PermissionCollection
-implements java.io.Serializable
-{
+final class AllPermissionCollection extends PermissionCollection implements java.io.Serializable {
 
     // use serialVersionUID from JDK 1.2.2 for interoperability
     private static final long serialVersionUID = -4023755556366636806L;
@@ -168,7 +156,6 @@ implements java.io.Serializable
 
     /**
      * Create an empty AllPermissions object.
-     *
      */
 
     public AllPermissionCollection() {
@@ -180,21 +167,19 @@ implements java.io.Serializable
      * permission.path.
      *
      * @param permission the Permission object to add.
-     *
-     * @exception IllegalArgumentException - if the permission is not a
-     *                                       AllPermission
-     *
-     * @exception SecurityException - if this AllPermissionCollection object
-     *                                has been marked readonly
+     * @throws IllegalArgumentException - if the permission is not a
+     *                                  AllPermission
+     * @throws SecurityException        - if this AllPermissionCollection object
+     *                                  has been marked readonly
      */
 
-    public void add(Permission permission)
-    {
-        if (! (permission instanceof AllPermission))
-            throw new IllegalArgumentException("invalid permission: "+
-                                               permission);
-        if (isReadOnly())
+    public void add(Permission permission) {
+        if (!(permission instanceof AllPermission)) {
+            throw new IllegalArgumentException("invalid permission: " + permission);
+        }
+        if (isReadOnly()) {
             throw new SecurityException("attempt to add a Permission to a readonly PermissionCollection");
+        }
 
         all_allowed = true; // No sync; staleness OK
     }
@@ -204,12 +189,10 @@ implements java.io.Serializable
      * expressed in "permission".
      *
      * @param p the Permission object to compare
-     *
      * @return always returns true.
      */
 
-    public boolean implies(Permission permission)
-    {
+    public boolean implies(Permission permission) {
         return all_allowed; // No sync; staleness OK
     }
 
@@ -219,8 +202,7 @@ implements java.io.Serializable
      *
      * @return an enumeration of all the AllPermission objects.
      */
-    public Enumeration<Permission> elements()
-    {
+    public Enumeration<Permission> elements() {
         return new Enumeration<Permission>() {
             private boolean hasMore = all_allowed;
 

@@ -111,7 +111,7 @@ import java.util.Locale;
  * provider returns null instead of a name, the lookup will proceed as
  * described above as if the locale was not supported.
  *
- * @since        1.6
+ * @since 1.6
  */
 public abstract class LocaleServiceProvider {
 

@@ -27,7 +27,9 @@ package java.awt.geom;
 
 import java.awt.Shape;
 import java.awt.Rectangle;
+
 import sun.awt.geom.Curve;
+
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.Arrays;
@@ -88,11 +90,11 @@ public abstract class Path2D implements Shape, Cloneable {
 
     // For code simplicity, copy these constants to our namespace
     // and cast them to byte constants for easy storage.
-    private static final byte SEG_MOVETO  = (byte) PathIterator.SEG_MOVETO;
-    private static final byte SEG_LINETO  = (byte) PathIterator.SEG_LINETO;
-    private static final byte SEG_QUADTO  = (byte) PathIterator.SEG_QUADTO;
+    private static final byte SEG_MOVETO = (byte) PathIterator.SEG_MOVETO;
+    private static final byte SEG_LINETO = (byte) PathIterator.SEG_LINETO;
+    private static final byte SEG_QUADTO = (byte) PathIterator.SEG_QUADTO;
     private static final byte SEG_CUBICTO = (byte) PathIterator.SEG_CUBICTO;
-    private static final byte SEG_CLOSE   = (byte) PathIterator.SEG_CLOSE;
+    private static final byte SEG_CLOSE = (byte) PathIterator.SEG_CLOSE;
 
     transient byte[] pointTypes;
     transient int numTypes;
@@ -120,7 +122,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * not be made public if the other constructors for this class
      * are ever exposed.
      *
-     * @param rule the winding rule
+     * @param rule         the winding rule
      * @param initialTypes the size to make the initial array to
      *                     store the path segment types
      * @since 1.6
@@ -132,14 +134,20 @@ public abstract class Path2D implements Shape, Cloneable {
     }
 
     abstract float[] cloneCoordsFloat(AffineTransform at);
+
     abstract double[] cloneCoordsDouble(AffineTransform at);
+
     abstract void append(float x, float y);
+
     abstract void append(double x, double y);
+
     abstract Point2D getPoint(int coordindex);
+
     abstract void needRoom(boolean needMove, int newCoords);
+
     abstract int pointCrossings(double px, double py);
-    abstract int rectCrossings(double rxmin, double rymin,
-                               double rxmax, double rymax);
+
+    abstract int rectCrossings(double rxmin, double rymin, double rxmax, double rymax);
 
     /**
      * The {@code Float} class defines a geometric path with
@@ -182,7 +190,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * will be added to the path, but the storage is expanded as
          * needed to store whatever path segments are added.
          *
-         * @param rule the winding rule
+         * @param rule            the winding rule
          * @param initialCapacity the estimate for the number of path segments
          *                        in the path
          * @see #WIND_EVEN_ODD
@@ -215,7 +223,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * taken from the specified {@code Shape} object and transformed
          * by the specified {@code AffineTransform} object.
          *
-         * @param s the specified {@code Shape} object
+         * @param s  the specified {@code Shape} object
          * @param at the specified {@code AffineTransform} object
          * @since 1.6
          */
@@ -224,8 +232,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 Path2D p2d = (Path2D) s;
                 setWindingRule(p2d.windingRule);
                 this.numTypes = p2d.numTypes;
-                this.pointTypes = Arrays.copyOf(p2d.pointTypes,
-                                                p2d.pointTypes.length);
+                this.pointTypes = Arrays.copyOf(p2d.pointTypes, p2d.pointTypes.length);
                 this.numCoords = p2d.numCoords;
                 this.floatCoords = p2d.cloneCoordsFloat(at);
             } else {
@@ -271,14 +278,12 @@ public abstract class Path2D implements Shape, Cloneable {
         }
 
         Point2D getPoint(int coordindex) {
-            return new Point2D.Float(floatCoords[coordindex],
-                                     floatCoords[coordindex+1]);
+            return new Point2D.Float(floatCoords[coordindex], floatCoords[coordindex + 1]);
         }
 
         void needRoom(boolean needMove, int newCoords) {
             if (needMove && numTypes == 0) {
-                throw new IllegalPathStateException("missing initial moveto "+
-                                                    "in path definition");
+                throw new IllegalPathStateException("missing initial moveto " + "in path definition");
             }
             int size = pointTypes.length;
             if (numTypes >= size) {
@@ -286,7 +291,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 if (grow > EXPAND_MAX) {
                     grow = EXPAND_MAX;
                 }
-                pointTypes = Arrays.copyOf(pointTypes, size+grow);
+                pointTypes = Arrays.copyOf(pointTypes, size + grow);
             }
             size = floatCoords.length;
             if (numCoords + newCoords > size) {
@@ -297,18 +302,19 @@ public abstract class Path2D implements Shape, Cloneable {
                 if (grow < newCoords) {
                     grow = newCoords;
                 }
-                floatCoords = Arrays.copyOf(floatCoords, size+grow);
+                floatCoords = Arrays.copyOf(floatCoords, size + grow);
             }
         }
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized void moveTo(double x, double y) {
             if (numTypes > 0 && pointTypes[numTypes - 1] == SEG_MOVETO) {
-                floatCoords[numCoords-2] = (float) x;
-                floatCoords[numCoords-1] = (float) y;
+                floatCoords[numCoords - 2] = (float) x;
+                floatCoords[numCoords - 1] = (float) y;
             } else {
                 needRoom(false, 2);
                 pointTypes[numTypes++] = SEG_MOVETO;
@@ -332,8 +338,8 @@ public abstract class Path2D implements Shape, Cloneable {
          */
         public final synchronized void moveTo(float x, float y) {
             if (numTypes > 0 && pointTypes[numTypes - 1] == SEG_MOVETO) {
-                floatCoords[numCoords-2] = x;
-                floatCoords[numCoords-1] = y;
+                floatCoords[numCoords - 2] = x;
+                floatCoords[numCoords - 1] = y;
             } else {
                 needRoom(false, 2);
                 pointTypes[numTypes++] = SEG_MOVETO;
@@ -344,6 +350,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized void lineTo(double x, double y) {
@@ -376,11 +383,10 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
-        public final synchronized void quadTo(double x1, double y1,
-                                              double x2, double y2)
-        {
+        public final synchronized void quadTo(double x1, double y1, double x2, double y2) {
             needRoom(true, 4);
             pointTypes[numTypes++] = SEG_QUADTO;
             floatCoords[numCoords++] = (float) x1;
@@ -408,9 +414,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * @see Path2D#quadTo
          * @since 1.6
          */
-        public final synchronized void quadTo(float x1, float y1,
-                                              float x2, float y2)
-        {
+        public final synchronized void quadTo(float x1, float y1, float x2, float y2) {
             needRoom(true, 4);
             pointTypes[numTypes++] = SEG_QUADTO;
             floatCoords[numCoords++] = x1;
@@ -421,12 +425,10 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
-        public final synchronized void curveTo(double x1, double y1,
-                                               double x2, double y2,
-                                               double x3, double y3)
-        {
+        public final synchronized void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
             needRoom(true, 6);
             pointTypes[numTypes++] = SEG_CUBICTO;
             floatCoords[numCoords++] = (float) x1;
@@ -458,10 +460,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * @see Path2D#curveTo
          * @since 1.6
          */
-        public final synchronized void curveTo(float x1, float y1,
-                                               float x2, float y2,
-                                               float x3, float y3)
-        {
+        public final synchronized void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
             needRoom(true, 6);
             pointTypes[numTypes++] = SEG_CUBICTO;
             floatCoords[numCoords++] = x1;
@@ -481,166 +480,101 @@ public abstract class Path2D implements Shape, Cloneable {
             int ci = 2;
             for (int i = 1; i < numTypes; i++) {
                 switch (pointTypes[i]) {
-                case PathIterator.SEG_MOVETO:
-                    if (cury != movy) {
-                        crossings +=
-                            Curve.pointCrossingsForLine(px, py,
-                                                        curx, cury,
-                                                        movx, movy);
-                    }
-                    movx = curx = coords[ci++];
-                    movy = cury = coords[ci++];
-                    break;
-                case PathIterator.SEG_LINETO:
-                    crossings +=
-                        Curve.pointCrossingsForLine(px, py,
-                                                    curx, cury,
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++]);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    crossings +=
-                        Curve.pointCrossingsForQuad(px, py,
-                                                    curx, cury,
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++],
-                                                    0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-            case PathIterator.SEG_CUBICTO:
-                    crossings +=
-                        Curve.pointCrossingsForCubic(px, py,
-                                                     curx, cury,
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     endx = coords[ci++],
-                                                     endy = coords[ci++],
-                                                     0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    if (cury != movy) {
-                        crossings +=
-                            Curve.pointCrossingsForLine(px, py,
-                                                        curx, cury,
-                                                        movx, movy);
-                    }
-                    curx = movx;
-                    cury = movy;
-                    break;
+                    case PathIterator.SEG_MOVETO:
+                        if (cury != movy) {
+                            crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
+                        }
+                        movx = curx = coords[ci++];
+                        movy = cury = coords[ci++];
+                        break;
+                    case PathIterator.SEG_LINETO:
+                        crossings += Curve
+                            .pointCrossingsForLine(px, py, curx, cury, endx = coords[ci++], endy = coords[ci++]);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_QUADTO:
+                        crossings += Curve
+                            .pointCrossingsForQuad(px, py, curx, cury, coords[ci++], coords[ci++], endx = coords[ci++],
+                                endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CUBICTO:
+                        crossings += Curve
+                            .pointCrossingsForCubic(px, py, curx, cury, coords[ci++], coords[ci++], coords[ci++],
+                                coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CLOSE:
+                        if (cury != movy) {
+                            crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
+                        }
+                        curx = movx;
+                        cury = movy;
+                        break;
                 }
             }
             if (cury != movy) {
-                crossings +=
-                    Curve.pointCrossingsForLine(px, py,
-                                                curx, cury,
-                                                movx, movy);
+                crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
             }
             return crossings;
         }
 
-        int rectCrossings(double rxmin, double rymin,
-                          double rxmax, double rymax)
-        {
+        int rectCrossings(double rxmin, double rymin, double rxmax, double rymax) {
             float coords[] = floatCoords;
             double curx, cury, movx, movy, endx, endy;
             curx = movx = coords[0];
             cury = movy = coords[1];
             int crossings = 0;
             int ci = 2;
-            for (int i = 1;
-                 crossings != Curve.RECT_INTERSECTS && i < numTypes;
-                 i++)
-            {
+            for (int i = 1; crossings != Curve.RECT_INTERSECTS && i < numTypes; i++) {
                 switch (pointTypes[i]) {
-                case PathIterator.SEG_MOVETO:
-                    if (curx != movx || cury != movy) {
-                        crossings =
-                            Curve.rectCrossingsForLine(crossings,
-                                                       rxmin, rymin,
-                                                       rxmax, rymax,
-                                                       curx, cury,
-                                                       movx, movy);
-                    }
-                    // Count should always be a multiple of 2 here.
-                    // assert((crossings & 1) != 0);
-                    movx = curx = coords[ci++];
-                    movy = cury = coords[ci++];
-                    break;
-                case PathIterator.SEG_LINETO:
-                    crossings =
-                        Curve.rectCrossingsForLine(crossings,
-                                                   rxmin, rymin,
-                                                   rxmax, rymax,
-                                                   curx, cury,
-                                                   endx = coords[ci++],
-                                                   endy = coords[ci++]);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    crossings =
-                        Curve.rectCrossingsForQuad(crossings,
-                                                   rxmin, rymin,
-                                                   rxmax, rymax,
-                                                   curx, cury,
-                                                   coords[ci++],
-                                                   coords[ci++],
-                                                   endx = coords[ci++],
-                                                   endy = coords[ci++],
-                                                   0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CUBICTO:
-                    crossings =
-                        Curve.rectCrossingsForCubic(crossings,
-                                                    rxmin, rymin,
-                                                    rxmax, rymax,
-                                                    curx, cury,
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++],
-                                                    0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    if (curx != movx || cury != movy) {
-                        crossings =
-                            Curve.rectCrossingsForLine(crossings,
-                                                       rxmin, rymin,
-                                                       rxmax, rymax,
-                                                       curx, cury,
-                                                       movx, movy);
-                    }
-                    curx = movx;
-                    cury = movy;
-                    // Count should always be a multiple of 2 here.
-                    // assert((crossings & 1) != 0);
-                    break;
+                    case PathIterator.SEG_MOVETO:
+                        if (curx != movx || cury != movy) {
+                            crossings = Curve
+                                .rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
+                        }
+                        // Count should always be a multiple of 2 here.
+                        // assert((crossings & 1) != 0);
+                        movx = curx = coords[ci++];
+                        movy = cury = coords[ci++];
+                        break;
+                    case PathIterator.SEG_LINETO:
+                        crossings = Curve.rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury,
+                            endx = coords[ci++], endy = coords[ci++]);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_QUADTO:
+                        crossings = Curve
+                            .rectCrossingsForQuad(crossings, rxmin, rymin, rxmax, rymax, curx, cury, coords[ci++],
+                                coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CUBICTO:
+                        crossings = Curve
+                            .rectCrossingsForCubic(crossings, rxmin, rymin, rxmax, rymax, curx, cury, coords[ci++],
+                                coords[ci++], coords[ci++], coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CLOSE:
+                        if (curx != movx || cury != movy) {
+                            crossings = Curve
+                                .rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
+                        }
+                        curx = movx;
+                        cury = movy;
+                        // Count should always be a multiple of 2 here.
+                        // assert((crossings & 1) != 0);
+                        break;
                 }
             }
-            if (crossings != Curve.RECT_INTERSECTS &&
-                (curx != movx || cury != movy))
-            {
-                crossings =
-                    Curve.rectCrossingsForLine(crossings,
-                                               rxmin, rymin,
-                                               rxmax, rymax,
-                                               curx, cury,
-                                               movx, movy);
+            if (crossings != Curve.RECT_INTERSECTS && (curx != movx || cury != movy)) {
+                crossings = Curve.rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
             }
             // Count should always be a multiple of 2 here.
             // assert((crossings & 1) != 0);
@@ -649,40 +583,36 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final void append(PathIterator pi, boolean connect) {
             float coords[] = new float[6];
             while (!pi.isDone()) {
                 switch (pi.currentSegment(coords)) {
-                case SEG_MOVETO:
-                    if (!connect || numTypes < 1 || numCoords < 1) {
-                        moveTo(coords[0], coords[1]);
+                    case SEG_MOVETO:
+                        if (!connect || numTypes < 1 || numCoords < 1) {
+                            moveTo(coords[0], coords[1]);
+                            break;
+                        }
+                        if (pointTypes[numTypes - 1] != SEG_CLOSE && floatCoords[numCoords - 2] == coords[0] &&
+                            floatCoords[numCoords - 1] == coords[1]) {
+                            // Collapse out initial moveto/lineto
+                            break;
+                        }
+                        // NO BREAK;
+                    case SEG_LINETO:
+                        lineTo(coords[0], coords[1]);
                         break;
-                    }
-                    if (pointTypes[numTypes - 1] != SEG_CLOSE &&
-                        floatCoords[numCoords-2] == coords[0] &&
-                        floatCoords[numCoords-1] == coords[1])
-                    {
-                        // Collapse out initial moveto/lineto
+                    case SEG_QUADTO:
+                        quadTo(coords[0], coords[1], coords[2], coords[3]);
                         break;
-                    }
-                    // NO BREAK;
-                case SEG_LINETO:
-                    lineTo(coords[0], coords[1]);
-                    break;
-                case SEG_QUADTO:
-                    quadTo(coords[0], coords[1],
-                           coords[2], coords[3]);
-                    break;
-                case SEG_CUBICTO:
-                    curveTo(coords[0], coords[1],
-                            coords[2], coords[3],
-                            coords[4], coords[5]);
-                    break;
-                case SEG_CLOSE:
-                    closePath();
-                    break;
+                    case SEG_CUBICTO:
+                        curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                        break;
+                    case SEG_CLOSE:
+                        closePath();
+                        break;
                 }
                 pi.next();
                 connect = false;
@@ -691,6 +621,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final void transform(AffineTransform at) {
@@ -699,6 +630,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized Rectangle2D getBounds2D() {
@@ -710,10 +642,10 @@ public abstract class Path2D implements Shape, Cloneable {
                 while (i > 0) {
                     float y = floatCoords[--i];
                     float x = floatCoords[--i];
-                    if (x < x1) x1 = x;
-                    if (y < y1) y1 = y;
-                    if (x > x2) x2 = x;
-                    if (y > y2) y2 = y;
+                    if (x < x1) { x1 = x; }
+                    if (y < y1) { y1 = y; }
+                    if (x > x2) { x2 = x; }
+                    if (y > y2) { y2 = y; }
                 }
             } else {
                 x1 = y1 = x2 = y2 = 0.0f;
@@ -743,10 +675,10 @@ public abstract class Path2D implements Shape, Cloneable {
         /**
          * Creates a new object of the same class as this object.
          *
-         * @return     a clone of this instance.
-         * @exception  OutOfMemoryError    if there is not enough memory.
-         * @see        java.lang.Cloneable
-         * @since      1.6
+         * @return a clone of this instance.
+         * @throws OutOfMemoryError if there is not enough memory.
+         * @see java.lang.Cloneable
+         * @since 1.6
          */
         public final Object clone() {
             // Note: It would be nice to have this return Path2D
@@ -772,8 +704,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * serialization of the path segments stored in this
          * path.
          *
-         * @serialData
-         * <a name="Path2DSerialData"><!-- --></a>
+         * @serialData <a name="Path2DSerialData"><!-- --></a>
          * <ol>
          * <li>The default serializable fields.
          * There are no default serializable fields as of 1.6.
@@ -884,12 +815,9 @@ public abstract class Path2D implements Shape, Cloneable {
          * <td></td>
          * <td>There are no more path segments following.</td>
          * </table>
-         *
          * @since 1.6
          */
-        private void writeObject(java.io.ObjectOutputStream s)
-            throws java.io.IOException
-        {
+        private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
             super.writeObject(s, false);
         }
 
@@ -907,8 +835,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * @since 1.6
          */
         private void readObject(java.io.ObjectInputStream s)
-            throws java.lang.ClassNotFoundException, java.io.IOException
-        {
+            throws java.lang.ClassNotFoundException, java.io.IOException {
             super.readObject(s, false);
         }
 
@@ -924,8 +851,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    System.arraycopy(floatCoords, pointIdx,
-                                     coords, 0, numCoords);
+                    System.arraycopy(floatCoords, pointIdx, coords, 0, numCoords);
                 }
                 return type;
             }
@@ -956,8 +882,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    affine.transform(floatCoords, pointIdx,
-                                     coords, 0, numCoords / 2);
+                    affine.transform(floatCoords, pointIdx, coords, 0, numCoords / 2);
                 }
                 return type;
             }
@@ -966,8 +891,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    affine.transform(floatCoords, pointIdx,
-                                     coords, 0, numCoords / 2);
+                    affine.transform(floatCoords, pointIdx, coords, 0, numCoords / 2);
                 }
                 return type;
             }
@@ -1016,7 +940,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * are in the path, but the storage is expanded as needed to store
          * whatever path segments are added to this path.
          *
-         * @param rule the winding rule
+         * @param rule            the winding rule
          * @param initialCapacity the estimate for the number of path segments
          *                        in the path
          * @see #WIND_EVEN_ODD
@@ -1049,7 +973,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * taken from the specified {@code Shape} object and transformed
          * by the specified {@code AffineTransform} object.
          *
-         * @param s the specified {@code Shape} object
+         * @param s  the specified {@code Shape} object
          * @param at the specified {@code AffineTransform} object
          * @since 1.6
          */
@@ -1058,8 +982,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 Path2D p2d = (Path2D) s;
                 setWindingRule(p2d.windingRule);
                 this.numTypes = p2d.numTypes;
-                this.pointTypes = Arrays.copyOf(p2d.pointTypes,
-                                                p2d.pointTypes.length);
+                this.pointTypes = Arrays.copyOf(p2d.pointTypes, p2d.pointTypes.length);
                 this.numCoords = p2d.numCoords;
                 this.doubleCoords = p2d.cloneCoordsDouble(at);
             } else {
@@ -1086,8 +1009,7 @@ public abstract class Path2D implements Shape, Cloneable {
         double[] cloneCoordsDouble(AffineTransform at) {
             double ret[];
             if (at == null) {
-                ret = Arrays.copyOf(this.doubleCoords,
-                                    this.doubleCoords.length);
+                ret = Arrays.copyOf(this.doubleCoords, this.doubleCoords.length);
             } else {
                 ret = new double[doubleCoords.length];
                 at.transform(doubleCoords, 0, ret, 0, numCoords / 2);
@@ -1106,14 +1028,12 @@ public abstract class Path2D implements Shape, Cloneable {
         }
 
         Point2D getPoint(int coordindex) {
-            return new Point2D.Double(doubleCoords[coordindex],
-                                      doubleCoords[coordindex+1]);
+            return new Point2D.Double(doubleCoords[coordindex], doubleCoords[coordindex + 1]);
         }
 
         void needRoom(boolean needMove, int newCoords) {
             if (needMove && numTypes == 0) {
-                throw new IllegalPathStateException("missing initial moveto "+
-                                                    "in path definition");
+                throw new IllegalPathStateException("missing initial moveto " + "in path definition");
             }
             int size = pointTypes.length;
             if (numTypes >= size) {
@@ -1121,7 +1041,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 if (grow > EXPAND_MAX) {
                     grow = EXPAND_MAX;
                 }
-                pointTypes = Arrays.copyOf(pointTypes, size+grow);
+                pointTypes = Arrays.copyOf(pointTypes, size + grow);
             }
             size = doubleCoords.length;
             if (numCoords + newCoords > size) {
@@ -1132,18 +1052,19 @@ public abstract class Path2D implements Shape, Cloneable {
                 if (grow < newCoords) {
                     grow = newCoords;
                 }
-                doubleCoords = Arrays.copyOf(doubleCoords, size+grow);
+                doubleCoords = Arrays.copyOf(doubleCoords, size + grow);
             }
         }
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized void moveTo(double x, double y) {
             if (numTypes > 0 && pointTypes[numTypes - 1] == SEG_MOVETO) {
-                doubleCoords[numCoords-2] = x;
-                doubleCoords[numCoords-1] = y;
+                doubleCoords[numCoords - 2] = x;
+                doubleCoords[numCoords - 1] = y;
             } else {
                 needRoom(false, 2);
                 pointTypes[numTypes++] = SEG_MOVETO;
@@ -1154,6 +1075,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized void lineTo(double x, double y) {
@@ -1165,11 +1087,10 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
-        public final synchronized void quadTo(double x1, double y1,
-                                              double x2, double y2)
-        {
+        public final synchronized void quadTo(double x1, double y1, double x2, double y2) {
             needRoom(true, 4);
             pointTypes[numTypes++] = SEG_QUADTO;
             doubleCoords[numCoords++] = x1;
@@ -1180,12 +1101,10 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
-        public final synchronized void curveTo(double x1, double y1,
-                                               double x2, double y2,
-                                               double x3, double y3)
-        {
+        public final synchronized void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
             needRoom(true, 6);
             pointTypes[numTypes++] = SEG_CUBICTO;
             doubleCoords[numCoords++] = x1;
@@ -1205,167 +1124,103 @@ public abstract class Path2D implements Shape, Cloneable {
             int ci = 2;
             for (int i = 1; i < numTypes; i++) {
                 switch (pointTypes[i]) {
-                case PathIterator.SEG_MOVETO:
-                    if (cury != movy) {
-                        crossings +=
-                            Curve.pointCrossingsForLine(px, py,
-                                                        curx, cury,
-                                                        movx, movy);
-                    }
-                    movx = curx = coords[ci++];
-                    movy = cury = coords[ci++];
-                    break;
-                case PathIterator.SEG_LINETO:
-                    crossings +=
-                        Curve.pointCrossingsForLine(px, py,
-                                                    curx, cury,
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++]);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    crossings +=
-                        Curve.pointCrossingsForQuad(px, py,
-                                                    curx, cury,
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++],
-                                                    0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-            case PathIterator.SEG_CUBICTO:
-                    crossings +=
-                        Curve.pointCrossingsForCubic(px, py,
-                                                     curx, cury,
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     coords[ci++],
-                                                     endx = coords[ci++],
-                                                     endy = coords[ci++],
-                                                     0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    if (cury != movy) {
-                        crossings +=
-                            Curve.pointCrossingsForLine(px, py,
-                                                        curx, cury,
-                                                        movx, movy);
-                    }
-                    curx = movx;
-                    cury = movy;
-                    break;
+                    case PathIterator.SEG_MOVETO:
+                        if (cury != movy) {
+                            crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
+                        }
+                        movx = curx = coords[ci++];
+                        movy = cury = coords[ci++];
+                        break;
+                    case PathIterator.SEG_LINETO:
+                        crossings += Curve
+                            .pointCrossingsForLine(px, py, curx, cury, endx = coords[ci++], endy = coords[ci++]);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_QUADTO:
+                        crossings += Curve
+                            .pointCrossingsForQuad(px, py, curx, cury, coords[ci++], coords[ci++], endx = coords[ci++],
+                                endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CUBICTO:
+                        crossings += Curve
+                            .pointCrossingsForCubic(px, py, curx, cury, coords[ci++], coords[ci++], coords[ci++],
+                                coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CLOSE:
+                        if (cury != movy) {
+                            crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
+                        }
+                        curx = movx;
+                        cury = movy;
+                        break;
                 }
             }
             if (cury != movy) {
-                crossings +=
-                    Curve.pointCrossingsForLine(px, py,
-                                                curx, cury,
-                                                movx, movy);
+                crossings += Curve.pointCrossingsForLine(px, py, curx, cury, movx, movy);
             }
             return crossings;
         }
 
-        int rectCrossings(double rxmin, double rymin,
-                          double rxmax, double rymax)
-        {
+        int rectCrossings(double rxmin, double rymin, double rxmax, double rymax) {
             double coords[] = doubleCoords;
             double curx, cury, movx, movy, endx, endy;
             curx = movx = coords[0];
             cury = movy = coords[1];
             int crossings = 0;
             int ci = 2;
-            for (int i = 1;
-                 crossings != Curve.RECT_INTERSECTS && i < numTypes;
-                 i++)
-            {
+            for (int i = 1; crossings != Curve.RECT_INTERSECTS && i < numTypes; i++) {
                 switch (pointTypes[i]) {
-                case PathIterator.SEG_MOVETO:
-                    if (curx != movx || cury != movy) {
-                        crossings =
-                            Curve.rectCrossingsForLine(crossings,
-                                                       rxmin, rymin,
-                                                       rxmax, rymax,
-                                                       curx, cury,
-                                                       movx, movy);
-                    }
-                    // Count should always be a multiple of 2 here.
-                    // assert((crossings & 1) != 0);
-                    movx = curx = coords[ci++];
-                    movy = cury = coords[ci++];
-                    break;
-                case PathIterator.SEG_LINETO:
-                    endx = coords[ci++];
-                    endy = coords[ci++];
-                    crossings =
-                        Curve.rectCrossingsForLine(crossings,
-                                                   rxmin, rymin,
-                                                   rxmax, rymax,
-                                                   curx, cury,
-                                                   endx, endy);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    crossings =
-                        Curve.rectCrossingsForQuad(crossings,
-                                                   rxmin, rymin,
-                                                   rxmax, rymax,
-                                                   curx, cury,
-                                                   coords[ci++],
-                                                   coords[ci++],
-                                                   endx = coords[ci++],
-                                                   endy = coords[ci++],
-                                                   0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CUBICTO:
-                    crossings =
-                        Curve.rectCrossingsForCubic(crossings,
-                                                    rxmin, rymin,
-                                                    rxmax, rymax,
-                                                    curx, cury,
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    coords[ci++],
-                                                    endx = coords[ci++],
-                                                    endy = coords[ci++],
-                                                    0);
-                    curx = endx;
-                    cury = endy;
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    if (curx != movx || cury != movy) {
-                        crossings =
-                            Curve.rectCrossingsForLine(crossings,
-                                                       rxmin, rymin,
-                                                       rxmax, rymax,
-                                                       curx, cury,
-                                                       movx, movy);
-                    }
-                    curx = movx;
-                    cury = movy;
-                    // Count should always be a multiple of 2 here.
-                    // assert((crossings & 1) != 0);
-                    break;
+                    case PathIterator.SEG_MOVETO:
+                        if (curx != movx || cury != movy) {
+                            crossings = Curve
+                                .rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
+                        }
+                        // Count should always be a multiple of 2 here.
+                        // assert((crossings & 1) != 0);
+                        movx = curx = coords[ci++];
+                        movy = cury = coords[ci++];
+                        break;
+                    case PathIterator.SEG_LINETO:
+                        endx = coords[ci++];
+                        endy = coords[ci++];
+                        crossings = Curve
+                            .rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, endx, endy);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_QUADTO:
+                        crossings = Curve
+                            .rectCrossingsForQuad(crossings, rxmin, rymin, rxmax, rymax, curx, cury, coords[ci++],
+                                coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CUBICTO:
+                        crossings = Curve
+                            .rectCrossingsForCubic(crossings, rxmin, rymin, rxmax, rymax, curx, cury, coords[ci++],
+                                coords[ci++], coords[ci++], coords[ci++], endx = coords[ci++], endy = coords[ci++], 0);
+                        curx = endx;
+                        cury = endy;
+                        break;
+                    case PathIterator.SEG_CLOSE:
+                        if (curx != movx || cury != movy) {
+                            crossings = Curve
+                                .rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
+                        }
+                        curx = movx;
+                        cury = movy;
+                        // Count should always be a multiple of 2 here.
+                        // assert((crossings & 1) != 0);
+                        break;
                 }
             }
-            if (crossings != Curve.RECT_INTERSECTS &&
-                (curx != movx || cury != movy))
-            {
-                crossings =
-                    Curve.rectCrossingsForLine(crossings,
-                                               rxmin, rymin,
-                                               rxmax, rymax,
-                                               curx, cury,
-                                               movx, movy);
+            if (crossings != Curve.RECT_INTERSECTS && (curx != movx || cury != movy)) {
+                crossings = Curve.rectCrossingsForLine(crossings, rxmin, rymin, rxmax, rymax, curx, cury, movx, movy);
             }
             // Count should always be a multiple of 2 here.
             // assert((crossings & 1) != 0);
@@ -1374,40 +1229,36 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final void append(PathIterator pi, boolean connect) {
             double coords[] = new double[6];
             while (!pi.isDone()) {
                 switch (pi.currentSegment(coords)) {
-                case SEG_MOVETO:
-                    if (!connect || numTypes < 1 || numCoords < 1) {
-                        moveTo(coords[0], coords[1]);
+                    case SEG_MOVETO:
+                        if (!connect || numTypes < 1 || numCoords < 1) {
+                            moveTo(coords[0], coords[1]);
+                            break;
+                        }
+                        if (pointTypes[numTypes - 1] != SEG_CLOSE && doubleCoords[numCoords - 2] == coords[0] &&
+                            doubleCoords[numCoords - 1] == coords[1]) {
+                            // Collapse out initial moveto/lineto
+                            break;
+                        }
+                        // NO BREAK;
+                    case SEG_LINETO:
+                        lineTo(coords[0], coords[1]);
                         break;
-                    }
-                    if (pointTypes[numTypes - 1] != SEG_CLOSE &&
-                        doubleCoords[numCoords-2] == coords[0] &&
-                        doubleCoords[numCoords-1] == coords[1])
-                    {
-                        // Collapse out initial moveto/lineto
+                    case SEG_QUADTO:
+                        quadTo(coords[0], coords[1], coords[2], coords[3]);
                         break;
-                    }
-                    // NO BREAK;
-                case SEG_LINETO:
-                    lineTo(coords[0], coords[1]);
-                    break;
-                case SEG_QUADTO:
-                    quadTo(coords[0], coords[1],
-                           coords[2], coords[3]);
-                    break;
-                case SEG_CUBICTO:
-                    curveTo(coords[0], coords[1],
-                            coords[2], coords[3],
-                            coords[4], coords[5]);
-                    break;
-                case SEG_CLOSE:
-                    closePath();
-                    break;
+                    case SEG_CUBICTO:
+                        curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                        break;
+                    case SEG_CLOSE:
+                        closePath();
+                        break;
                 }
                 pi.next();
                 connect = false;
@@ -1416,6 +1267,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final void transform(AffineTransform at) {
@@ -1424,6 +1276,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         /**
          * {@inheritDoc}
+         *
          * @since 1.6
          */
         public final synchronized Rectangle2D getBounds2D() {
@@ -1435,10 +1288,10 @@ public abstract class Path2D implements Shape, Cloneable {
                 while (i > 0) {
                     double y = doubleCoords[--i];
                     double x = doubleCoords[--i];
-                    if (x < x1) x1 = x;
-                    if (y < y1) y1 = y;
-                    if (x > x2) x2 = x;
-                    if (y > y2) y2 = y;
+                    if (x < x1) { x1 = x; }
+                    if (y < y1) { y1 = y; }
+                    if (x > x2) { x2 = x; }
+                    if (y > y2) { y2 = y; }
                 }
             } else {
                 x1 = y1 = x2 = y2 = 0.0;
@@ -1457,8 +1310,8 @@ public abstract class Path2D implements Shape, Cloneable {
          *
          * @param at an {@code AffineTransform}
          * @return a new {@code PathIterator} that iterates along the boundary
-         *         of this {@code Shape} and provides access to the geometry
-         *         of this {@code Shape}'s outline
+         * of this {@code Shape} and provides access to the geometry
+         * of this {@code Shape}'s outline
          * @since 1.6
          */
         public final PathIterator getPathIterator(AffineTransform at) {
@@ -1472,10 +1325,10 @@ public abstract class Path2D implements Shape, Cloneable {
         /**
          * Creates a new object of the same class as this object.
          *
-         * @return     a clone of this instance.
-         * @exception  OutOfMemoryError    if there is not enough memory.
-         * @see        java.lang.Cloneable
-         * @since      1.6
+         * @return a clone of this instance.
+         * @throws OutOfMemoryError if there is not enough memory.
+         * @see java.lang.Cloneable
+         * @since 1.6
          */
         public final Object clone() {
             // Note: It would be nice to have this return Path2D
@@ -1497,8 +1350,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * serialization of the path segments stored in this
          * path.
          *
-         * @serialData
-         * <a name="Path2DSerialData"><!-- --></a>
+         * @serialData <a name="Path2DSerialData"><!-- --></a>
          * <ol>
          * <li>The default serializable fields.
          * There are no default serializable fields as of 1.6.
@@ -1609,12 +1461,9 @@ public abstract class Path2D implements Shape, Cloneable {
          * <td></td>
          * <td>There are no more path segments following.</td>
          * </table>
-         *
          * @since 1.6
          */
-        private void writeObject(java.io.ObjectOutputStream s)
-            throws java.io.IOException
-        {
+        private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
             super.writeObject(s, true);
         }
 
@@ -1632,8 +1481,7 @@ public abstract class Path2D implements Shape, Cloneable {
          * @since 1.6
          */
         private void readObject(java.io.ObjectInputStream s)
-            throws java.lang.ClassNotFoundException, java.io.IOException
-        {
+            throws java.lang.ClassNotFoundException, java.io.IOException {
             super.readObject(s, true);
         }
 
@@ -1660,8 +1508,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    System.arraycopy(doubleCoords, pointIdx,
-                                     coords, 0, numCoords);
+                    System.arraycopy(doubleCoords, pointIdx, coords, 0, numCoords);
                 }
                 return type;
             }
@@ -1681,8 +1528,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    affine.transform(doubleCoords, pointIdx,
-                                     coords, 0, numCoords / 2);
+                    affine.transform(doubleCoords, pointIdx, coords, 0, numCoords / 2);
                 }
                 return type;
             }
@@ -1691,8 +1537,7 @@ public abstract class Path2D implements Shape, Cloneable {
                 int type = path.pointTypes[typeIdx];
                 int numCoords = curvecoords[type];
                 if (numCoords > 0) {
-                    affine.transform(doubleCoords, pointIdx,
-                                     coords, 0, numCoords / 2);
+                    affine.transform(doubleCoords, pointIdx, coords, 0, numCoords / 2);
                 }
                 return type;
             }
@@ -1734,8 +1579,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * @param y2 the Y coordinate of the final end point
      * @since 1.6
      */
-    public abstract void quadTo(double x1, double y1,
-                                double x2, double y2);
+    public abstract void quadTo(double x1, double y1, double x2, double y2);
 
     /**
      * Adds a curved segment, defined by three new points, to the path by
@@ -1753,9 +1597,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * @param y3 the Y coordinate of the final end point
      * @since 1.6
      */
-    public abstract void curveTo(double x1, double y1,
-                                 double x2, double y2,
-                                 double x3, double y3);
+    public abstract void curveTo(double x1, double y1, double x2, double y2, double x3, double y3);
 
     /**
      * Closes the current subpath by drawing a straight line back to
@@ -1786,8 +1628,8 @@ public abstract class Path2D implements Shape, Cloneable {
      * and the appended geometry is governed by the winding
      * rule specified for this path.
      *
-     * @param s the {@code Shape} whose geometry is appended
-     *          to this path
+     * @param s       the {@code Shape} whose geometry is appended
+     *                to this path
      * @param connect a boolean to control whether or not to turn an initial
      *                {@code moveTo} segment into a {@code lineTo} segment
      *                to connect the new geometry to the existing path
@@ -1813,8 +1655,8 @@ public abstract class Path2D implements Shape, Cloneable {
      * and the appended geometry is governed by the winding
      * rule specified for this path.
      *
-     * @param pi the {@code PathIterator} whose geometry is appended to
-     *           this path
+     * @param pi      the {@code PathIterator} whose geometry is appended to
+     *                this path
      * @param connect a boolean to control whether or not to turn an initial
      *                {@code moveTo} segment into a {@code lineTo} segment
      *                to connect the new geometry to the existing path
@@ -1840,18 +1682,16 @@ public abstract class Path2D implements Shape, Cloneable {
      *
      * @param rule an integer representing the specified
      *             winding rule
-     * @exception IllegalArgumentException if
-     *          {@code rule} is not either
-     *          {@link #WIND_EVEN_ODD} or
-     *          {@link #WIND_NON_ZERO}
+     * @throws IllegalArgumentException if
+     *                                  {@code rule} is not either
+     *                                  {@link #WIND_EVEN_ODD} or
+     *                                  {@link #WIND_NON_ZERO}
      * @see #getWindingRule
      * @since 1.6
      */
     public final void setWindingRule(int rule) {
         if (rule != WIND_EVEN_ODD && rule != WIND_NON_ZERO) {
-            throw new IllegalArgumentException("winding rule must be "+
-                                               "WIND_EVEN_ODD or "+
-                                               "WIND_NON_ZERO");
+            throw new IllegalArgumentException("winding rule must be " + "WIND_EVEN_ODD or " + "WIND_NON_ZERO");
         }
         windingRule = rule;
     }
@@ -1861,7 +1701,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * as a {@link Point2D} object.
      *
      * @return a {@code Point2D} object containing the ending coordinates of
-     *         the path or {@code null} if there are no points in the path.
+     * the path or {@code null} if there are no points in the path.
      * @since 1.6
      */
     public final synchronized Point2D getCurrentPoint() {
@@ -1870,22 +1710,22 @@ public abstract class Path2D implements Shape, Cloneable {
             return null;
         }
         if (pointTypes[numTypes - 1] == SEG_CLOSE) {
-        loop:
+            loop:
             for (int i = numTypes - 2; i > 0; i--) {
                 switch (pointTypes[i]) {
-                case SEG_MOVETO:
-                    break loop;
-                case SEG_LINETO:
-                    index -= 2;
-                    break;
-                case SEG_QUADTO:
-                    index -= 4;
-                    break;
-                case SEG_CUBICTO:
-                    index -= 6;
-                    break;
-                case SEG_CLOSE:
-                    break;
+                    case SEG_MOVETO:
+                        break loop;
+                    case SEG_LINETO:
+                        index -= 2;
+                        break;
+                    case SEG_QUADTO:
+                        index -= 4;
+                        break;
+                    case SEG_CUBICTO:
+                        index -= 6;
+                        break;
+                    case SEG_CLOSE:
+                        break;
                 }
             }
         }
@@ -1932,7 +1772,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * @param at the {@code AffineTransform} used to transform a
      *           new {@code Shape}.
      * @return a new {@code Shape}, transformed with the specified
-     *         {@code AffineTransform}.
+     * {@code AffineTransform}.
      * @since 1.6
      */
     public final synchronized Shape createTransformedShape(AffineTransform at) {
@@ -1945,6 +1785,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
     /**
      * {@inheritDoc}
+     *
      * @since 1.6
      */
     public final Rectangle getBounds() {
@@ -1960,10 +1801,10 @@ public abstract class Path2D implements Shape, Cloneable {
      * {@link Shape#contains(double, double)} method.
      *
      * @param pi the specified {@code PathIterator}
-     * @param x the specified X coordinate
-     * @param y the specified Y coordinate
+     * @param x  the specified X coordinate
+     * @param y  the specified Y coordinate
      * @return {@code true} if the specified coordinates are inside the
-     *         specified {@code PathIterator}; {@code false} otherwise
+     * specified {@code PathIterator}; {@code false} otherwise
      * @since 1.6
      */
     public static boolean contains(PathIterator pi, double x, double y) {
@@ -1993,9 +1834,9 @@ public abstract class Path2D implements Shape, Cloneable {
      * {@link Shape#contains(Point2D)} method.
      *
      * @param pi the specified {@code PathIterator}
-     * @param p the specified {@code Point2D}
+     * @param p  the specified {@code Point2D}
      * @return {@code true} if the specified coordinates are inside the
-     *         specified {@code PathIterator}; {@code false} otherwise
+     * specified {@code PathIterator}; {@code false} otherwise
      * @since 1.6
      */
     public static boolean contains(PathIterator pi, Point2D p) {
@@ -2004,6 +1845,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
     /**
      * {@inheritDoc}
+     *
      * @since 1.6
      */
     public final boolean contains(double x, double y) {
@@ -2028,6 +1870,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
     /**
      * {@inheritDoc}
+     *
      * @since 1.6
      */
     public final boolean contains(Point2D p) {
@@ -2057,18 +1900,16 @@ public abstract class Path2D implements Shape, Cloneable {
      * rule and are thus beyond the scope of this implementation.
      *
      * @param pi the specified {@code PathIterator}
-     * @param x the specified X coordinate
-     * @param y the specified Y coordinate
-     * @param w the width of the specified rectangular area
-     * @param h the height of the specified rectangular area
+     * @param x  the specified X coordinate
+     * @param y  the specified Y coordinate
+     * @param w  the width of the specified rectangular area
+     * @param h  the height of the specified rectangular area
      * @return {@code true} if the specified {@code PathIterator} contains
-     *         the specified rectangluar area; {@code false} otherwise.
+     * the specified rectangluar area; {@code false} otherwise.
      * @since 1.6
      */
-    public static boolean contains(PathIterator pi,
-                                   double x, double y, double w, double h)
-    {
-        if (java.lang.Double.isNaN(x+w) || java.lang.Double.isNaN(y+h)) {
+    public static boolean contains(PathIterator pi, double x, double y, double w, double h) {
+        if (java.lang.Double.isNaN(x + w) || java.lang.Double.isNaN(y + h)) {
             /* [xy]+[wh] is NaN if any of those values are NaN,
              * or if adding the two together would produce NaN
              * by virtue of adding opposing Infinte values.
@@ -2083,9 +1924,8 @@ public abstract class Path2D implements Shape, Cloneable {
             return false;
         }
         int mask = (pi.getWindingRule() == WIND_NON_ZERO ? -1 : 2);
-        int crossings = Curve.rectCrossingsForPath(pi, x, y, x+w, y+h);
-        return (crossings != Curve.RECT_INTERSECTS &&
-                (crossings & mask) != 0);
+        int crossings = Curve.rectCrossingsForPath(pi, x, y, x + w, y + h);
+        return (crossings != Curve.RECT_INTERSECTS && (crossings & mask) != 0);
     }
 
     /**
@@ -2111,9 +1951,9 @@ public abstract class Path2D implements Shape, Cloneable {
      * rule and are thus beyond the scope of this implementation.
      *
      * @param pi the specified {@code PathIterator}
-     * @param r a specified {@code Rectangle2D}
+     * @param r  a specified {@code Rectangle2D}
      * @return {@code true} if the specified {@code PathIterator} contains
-     *         the specified {@code Rectangle2D}; {@code false} otherwise.
+     * the specified {@code Rectangle2D}; {@code false} otherwise.
      * @since 1.6
      */
     public static boolean contains(PathIterator pi, Rectangle2D r) {
@@ -2140,7 +1980,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * @since 1.6
      */
     public final boolean contains(double x, double y, double w, double h) {
-        if (java.lang.Double.isNaN(x+w) || java.lang.Double.isNaN(y+h)) {
+        if (java.lang.Double.isNaN(x + w) || java.lang.Double.isNaN(y + h)) {
             /* [xy]+[wh] is NaN if any of those values are NaN,
              * or if adding the two together would produce NaN
              * by virtue of adding opposing Infinte values.
@@ -2155,9 +1995,8 @@ public abstract class Path2D implements Shape, Cloneable {
             return false;
         }
         int mask = (windingRule == WIND_NON_ZERO ? -1 : 2);
-        int crossings = rectCrossings(x, y, x+w, y+h);
-        return (crossings != Curve.RECT_INTERSECTS &&
-                (crossings & mask) != 0);
+        int crossings = rectCrossings(x, y, x + w, y + h);
+        return (crossings != Curve.RECT_INTERSECTS && (crossings & mask) != 0);
     }
 
     /**
@@ -2206,19 +2045,17 @@ public abstract class Path2D implements Shape, Cloneable {
      * rule and are thus beyond the scope of this implementation.
      *
      * @param pi the specified {@code PathIterator}
-     * @param x the specified X coordinate
-     * @param y the specified Y coordinate
-     * @param w the width of the specified rectangular coordinates
-     * @param h the height of the specified rectangular coordinates
+     * @param x  the specified X coordinate
+     * @param y  the specified Y coordinate
+     * @param w  the width of the specified rectangular coordinates
+     * @param h  the height of the specified rectangular coordinates
      * @return {@code true} if the specified {@code PathIterator} and
-     *         the interior of the specified set of rectangular
-     *         coordinates intersect each other; {@code false} otherwise.
+     * the interior of the specified set of rectangular
+     * coordinates intersect each other; {@code false} otherwise.
      * @since 1.6
      */
-    public static boolean intersects(PathIterator pi,
-                                     double x, double y, double w, double h)
-    {
-        if (java.lang.Double.isNaN(x+w) || java.lang.Double.isNaN(y+h)) {
+    public static boolean intersects(PathIterator pi, double x, double y, double w, double h) {
+        if (java.lang.Double.isNaN(x + w) || java.lang.Double.isNaN(y + h)) {
             /* [xy]+[wh] is NaN if any of those values are NaN,
              * or if adding the two together would produce NaN
              * by virtue of adding opposing Infinte values.
@@ -2233,9 +2070,8 @@ public abstract class Path2D implements Shape, Cloneable {
             return false;
         }
         int mask = (pi.getWindingRule() == WIND_NON_ZERO ? -1 : 2);
-        int crossings = Curve.rectCrossingsForPath(pi, x, y, x+w, y+h);
-        return (crossings == Curve.RECT_INTERSECTS ||
-                (crossings & mask) != 0);
+        int crossings = Curve.rectCrossingsForPath(pi, x, y, x + w, y + h);
+        return (crossings == Curve.RECT_INTERSECTS || (crossings & mask) != 0);
     }
 
     /**
@@ -2260,10 +2096,10 @@ public abstract class Path2D implements Shape, Cloneable {
      * rule and are thus beyond the scope of this implementation.
      *
      * @param pi the specified {@code PathIterator}
-     * @param r the specified {@code Rectangle2D}
+     * @param r  the specified {@code Rectangle2D}
      * @return {@code true} if the specified {@code PathIterator} and
-     *         the interior of the specified {@code Rectangle2D}
-     *         intersect each other; {@code false} otherwise.
+     * the interior of the specified {@code Rectangle2D}
+     * intersect each other; {@code false} otherwise.
      * @since 1.6
      */
     public static boolean intersects(PathIterator pi, Rectangle2D r) {
@@ -2289,7 +2125,7 @@ public abstract class Path2D implements Shape, Cloneable {
      * @since 1.6
      */
     public final boolean intersects(double x, double y, double w, double h) {
-        if (java.lang.Double.isNaN(x+w) || java.lang.Double.isNaN(y+h)) {
+        if (java.lang.Double.isNaN(x + w) || java.lang.Double.isNaN(y + h)) {
             /* [xy]+[wh] is NaN if any of those values are NaN,
              * or if adding the two together would produce NaN
              * by virtue of adding opposing Infinte values.
@@ -2304,9 +2140,8 @@ public abstract class Path2D implements Shape, Cloneable {
             return false;
         }
         int mask = (windingRule == WIND_NON_ZERO ? -1 : 2);
-        int crossings = rectCrossings(x, y, x+w, y+h);
-        return (crossings == Curve.RECT_INTERSECTS ||
-                (crossings & mask) != 0);
+        int crossings = rectCrossings(x, y, x + w, y + h);
+        return (crossings == Curve.RECT_INTERSECTS || (crossings & mask) != 0);
     }
 
     /**
@@ -2342,26 +2177,24 @@ public abstract class Path2D implements Shape, Cloneable {
      *
      * @since 1.6
      */
-    public final PathIterator getPathIterator(AffineTransform at,
-                                              double flatness)
-    {
+    public final PathIterator getPathIterator(AffineTransform at, double flatness) {
         return new FlatteningPathIterator(getPathIterator(at), flatness);
     }
 
     /**
      * Creates a new object of the same class as this object.
      *
-     * @return     a clone of this instance.
-     * @exception  OutOfMemoryError            if there is not enough memory.
-     * @see        java.lang.Cloneable
-     * @since      1.6
+     * @return a clone of this instance.
+     * @throws OutOfMemoryError if there is not enough memory.
+     * @see java.lang.Cloneable
+     * @since 1.6
      */
     public abstract Object clone();
-        // Note: It would be nice to have this return Path2D
-        // but one of our subclasses (GeneralPath) needs to
-        // offer "public Object clone()" for backwards
-        // compatibility so we cannot restrict it further.
-        // REMIND: Can we do both somehow?
+    // Note: It would be nice to have this return Path2D
+    // but one of our subclasses (GeneralPath) needs to
+    // offer "public Object clone()" for backwards
+    // compatibility so we cannot restrict it further.
+    // REMIND: Can we do both somehow?
 
     /*
      * Support fields and methods for serializing the subclasses.
@@ -2369,22 +2202,20 @@ public abstract class Path2D implements Shape, Cloneable {
     private static final byte SERIAL_STORAGE_FLT_ARRAY = 0x30;
     private static final byte SERIAL_STORAGE_DBL_ARRAY = 0x31;
 
-    private static final byte SERIAL_SEG_FLT_MOVETO    = 0x40;
-    private static final byte SERIAL_SEG_FLT_LINETO    = 0x41;
-    private static final byte SERIAL_SEG_FLT_QUADTO    = 0x42;
-    private static final byte SERIAL_SEG_FLT_CUBICTO   = 0x43;
+    private static final byte SERIAL_SEG_FLT_MOVETO = 0x40;
+    private static final byte SERIAL_SEG_FLT_LINETO = 0x41;
+    private static final byte SERIAL_SEG_FLT_QUADTO = 0x42;
+    private static final byte SERIAL_SEG_FLT_CUBICTO = 0x43;
 
-    private static final byte SERIAL_SEG_DBL_MOVETO    = 0x50;
-    private static final byte SERIAL_SEG_DBL_LINETO    = 0x51;
-    private static final byte SERIAL_SEG_DBL_QUADTO    = 0x52;
-    private static final byte SERIAL_SEG_DBL_CUBICTO   = 0x53;
+    private static final byte SERIAL_SEG_DBL_MOVETO = 0x50;
+    private static final byte SERIAL_SEG_DBL_LINETO = 0x51;
+    private static final byte SERIAL_SEG_DBL_QUADTO = 0x52;
+    private static final byte SERIAL_SEG_DBL_CUBICTO = 0x53;
 
-    private static final byte SERIAL_SEG_CLOSE         = 0x60;
-    private static final byte SERIAL_PATH_END          = 0x61;
+    private static final byte SERIAL_SEG_CLOSE = 0x60;
+    private static final byte SERIAL_PATH_END = 0x61;
 
-    final void writeObject(java.io.ObjectOutputStream s, boolean isdbl)
-        throws java.io.IOException
-    {
+    final void writeObject(java.io.ObjectOutputStream s, boolean isdbl) throws java.io.IOException {
         s.defaultWriteObject();
 
         float fCoords[];
@@ -2400,9 +2231,7 @@ public abstract class Path2D implements Shape, Cloneable {
 
         int numTypes = this.numTypes;
 
-        s.writeByte(isdbl
-                    ? SERIAL_STORAGE_DBL_ARRAY
-                    : SERIAL_STORAGE_FLT_ARRAY);
+        s.writeByte(isdbl ? SERIAL_STORAGE_DBL_ARRAY : SERIAL_STORAGE_FLT_ARRAY);
         s.writeInt(numTypes);
         s.writeInt(numCoords);
         s.writeByte((byte) windingRule);
@@ -2412,38 +2241,30 @@ public abstract class Path2D implements Shape, Cloneable {
             int npoints;
             byte serialtype;
             switch (pointTypes[i]) {
-            case SEG_MOVETO:
-                npoints = 1;
-                serialtype = (isdbl
-                              ? SERIAL_SEG_DBL_MOVETO
-                              : SERIAL_SEG_FLT_MOVETO);
-                break;
-            case SEG_LINETO:
-                npoints = 1;
-                serialtype = (isdbl
-                              ? SERIAL_SEG_DBL_LINETO
-                              : SERIAL_SEG_FLT_LINETO);
-                break;
-            case SEG_QUADTO:
-                npoints = 2;
-                serialtype = (isdbl
-                              ? SERIAL_SEG_DBL_QUADTO
-                              : SERIAL_SEG_FLT_QUADTO);
-                break;
-            case SEG_CUBICTO:
-                npoints = 3;
-                serialtype = (isdbl
-                              ? SERIAL_SEG_DBL_CUBICTO
-                              : SERIAL_SEG_FLT_CUBICTO);
-                break;
-            case SEG_CLOSE:
-                npoints = 0;
-                serialtype = SERIAL_SEG_CLOSE;
-                break;
+                case SEG_MOVETO:
+                    npoints = 1;
+                    serialtype = (isdbl ? SERIAL_SEG_DBL_MOVETO : SERIAL_SEG_FLT_MOVETO);
+                    break;
+                case SEG_LINETO:
+                    npoints = 1;
+                    serialtype = (isdbl ? SERIAL_SEG_DBL_LINETO : SERIAL_SEG_FLT_LINETO);
+                    break;
+                case SEG_QUADTO:
+                    npoints = 2;
+                    serialtype = (isdbl ? SERIAL_SEG_DBL_QUADTO : SERIAL_SEG_FLT_QUADTO);
+                    break;
+                case SEG_CUBICTO:
+                    npoints = 3;
+                    serialtype = (isdbl ? SERIAL_SEG_DBL_CUBICTO : SERIAL_SEG_FLT_CUBICTO);
+                    break;
+                case SEG_CLOSE:
+                    npoints = 0;
+                    serialtype = SERIAL_SEG_CLOSE;
+                    break;
 
-            default:
-                // Should never happen
-                throw new InternalError("unrecognized path type");
+                default:
+                    // Should never happen
+                    throw new InternalError("unrecognized path type");
             }
             s.writeByte(serialtype);
             while (--npoints >= 0) {
@@ -2460,8 +2281,7 @@ public abstract class Path2D implements Shape, Cloneable {
     }
 
     final void readObject(java.io.ObjectInputStream s, boolean storedbl)
-        throws java.lang.ClassNotFoundException, java.io.IOException
-    {
+        throws java.lang.ClassNotFoundException, java.io.IOException {
         s.defaultReadObject();
 
         // The subclass calls this method with the storage type that
@@ -2486,7 +2306,7 @@ public abstract class Path2D implements Shape, Cloneable {
             ((Path2D.Float) this).floatCoords = new float[nC];
         }
 
-    PATHDONE:
+        PATHDONE:
         for (int i = 0; nT < 0 || i < nT; i++) {
             boolean isdbl;
             int npoints;
@@ -2494,62 +2314,62 @@ public abstract class Path2D implements Shape, Cloneable {
 
             byte serialtype = s.readByte();
             switch (serialtype) {
-            case SERIAL_SEG_FLT_MOVETO:
-                isdbl = false;
-                npoints = 1;
-                segtype = SEG_MOVETO;
-                break;
-            case SERIAL_SEG_FLT_LINETO:
-                isdbl = false;
-                npoints = 1;
-                segtype = SEG_LINETO;
-                break;
-            case SERIAL_SEG_FLT_QUADTO:
-                isdbl = false;
-                npoints = 2;
-                segtype = SEG_QUADTO;
-                break;
-            case SERIAL_SEG_FLT_CUBICTO:
-                isdbl = false;
-                npoints = 3;
-                segtype = SEG_CUBICTO;
-                break;
+                case SERIAL_SEG_FLT_MOVETO:
+                    isdbl = false;
+                    npoints = 1;
+                    segtype = SEG_MOVETO;
+                    break;
+                case SERIAL_SEG_FLT_LINETO:
+                    isdbl = false;
+                    npoints = 1;
+                    segtype = SEG_LINETO;
+                    break;
+                case SERIAL_SEG_FLT_QUADTO:
+                    isdbl = false;
+                    npoints = 2;
+                    segtype = SEG_QUADTO;
+                    break;
+                case SERIAL_SEG_FLT_CUBICTO:
+                    isdbl = false;
+                    npoints = 3;
+                    segtype = SEG_CUBICTO;
+                    break;
 
-            case SERIAL_SEG_DBL_MOVETO:
-                isdbl = true;
-                npoints = 1;
-                segtype = SEG_MOVETO;
-                break;
-            case SERIAL_SEG_DBL_LINETO:
-                isdbl = true;
-                npoints = 1;
-                segtype = SEG_LINETO;
-                break;
-            case SERIAL_SEG_DBL_QUADTO:
-                isdbl = true;
-                npoints = 2;
-                segtype = SEG_QUADTO;
-                break;
-            case SERIAL_SEG_DBL_CUBICTO:
-                isdbl = true;
-                npoints = 3;
-                segtype = SEG_CUBICTO;
-                break;
+                case SERIAL_SEG_DBL_MOVETO:
+                    isdbl = true;
+                    npoints = 1;
+                    segtype = SEG_MOVETO;
+                    break;
+                case SERIAL_SEG_DBL_LINETO:
+                    isdbl = true;
+                    npoints = 1;
+                    segtype = SEG_LINETO;
+                    break;
+                case SERIAL_SEG_DBL_QUADTO:
+                    isdbl = true;
+                    npoints = 2;
+                    segtype = SEG_QUADTO;
+                    break;
+                case SERIAL_SEG_DBL_CUBICTO:
+                    isdbl = true;
+                    npoints = 3;
+                    segtype = SEG_CUBICTO;
+                    break;
 
-            case SERIAL_SEG_CLOSE:
-                isdbl = false;
-                npoints = 0;
-                segtype = SEG_CLOSE;
-                break;
+                case SERIAL_SEG_CLOSE:
+                    isdbl = false;
+                    npoints = 0;
+                    segtype = SEG_CLOSE;
+                    break;
 
-            case SERIAL_PATH_END:
-                if (nT < 0) {
-                    break PATHDONE;
-                }
-                throw new StreamCorruptedException("unexpected PATH_END");
+                case SERIAL_PATH_END:
+                    if (nT < 0) {
+                        break PATHDONE;
+                    }
+                    throw new StreamCorruptedException("unexpected PATH_END");
 
-            default:
-                throw new StreamCorruptedException("unrecognized path type");
+                default:
+                    throw new StreamCorruptedException("unrecognized path type");
             }
             needRoom(segtype != SEG_MOVETO, npoints * 2);
             if (isdbl) {
@@ -2573,7 +2393,7 @@ public abstract class Path2D implements Shape, Cloneable {
         int pointIdx;
         Path2D path;
 
-        static final int curvecoords[] = {2, 2, 4, 6, 0};
+        static final int curvecoords[] = { 2, 2, 4, 6, 0 };
 
         Iterator(Path2D path) {
             this.path = path;

@@ -31,7 +31,7 @@ import java.util.*;
  * A utility class to iterate over the path segments of an arc
  * through the PathIterator interface.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  */
 class ArcIterator implements PathIterator {
     double x, y, w, h, angStRad, increment, cv;
@@ -66,15 +66,15 @@ class ArcIterator implements PathIterator {
             }
         }
         switch (a.getArcType()) {
-        case Arc2D.OPEN:
-            lineSegs = 0;
-            break;
-        case Arc2D.CHORD:
-            lineSegs = 1;
-            break;
-        case Arc2D.PIE:
-            lineSegs = 2;
-            break;
+            case Arc2D.OPEN:
+                lineSegs = 0;
+                break;
+            case Arc2D.CHORD:
+                lineSegs = 1;
+                break;
+            case Arc2D.PIE:
+                lineSegs = 2;
+                break;
         }
         if (w < 0 || h < 0) {
             arcSegs = lineSegs = -1;
@@ -84,6 +84,7 @@ class ArcIterator implements PathIterator {
     /**
      * Return the winding rule for determining the insideness of the
      * path.
+     *
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
      */
@@ -93,6 +94,7 @@ class ArcIterator implements PathIterator {
 
     /**
      * Tests if there are more points to read.
+     *
      * @return true if there are more points to read
      */
     public boolean isDone() {
@@ -202,6 +204,7 @@ class ArcIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO
@@ -262,6 +265,7 @@ class ArcIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO

@@ -126,11 +126,11 @@ import java.awt.Image;
  * w.dispose();
  * </code></pre>
  *
+ * @author Michael Martak
  * @see java.awt.Window
  * @see java.awt.Canvas
  * @see java.awt.GraphicsConfiguration
  * @see VolatileImage
- * @author Michael Martak
  * @since 1.4
  */
 public abstract class BufferStrategy {
@@ -175,7 +175,7 @@ public abstract class BufferStrategy {
      * For a discussion on lost buffers, see <code>VolatileImage</code>.
      *
      * @return Whether or not the drawing buffer was restored since the last
-     *         call to <code>getDrawGraphics</code>.
+     * call to <code>getDrawGraphics</code>.
      * @see java.awt.image.VolatileImage
      */
     public abstract boolean contentsRestored();

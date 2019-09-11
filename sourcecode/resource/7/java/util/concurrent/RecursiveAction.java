@@ -45,7 +45,7 @@ package java.util.concurrent;
  * <p><b>Sample Usages.</b> Here is a sketch of a ForkJoin sort that
  * sorts a given {@code long[]} array:
  *
- *  <pre> {@code
+ * <pre> {@code
  * class SortTask extends RecursiveAction {
  *   final long[] array; final int lo; final int hi;
  *   SortTask(long[] array, int lo, int hi) {
@@ -62,12 +62,12 @@ package java.util.concurrent;
  *     }
  *   }
  * }}</pre>
- *
+ * <p>
  * You could then sort {@code anArray} by creating {@code new
  * SortTask(anArray, 0, anArray.length-1) } and invoking it in a
  * ForkJoinPool.  As a more concrete simple example, the following
  * task increments each element of an array:
- *  <pre> {@code
+ * <pre> {@code
  * class IncrementTask extends RecursiveAction {
  *   final long[] array; final int lo; final int hi;
  *   IncrementTask(long[] array, int lo, int hi) {
@@ -98,7 +98,7 @@ package java.util.concurrent;
  * performing leaf actions on unstolen tasks rather than further
  * subdividing.
  *
- *  <pre> {@code
+ * <pre> {@code
  * double sumOfSquares(ForkJoinPool pool, double[] array) {
  *   int n = array.length;
  *   Applyer a = new Applyer(array, 0, n, null);
@@ -147,8 +147,8 @@ package java.util.concurrent;
  *   }
  * }}</pre>
  *
- * @since 1.7
  * @author Doug Lea
+ * @since 1.7
  */
 public abstract class RecursiveAction extends ForkJoinTask<Void> {
     private static final long serialVersionUID = 5232453952276485070L;

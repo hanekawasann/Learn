@@ -95,9 +95,7 @@ import java.io.IOException;
  * @since 1.7
  */
 
-public abstract class FileSystem
-    implements Closeable
-{
+public abstract class FileSystem implements Closeable {
     /**
      * Initializes a new instance of this class.
      */
@@ -107,7 +105,7 @@ public abstract class FileSystem
     /**
      * Returns the provider that created this file system.
      *
-     * @return  The provider that created this file system.
+     * @return The provider that created this file system.
      */
     public abstract FileSystemProvider provider();
 
@@ -125,10 +123,8 @@ public abstract class FileSystem
      * with this file system. The {@link FileSystems#getDefault default} file
      * system cannot be closed.
      *
-     * @throws  IOException
-     *          If an I/O error occurs
-     * @throws  UnsupportedOperationException
-     *          Thrown in the case of the default file system
+     * @throws IOException                   If an I/O error occurs
+     * @throws UnsupportedOperationException Thrown in the case of the default file system
      */
     @Override
     public abstract void close() throws IOException;
@@ -138,7 +134,7 @@ public abstract class FileSystem
      *
      * <p> File systems created by the default provider are always open.
      *
-     * @return  {@code true} if, and only if, this file system is open
+     * @return {@code true} if, and only if, this file system is open
      */
     public abstract boolean isOpen();
 
@@ -146,8 +142,8 @@ public abstract class FileSystem
      * Tells whether or not this file system allows only read-only access to
      * its file stores.
      *
-     * @return  {@code true} if, and only if, this file system provides
-     *          read-only access
+     * @return {@code true} if, and only if, this file system provides
+     * read-only access
      */
     public abstract boolean isReadOnly();
 
@@ -163,7 +159,7 @@ public abstract class FileSystem
      * <p> In the case of the default provider, this method returns the same
      * separator as {@link java.io.File#separator}.
      *
-     * @return  The name separator
+     * @return The name separator
      */
     public abstract String getSeparator();
 
@@ -187,7 +183,7 @@ public abstract class FileSystem
      * to each root directory. It is system dependent if the permission checks
      * are done when the iterator is obtained or during iteration.
      *
-     * @return  An object to iterate over the root directories
+     * @return An object to iterate over the root directories
      */
     public abstract Iterable<Path> getRootDirectories();
 
@@ -221,7 +217,7 @@ public abstract class FileSystem
      *     }
      * </pre>
      *
-     * @return  An object to iterate over the backing file stores
+     * @return An object to iterate over the backing file stores
      */
     public abstract Iterable<FileStore> getFileStores();
 
@@ -237,8 +233,8 @@ public abstract class FileSystem
      * underlying {@link FileStore} supports the file attributes identified by a
      * file attribute view.
      *
-     * @return  An unmodifiable set of the names of the supported file attribute
-     *          views
+     * @return An unmodifiable set of the names of the supported file attribute
+     * views
      */
     public abstract Set<String> supportedFileAttributeViews();
 
@@ -282,15 +278,10 @@ public abstract class FileSystem
      * index} value indicating the first position in the {@code path} parameter
      * that caused the path string to be rejected.
      *
-     * @param   first
-     *          the path string or initial part of the path string
-     * @param   more
-     *          additional strings to be joined to form the path string
-     *
-     * @return  the resulting {@code Path}
-     *
-     * @throws  InvalidPathException
-     *          If the path string cannot be converted
+     * @param first the path string or initial part of the path string
+     * @param more  additional strings to be joined to form the path string
+     * @return the resulting {@code Path}
+     * @throws InvalidPathException If the path string cannot be converted
      */
     public abstract Path getPath(String first, String... more);
 
@@ -298,7 +289,7 @@ public abstract class FileSystem
      * Returns a {@code PathMatcher} that performs match operations on the
      * {@code String} representation of {@link Path} objects by interpreting a
      * given pattern.
-     *
+     * <p>
      * The {@code syntaxAndPattern} parameter identifies the syntax and the
      * pattern and takes the form:
      * <blockquote><pre>
@@ -415,19 +406,12 @@ public abstract class FileSystem
      * whether the matching is case sensitive, are implementation-dependent
      * and therefore not specified.
      *
-     * @param   syntaxAndPattern
-     *          The syntax and pattern
-     *
-     * @return  A path matcher that may be used to match paths against the pattern
-     *
-     * @throws  IllegalArgumentException
-     *          If the parameter does not take the form: {@code syntax:pattern}
-     * @throws  java.util.regex.PatternSyntaxException
-     *          If the pattern is invalid
-     * @throws  UnsupportedOperationException
-     *          If the pattern syntax is not known to the implementation
-     *
-     * @see Files#newDirectoryStream(Path,String)
+     * @param syntaxAndPattern The syntax and pattern
+     * @return A path matcher that may be used to match paths against the pattern
+     * @throws IllegalArgumentException               If the parameter does not take the form: {@code syntax:pattern}
+     * @throws java.util.regex.PatternSyntaxException If the pattern is invalid
+     * @throws UnsupportedOperationException          If the pattern syntax is not known to the implementation
+     * @see Files#newDirectoryStream(Path, String)
      */
     public abstract PathMatcher getPathMatcher(String syntaxAndPattern);
 
@@ -443,10 +427,8 @@ public abstract class FileSystem
      *     Files.setOwner(path, lookupService.lookupPrincipalByName("joe"));
      * </pre>
      *
-     * @throws  UnsupportedOperationException
-     *          If this {@code FileSystem} does not does have a lookup service
-     *
-     * @return  The {@code UserPrincipalLookupService} for this file system
+     * @return The {@code UserPrincipalLookupService} for this file system
+     * @throws UnsupportedOperationException If this {@code FileSystem} does not does have a lookup service
      */
     public abstract UserPrincipalLookupService getUserPrincipalLookupService();
 
@@ -456,14 +438,11 @@ public abstract class FileSystem
      * <p> This method constructs a new watch service that may be used to watch
      * registered objects for changes and events.
      *
-     * @return  a new watch service
-     *
-     * @throws  UnsupportedOperationException
-     *          If this {@code FileSystem} does not support watching file system
-     *          objects for changes and events. This exception is not thrown
-     *          by {@code FileSystems} created by the default provider.
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @return a new watch service
+     * @throws UnsupportedOperationException If this {@code FileSystem} does not support watching file system
+     *                                       objects for changes and events. This exception is not thrown
+     *                                       by {@code FileSystems} created by the default provider.
+     * @throws IOException                   If an I/O error occurs
      */
     public abstract WatchService newWatchService() throws IOException;
 }

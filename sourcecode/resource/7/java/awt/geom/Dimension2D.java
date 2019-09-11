@@ -34,7 +34,7 @@ package java.awt.geom;
  * The actual storage representation of the sizes is left to
  * the subclass.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  * @since 1.2
  */
 public abstract class Dimension2D implements Cloneable {
@@ -55,6 +55,7 @@ public abstract class Dimension2D implements Cloneable {
     /**
      * Returns the width of this <code>Dimension</code> in double
      * precision.
+     *
      * @return the width of this <code>Dimension</code>.
      * @since 1.2
      */
@@ -63,6 +64,7 @@ public abstract class Dimension2D implements Cloneable {
     /**
      * Returns the height of this <code>Dimension</code> in double
      * precision.
+     *
      * @return the height of this <code>Dimension</code>.
      * @since 1.2
      */
@@ -74,10 +76,11 @@ public abstract class Dimension2D implements Cloneable {
      * This method is included for completeness, to parallel the
      * {@link java.awt.Component#getSize getSize} method of
      * {@link java.awt.Component}.
+     *
      * @param width  the new width for the <code>Dimension</code>
-     * object
-     * @param height  the new height for the <code>Dimension</code>
-     * object
+     *               object
+     * @param height the new height for the <code>Dimension</code>
+     *               object
      * @since 1.2
      */
     public abstract void setSize(double width, double height);
@@ -87,8 +90,9 @@ public abstract class Dimension2D implements Cloneable {
      * match the specified size.
      * This method is included for completeness, to parallel the
      * <code>getSize</code> method of <code>Component</code>.
-     * @param d  the new size for the <code>Dimension2D</code>
-     * object
+     *
+     * @param d the new size for the <code>Dimension2D</code>
+     *          object
      * @since 1.2
      */
     public void setSize(Dimension2D d) {
@@ -98,10 +102,10 @@ public abstract class Dimension2D implements Cloneable {
     /**
      * Creates a new object of the same class as this object.
      *
-     * @return     a clone of this instance.
-     * @exception  OutOfMemoryError            if there is not enough memory.
-     * @see        java.lang.Cloneable
-     * @since      1.2
+     * @return a clone of this instance.
+     * @throws OutOfMemoryError if there is not enough memory.
+     * @see java.lang.Cloneable
+     * @since 1.2
      */
     public Object clone() {
         try {

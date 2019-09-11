@@ -47,13 +47,12 @@ import java.util.Collections;
  * provide the necessary locking. Multiple threads each manipulating
  * separate objects need not synchronize.
  *
- * @since       1.4
- * @author      Steve Hanna
- * @see         java.util.Collection
- * @see         CertStore
+ * @author Steve Hanna
+ * @see java.util.Collection
+ * @see CertStore
+ * @since 1.4
  */
-public class CollectionCertStoreParameters
-    implements CertStoreParameters {
+public class CollectionCertStoreParameters implements CertStoreParameters {
 
     private Collection<?> coll;
 
@@ -79,13 +78,12 @@ public class CollectionCertStoreParameters
      * <code>Collection</code> must have fail-fast iterators.
      *
      * @param collection a <code>Collection</code> of
-     *        <code>Certificate</code>s and <code>CRL</code>s
-     * @exception NullPointerException if <code>collection</code> is
-     * <code>null</code>
+     *                   <code>Certificate</code>s and <code>CRL</code>s
+     * @throws NullPointerException if <code>collection</code> is
+     *                              <code>null</code>
      */
     public CollectionCertStoreParameters(Collection<?> collection) {
-        if (collection == null)
-            throw new NullPointerException();
+        if (collection == null) { throw new NullPointerException(); }
         coll = collection;
     }
 

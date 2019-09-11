@@ -34,6 +34,7 @@
  */
 
 package java.util.concurrent.atomic;
+
 import sun.misc.Unsafe;
 
 /**
@@ -46,8 +47,8 @@ import sun.misc.Unsafe;
  * {@code Number} to allow uniform access by tools and utilities that
  * deal with numerically-based classes.
  *
- * @since 1.5
  * @author Doug Lea
+ * @since 1.5
  */
 public class AtomicLong extends Number implements java.io.Serializable {
     private static final long serialVersionUID = 1927816293512124184L;
@@ -71,10 +72,9 @@ public class AtomicLong extends Number implements java.io.Serializable {
     private static native boolean VMSupportsCS8();
 
     static {
-      try {
-        valueOffset = unsafe.objectFieldOffset
-            (AtomicLong.class.getDeclaredField("value"));
-      } catch (Exception ex) { throw new Error(ex); }
+        try {
+            valueOffset = unsafe.objectFieldOffset(AtomicLong.class.getDeclaredField("value"));
+        } catch (Exception ex) { throw new Error(ex); }
     }
 
     private volatile long value;
@@ -131,8 +131,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
     public final long getAndSet(long newValue) {
         while (true) {
             long current = get();
-            if (compareAndSet(current, newValue))
-                return current;
+            if (compareAndSet(current, newValue)) { return current; }
         }
     }
 
@@ -174,8 +173,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
         while (true) {
             long current = get();
             long next = current + 1;
-            if (compareAndSet(current, next))
-                return current;
+            if (compareAndSet(current, next)) { return current; }
         }
     }
 
@@ -188,8 +186,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
         while (true) {
             long current = get();
             long next = current - 1;
-            if (compareAndSet(current, next))
-                return current;
+            if (compareAndSet(current, next)) { return current; }
         }
     }
 
@@ -203,8 +200,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
         while (true) {
             long current = get();
             long next = current + delta;
-            if (compareAndSet(current, next))
-                return current;
+            if (compareAndSet(current, next)) { return current; }
         }
     }
 
@@ -214,11 +210,10 @@ public class AtomicLong extends Number implements java.io.Serializable {
      * @return the updated value
      */
     public final long incrementAndGet() {
-        for (;;) {
+        for (; ; ) {
             long current = get();
             long next = current + 1;
-            if (compareAndSet(current, next))
-                return next;
+            if (compareAndSet(current, next)) { return next; }
         }
     }
 
@@ -228,11 +223,10 @@ public class AtomicLong extends Number implements java.io.Serializable {
      * @return the updated value
      */
     public final long decrementAndGet() {
-        for (;;) {
+        for (; ; ) {
             long current = get();
             long next = current - 1;
-            if (compareAndSet(current, next))
-                return next;
+            if (compareAndSet(current, next)) { return next; }
         }
     }
 
@@ -243,16 +237,16 @@ public class AtomicLong extends Number implements java.io.Serializable {
      * @return the updated value
      */
     public final long addAndGet(long delta) {
-        for (;;) {
+        for (; ; ) {
             long current = get();
             long next = current + delta;
-            if (compareAndSet(current, next))
-                return next;
+            if (compareAndSet(current, next)) { return next; }
         }
     }
 
     /**
      * Returns the String representation of the current value.
+     *
      * @return the String representation of the current value.
      */
     public String toString() {
@@ -261,7 +255,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
 
 
     public int intValue() {
-        return (int)get();
+        return (int) get();
     }
 
     public long longValue() {
@@ -269,11 +263,11 @@ public class AtomicLong extends Number implements java.io.Serializable {
     }
 
     public float floatValue() {
-        return (float)get();
+        return (float) get();
     }
 
     public double doubleValue() {
-        return (double)get();
+        return (double) get();
     }
 
 }

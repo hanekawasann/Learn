@@ -39,8 +39,7 @@ package java.nio.file;
  * <p> Watch events are immutable and safe for use by multiple concurrent
  * threads.
  *
- * @param   <T>     The type of the context object associated with the event
- *
+ * @param <T> The type of the context object associated with the event
  * @since 1.7
  */
 
@@ -49,8 +48,8 @@ public interface WatchEvent<T> {
     /**
      * An event kind, for the purposes of identification.
      *
-     * @since 1.7
      * @see StandardWatchEventKinds
+     * @since 1.7
      */
     public static interface Kind<T> {
         /**
@@ -70,8 +69,8 @@ public interface WatchEvent<T> {
      *
      * <p> This release does not define any <em>standard</em> modifiers.
      *
-     * @since 1.7
      * @see Watchable#register
+     * @since 1.7
      */
     public static interface Modifier {
         /**
@@ -83,7 +82,7 @@ public interface WatchEvent<T> {
     /**
      * Returns the event kind.
      *
-     * @return  the event kind
+     * @return the event kind
      */
     Kind<T> kind();
 
@@ -91,7 +90,7 @@ public interface WatchEvent<T> {
      * Returns the event count. If the event count is greater than {@code 1}
      * then this is a repeated event.
      *
-     * @return  the event count
+     * @return the event count
      */
     int count();
 
@@ -105,7 +104,7 @@ public interface WatchEvent<T> {
      * the directory registered with the watch service, and the entry that is
      * created, deleted, or modified.
      *
-     * @return  the event context; may be {@code null}
+     * @return the event context; may be {@code null}
      */
     T context();
 }

@@ -61,7 +61,6 @@ import sun.util.locale.LocaleObjectCache;
 
 
 /**
- *
  * Resource bundles contain locale-specific objects.  When your program needs a
  * locale-specific resource, a <code>String</code> for example, your program can
  * load it from the resource bundle that is appropriate for the current user's
@@ -77,7 +76,7 @@ import sun.util.locale.LocaleObjectCache;
  * <LI> be easily modified later to support even more locales
  * </UL>
  *
- * <P>
+ * <p>
  * Resource bundles belong to families whose members share a common base
  * name, but whose names also have additional components that identify
  * their locales. For example, the base name of a family of resource
@@ -88,7 +87,7 @@ import sun.util.locale.LocaleObjectCache;
  * many locale-specific members as needed, for example a German one
  * named "MyResources_de".
  *
- * <P>
+ * <p>
  * Each resource bundle in a family contains the same items, but the items have
  * been translated for the locale represented by that resource bundle.
  * For example, both "MyResources" and "MyResources_de" may have a
@@ -96,14 +95,14 @@ import sun.util.locale.LocaleObjectCache;
  * In "MyResources" the <code>String</code> may contain "Cancel" and in
  * "MyResources_de" it may contain "Abbrechen".
  *
- * <P>
+ * <p>
  * If there are different resources for different countries, you
  * can make specializations: for example, "MyResources_de_CH" contains objects for
  * the German language (de) in Switzerland (CH). If you want to only
  * modify some of the resources
  * in the specialization, you can do so.
  *
- * <P>
+ * <p>
  * When your program needs a locale-specific object, it loads
  * the <code>ResourceBundle</code> class using the
  * {@link #getBundle(java.lang.String, java.util.Locale) getBundle}
@@ -115,7 +114,7 @@ import sun.util.locale.LocaleObjectCache;
  * </pre>
  * </blockquote>
  *
- * <P>
+ * <p>
  * Resource bundles contain key/value pairs. The keys uniquely
  * identify a locale-specific object in the bundle. Here's an
  * example of a <code>ListResourceBundle</code> that contains
@@ -140,7 +139,7 @@ import sun.util.locale.LocaleObjectCache;
  * are also <code>String</code>s--"OK" and "Cancel"--but
  * they don't have to be. The values can be any type of object.
  *
- * <P>
+ * <p>
  * You retrieve an object from resource bundle using the appropriate
  * getter method. Because "OkKey" and "CancelKey"
  * are both strings, you would use <code>getString</code> to retrieve them:
@@ -154,7 +153,7 @@ import sun.util.locale.LocaleObjectCache;
  * the object if found. If the object is not found, the getter method
  * throws a <code>MissingResourceException</code>.
  *
- * <P>
+ * <p>
  * Besides <code>getString</code>, <code>ResourceBundle</code> also provides
  * a method for getting string arrays, <code>getStringArray</code>,
  * as well as a generic <code>getObject</code> method for any other
@@ -166,7 +165,7 @@ import sun.util.locale.LocaleObjectCache;
  * </pre>
  * </blockquote>
  *
- * <P>
+ * <p>
  * The Java Platform provides two subclasses of <code>ResourceBundle</code>,
  * <code>ListResourceBundle</code> and <code>PropertyResourceBundle</code>,
  * that provide a fairly simple way to create resources.
@@ -182,7 +181,7 @@ import sun.util.locale.LocaleObjectCache;
  * and <code>getKeys()</code>.
  *
  * <h4>ResourceBundle.Control</h4>
- *
+ * <p>
  * The {@link ResourceBundle.Control} class provides information necessary
  * to perform the bundle loading process by the <code>getBundle</code>
  * factory methods that take a <code>ResourceBundle.Control</code>
@@ -193,7 +192,7 @@ import sun.util.locale.LocaleObjectCache;
  * factory method for details.
  *
  * <h4>Cache Management</h4>
- *
+ * <p>
  * Resource bundle instances created by the <code>getBundle</code> factory
  * methods are cached by default, and the factory methods return the same
  * resource bundle instance multiple times if it has been
@@ -209,7 +208,7 @@ import sun.util.locale.LocaleObjectCache;
  * long) ResourceBundle.Control.needsReload} for details.
  *
  * <h4>Example</h4>
- *
+ * <p>
  * The following is a very simple example of a <code>ResourceBundle</code>
  * subclass, <code>MyResources</code>, that manages two resources (for a larger number of
  * resources you would probably use a <code>Map</code>).
@@ -270,26 +269,28 @@ public abstract class ResourceBundle {
 
     /** constant indicating that no resource bundle exists */
     private static final ResourceBundle NONEXISTENT_BUNDLE = new ResourceBundle() {
-            public Enumeration<String> getKeys() { return null; }
-            protected Object handleGetObject(String key) { return null; }
-            public String toString() { return "NONEXISTENT_BUNDLE"; }
-        };
+        public Enumeration<String> getKeys() { return null; }
+
+        protected Object handleGetObject(String key) { return null; }
+
+        public String toString() { return "NONEXISTENT_BUNDLE"; }
+    };
 
 
     /**
      * The cache is a map from cache keys (with bundle base name, locale, and
      * class loader) to either a resource bundle or NONEXISTENT_BUNDLE wrapped by a
      * BundleReference.
-     *
+     * <p>
      * The cache is a ConcurrentMap, allowing the cache to be searched
      * concurrently by multiple threads.  This will also allow the cache keys
      * to be reclaimed along with the ClassLoaders they reference.
-     *
+     * <p>
      * This variable would be better named "cache", but we keep the old
      * name for compatibility with some workarounds for bug 4212439.
      */
-    private static final ConcurrentMap<CacheKey, BundleReference> cacheList
-        = new ConcurrentHashMap<>(INITIAL_CACHE_SIZE);
+    private static final ConcurrentMap<CacheKey, BundleReference> cacheList = new ConcurrentHashMap<>(
+        INITIAL_CACHE_SIZE);
 
     /**
      * Queue for reference objects referring to class loaders or bundles.
@@ -344,10 +345,10 @@ public abstract class ResourceBundle {
      * </blockquote>
      *
      * @param key the key for the desired string
-     * @exception NullPointerException if <code>key</code> is <code>null</code>
-     * @exception MissingResourceException if no object for the given key can be found
-     * @exception ClassCastException if the object found for the given key is not a string
      * @return the string for the given key
+     * @throws NullPointerException     if <code>key</code> is <code>null</code>
+     * @throws MissingResourceException if no object for the given key can be found
+     * @throws ClassCastException       if the object found for the given key is not a string
      */
     public final String getString(String key) {
         return (String) getObject(key);
@@ -361,10 +362,10 @@ public abstract class ResourceBundle {
      * </blockquote>
      *
      * @param key the key for the desired string array
-     * @exception NullPointerException if <code>key</code> is <code>null</code>
-     * @exception MissingResourceException if no object for the given key can be found
-     * @exception ClassCastException if the object found for the given key is not a string array
      * @return the string array for the given key
+     * @throws NullPointerException     if <code>key</code> is <code>null</code>
+     * @throws MissingResourceException if no object for the given key can be found
+     * @throws ClassCastException       if the object found for the given key is not a string array
      */
     public final String[] getStringArray(String key) {
         return (String[]) getObject(key);
@@ -379,9 +380,9 @@ public abstract class ResourceBundle {
      * If still not successful, it throws a MissingResourceException.
      *
      * @param key the key for the desired object
-     * @exception NullPointerException if <code>key</code> is <code>null</code>
-     * @exception MissingResourceException if no object for the given key can be found
      * @return the object for the given key
+     * @throws NullPointerException     if <code>key</code> is <code>null</code>
+     * @throws MissingResourceException if no object for the given key can be found
      */
     public final Object getObject(String key) {
         Object obj = handleGetObject(key);
@@ -389,12 +390,11 @@ public abstract class ResourceBundle {
             if (parent != null) {
                 obj = parent.getObject(key);
             }
-            if (obj == null)
-                throw new MissingResourceException("Can't find resource for bundle "
-                                                   +this.getClass().getName()
-                                                   +", key "+key,
-                                                   this.getClass().getName(),
-                                                   key);
+            if (obj == null) {
+                throw new MissingResourceException(
+                    "Can't find resource for bundle " + this.getClass().getName() + ", key " + key,
+                    this.getClass().getName(), key);
+            }
         }
         return obj;
     }
@@ -439,28 +439,31 @@ public abstract class ResourceBundle {
      * A wrapper of ClassLoader.getSystemClassLoader().
      */
     private static class RBClassLoader extends ClassLoader {
-        private static final RBClassLoader INSTANCE = AccessController.doPrivileged(
-                    new PrivilegedAction<RBClassLoader>() {
-                        public RBClassLoader run() {
-                            return new RBClassLoader();
-                        }
-                    });
+        private static final RBClassLoader INSTANCE = AccessController
+            .doPrivileged(new PrivilegedAction<RBClassLoader>() {
+                public RBClassLoader run() {
+                    return new RBClassLoader();
+                }
+            });
         private static final ClassLoader loader = ClassLoader.getSystemClassLoader();
 
         private RBClassLoader() {
         }
+
         public Class<?> loadClass(String name) throws ClassNotFoundException {
             if (loader != null) {
                 return loader.loadClass(name);
             }
             return Class.forName(name);
         }
+
         public URL getResource(String name) {
             if (loader != null) {
                 return loader.getResource(name);
             }
             return ClassLoader.getSystemResource(name);
         }
+
         public InputStream getResourceAsStream(String name) {
             if (loader != null) {
                 return loader.getResourceAsStream(name);
@@ -559,7 +562,7 @@ public abstract class ResourceBundle {
                 return true;
             }
             try {
-                final CacheKey otherEntry = (CacheKey)other;
+                final CacheKey otherEntry = (CacheKey) other;
                 //quick check to see if they are not equal
                 if (hashCodeCache != otherEntry.hashCodeCache) {
                     return false;
@@ -578,11 +581,10 @@ public abstract class ResourceBundle {
                 }
                 ClassLoader loader = loaderRef.get();
                 return (otherEntry.loaderRef != null)
-                        // with a null reference we can no longer find
-                        // out which class loader was referenced; so
-                        // treat it as unequal
-                        && (loader != null)
-                        && (loader == otherEntry.loaderRef.get());
+                    // with a null reference we can no longer find
+                    // out which class loader was referenced; so
+                    // treat it as unequal
+                    && (loader != null) && (loader == otherEntry.loaderRef.get());
             } catch (NullPointerException e) {
             } catch (ClassCastException e) {
             }
@@ -606,8 +608,7 @@ public abstract class ResourceBundle {
             try {
                 CacheKey clone = (CacheKey) super.clone();
                 if (loaderRef != null) {
-                    clone.loaderRef = new LoaderReference(loaderRef.get(),
-                                                          referenceQueue, clone);
+                    clone.loaderRef = new LoaderReference(loaderRef.get(), referenceQueue, clone);
                 }
                 // Clear the reference to a Throwable
                 clone.cause = null;
@@ -651,8 +652,7 @@ public abstract class ResourceBundle {
                     l = "\"\"";
                 }
             }
-            return "CacheKey[" + name + ", lc=" + l + ", ldr=" + getLoader()
-                + "(format=" + format + ")]";
+            return "CacheKey[" + name + ", lc=" + l + ", ldr=" + getLoader() + "(format=" + format + ")]";
         }
     }
 
@@ -669,8 +669,7 @@ public abstract class ResourceBundle {
      * garbage collected when nobody else is using them. The ResourceBundle
      * class has no reason to keep class loaders alive.
      */
-    private static final class LoaderReference extends WeakReference<ClassLoader>
-                                               implements CacheKeyReference {
+    private static final class LoaderReference extends WeakReference<ClassLoader> implements CacheKeyReference {
         private CacheKey cacheKey;
 
         LoaderReference(ClassLoader referent, ReferenceQueue q, CacheKey key) {
@@ -687,8 +686,7 @@ public abstract class ResourceBundle {
      * References to bundles are soft references so that they can be garbage
      * collected when they have no hard references.
      */
-    private static final class BundleReference extends SoftReference<ResourceBundle>
-                                               implements CacheKeyReference {
+    private static final class BundleReference extends SoftReference<ResourceBundle> implements CacheKeyReference {
         private CacheKey cacheKey;
 
         BundleReference(ResourceBundle referent, ReferenceQueue q, CacheKey key) {
@@ -713,18 +711,14 @@ public abstract class ResourceBundle {
      * for a complete description of the search and instantiation strategy.
      *
      * @param baseName the base name of the resource bundle, a fully qualified class name
-     * @exception java.lang.NullPointerException
-     *     if <code>baseName</code> is <code>null</code>
-     * @exception MissingResourceException
-     *     if no resource bundle for the specified base name can be found
      * @return a resource bundle for the given base name and the default locale
+     * @throws java.lang.NullPointerException if <code>baseName</code> is <code>null</code>
+     * @throws MissingResourceException       if no resource bundle for the specified base name can be found
      */
-    public static final ResourceBundle getBundle(String baseName)
-    {
+    public static final ResourceBundle getBundle(String baseName) {
         return getBundleImpl(baseName, Locale.getDefault(),
-                             /* must determine loader here, else we break stack invariant */
-                             getLoader(),
-                             Control.INSTANCE);
+            /* must determine loader here, else we break stack invariant */
+            getLoader(), Control.INSTANCE);
     }
 
     /**
@@ -741,32 +735,25 @@ public abstract class ResourceBundle {
      * complete description of the resource bundle loading process with a
      * <code>ResourceBundle.Control</code>.
      *
-     * @param baseName
-     *        the base name of the resource bundle, a fully qualified class
-     *        name
-     * @param control
-     *        the control which gives information for the resource bundle
-     *        loading process
+     * @param baseName the base name of the resource bundle, a fully qualified class
+     *                 name
+     * @param control  the control which gives information for the resource bundle
+     *                 loading process
      * @return a resource bundle for the given base name and the default
-     *        locale
-     * @exception NullPointerException
-     *        if <code>baseName</code> or <code>control</code> is
-     *        <code>null</code>
-     * @exception MissingResourceException
-     *        if no resource bundle for the specified base name can be found
-     * @exception IllegalArgumentException
-     *        if the given <code>control</code> doesn't perform properly
-     *        (e.g., <code>control.getCandidateLocales</code> returns null.)
-     *        Note that validation of <code>control</code> is performed as
-     *        needed.
+     * locale
+     * @throws NullPointerException     if <code>baseName</code> or <code>control</code> is
+     *                                  <code>null</code>
+     * @throws MissingResourceException if no resource bundle for the specified base name can be found
+     * @throws IllegalArgumentException if the given <code>control</code> doesn't perform properly
+     *                                  (e.g., <code>control.getCandidateLocales</code> returns null.)
+     *                                  Note that validation of <code>control</code> is performed as
+     *                                  needed.
      * @since 1.6
      */
-    public static final ResourceBundle getBundle(String baseName,
-                                                 Control control) {
+    public static final ResourceBundle getBundle(String baseName, Control control) {
         return getBundleImpl(baseName, Locale.getDefault(),
-                             /* must determine loader here, else we break stack invariant */
-                             getLoader(),
-                             control);
+            /* must determine loader here, else we break stack invariant */
+            getLoader(), control);
     }
 
     /**
@@ -780,23 +767,16 @@ public abstract class ResourceBundle {
      * See {@link #getBundle(String, Locale, ClassLoader) getBundle}
      * for a complete description of the search and instantiation strategy.
      *
-     * @param baseName
-     *        the base name of the resource bundle, a fully qualified class name
-     * @param locale
-     *        the locale for which a resource bundle is desired
-     * @exception NullPointerException
-     *        if <code>baseName</code> or <code>locale</code> is <code>null</code>
-     * @exception MissingResourceException
-     *        if no resource bundle for the specified base name can be found
+     * @param baseName the base name of the resource bundle, a fully qualified class name
+     * @param locale   the locale for which a resource bundle is desired
      * @return a resource bundle for the given base name and locale
+     * @throws NullPointerException     if <code>baseName</code> or <code>locale</code> is <code>null</code>
+     * @throws MissingResourceException if no resource bundle for the specified base name can be found
      */
-    public static final ResourceBundle getBundle(String baseName,
-                                                 Locale locale)
-    {
+    public static final ResourceBundle getBundle(String baseName, Locale locale) {
         return getBundleImpl(baseName, locale,
-                             /* must determine loader here, else we break stack invariant */
-                             getLoader(),
-                             Control.INSTANCE);
+            /* must determine loader here, else we break stack invariant */
+            getLoader(), Control.INSTANCE);
     }
 
     /**
@@ -813,35 +793,27 @@ public abstract class ResourceBundle {
      * complete description of the resource bundle loading process with a
      * <code>ResourceBundle.Control</code>.
      *
-     * @param baseName
-     *        the base name of the resource bundle, a fully qualified
-     *        class name
-     * @param targetLocale
-     *        the locale for which a resource bundle is desired
-     * @param control
-     *        the control which gives information for the resource
-     *        bundle loading process
+     * @param baseName     the base name of the resource bundle, a fully qualified
+     *                     class name
+     * @param targetLocale the locale for which a resource bundle is desired
+     * @param control      the control which gives information for the resource
+     *                     bundle loading process
      * @return a resource bundle for the given base name and a
-     *        <code>Locale</code> in <code>locales</code>
-     * @exception NullPointerException
-     *        if <code>baseName</code>, <code>locales</code> or
-     *        <code>control</code> is <code>null</code>
-     * @exception MissingResourceException
-     *        if no resource bundle for the specified base name in any
-     *        of the <code>locales</code> can be found.
-     * @exception IllegalArgumentException
-     *        if the given <code>control</code> doesn't perform properly
-     *        (e.g., <code>control.getCandidateLocales</code> returns null.)
-     *        Note that validation of <code>control</code> is performed as
-     *        needed.
+     * <code>Locale</code> in <code>locales</code>
+     * @throws NullPointerException     if <code>baseName</code>, <code>locales</code> or
+     *                                  <code>control</code> is <code>null</code>
+     * @throws MissingResourceException if no resource bundle for the specified base name in any
+     *                                  of the <code>locales</code> can be found.
+     * @throws IllegalArgumentException if the given <code>control</code> doesn't perform properly
+     *                                  (e.g., <code>control.getCandidateLocales</code> returns null.)
+     *                                  Note that validation of <code>control</code> is performed as
+     *                                  needed.
      * @since 1.6
      */
-    public static final ResourceBundle getBundle(String baseName, Locale targetLocale,
-                                                 Control control) {
+    public static final ResourceBundle getBundle(String baseName, Locale targetLocale, Control control) {
         return getBundleImpl(baseName, targetLocale,
-                             /* must determine loader here, else we break stack invariant */
-                             getLoader(),
-                             control);
+            /* must determine loader here, else we break stack invariant */
+            getLoader(), control);
     }
 
     /**
@@ -883,7 +855,7 @@ public abstract class ResourceBundle {
      *     MyResource_de__JAVA
      *     MyResource_de
      * </pre>
-     *
+     * <p>
      * In the case that the variant contains one or more underscores ('_'), a
      * sequence of bundle names generated by truncating the last underscore and
      * the part following it is inserted after a candidate bundle name with the
@@ -988,7 +960,7 @@ public abstract class ResourceBundle {
      *     MyResources_en.properties
      *     MyResources_es_ES.class
      * </pre>
-     *
+     * <p>
      * The contents of all files are valid (that is, public non-abstract
      * subclasses of <code>ResourceBundle</code> for the ".class" files,
      * syntactically correct ".properties" files).  The default locale is
@@ -1010,18 +982,14 @@ public abstract class ResourceBundle {
      * is also hidden by MyResources.class.
      *
      * @param baseName the base name of the resource bundle, a fully qualified class name
-     * @param locale the locale for which a resource bundle is desired
-     * @param loader the class loader from which to load the resource bundle
+     * @param locale   the locale for which a resource bundle is desired
+     * @param loader   the class loader from which to load the resource bundle
      * @return a resource bundle for the given base name and locale
-     * @exception java.lang.NullPointerException
-     *        if <code>baseName</code>, <code>locale</code>, or <code>loader</code> is <code>null</code>
-     * @exception MissingResourceException
-     *        if no resource bundle for the specified base name can be found
+     * @throws java.lang.NullPointerException if <code>baseName</code>, <code>locale</code>, or <code>loader</code> is <code>null</code>
+     * @throws MissingResourceException       if no resource bundle for the specified base name can be found
      * @since 1.2
      */
-    public static ResourceBundle getBundle(String baseName, Locale locale,
-                                           ClassLoader loader)
-    {
+    public static ResourceBundle getBundle(String baseName, Locale locale, ClassLoader loader) {
         if (loader == null) {
             throw new NullPointerException();
         }
@@ -1075,7 +1043,7 @@ public abstract class ResourceBundle {
      * and <code>"java.properties"</code>, then the following is the
      * sequence of locale-format combinations to be used to call
      * <code>control.newBundle</code>.
-     *
+     * <p>
      * <table style="width: 50%; text-align: left; margin-left: 40px;"
      *  border="0" cellpadding="2" cellspacing="2">
      * <tbody><code>
@@ -1162,7 +1130,7 @@ public abstract class ResourceBundle {
      * expiration control as specified by <code>control</code>.
      *
      * <p>All resource bundles loaded are cached by default. Refer to
-     * {@link Control#getTimeToLive(String,Locale)
+     * {@link Control#getTimeToLive(String, Locale)
      * control.getTimeToLive} for details.
      *
      * <p>The following is an example of the bundle loading process with the
@@ -1214,40 +1182,31 @@ public abstract class ResourceBundle {
      * that becomes the parent of the instance for
      * <code>foo/bar/Messages_fr.properties</code>.
      *
-     * @param baseName
-     *        the base name of the resource bundle, a fully qualified
-     *        class name
-     * @param targetLocale
-     *        the locale for which a resource bundle is desired
-     * @param loader
-     *        the class loader from which to load the resource bundle
-     * @param control
-     *        the control which gives information for the resource
-     *        bundle loading process
+     * @param baseName     the base name of the resource bundle, a fully qualified
+     *                     class name
+     * @param targetLocale the locale for which a resource bundle is desired
+     * @param loader       the class loader from which to load the resource bundle
+     * @param control      the control which gives information for the resource
+     *                     bundle loading process
      * @return a resource bundle for the given base name and locale
-     * @exception NullPointerException
-     *        if <code>baseName</code>, <code>targetLocale</code>,
-     *        <code>loader</code>, or <code>control</code> is
-     *        <code>null</code>
-     * @exception MissingResourceException
-     *        if no resource bundle for the specified base name can be found
-     * @exception IllegalArgumentException
-     *        if the given <code>control</code> doesn't perform properly
-     *        (e.g., <code>control.getCandidateLocales</code> returns null.)
-     *        Note that validation of <code>control</code> is performed as
-     *        needed.
+     * @throws NullPointerException     if <code>baseName</code>, <code>targetLocale</code>,
+     *                                  <code>loader</code>, or <code>control</code> is
+     *                                  <code>null</code>
+     * @throws MissingResourceException if no resource bundle for the specified base name can be found
+     * @throws IllegalArgumentException if the given <code>control</code> doesn't perform properly
+     *                                  (e.g., <code>control.getCandidateLocales</code> returns null.)
+     *                                  Note that validation of <code>control</code> is performed as
+     *                                  needed.
      * @since 1.6
      */
-    public static ResourceBundle getBundle(String baseName, Locale targetLocale,
-                                           ClassLoader loader, Control control) {
+    public static ResourceBundle getBundle(String baseName, Locale targetLocale, ClassLoader loader, Control control) {
         if (loader == null || control == null) {
             throw new NullPointerException();
         }
         return getBundleImpl(baseName, targetLocale, loader, control);
     }
 
-    private static ResourceBundle getBundleImpl(String baseName, Locale locale,
-                                                ClassLoader loader, Control control) {
+    private static ResourceBundle getBundleImpl(String baseName, Locale locale, ClassLoader loader, Control control) {
         if (locale == null || control == null) {
             throw new NullPointerException();
         }
@@ -1277,8 +1236,7 @@ public abstract class ResourceBundle {
         // No valid bundle was found in the cache, so we need to load the
         // resource bundle and its parents.
 
-        boolean isKnownControl = (control == Control.INSTANCE) ||
-                                   (control instanceof SingleFormatControl);
+        boolean isKnownControl = (control == Control.INSTANCE) || (control instanceof SingleFormatControl);
         List<String> formats = control.getFormats(baseName);
         if (!isKnownControl && !checkList(formats)) {
             throw new IllegalArgumentException("Invalid Control: getFormats");
@@ -1286,8 +1244,7 @@ public abstract class ResourceBundle {
 
         ResourceBundle baseBundle = null;
         for (Locale targetLocale = locale;
-             targetLocale != null;
-             targetLocale = control.getFallbackLocale(baseName, targetLocale)) {
+            targetLocale != null; targetLocale = control.getFallbackLocale(baseName, targetLocale)) {
             List<Locale> candidateLocales = control.getCandidateLocales(baseName, targetLocale);
             if (!isKnownControl && !checkList(candidateLocales)) {
                 throw new IllegalArgumentException("Invalid Control: getCandidateLocales");
@@ -1302,9 +1259,8 @@ public abstract class ResourceBundle {
             // fallback locales.
             if (isValidBundle(bundle)) {
                 boolean isBaseBundle = Locale.ROOT.equals(bundle.locale);
-                if (!isBaseBundle || bundle.locale.equals(locale)
-                    || (candidateLocales.size() == 1
-                        && bundle.locale.equals(candidateLocales.get(0)))) {
+                if (!isBaseBundle || bundle.locale.equals(locale) ||
+                    (candidateLocales.size() == 1 && bundle.locale.equals(candidateLocales.get(0)))) {
                     break;
                 }
 
@@ -1342,17 +1298,12 @@ public abstract class ResourceBundle {
         return valid;
     }
 
-    private static final ResourceBundle findBundle(CacheKey cacheKey,
-                                                   List<Locale> candidateLocales,
-                                                   List<String> formats,
-                                                   int index,
-                                                   Control control,
-                                                   ResourceBundle baseBundle) {
+    private static final ResourceBundle findBundle(CacheKey cacheKey, List<Locale> candidateLocales,
+        List<String> formats, int index, Control control, ResourceBundle baseBundle) {
         Locale targetLocale = candidateLocales.get(index);
         ResourceBundle parent = null;
         if (index != candidateLocales.size() - 1) {
-            parent = findBundle(cacheKey, candidateLocales, formats, index + 1,
-                                control, baseBundle);
+            parent = findBundle(cacheKey, candidateLocales, formats, index + 1, control, baseBundle);
         } else if (baseBundle != null && Locale.ROOT.equals(targetLocale)) {
             return baseBundle;
         }
@@ -1363,7 +1314,7 @@ public abstract class ResourceBundle {
         // information from the cache.
         Object ref;
         while ((ref = referenceQueue.poll()) != null) {
-            cacheList.remove(((CacheKeyReference)ref).getCacheKey());
+            cacheList.remove(((CacheKeyReference) ref).getCacheKey());
         }
 
         // flag indicating the resource bundle has expired in the cache
@@ -1419,10 +1370,8 @@ public abstract class ResourceBundle {
         return parent;
     }
 
-    private static final ResourceBundle loadBundle(CacheKey cacheKey,
-                                                   List<String> formats,
-                                                   Control control,
-                                                   boolean reload) {
+    private static final ResourceBundle loadBundle(CacheKey cacheKey, List<String> formats, Control control,
+        boolean reload) {
 
         // Here we actually load the bundle in the order of formats
         // specified by the getFormats() value.
@@ -1433,8 +1382,7 @@ public abstract class ResourceBundle {
         for (int i = 0; i < size; i++) {
             String format = formats.get(i);
             try {
-                bundle = control.newBundle(cacheKey.getName(), targetLocale, format,
-                                           cacheKey.getLoader(), reload);
+                bundle = control.newBundle(cacheKey.getName(), targetLocale, format, cacheKey.getLoader(), reload);
             } catch (LinkageError error) {
                 // We need to handle the LinkageError case due to
                 // inconsistent case-sensitivity in ClassLoader.
@@ -1488,19 +1436,16 @@ public abstract class ResourceBundle {
     /**
      * Throw a MissingResourceException with proper message
      */
-    private static final void throwMissingResourceException(String baseName,
-                                                            Locale locale,
-                                                            Throwable cause) {
+    private static final void throwMissingResourceException(String baseName, Locale locale, Throwable cause) {
         // If the cause is a MissingResourceException, avoid creating
         // a long chain. (6355009)
         if (cause instanceof MissingResourceException) {
             cause = null;
         }
-        throw new MissingResourceException("Can't find bundle for base name "
-                                           + baseName + ", locale " + locale,
-                                           baseName + "_" + locale, // className
-                                           "",                      // key
-                                           cause);
+        throw new MissingResourceException("Can't find bundle for base name " + baseName + ", locale " + locale,
+            baseName + "_" + locale, // className
+            "",                      // key
+            cause);
     }
 
     /**
@@ -1508,13 +1453,12 @@ public abstract class ResourceBundle {
      * `expired' and removed from the cache upon return.
      *
      * @param cacheKey the key to look up the cache
-     * @param control the Control to be used for the expiration control
+     * @param control  the Control to be used for the expiration control
      * @return the cached bundle, or null if the bundle is not found in the
      * cache or its parent has expired. <code>bundle.expire</code> is true
      * upon return if the bundle in the cache has expired.
      */
-    private static final ResourceBundle findBundleInCache(CacheKey cacheKey,
-                                                          Control control) {
+    private static final ResourceBundle findBundleInCache(CacheKey cacheKey, Control control) {
         BundleReference bundleRef = cacheList.get(cacheKey);
         if (bundleRef == null) {
             return null;
@@ -1567,23 +1511,18 @@ public abstract class ResourceBundle {
         } else {
             CacheKey key = bundleRef.getCacheKey();
             long expirationTime = key.expirationTime;
-            if (!bundle.expired && expirationTime >= 0 &&
-                expirationTime <= System.currentTimeMillis()) {
+            if (!bundle.expired && expirationTime >= 0 && expirationTime <= System.currentTimeMillis()) {
                 // its TTL period has expired.
                 if (bundle != NONEXISTENT_BUNDLE) {
                     // Synchronize here to call needsReload to avoid
                     // redundant concurrent calls for the same bundle.
                     synchronized (bundle) {
                         expirationTime = key.expirationTime;
-                        if (!bundle.expired && expirationTime >= 0 &&
-                            expirationTime <= System.currentTimeMillis()) {
+                        if (!bundle.expired && expirationTime >= 0 && expirationTime <= System.currentTimeMillis()) {
                             try {
-                                bundle.expired = control.needsReload(key.getName(),
-                                                                     key.getLocale(),
-                                                                     key.getFormat(),
-                                                                     key.getLoader(),
-                                                                     bundle,
-                                                                     key.loadTime);
+                                bundle.expired = control
+                                    .needsReload(key.getName(), key.getLocale(), key.getFormat(), key.getLoader(),
+                                        bundle, key.loadTime);
                             } catch (Exception e) {
                                 cacheKey.setCause(e);
                             }
@@ -1615,14 +1554,12 @@ public abstract class ResourceBundle {
      * Put a new bundle in the cache.
      *
      * @param cacheKey the key for the resource bundle
-     * @param bundle the resource bundle to be put in the cache
+     * @param bundle   the resource bundle to be put in the cache
      * @return the ResourceBundle for the cacheKey; if someone has put
      * the bundle before this call, the one found in the cache is
      * returned.
      */
-    private static final ResourceBundle putBundleInCache(CacheKey cacheKey,
-                                                         ResourceBundle bundle,
-                                                         Control control) {
+    private static final ResourceBundle putBundleInCache(CacheKey cacheKey, ResourceBundle bundle, Control control) {
         setExpirationTime(cacheKey, control);
         if (cacheKey.expirationTime != Control.TTL_DONT_CACHE) {
             CacheKey key = (CacheKey) cacheKey.clone();
@@ -1654,8 +1591,7 @@ public abstract class ResourceBundle {
     }
 
     private static final void setExpirationTime(CacheKey cacheKey, Control control) {
-        long ttl = control.getTimeToLive(cacheKey.getName(),
-                                         cacheKey.getLocale());
+        long ttl = control.getTimeToLive(cacheKey.getName(), cacheKey.getLocale());
         if (ttl >= 0) {
             // If any expiration time is specified, set the time to be
             // expired in the cache.
@@ -1673,8 +1609,8 @@ public abstract class ResourceBundle {
      * Removes all resource bundles from the cache that have been loaded
      * using the caller's class loader.
      *
+     * @see ResourceBundle.Control#getTimeToLive(String, Locale)
      * @since 1.6
-     * @see ResourceBundle.Control#getTimeToLive(String,Locale)
      */
     public static final void clearCache() {
         clearCache(getLoader());
@@ -1685,9 +1621,9 @@ public abstract class ResourceBundle {
      * using the given class loader.
      *
      * @param loader the class loader
-     * @exception NullPointerException if <code>loader</code> is null
+     * @throws NullPointerException if <code>loader</code> is null
+     * @see ResourceBundle.Control#getTimeToLive(String, Locale)
      * @since 1.6
-     * @see ResourceBundle.Control#getTimeToLive(String,Locale)
      */
     public static final void clearCache(ClassLoader loader) {
         if (loader == null) {
@@ -1707,8 +1643,8 @@ public abstract class ResourceBundle {
      * object for the given key.
      *
      * @param key the key for the desired object
-     * @exception NullPointerException if <code>key</code> is <code>null</code>
      * @return the object for the given key, or null
+     * @throws NullPointerException if <code>key</code> is <code>null</code>
      */
     protected abstract Object handleGetObject(String key);
 
@@ -1716,7 +1652,7 @@ public abstract class ResourceBundle {
      * Returns an enumeration of the keys.
      *
      * @return an <code>Enumeration</code> of the keys contained in
-     *         this <code>ResourceBundle</code> and its parent bundles.
+     * this <code>ResourceBundle</code> and its parent bundles.
      */
     public abstract Enumeration<String> getKeys();
 
@@ -1724,13 +1660,11 @@ public abstract class ResourceBundle {
      * Determines whether the given <code>key</code> is contained in
      * this <code>ResourceBundle</code> or its parent bundles.
      *
-     * @param key
-     *        the resource <code>key</code>
+     * @param key the resource <code>key</code>
      * @return <code>true</code> if the given <code>key</code> is
-     *        contained in this <code>ResourceBundle</code> or its
-     *        parent bundles; <code>false</code> otherwise.
-     * @exception NullPointerException
-     *         if <code>key</code> is <code>null</code>
+     * contained in this <code>ResourceBundle</code> or its
+     * parent bundles; <code>false</code> otherwise.
+     * @throws NullPointerException if <code>key</code> is <code>null</code>
      * @since 1.6
      */
     public boolean containsKey(String key) {
@@ -1750,7 +1684,7 @@ public abstract class ResourceBundle {
      * <code>ResourceBundle</code> and its parent bundles.
      *
      * @return a <code>Set</code> of all keys contained in this
-     *         <code>ResourceBundle</code> and its parent bundles.
+     * <code>ResourceBundle</code> and its parent bundles.
      * @since 1.6
      */
     public Set<String> keySet() {
@@ -1775,7 +1709,7 @@ public abstract class ResourceBundle {
      * override this method for faster handling.
      *
      * @return a <code>Set</code> of the keys contained only in this
-     *        <code>ResourceBundle</code>
+     * <code>ResourceBundle</code>
      * @since 1.6
      */
     protected Set<String> handleKeySet() {
@@ -1796,7 +1730,6 @@ public abstract class ResourceBundle {
         }
         return keySet;
     }
-
 
 
     /**
@@ -1863,7 +1796,7 @@ public abstract class ResourceBundle {
      *   ResourceBundle.getBundle("MyResources", new Locale("fr", "CH"),
      *                            ResourceBundle.Control.getControl(FORMAT_PROPERTIES));
      * </pre>
-     *
+     * <p>
      * Given the resource bundles in the <a
      * href="./ResourceBundle.html#default_behavior_example">example</a> in
      * the <code>ResourceBundle.getBundle</code> description, this
@@ -1955,9 +1888,8 @@ public abstract class ResourceBundle {
          *
          * @see #getFormats(String)
          */
-        public static final List<String> FORMAT_DEFAULT
-            = Collections.unmodifiableList(Arrays.asList("java.class",
-                                                         "java.properties"));
+        public static final List<String> FORMAT_DEFAULT = Collections
+            .unmodifiableList(Arrays.asList("java.class", "java.properties"));
 
         /**
          * The class-only format <code>List</code> containing
@@ -1966,8 +1898,7 @@ public abstract class ResourceBundle {
          *
          * @see #getFormats(String)
          */
-        public static final List<String> FORMAT_CLASS
-            = Collections.unmodifiableList(Arrays.asList("java.class"));
+        public static final List<String> FORMAT_CLASS = Collections.unmodifiableList(Arrays.asList("java.class"));
 
         /**
          * The properties-only format <code>List</code> containing
@@ -1976,8 +1907,8 @@ public abstract class ResourceBundle {
          *
          * @see #getFormats(String)
          */
-        public static final List<String> FORMAT_PROPERTIES
-            = Collections.unmodifiableList(Arrays.asList("java.properties"));
+        public static final List<String> FORMAT_PROPERTIES = Collections
+            .unmodifiableList(Arrays.asList("java.properties"));
 
         /**
          * The time-to-live constant for not caching loaded resource bundle
@@ -2017,15 +1948,12 @@ public abstract class ResourceBundle {
          * instantiating the <code>ResourceBundle.Control</code> class,
          * except that this method returns a singleton.
          *
-         * @param formats
-         *        the formats to be returned by the
-         *        <code>ResourceBundle.Control.getFormats</code> method
+         * @param formats the formats to be returned by the
+         *                <code>ResourceBundle.Control.getFormats</code> method
          * @return a <code>ResourceBundle.Control</code> supporting the
-         *        specified <code>formats</code>
-         * @exception NullPointerException
-         *        if <code>formats</code> is <code>null</code>
-         * @exception IllegalArgumentException
-         *        if <code>formats</code> is unknown
+         * specified <code>formats</code>
+         * @throws NullPointerException     if <code>formats</code> is <code>null</code>
+         * @throws IllegalArgumentException if <code>formats</code> is unknown
          */
         public static final Control getControl(List<String> formats) {
             if (formats.equals(Control.FORMAT_PROPERTIES)) {
@@ -2051,16 +1979,13 @@ public abstract class ResourceBundle {
          * <code>ResourceBundle.Control</code> instances returned by this
          * method are singletons and thread-safe.
          *
-         * @param formats
-         *        the formats to be returned by the
-         *        <code>ResourceBundle.Control.getFormats</code> method
+         * @param formats the formats to be returned by the
+         *                <code>ResourceBundle.Control.getFormats</code> method
          * @return a <code>ResourceBundle.Control</code> supporting the
-         *        specified <code>formats</code> with no fallback
-         *        <code>Locale</code> support
-         * @exception NullPointerException
-         *        if <code>formats</code> is <code>null</code>
-         * @exception IllegalArgumentException
-         *        if <code>formats</code> is unknown
+         * specified <code>formats</code> with no fallback
+         * <code>Locale</code> support
+         * @throws NullPointerException     if <code>formats</code> is <code>null</code>
+         * @throws IllegalArgumentException if <code>formats</code> is unknown
          */
         public static final Control getNoFallbackControl(List<String> formats) {
             if (formats.equals(Control.FORMAT_DEFAULT)) {
@@ -2098,13 +2023,11 @@ public abstract class ResourceBundle {
          * looks up first class-based resource bundles, then
          * properties-based ones.
          *
-         * @param baseName
-         *        the base name of the resource bundle, a fully qualified class
-         *        name
+         * @param baseName the base name of the resource bundle, a fully qualified class
+         *                 name
          * @return a <code>List</code> of <code>String</code>s containing
-         *        formats for loading resource bundles.
-         * @exception NullPointerException
-         *        if <code>baseName</code> is null
+         * formats for loading resource bundles.
+         * @throws NullPointerException if <code>baseName</code> is null
          * @see #FORMAT_DEFAULT
          * @see #FORMAT_CLASS
          * @see #FORMAT_PROPERTIES
@@ -2212,7 +2135,7 @@ public abstract class ResourceBundle {
          * <li> [<em>L</em>("zh")]
          * <li> <code>Locale.ROOT</code>
          * </ul>
-         *
+         * <p>
          * For <code>Locale("zh", "TW")</code>, the candidate list will be:
          * <ul>
          * <li> [<em>L</em>("zh"), <em>S</em>("Hant"), <em>C</em>("TW")]
@@ -2233,7 +2156,7 @@ public abstract class ResourceBundle {
          * <li> [<em>L</em>("no")]
          * <li> <code>Locale.ROOT</code>
          * </ul>
-         *
+         * <p>
          * If the locale is exactly <code>Locale("no", "NO", "NY")</code>, it is first
          * converted to <code>Locale("nn", "NO")</code> and then the above procedure is
          * followed.
@@ -2285,16 +2208,13 @@ public abstract class ResourceBundle {
          *     Messages_ja -> Messages
          * </pre>
          *
-         * @param baseName
-         *        the base name of the resource bundle, a fully
-         *        qualified class name
-         * @param locale
-         *        the locale for which a resource bundle is desired
+         * @param baseName the base name of the resource bundle, a fully
+         *                 qualified class name
+         * @param locale   the locale for which a resource bundle is desired
          * @return a <code>List</code> of candidate
-         *        <code>Locale</code>s for the given <code>locale</code>
-         * @exception NullPointerException
-         *        if <code>baseName</code> or <code>locale</code> is
-         *        <code>null</code>
+         * <code>Locale</code>s for the given <code>locale</code>
+         * @throws NullPointerException if <code>baseName</code> or <code>locale</code> is
+         *                              <code>null</code>
          */
         public List<Locale> getCandidateLocales(String baseName, Locale locale) {
             if (baseName == null) {
@@ -2332,8 +2252,7 @@ public abstract class ResourceBundle {
                         if (l.getLanguage().length() == 0) {
                             break;
                         }
-                        bokmalList.add(Locale.getInstance("no", l.getScript(), l.getCountry(),
-                                l.getVariant(), null));
+                        bokmalList.add(Locale.getInstance("no", l.getScript(), l.getCountry(), l.getVariant(), null));
                     }
                     return bokmalList;
                 } else if (language.equals("nn") || isNorwegianNynorsk) {
@@ -2433,23 +2352,20 @@ public abstract class ResourceBundle {
          * <code>locale</code> isn't the default one.  Otherwise,
          * <code>null</code> is returned.
          *
-         * @param baseName
-         *        the base name of the resource bundle, a fully
-         *        qualified class name for which
-         *        <code>ResourceBundle.getBundle</code> has been
-         *        unable to find any resource bundles (except for the
-         *        base bundle)
-         * @param locale
-         *        the <code>Locale</code> for which
-         *        <code>ResourceBundle.getBundle</code> has been
-         *        unable to find any resource bundles (except for the
-         *        base bundle)
+         * @param baseName the base name of the resource bundle, a fully
+         *                 qualified class name for which
+         *                 <code>ResourceBundle.getBundle</code> has been
+         *                 unable to find any resource bundles (except for the
+         *                 base bundle)
+         * @param locale   the <code>Locale</code> for which
+         *                 <code>ResourceBundle.getBundle</code> has been
+         *                 unable to find any resource bundles (except for the
+         *                 base bundle)
          * @return a <code>Locale</code> for the fallback search,
-         *        or <code>null</code> if no further fallback search
-         *        is desired.
-         * @exception NullPointerException
-         *        if <code>baseName</code> or <code>locale</code>
-         *        is <code>null</code>
+         * or <code>null</code> if no further fallback search
+         * is desired.
+         * @throws NullPointerException if <code>baseName</code> or <code>locale</code>
+         *                              is <code>null</code>
          */
         public Locale getFallbackLocale(String baseName, Locale locale) {
             if (baseName == null) {
@@ -2513,65 +2429,50 @@ public abstract class ResourceBundle {
          *
          * </ul>
          *
-         * @param baseName
-         *        the base bundle name of the resource bundle, a fully
-         *        qualified class name
-         * @param locale
-         *        the locale for which the resource bundle should be
-         *        instantiated
-         * @param format
-         *        the resource bundle format to be loaded
-         * @param loader
-         *        the <code>ClassLoader</code> to use to load the bundle
-         * @param reload
-         *        the flag to indicate bundle reloading; <code>true</code>
-         *        if reloading an expired resource bundle,
-         *        <code>false</code> otherwise
+         * @param baseName the base bundle name of the resource bundle, a fully
+         *                 qualified class name
+         * @param locale   the locale for which the resource bundle should be
+         *                 instantiated
+         * @param format   the resource bundle format to be loaded
+         * @param loader   the <code>ClassLoader</code> to use to load the bundle
+         * @param reload   the flag to indicate bundle reloading; <code>true</code>
+         *                 if reloading an expired resource bundle,
+         *                 <code>false</code> otherwise
          * @return the resource bundle instance,
-         *        or <code>null</code> if none could be found.
-         * @exception NullPointerException
-         *        if <code>bundleName</code>, <code>locale</code>,
-         *        <code>format</code>, or <code>loader</code> is
-         *        <code>null</code>, or if <code>null</code> is returned by
-         *        {@link #toBundleName(String, Locale) toBundleName}
-         * @exception IllegalArgumentException
-         *        if <code>format</code> is unknown, or if the resource
-         *        found for the given parameters contains malformed data.
-         * @exception ClassCastException
-         *        if the loaded class cannot be cast to <code>ResourceBundle</code>
-         * @exception IllegalAccessException
-         *        if the class or its nullary constructor is not
-         *        accessible.
-         * @exception InstantiationException
-         *        if the instantiation of a class fails for some other
-         *        reason.
-         * @exception ExceptionInInitializerError
-         *        if the initialization provoked by this method fails.
-         * @exception SecurityException
-         *        If a security manager is present and creation of new
-         *        instances is denied. See {@link Class#newInstance()}
-         *        for details.
-         * @exception IOException
-         *        if an error occurred when reading resources using
-         *        any I/O operations
+         * or <code>null</code> if none could be found.
+         * @throws NullPointerException        if <code>bundleName</code>, <code>locale</code>,
+         *                                     <code>format</code>, or <code>loader</code> is
+         *                                     <code>null</code>, or if <code>null</code> is returned by
+         *                                     {@link #toBundleName(String, Locale) toBundleName}
+         * @throws IllegalArgumentException    if <code>format</code> is unknown, or if the resource
+         *                                     found for the given parameters contains malformed data.
+         * @throws ClassCastException          if the loaded class cannot be cast to <code>ResourceBundle</code>
+         * @throws IllegalAccessException      if the class or its nullary constructor is not
+         *                                     accessible.
+         * @throws InstantiationException      if the instantiation of a class fails for some other
+         *                                     reason.
+         * @throws ExceptionInInitializerError if the initialization provoked by this method fails.
+         * @throws SecurityException           If a security manager is present and creation of new
+         *                                     instances is denied. See {@link Class#newInstance()}
+         *                                     for details.
+         * @throws IOException                 if an error occurred when reading resources using
+         *                                     any I/O operations
          */
-        public ResourceBundle newBundle(String baseName, Locale locale, String format,
-                                        ClassLoader loader, boolean reload)
-                    throws IllegalAccessException, InstantiationException, IOException {
+        public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
+            boolean reload) throws IllegalAccessException, InstantiationException, IOException {
             String bundleName = toBundleName(baseName, locale);
             ResourceBundle bundle = null;
             if (format.equals("java.class")) {
                 try {
-                    Class<? extends ResourceBundle> bundleClass
-                        = (Class<? extends ResourceBundle>)loader.loadClass(bundleName);
+                    Class<? extends ResourceBundle> bundleClass = (Class<? extends ResourceBundle>) loader
+                        .loadClass(bundleName);
 
                     // If the class isn't a ResourceBundle subclass, throw a
                     // ClassCastException.
                     if (ResourceBundle.class.isAssignableFrom(bundleClass)) {
                         bundle = bundleClass.newInstance();
                     } else {
-                        throw new ClassCastException(bundleClass.getName()
-                                     + " cannot be cast to ResourceBundle");
+                        throw new ClassCastException(bundleClass.getName() + " cannot be cast to ResourceBundle");
                     }
                 } catch (ClassNotFoundException e) {
                 }
@@ -2581,27 +2482,26 @@ public abstract class ResourceBundle {
                 final boolean reloadFlag = reload;
                 InputStream stream = null;
                 try {
-                    stream = AccessController.doPrivileged(
-                        new PrivilegedExceptionAction<InputStream>() {
-                            public InputStream run() throws IOException {
-                                InputStream is = null;
-                                if (reloadFlag) {
-                                    URL url = classLoader.getResource(resourceName);
-                                    if (url != null) {
-                                        URLConnection connection = url.openConnection();
-                                        if (connection != null) {
-                                            // Disable caches to get fresh data for
-                                            // reloading.
-                                            connection.setUseCaches(false);
-                                            is = connection.getInputStream();
-                                        }
+                    stream = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+                        public InputStream run() throws IOException {
+                            InputStream is = null;
+                            if (reloadFlag) {
+                                URL url = classLoader.getResource(resourceName);
+                                if (url != null) {
+                                    URLConnection connection = url.openConnection();
+                                    if (connection != null) {
+                                        // Disable caches to get fresh data for
+                                        // reloading.
+                                        connection.setUseCaches(false);
+                                        is = connection.getInputStream();
                                     }
-                                } else {
-                                    is = classLoader.getResourceAsStream(resourceName);
                                 }
-                                return is;
+                            } else {
+                                is = classLoader.getResourceAsStream(resourceName);
                             }
-                        });
+                            return is;
+                        }
+                    });
                 } catch (PrivilegedActionException e) {
                     throw (IOException) e.getException();
                 }
@@ -2649,20 +2549,17 @@ public abstract class ResourceBundle {
          *
          * <p>The default implementation returns {@link #TTL_NO_EXPIRATION_CONTROL}.
          *
-         * @param baseName
-         *        the base name of the resource bundle for which the
-         *        expiration value is specified.
-         * @param locale
-         *        the locale of the resource bundle for which the
-         *        expiration value is specified.
+         * @param baseName the base name of the resource bundle for which the
+         *                 expiration value is specified.
+         * @param locale   the locale of the resource bundle for which the
+         *                 expiration value is specified.
          * @return the time (0 or a positive millisecond offset from the
-         *        cached time) to get loaded bundles expired in the cache,
-         *        {@link #TTL_NO_EXPIRATION_CONTROL} to disable the
-         *        expiration control, or {@link #TTL_DONT_CACHE} to disable
-         *        caching.
-         * @exception NullPointerException
-         *        if <code>baseName</code> or <code>locale</code> is
-         *        <code>null</code>
+         * cached time) to get loaded bundles expired in the cache,
+         * {@link #TTL_NO_EXPIRATION_CONTROL} to disable the
+         * expiration control, or {@link #TTL_DONT_CACHE} to disable
+         * caching.
+         * @throws NullPointerException if <code>baseName</code> or <code>locale</code> is
+         *                              <code>null</code>
          */
         public long getTimeToLive(String baseName, Locale locale) {
             if (baseName == null || locale == null) {
@@ -2679,7 +2576,7 @@ public abstract class ResourceBundle {
          * otherwise. <code>loadTime</code> is a millisecond offset since
          * the <a href="Calendar.html#Epoch"> <code>Calendar</code>
          * Epoch</a>.
-         *
+         * <p>
          * The calling <code>ResourceBundle.getBundle</code> factory method
          * calls this method on the <code>ResourceBundle.Control</code>
          * instance used for its current invocation, not on the instance
@@ -2696,32 +2593,24 @@ public abstract class ResourceBundle {
          * formats, <code>"java.class"</code> or
          * <code>"java.properties"</code>.
          *
-         * @param baseName
-         *        the base bundle name of the resource bundle, a
-         *        fully qualified class name
-         * @param locale
-         *        the locale for which the resource bundle
-         *        should be instantiated
-         * @param format
-         *        the resource bundle format to be loaded
-         * @param loader
-         *        the <code>ClassLoader</code> to use to load the bundle
-         * @param bundle
-         *        the resource bundle instance that has been expired
-         *        in the cache
-         * @param loadTime
-         *        the time when <code>bundle</code> was loaded and put
-         *        in the cache
+         * @param baseName the base bundle name of the resource bundle, a
+         *                 fully qualified class name
+         * @param locale   the locale for which the resource bundle
+         *                 should be instantiated
+         * @param format   the resource bundle format to be loaded
+         * @param loader   the <code>ClassLoader</code> to use to load the bundle
+         * @param bundle   the resource bundle instance that has been expired
+         *                 in the cache
+         * @param loadTime the time when <code>bundle</code> was loaded and put
+         *                 in the cache
          * @return <code>true</code> if the expired bundle needs to be
-         *        reloaded; <code>false</code> otherwise.
-         * @exception NullPointerException
-         *        if <code>baseName</code>, <code>locale</code>,
-         *        <code>format</code>, <code>loader</code>, or
-         *        <code>bundle</code> is <code>null</code>
+         * reloaded; <code>false</code> otherwise.
+         * @throws NullPointerException if <code>baseName</code>, <code>locale</code>,
+         *                              <code>format</code>, <code>loader</code>, or
+         *                              <code>bundle</code> is <code>null</code>
          */
-        public boolean needsReload(String baseName, Locale locale,
-                                   String format, ClassLoader loader,
-                                   ResourceBundle bundle, long loadTime) {
+        public boolean needsReload(String baseName, Locale locale, String format, ClassLoader loader,
+            ResourceBundle bundle, long loadTime) {
             if (bundle == null) {
                 throw new NullPointerException();
             }
@@ -2739,7 +2628,7 @@ public abstract class ResourceBundle {
                         // disable caches to get the correct data
                         connection.setUseCaches(false);
                         if (connection instanceof JarURLConnection) {
-                            JarEntry ent = ((JarURLConnection)connection).getJarEntry();
+                            JarEntry ent = ((JarURLConnection) connection).getJarEntry();
                             if (ent != null) {
                                 lastModified = ent.getTime();
                                 if (lastModified == -1) {
@@ -2791,16 +2680,13 @@ public abstract class ResourceBundle {
          * conventions in the organization and packaging of localized
          * resources.
          *
-         * @param baseName
-         *        the base name of the resource bundle, a fully
-         *        qualified class name
-         * @param locale
-         *        the locale for which a resource bundle should be
-         *        loaded
+         * @param baseName the base name of the resource bundle, a fully
+         *                 qualified class name
+         * @param locale   the locale for which a resource bundle should be
+         *                 loaded
          * @return the bundle name for the resource bundle
-         * @exception NullPointerException
-         *        if <code>baseName</code> or <code>locale</code>
-         *        is <code>null</code>
+         * @throws NullPointerException if <code>baseName</code> or <code>locale</code>
+         *                              is <code>null</code>
          */
         public String toBundleName(String baseName, Locale locale) {
             if (locale == Locale.ROOT) {
@@ -2820,7 +2706,8 @@ public abstract class ResourceBundle {
             sb.append('_');
             if (script != "") {
                 if (variant != "") {
-                    sb.append(language).append('_').append(script).append('_').append(country).append('_').append(variant);
+                    sb.append(language).append('_').append(script).append('_').append(country).append('_')
+                        .append(variant);
                 } else if (country != "") {
                     sb.append(language).append('_').append(script).append('_').append(country);
                 } else {
@@ -2850,14 +2737,11 @@ public abstract class ResourceBundle {
          * is <code>"properties"</code>, then
          * <code>"foo/bar/MyResources_ja_JP.properties"</code> is returned.
          *
-         * @param bundleName
-         *        the bundle name
-         * @param suffix
-         *        the file type suffix
+         * @param bundleName the bundle name
+         * @param suffix     the file type suffix
          * @return the converted resource name
-         * @exception NullPointerException
-         *         if <code>bundleName</code> or <code>suffix</code>
-         *         is <code>null</code>
+         * @throws NullPointerException if <code>bundleName</code> or <code>suffix</code>
+         *                              is <code>null</code>
          */
         public final String toResourceName(String bundleName, String suffix) {
             StringBuilder sb = new StringBuilder(bundleName.length() + 1 + suffix.length());
@@ -2867,11 +2751,9 @@ public abstract class ResourceBundle {
     }
 
     private static class SingleFormatControl extends Control {
-        private static final Control PROPERTIES_ONLY
-            = new SingleFormatControl(FORMAT_PROPERTIES);
+        private static final Control PROPERTIES_ONLY = new SingleFormatControl(FORMAT_PROPERTIES);
 
-        private static final Control CLASS_ONLY
-            = new SingleFormatControl(FORMAT_CLASS);
+        private static final Control CLASS_ONLY = new SingleFormatControl(FORMAT_CLASS);
 
         private final List<String> formats;
 
@@ -2888,14 +2770,11 @@ public abstract class ResourceBundle {
     }
 
     private static final class NoFallbackControl extends SingleFormatControl {
-        private static final Control NO_FALLBACK
-            = new NoFallbackControl(FORMAT_DEFAULT);
+        private static final Control NO_FALLBACK = new NoFallbackControl(FORMAT_DEFAULT);
 
-        private static final Control PROPERTIES_ONLY_NO_FALLBACK
-            = new NoFallbackControl(FORMAT_PROPERTIES);
+        private static final Control PROPERTIES_ONLY_NO_FALLBACK = new NoFallbackControl(FORMAT_PROPERTIES);
 
-        private static final Control CLASS_ONLY_NO_FALLBACK
-            = new NoFallbackControl(FORMAT_CLASS);
+        private static final Control CLASS_ONLY_NO_FALLBACK = new NoFallbackControl(FORMAT_CLASS);
 
         protected NoFallbackControl(List<String> formats) {
             super(formats);

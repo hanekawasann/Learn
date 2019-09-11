@@ -33,7 +33,7 @@ package java.beans;
  * displaying and updating property values.  Most PropertyEditors will
  * only need to support a subset of the different options available in
  * this API.
- * <P>
+ * <p>
  * Simple PropertyEditors may only support the getAsText and setAsText
  * methods and need not support (say) paintValue or getCustomEditor.  More
  * complex types may be unable to support getAsText and setAsText but will
@@ -61,9 +61,9 @@ public interface PropertyEditor {
      * "java.lang.Integer".
      *
      * @param value The new target object to be edited.  Note that this
-     *     object should not be modified by the PropertyEditor, rather
-     *     the PropertyEditor should create a new object to hold any
-     *     modified value.
+     *              object should not be modified by the PropertyEditor, rather
+     *              the PropertyEditor should create a new object to hold any
+     *              modified value.
      */
     void setValue(Object value);
 
@@ -81,7 +81,7 @@ public interface PropertyEditor {
     /**
      * Determines whether this property editor is paintable.
      *
-     * @return  True if the class will honor the paintValue method.
+     * @return True if the class will honor the paintValue method.
      */
 
     boolean isPaintable();
@@ -98,8 +98,8 @@ public interface PropertyEditor {
      * the parent container.  The PropertyEditor may change graphics attributes
      * such as font and color and doesn't need to restore the old values.
      *
-     * @param gfx  Graphics object to paint into.
-     * @param box  Rectangle within graphics object into which we should paint.
+     * @param gfx Graphics object to paint into.
+     * @param box Rectangle within graphics object into which we should paint.
      */
     void paintValue(java.awt.Graphics gfx, java.awt.Rectangle box);
 
@@ -133,8 +133,8 @@ public interface PropertyEditor {
      * </ul>
      *
      * @return a fragment of Java code representing an initializer for the
-     *         current value. It should not contain a semi-colon
-     *         ('<code>;</code>') to end the expression.
+     * current value. It should not contain a semi-colon
+     * ('<code>;</code>') to end the expression.
      */
     String getJavaInitializationString();
 
@@ -146,7 +146,7 @@ public interface PropertyEditor {
      * @return The property value as a human editable string.
      * <p>   Returns null if the value can't be expressed as an editable string.
      * <p>   If a non-null value is returned, then the PropertyEditor should
-     *       be prepared to parse that string back in setAsText().
+     * be prepared to parse that string back in setAsText().
      */
     String getAsText();
 
@@ -155,7 +155,8 @@ public interface PropertyEditor {
      * java.lang.IllegalArgumentException if either the String is
      * badly formatted or if this kind of property can't be expressed
      * as text.
-     * @param text  The string to be parsed.
+     *
+     * @param text The string to be parsed.
      */
     void setAsText(String text) throws java.lang.IllegalArgumentException;
 
@@ -170,8 +171,7 @@ public interface PropertyEditor {
      * to identify the current value.
      *
      * @return The tag values for this property.  May be null if this
-     *   property cannot be represented as a tagged value.
-     *
+     * property cannot be represented as a tagged value.
      */
     String[] getTags();
 
@@ -182,14 +182,14 @@ public interface PropertyEditor {
      * that edits its property value.  It is the responsibility of the
      * PropertyEditor to hook itself up to its editor Component itself and
      * to report property value changes by firing a PropertyChange event.
-     * <P>
+     * <p>
      * The higher-level code that calls getCustomEditor may either embed
      * the Component in some larger property sheet, or it may put it in
      * its own individual dialog, or ...
      *
      * @return A java.awt.Component that will allow a human to directly
-     *      edit the current property value.  May be null if this is
-     *      not supported.
+     * edit the current property value.  May be null if this is
+     * not supported.
      */
 
     java.awt.Component getCustomEditor();
@@ -197,7 +197,7 @@ public interface PropertyEditor {
     /**
      * Determines whether this property editor supports a custom editor.
      *
-     * @return  True if the propertyEditor can provide a custom editor.
+     * @return True if the propertyEditor can provide a custom editor.
      */
     boolean supportsCustomEditor();
 
@@ -211,14 +211,14 @@ public interface PropertyEditor {
      * specifying the {@code null} value for the property name
      * and itself as the source.
      *
-     * @param listener  the {@link PropertyChangeListener} to add
+     * @param listener the {@link PropertyChangeListener} to add
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Removes a listener for the value change.
      *
-     * @param listener  the {@link PropertyChangeListener} to remove
+     * @param listener the {@link PropertyChangeListener} to remove
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
 

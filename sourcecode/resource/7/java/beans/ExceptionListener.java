@@ -27,9 +27,8 @@ package java.beans;
 /**
  * An ExceptionListener is notified of internal exceptions.
  *
- * @since 1.4
- *
  * @author Philip Milne
+ * @since 1.4
  */
 public interface ExceptionListener {
     /**
@@ -37,7 +36,6 @@ public interface ExceptionListener {
      * been caught.
      *
      * @param e The exception that was caught.
-     *
      */
     public void exceptionThrown(Exception e);
 }

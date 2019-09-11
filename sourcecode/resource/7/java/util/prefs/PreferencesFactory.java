@@ -24,6 +24,7 @@
  */
 
 package java.util.prefs;
+
 import java.util.*;
 
 /**
@@ -37,9 +38,9 @@ import java.util.*;
  * Normal users of the <tt>Preferences</tt> facility should have no need to
  * consult this documentation.</strong>
  *
- * @author  Josh Bloch
- * @see     Preferences
- * @since   1.4
+ * @author Josh Bloch
+ * @see Preferences
+ * @since 1.4
  */
 public interface PreferencesFactory {
     /**

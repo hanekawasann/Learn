@@ -35,18 +35,18 @@ package java.math;
  * calculations to occur on the same number without having to create
  * a new number for every step of the calculation as occurs with
  * BigIntegers.
- *
+ * <p>
  * Note that SignedMutableBigIntegers only support signed addition and
  * subtraction. All other operations occur as with MutableBigIntegers.
  *
- * @see     BigInteger
- * @author  Michael McCloskey
- * @since   1.3
+ * @author Michael McCloskey
+ * @see BigInteger
+ * @since 1.3
  */
 
 class SignedMutableBigInteger extends MutableBigInteger {
 
-   /**
+    /**
      * The sign of this MutableBigInteger.
      */
     int sign = 1;
@@ -77,51 +77,38 @@ class SignedMutableBigInteger extends MutableBigInteger {
         super(val);
     }
 
-   // Arithmetic Operations
+    // Arithmetic Operations
 
-   /**
+    /**
      * Signed addition built upon unsigned add and subtract.
      */
     void signedAdd(SignedMutableBigInteger addend) {
-        if (sign == addend.sign)
-            add(addend);
-        else
-            sign = sign * subtract(addend);
+        if (sign == addend.sign) { add(addend); } else { sign = sign * subtract(addend); }
 
     }
 
-   /**
+    /**
      * Signed addition built upon unsigned add and subtract.
      */
     void signedAdd(MutableBigInteger addend) {
-        if (sign == 1)
-            add(addend);
-        else
-            sign = sign * subtract(addend);
+        if (sign == 1) { add(addend); } else { sign = sign * subtract(addend); }
 
     }
 
-   /**
+    /**
      * Signed subtraction built upon unsigned add and subtract.
      */
     void signedSubtract(SignedMutableBigInteger addend) {
-        if (sign == addend.sign)
-            sign = sign * subtract(addend);
-        else
-            add(addend);
+        if (sign == addend.sign) { sign = sign * subtract(addend); } else { add(addend); }
 
     }
 
-   /**
+    /**
      * Signed subtraction built upon unsigned add and subtract.
      */
     void signedSubtract(MutableBigInteger addend) {
-        if (sign == 1)
-            sign = sign * subtract(addend);
-        else
-            add(addend);
-        if (intLen == 0)
-             sign = 1;
+        if (sign == 1) { sign = sign * subtract(addend); } else { add(addend); }
+        if (intLen == 0) { sign = 1; }
     }
 
     /**

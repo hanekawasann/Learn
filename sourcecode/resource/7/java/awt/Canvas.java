@@ -26,6 +26,7 @@ package java.awt;
 
 import java.awt.image.BufferStrategy;
 import java.awt.peer.CanvasPeer;
+
 import javax.accessibility.*;
 
 /**
@@ -38,8 +39,8 @@ import javax.accessibility.*;
  * component. The <code>paint</code> method must be overridden
  * in order to perform custom graphics on the canvas.
  *
- * @author      Sami Shaio
- * @since       JDK1.0
+ * @author Sami Shaio
+ * @since JDK1.0
  */
 public class Canvas extends Component implements Accessible {
 
@@ -49,7 +50,7 @@ public class Canvas extends Component implements Accessible {
     /*
      * JDK 1.1 serialVersionUID
      */
-     private static final long serialVersionUID = -2284879212465893870L;
+    private static final long serialVersionUID = -2284879212465893870L;
 
     /**
      * Constructs a new Canvas.
@@ -61,7 +62,6 @@ public class Canvas extends Component implements Accessible {
      * Constructs a new Canvas given a GraphicsConfiguration object.
      *
      * @param config a reference to a GraphicsConfiguration object.
-     *
      * @see GraphicsConfiguration
      */
     public Canvas(GraphicsConfiguration config) {
@@ -71,8 +71,8 @@ public class Canvas extends Component implements Accessible {
 
     @Override
     void setGraphicsConfiguration(GraphicsConfiguration gc) {
-        synchronized(getTreeLock()) {
-            CanvasPeer peer = (CanvasPeer)getPeer();
+        synchronized (getTreeLock()) {
+            CanvasPeer peer = (CanvasPeer) getPeer();
             if (peer != null) {
                 gc = peer.getAppropriateGraphicsConfiguration(gc);
             }
@@ -93,13 +93,13 @@ public class Canvas extends Component implements Accessible {
     /**
      * Creates the peer of the canvas.  This peer allows you to change the
      * user interface of the canvas without changing its functionality.
-     * @see     java.awt.Toolkit#createCanvas(java.awt.Canvas)
-     * @see     java.awt.Component#getToolkit()
+     *
+     * @see java.awt.Toolkit#createCanvas(java.awt.Canvas)
+     * @see java.awt.Component#getToolkit()
      */
     public void addNotify() {
         synchronized (getTreeLock()) {
-            if (peer == null)
-                peer = getToolkit().createCanvas(this);
+            if (peer == null) { peer = getToolkit().createCanvas(this); }
             super.addNotify();
         }
     }
@@ -114,9 +114,9 @@ public class Canvas extends Component implements Accessible {
      * Applications that override this method need not call
      * super.paint(g).
      *
-     * @param      g   the specified Graphics context
-     * @see        #update(Graphics)
-     * @see        Component#paint(Graphics)
+     * @param g the specified Graphics context
+     * @see #update(Graphics)
+     * @see Component#paint(Graphics)
      */
     public void paint(Graphics g) {
         g.clearRect(0, 0, width, height);
@@ -134,8 +134,8 @@ public class Canvas extends Component implements Accessible {
      * above into their own code.
      *
      * @param g the specified Graphics context
-     * @see   #paint(Graphics)
-     * @see   Component#update(Graphics)
+     * @see #paint(Graphics)
+     * @see Component#update(Graphics)
      */
     public void update(Graphics g) {
         g.clearRect(0, 0, width, height);
@@ -158,9 +158,10 @@ public class Canvas extends Component implements Accessible {
      * <p>
      * Each time this method is called,
      * the existing buffer strategy for this component is discarded.
+     *
      * @param numBuffers number of buffers to create, including the front buffer
-     * @exception IllegalArgumentException if numBuffers is less than 1.
-     * @exception IllegalStateException if the component is not displayable
+     * @throws IllegalArgumentException if numBuffers is less than 1.
+     * @throws IllegalStateException    if the component is not displayable
      * @see #isDisplayable
      * @see #getBufferStrategy
      * @since 1.4
@@ -177,20 +178,20 @@ public class Canvas extends Component implements Accessible {
      * <p>
      * Each time this method
      * is called, the existing buffer strategy for this component is discarded.
+     *
      * @param numBuffers number of buffers to create
-     * @param caps the required capabilities for creating the buffer strategy;
-     * cannot be <code>null</code>
-     * @exception AWTException if the capabilities supplied could not be
-     * supported or met; this may happen, for example, if there is not enough
-     * accelerated memory currently available, or if page flipping is specified
-     * but not possible.
-     * @exception IllegalArgumentException if numBuffers is less than 1, or if
-     * caps is <code>null</code>
+     * @param caps       the required capabilities for creating the buffer strategy;
+     *                   cannot be <code>null</code>
+     * @throws AWTException             if the capabilities supplied could not be
+     *                                  supported or met; this may happen, for example, if there is not enough
+     *                                  accelerated memory currently available, or if page flipping is specified
+     *                                  but not possible.
+     * @throws IllegalArgumentException if numBuffers is less than 1, or if
+     *                                  caps is <code>null</code>
      * @see #getBufferStrategy
      * @since 1.4
      */
-    public void createBufferStrategy(int numBuffers,
-        BufferCapabilities caps) throws AWTException {
+    public void createBufferStrategy(int numBuffers, BufferCapabilities caps) throws AWTException {
         super.createBufferStrategy(numBuffers, caps);
     }
 
@@ -219,7 +220,7 @@ public class Canvas extends Component implements Accessible {
      * A new AccessibleAWTCanvas instance is created if necessary.
      *
      * @return an AccessibleAWTCanvas that serves as the
-     *         AccessibleContext of this Canvas
+     * AccessibleContext of this Canvas
      * @since 1.3
      */
     public AccessibleContext getAccessibleContext() {
@@ -233,10 +234,10 @@ public class Canvas extends Component implements Accessible {
      * This class implements accessibility support for the
      * <code>Canvas</code> class.  It provides an implementation of the
      * Java Accessibility API appropriate to canvas user-interface elements.
+     *
      * @since 1.3
      */
-    protected class AccessibleAWTCanvas extends AccessibleAWTComponent
-    {
+    protected class AccessibleAWTCanvas extends AccessibleAWTComponent {
         private static final long serialVersionUID = -6325592262103146699L;
 
         /**

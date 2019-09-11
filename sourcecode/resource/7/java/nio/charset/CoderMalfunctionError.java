@@ -35,17 +35,14 @@ package java.nio.charset;
  * @since 1.4
  */
 
-public class CoderMalfunctionError
-    extends Error
-{
+public class CoderMalfunctionError extends Error {
 
     private static final long serialVersionUID = -1151412348057794301L;
 
     /**
      * Initializes an instance of this class.
      *
-     * @param  cause
-     *         The unexpected exception that was thrown
+     * @param cause The unexpected exception that was thrown
      */
     public CoderMalfunctionError(Exception cause) {
         super(cause);

@@ -24,7 +24,9 @@
  */
 
 package java.lang;
+
 import java.util.Random;
+
 import sun.misc.FpUtils;
 import sun.misc.DoubleConsts;
 
@@ -57,9 +59,9 @@ import sun.misc.DoubleConsts;
  * {@code sinh}, {@code cosh}, {@code tanh},
  * {@code hypot}, {@code expm1}, and {@code log1p}.
  *
- * @author  unascribed
- * @author  Joseph D. Darcy
- * @since   1.3
+ * @author unascribed
+ * @author Joseph D. Darcy
+ * @since 1.3
  */
 
 public final class StrictMath {
@@ -89,8 +91,8 @@ public final class StrictMath {
      * <li>If the argument is zero, then the result is a zero with the
      * same sign as the argument.</ul>
      *
-     * @param   a   an angle, in radians.
-     * @return  the sine of the argument.
+     * @param a an angle, in radians.
+     * @return the sine of the argument.
      */
     public static native double sin(double a);
 
@@ -99,8 +101,8 @@ public final class StrictMath {
      * <ul><li>If the argument is NaN or an infinity, then the
      * result is NaN.</ul>
      *
-     * @param   a   an angle, in radians.
-     * @return  the cosine of the argument.
+     * @param a an angle, in radians.
+     * @return the cosine of the argument.
      */
     public static native double cos(double a);
 
@@ -111,8 +113,8 @@ public final class StrictMath {
      * <li>If the argument is zero, then the result is a zero with the
      * same sign as the argument.</ul>
      *
-     * @param   a   an angle, in radians.
-     * @return  the tangent of the argument.
+     * @param a an angle, in radians.
+     * @return the tangent of the argument.
      */
     public static native double tan(double a);
 
@@ -124,8 +126,8 @@ public final class StrictMath {
      * <li>If the argument is zero, then the result is a zero with the
      * same sign as the argument.</ul>
      *
-     * @param   a   the value whose arc sine is to be returned.
-     * @return  the arc sine of the argument.
+     * @param a the value whose arc sine is to be returned.
+     * @return the arc sine of the argument.
      */
     public static native double asin(double a);
 
@@ -135,8 +137,8 @@ public final class StrictMath {
      * <ul><li>If the argument is NaN or its absolute value is greater
      * than 1, then the result is NaN.</ul>
      *
-     * @param   a   the value whose arc cosine is to be returned.
-     * @return  the arc cosine of the argument.
+     * @param a the value whose arc cosine is to be returned.
+     * @return the arc cosine of the argument.
      */
     public static native double acos(double a);
 
@@ -147,8 +149,8 @@ public final class StrictMath {
      * <li>If the argument is zero, then the result is a zero with the
      * same sign as the argument.</ul>
      *
-     * @param   a   the value whose arc tangent is to be returned.
-     * @return  the arc tangent of the argument.
+     * @param a the value whose arc tangent is to be returned.
+     * @return the arc tangent of the argument.
      */
     public static native double atan(double a);
 
@@ -157,9 +159,9 @@ public final class StrictMath {
      * equivalent angle measured in radians.  The conversion from
      * degrees to radians is generally inexact.
      *
-     * @param   angdeg   an angle, in degrees
-     * @return  the measurement of the angle {@code angdeg}
-     *          in radians.
+     * @param angdeg an angle, in degrees
+     * @return the measurement of the angle {@code angdeg}
+     * in radians.
      */
     public static strictfp double toRadians(double angdeg) {
         return angdeg / 180.0 * PI;
@@ -172,9 +174,9 @@ public final class StrictMath {
      * <i>not</i> expect {@code cos(toRadians(90.0))} to exactly
      * equal {@code 0.0}.
      *
-     * @param   angrad   an angle, in radians
-     * @return  the measurement of the angle {@code angrad}
-     *          in degrees.
+     * @param angrad an angle, in radians
+     * @return the measurement of the angle {@code angrad}
+     * in degrees.
      */
     public static strictfp double toDegrees(double angrad) {
         return angrad * 180.0 / PI;
@@ -189,9 +191,9 @@ public final class StrictMath {
      * <li>If the argument is negative infinity, then the result is
      * positive zero.</ul>
      *
-     * @param   a   the exponent to raise <i>e</i> to.
-     * @return  the value <i>e</i><sup>{@code a}</sup>,
-     *          where <i>e</i> is the base of the natural logarithms.
+     * @param a the exponent to raise <i>e</i> to.
+     * @return the value <i>e</i><sup>{@code a}</sup>,
+     * where <i>e</i> is the base of the natural logarithms.
      */
     public static native double exp(double a);
 
@@ -205,9 +207,9 @@ public final class StrictMath {
      * <li>If the argument is positive zero or negative zero, then the
      * result is negative infinity.</ul>
      *
-     * @param   a   a value
-     * @return  the value ln&nbsp;{@code a}, the natural logarithm of
-     *          {@code a}.
+     * @param a a value
+     * @return the value ln&nbsp;{@code a}, the natural logarithm of
+     * {@code a}.
      */
     public static native double log(double a);
 
@@ -226,8 +228,8 @@ public final class StrictMath {
      * integer <i>n</i>, then the result is <i>n</i>.
      * </ul>
      *
-     * @param   a   a value
-     * @return  the base 10 logarithm of  {@code a}.
+     * @param a a value
+     * @return the base 10 logarithm of  {@code a}.
      * @since 1.5
      */
     public static native double log10(double a);
@@ -245,8 +247,8 @@ public final class StrictMath {
      * Otherwise, the result is the {@code double} value closest to
      * the true mathematical square root of the argument value.
      *
-     * @param   a   a value.
-     * @return  the positive square root of {@code a}.
+     * @param a a value.
+     * @return the positive square root of {@code a}.
      */
     public static native double sqrt(double a);
 
@@ -269,8 +271,8 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   a   a value.
-     * @return  the cube root of {@code a}.
+     * @param a a value.
+     * @return the cube root of {@code a}.
      * @since 1.5
      */
     public static native double cbrt(double a);
@@ -292,10 +294,10 @@ public final class StrictMath {
      * <li>If the first argument is finite and the second argument is
      * infinite, then the result is the same as the first argument.</ul>
      *
-     * @param   f1   the dividend.
-     * @param   f2   the divisor.
-     * @return  the remainder when {@code f1} is divided by
-     *          {@code f2}.
+     * @param f1 the dividend.
+     * @param f2 the divisor.
+     * @return the remainder when {@code f1} is divided by
+     * {@code f2}.
      */
     public static native double IEEEremainder(double f1, double f2);
 
@@ -312,10 +314,10 @@ public final class StrictMath {
      * that the value of {@code StrictMath.ceil(x)} is exactly the
      * value of {@code -StrictMath.floor(-x)}.
      *
-     * @param   a   a value.
-     * @return  the smallest (closest to negative infinity)
-     *          floating-point value that is greater than or equal to
-     *          the argument and is equal to a mathematical integer.
+     * @param a a value.
+     * @return the smallest (closest to negative infinity)
+     * floating-point value that is greater than or equal to
+     * the argument and is equal to a mathematical integer.
      */
     public static double ceil(double a) {
         return floorOrCeil(a, -0.0, 1.0, 1.0);
@@ -331,10 +333,10 @@ public final class StrictMath {
      * positive zero or negative zero, then the result is the same as
      * the argument.</ul>
      *
-     * @param   a   a value.
-     * @return  the largest (closest to positive infinity)
-     *          floating-point value that less than or equal to the argument
-     *          and is equal to a mathematical integer.
+     * @param a a value.
+     * @return the largest (closest to positive infinity)
+     * floating-point value that less than or equal to the argument
+     * and is equal to a mathematical integer.
      */
     public static double floor(double a) {
         return floorOrCeil(a, -1.0, 0.0, -1.0);
@@ -343,15 +345,12 @@ public final class StrictMath {
     /**
      * Internal method to share logic between floor and ceil.
      *
-     * @param a the value to be floored or ceiled
+     * @param a                the value to be floored or ceiled
      * @param negativeBoundary result for values in (-1, 0)
      * @param positiveBoundary result for values in (0, 1)
-     * @param increment value to add when the argument is non-integral
+     * @param increment        value to add when the argument is non-integral
      */
-    private static double floorOrCeil(double a,
-                                      double negativeBoundary,
-                                      double positiveBoundary,
-                                      double sign) {
+    private static double floorOrCeil(double a, double negativeBoundary, double positiveBoundary, double sign) {
         int exponent = Math.getExponent(a);
 
         if (exponent < 0) {
@@ -360,8 +359,7 @@ public final class StrictMath {
              * floorOrceil(-0.0) => -0.0
              * floorOrceil(+0.0) => +0.0
              */
-            return ((a == 0.0) ? a :
-                    ( (a < 0.0) ?  negativeBoundary : positiveBoundary) );
+            return ((a == 0.0) ? a : ((a < 0.0) ? negativeBoundary : positiveBoundary));
         } else if (exponent >= 52) {
             /*
              * Infinity, NaN, or a value so large it must be integral.
@@ -373,14 +371,13 @@ public final class StrictMath {
         assert exponent >= 0 && exponent <= 51;
 
         long doppel = Double.doubleToRawLongBits(a);
-        long mask   = DoubleConsts.SIGNIF_BIT_MASK >> exponent;
+        long mask = DoubleConsts.SIGNIF_BIT_MASK >> exponent;
 
-        if ( (mask & doppel) == 0L )
+        if ((mask & doppel) == 0L) {
             return a; // integral value
-        else {
+        } else {
             double result = Double.longBitsToDouble(doppel & (~mask));
-            if (sign*a > 0.0)
-                result = result + sign;
+            if (sign * a > 0.0) { result = result + sign; }
             return result;
         }
     }
@@ -396,9 +393,9 @@ public final class StrictMath {
      * <li>If the argument is NaN or an infinity or positive zero or negative
      * zero, then the result is the same as the argument.</ul>
      *
-     * @param   a   a value.
-     * @return  the closest floating-point value to {@code a} that is
-     *          equal to a mathematical integer.
+     * @param a a value.
+     * @return the closest floating-point value to {@code a} that is
+     * equal to a mathematical integer.
      * @author Joseph D. Darcy
      */
     public static double rint(double a) {
@@ -427,12 +424,12 @@ public final class StrictMath {
          * last multiply in the return statement is by plus or minus
          * 1.0, which is exact too.
          */
-        double twoToThe52 = (double)(1L << 52); // 2^52
+        double twoToThe52 = (double) (1L << 52); // 2^52
         double sign = FpUtils.rawCopySign(1.0, a); // preserve sign info
         a = Math.abs(a);
 
         if (a < twoToThe52) { // E_min <= ilogb(a) <= 51
-            a = ((twoToThe52 + a ) - twoToThe52);
+            a = ((twoToThe52 + a) - twoToThe52);
         }
 
         return sign * a; // restore original sign
@@ -480,12 +477,12 @@ public final class StrictMath {
      * <li>If both arguments are negative infinity, then the result is the
      * {@code double} value closest to -3*<i>pi</i>/4.</ul>
      *
-     * @param   y   the ordinate coordinate
-     * @param   x   the abscissa coordinate
-     * @return  the <i>theta</i> component of the point
-     *          (<i>r</i>,&nbsp;<i>theta</i>)
-     *          in polar coordinates that corresponds to the point
-     *          (<i>x</i>,&nbsp;<i>y</i>) in Cartesian coordinates.
+     * @param y the ordinate coordinate
+     * @param x the abscissa coordinate
+     * @return the <i>theta</i> component of the point
+     * (<i>r</i>,&nbsp;<i>theta</i>)
+     * in polar coordinates that corresponds to the point
+     * (<i>x</i>,&nbsp;<i>y</i>) in Cartesian coordinates.
      */
     public static native double atan2(double y, double x);
 
@@ -606,9 +603,9 @@ public final class StrictMath {
      * method if and only if the result of applying the method to the
      * value is equal to the value.)
      *
-     * @param   a   base.
-     * @param   b   the exponent.
-     * @return  the value {@code a}<sup>{@code b}</sup>.
+     * @param a base.
+     * @param b the exponent.
+     * @return the value {@code a}<sup>{@code b}</sup>.
      */
     public static native double pow(double a, double b);
 
@@ -625,11 +622,11 @@ public final class StrictMath {
      * equal to the value of {@code Integer.MAX_VALUE}, the result is
      * equal to the value of {@code Integer.MAX_VALUE}.</ul>
      *
-     * @param   a   a floating-point value to be rounded to an integer.
-     * @return  the value of the argument rounded to the nearest
-     *          {@code int} value.
-     * @see     java.lang.Integer#MAX_VALUE
-     * @see     java.lang.Integer#MIN_VALUE
+     * @param a a floating-point value to be rounded to an integer.
+     * @return the value of the argument rounded to the nearest
+     * {@code int} value.
+     * @see java.lang.Integer#MAX_VALUE
+     * @see java.lang.Integer#MIN_VALUE
      */
     public static int round(float a) {
         return Math.round(a);
@@ -648,12 +645,12 @@ public final class StrictMath {
      * equal to the value of {@code Long.MAX_VALUE}, the result is
      * equal to the value of {@code Long.MAX_VALUE}.</ul>
      *
-     * @param   a  a floating-point value to be rounded to a
+     * @param a a floating-point value to be rounded to a
      *          {@code long}.
-     * @return  the value of the argument rounded to the nearest
-     *          {@code long} value.
-     * @see     java.lang.Long#MAX_VALUE
-     * @see     java.lang.Long#MIN_VALUE
+     * @return the value of the argument rounded to the nearest
+     * {@code long} value.
+     * @see java.lang.Long#MAX_VALUE
+     * @see java.lang.Long#MIN_VALUE
      */
     public static long round(double a) {
         return Math.round(a);
@@ -676,7 +673,7 @@ public final class StrictMath {
      * pseudorandom-number generator, exactly as if by the expression
      *
      * <blockquote>{@code new java.util.Random()}</blockquote>
-     *
+     * <p>
      * This new pseudorandom-number generator is used thereafter for
      * all calls to this method and is used nowhere else.
      *
@@ -685,13 +682,13 @@ public final class StrictMath {
      * pseudorandom numbers at a great rate, it may reduce contention
      * for each thread to have its own pseudorandom number generator.
      *
-     * @return  a pseudorandom {@code double} greater than or equal
+     * @return a pseudorandom {@code double} greater than or equal
      * to {@code 0.0} and less than {@code 1.0}.
      * @see Random#nextDouble()
      */
     public static double random() {
         Random rnd = randomNumberGenerator;
-        if (rnd == null) rnd = initRNG();
+        if (rnd == null) { rnd = initRNG(); }
         return rnd.nextDouble();
     }
 
@@ -705,8 +702,8 @@ public final class StrictMath {
      * {@code int} value, the result is that same value, which is
      * negative.
      *
-     * @param   a   the  argument whose absolute value is to be determined.
-     * @return  the absolute value of the argument.
+     * @param a the  argument whose absolute value is to be determined.
+     * @return the absolute value of the argument.
      */
     public static int abs(int a) {
         return (a < 0) ? -a : a;
@@ -722,8 +719,8 @@ public final class StrictMath {
      * {@code long} value, the result is that same value, which
      * is negative.
      *
-     * @param   a   the  argument whose absolute value is to be determined.
-     * @return  the absolute value of the argument.
+     * @param a the  argument whose absolute value is to be determined.
+     * @return the absolute value of the argument.
      */
     public static long abs(long a) {
         return (a < 0) ? -a : a;
@@ -741,8 +738,8 @@ public final class StrictMath {
      * In other words, the result is the same as the value of the expression:
      * <p>{@code Float.intBitsToFloat(0x7fffffff & Float.floatToIntBits(a))}
      *
-     * @param   a   the argument whose absolute value is to be determined
-     * @return  the absolute value of the argument.
+     * @param a the argument whose absolute value is to be determined
+     * @return the absolute value of the argument.
      */
     public static float abs(float a) {
         return (a <= 0.0F) ? 0.0F - a : a;
@@ -760,8 +757,8 @@ public final class StrictMath {
      * In other words, the result is the same as the value of the expression:
      * <p>{@code Double.longBitsToDouble((Double.doubleToLongBits(a)<<1)>>>1)}
      *
-     * @param   a   the argument whose absolute value is to be determined
-     * @return  the absolute value of the argument.
+     * @param a the argument whose absolute value is to be determined
+     * @return the absolute value of the argument.
      */
     public static double abs(double a) {
         return (a <= 0.0D) ? 0.0D - a : a;
@@ -773,9 +770,9 @@ public final class StrictMath {
      * {@link Integer#MAX_VALUE}. If the arguments have the same value,
      * the result is that same value.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the larger of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the larger of {@code a} and {@code b}.
      */
     public static int max(int a, int b) {
         return (a >= b) ? a : b;
@@ -787,16 +784,16 @@ public final class StrictMath {
      * {@link Long#MAX_VALUE}. If the arguments have the same value,
      * the result is that same value.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the larger of {@code a} and {@code b}.
-        */
+     * @param a an argument.
+     * @param b another argument.
+     * @return the larger of {@code a} and {@code b}.
+     */
     public static long max(long a, long b) {
         return (a >= b) ? a : b;
     }
 
     // Use raw bit-wise conversions on guaranteed non-NaN arguments.
-    private static long negativeZeroFloatBits  = Float.floatToRawIntBits(-0.0f);
+    private static long negativeZeroFloatBits = Float.floatToRawIntBits(-0.0f);
     private static long negativeZeroDoubleBits = Double.doubleToRawLongBits(-0.0d);
 
     /**
@@ -809,16 +806,15 @@ public final class StrictMath {
      * argument is positive zero and the other negative zero, the
      * result is positive zero.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the larger of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the larger of {@code a} and {@code b}.
      */
     public static float max(float a, float b) {
-        if (a != a)
+        if (a != a) {
             return a;   // a is NaN
-        if ((a == 0.0f) &&
-            (b == 0.0f) &&
-            (Float.floatToRawIntBits(a) == negativeZeroFloatBits)) {
+        }
+        if ((a == 0.0f) && (b == 0.0f) && (Float.floatToRawIntBits(a) == negativeZeroFloatBits)) {
             // Raw conversion ok since NaN can't map to -0.0.
             return b;
         }
@@ -835,16 +831,15 @@ public final class StrictMath {
      * argument is positive zero and the other negative zero, the
      * result is positive zero.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the larger of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the larger of {@code a} and {@code b}.
      */
     public static double max(double a, double b) {
-        if (a != a)
+        if (a != a) {
             return a;   // a is NaN
-        if ((a == 0.0d) &&
-            (b == 0.0d) &&
-            (Double.doubleToRawLongBits(a) == negativeZeroDoubleBits)) {
+        }
+        if ((a == 0.0d) && (b == 0.0d) && (Double.doubleToRawLongBits(a) == negativeZeroDoubleBits)) {
             // Raw conversion ok since NaN can't map to -0.0.
             return b;
         }
@@ -857,9 +852,9 @@ public final class StrictMath {
      * {@link Integer#MIN_VALUE}.  If the arguments have the same
      * value, the result is that same value.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the smaller of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the smaller of {@code a} and {@code b}.
      */
     public static int min(int a, int b) {
         return (a <= b) ? a : b;
@@ -871,9 +866,9 @@ public final class StrictMath {
      * {@link Long#MIN_VALUE}. If the arguments have the same
      * value, the result is that same value.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the smaller of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the smaller of {@code a} and {@code b}.
      */
     public static long min(long a, long b) {
         return (a <= b) ? a : b;
@@ -889,16 +884,15 @@ public final class StrictMath {
      * one argument is positive zero and the other is negative zero,
      * the result is negative zero.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the smaller of {@code a} and {@code b.}
+     * @param a an argument.
+     * @param b another argument.
+     * @return the smaller of {@code a} and {@code b.}
      */
     public static float min(float a, float b) {
-        if (a != a)
+        if (a != a) {
             return a;   // a is NaN
-        if ((a == 0.0f) &&
-            (b == 0.0f) &&
-            (Float.floatToRawIntBits(b) == negativeZeroFloatBits)) {
+        }
+        if ((a == 0.0f) && (b == 0.0f) && (Float.floatToRawIntBits(b) == negativeZeroFloatBits)) {
             // Raw conversion ok since NaN can't map to -0.0.
             return b;
         }
@@ -915,16 +909,15 @@ public final class StrictMath {
      * argument is positive zero and the other is negative zero, the
      * result is negative zero.
      *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @return  the smaller of {@code a} and {@code b}.
+     * @param a an argument.
+     * @param b another argument.
+     * @return the smaller of {@code a} and {@code b}.
      */
     public static double min(double a, double b) {
-        if (a != a)
+        if (a != a) {
             return a;   // a is NaN
-        if ((a == 0.0d) &&
-            (b == 0.0d) &&
-            (Double.doubleToRawLongBits(b) == negativeZeroDoubleBits)) {
+        }
+        if ((a == 0.0d) && (b == 0.0d) && (Double.doubleToRawLongBits(b) == negativeZeroDoubleBits)) {
             // Raw conversion ok since NaN can't map to -0.0.
             return b;
         }
@@ -1046,8 +1039,8 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   x The number whose hyperbolic sine is to be returned.
-     * @return  The hyperbolic sine of {@code x}.
+     * @param x The number whose hyperbolic sine is to be returned.
+     * @return The hyperbolic sine of {@code x}.
      * @since 1.5
      */
     public static native double sinh(double x);
@@ -1070,8 +1063,8 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   x The number whose hyperbolic cosine is to be returned.
-     * @return  The hyperbolic cosine of {@code x}.
+     * @param x The number whose hyperbolic cosine is to be returned.
+     * @return The hyperbolic cosine of {@code x}.
      * @since 1.5
      */
     public static native double cosh(double x);
@@ -1101,8 +1094,8 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   x The number whose hyperbolic tangent is to be returned.
-     * @return  The hyperbolic tangent of {@code x}.
+     * @param x The number whose hyperbolic tangent is to be returned.
+     * @return The hyperbolic tangent of {@code x}.
      * @since 1.5
      */
     public static native double tanh(double x);
@@ -1124,7 +1117,7 @@ public final class StrictMath {
      *
      * @param x a value
      * @param y a value
-     * @return sqrt(<i>x</i><sup>2</sup>&nbsp;+<i>y</i><sup>2</sup>)
+     * @return sqrt(< i > x < / i > < sup > 2 < / sup > & nbsp ; + < i > y < / i > < sup > 2 < / sup >)
      * without intermediate overflow or underflow
      * @since 1.5
      */
@@ -1151,9 +1144,9 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   x   the exponent to raise <i>e</i> to in the computation of
-     *              <i>e</i><sup>{@code x}</sup>&nbsp;-1.
-     * @return  the value <i>e</i><sup>{@code x}</sup>&nbsp;-&nbsp;1.
+     * @param x the exponent to raise <i>e</i> to in the computation of
+     *          <i>e</i><sup>{@code x}</sup>&nbsp;-1.
+     * @return the value <i>e</i><sup>{@code x}</sup>&nbsp;-&nbsp;1.
      * @since 1.5
      */
     public static native double expm1(double x);
@@ -1182,7 +1175,7 @@ public final class StrictMath {
      *
      * </ul>
      *
-     * @param   x   a value
+     * @param x a value
      * @return the value ln({@code x}&nbsp;+&nbsp;1), the natural
      * log of {@code x}&nbsp;+&nbsp;1
      * @since 1.5
@@ -1195,8 +1188,8 @@ public final class StrictMath {
      * {@code sign} argument is always treated as if it were
      * positive.
      *
-     * @param magnitude  the parameter providing the magnitude of the result
-     * @param sign   the parameter providing the sign of the result
+     * @param magnitude the parameter providing the magnitude of the result
+     * @param sign      the parameter providing the sign of the result
      * @return a value with the magnitude of {@code magnitude}
      * and the sign of {@code sign}.
      * @since 1.6
@@ -1211,8 +1204,8 @@ public final class StrictMath {
      * {@code sign} argument is always treated as if it were
      * positive.
      *
-     * @param magnitude  the parameter providing the magnitude of the result
-     * @param sign   the parameter providing the sign of the result
+     * @param magnitude the parameter providing the magnitude of the result
+     * @param sign      the parameter providing the sign of the result
      * @return a value with the magnitude of {@code magnitude}
      * and the sign of {@code sign}.
      * @since 1.6
@@ -1220,6 +1213,7 @@ public final class StrictMath {
     public static float copySign(float magnitude, float sign) {
         return sun.misc.FpUtils.copySign(magnitude, sign);
     }
+
     /**
      * Returns the unbiased exponent used in the representation of a
      * {@code float}.  Special cases:
@@ -1230,6 +1224,7 @@ public final class StrictMath {
      * <li>If the argument is zero or subnormal, then the result is
      * {@link Float#MIN_EXPONENT} -1.
      * </ul>
+     *
      * @param f a {@code float} value
      * @since 1.6
      */
@@ -1247,6 +1242,7 @@ public final class StrictMath {
      * <li>If the argument is zero or subnormal, then the result is
      * {@link Double#MIN_EXPONENT} -1.
      * </ul>
+     *
      * @param d a {@code double} value
      * @since 1.6
      */
@@ -1285,10 +1281,10 @@ public final class StrictMath {
      * infinity with same sign as {@code start} is returned.
      * </ul>
      *
-     * @param start  starting floating-point value
+     * @param start     starting floating-point value
      * @param direction value indicating which of
-     * {@code start}'s neighbors or {@code start} should
-     * be returned
+     *                  {@code start}'s neighbors or {@code start} should
+     *                  be returned
      * @return The floating-point number adjacent to {@code start} in the
      * direction of {@code direction}.
      * @since 1.6
@@ -1327,10 +1323,10 @@ public final class StrictMath {
      * infinity with same sign as {@code start} is returned.
      * </ul>
      *
-     * @param start  starting floating-point value
+     * @param start     starting floating-point value
      * @param direction value indicating which of
-     * {@code start}'s neighbors or {@code start} should
-     * be returned
+     *                  {@code start}'s neighbors or {@code start} should
+     *                  be returned
      * @return The floating-point number adjacent to {@code start} in the
      * direction of {@code direction}.
      * @since 1.6
@@ -1423,7 +1419,7 @@ public final class StrictMath {
      * sign is returned.
      * </ul>
      *
-     * @param d number to be scaled by a power of two.
+     * @param d           number to be scaled by a power of two.
      * @param scaleFactor power of 2 used to scale {@code d}
      * @return {@code d} &times; 2<sup>{@code scaleFactor}</sup>
      * @since 1.6
@@ -1457,7 +1453,7 @@ public final class StrictMath {
      * sign is returned.
      * </ul>
      *
-     * @param f number to be scaled by a power of two.
+     * @param f           number to be scaled by a power of two.
      * @param scaleFactor power of 2 used to scale {@code f}
      * @return {@code f} &times; 2<sup>{@code scaleFactor}</sup>
      * @since 1.6

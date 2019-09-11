@@ -29,6 +29,7 @@ package java.lang.invoke;
  * A {@code ConstantCallSite} is a {@link CallSite} whose target is permanent, and can never be changed.
  * An {@code invokedynamic} instruction linked to a {@code ConstantCallSite} is permanently
  * bound to the call site's target.
+ *
  * @author John Rose, JSR 292 EG
  */
 public class ConstantCallSite extends CallSite {
@@ -36,6 +37,7 @@ public class ConstantCallSite extends CallSite {
 
     /**
      * Creates a call site with a permanent target.
+     *
      * @param target the target to be permanently associated with this call site
      * @throws NullPointerException if the proposed target is null
      */
@@ -69,13 +71,13 @@ public class ConstantCallSite extends CallSite {
      * will result in an {@code IllegalStateException}.
      * It is legal at all times to obtain the call site's type using the {@code type} method.
      *
-     * @param targetType the type of the method handle to be permanently associated with this call site
+     * @param targetType       the type of the method handle to be permanently associated with this call site
      * @param createTargetHook a method handle to invoke (on the call site) to produce the call site's target
      * @throws WrongMethodTypeException if the hook cannot be invoked on the required arguments,
-     *         or if the target returned by the hook is not of the given {@code targetType}
-     * @throws NullPointerException if the hook returns a null value
-     * @throws ClassCastException if the hook returns something other than a {@code MethodHandle}
-     * @throws Throwable anything else thrown by the the hook function
+     *                                  or if the target returned by the hook is not of the given {@code targetType}
+     * @throws NullPointerException     if the hook returns a null value
+     * @throws ClassCastException       if the hook returns something other than a {@code MethodHandle}
+     * @throws Throwable                anything else thrown by the the hook function
      */
     protected ConstantCallSite(MethodType targetType, MethodHandle createTargetHook) throws Throwable {
         super(targetType, createTargetHook);
@@ -91,18 +93,21 @@ public class ConstantCallSite extends CallSite {
      * @return the immutable linkage state of this call site, a constant method handle
      * @throws IllegalStateException if the {@code ConstantCallSite} constructor has not completed
      */
-    @Override public final MethodHandle getTarget() {
-        if (!isFrozen)  throw new IllegalStateException();
+    @Override
+    public final MethodHandle getTarget() {
+        if (!isFrozen) { throw new IllegalStateException(); }
         return target;
     }
 
     /**
      * Always throws an {@link UnsupportedOperationException}.
      * This kind of call site cannot change its target.
+     *
      * @param ignore a new target proposed for the call site, which is ignored
      * @throws UnsupportedOperationException because this kind of call site cannot change its target
      */
-    @Override public final void setTarget(MethodHandle ignore) {
+    @Override
+    public final void setTarget(MethodHandle ignore) {
         throw new UnsupportedOperationException();
     }
 
@@ -110,6 +115,7 @@ public class ConstantCallSite extends CallSite {
      * Returns this call site's permanent target.
      * Since that target will never change, this is a correct implementation
      * of {@link CallSite#dynamicInvoker CallSite.dynamicInvoker}.
+     *
      * @return the immutable linkage state of this call site, a constant method handle
      * @throws IllegalStateException if the {@code ConstantCallSite} constructor has not completed
      */

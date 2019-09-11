@@ -40,16 +40,13 @@ import java.nio.channels.*;
  * abstract protected methods defined in this class need not synchronize
  * against other threads that might be engaged in the same operations.  </p>
  *
- *
  * @author Mark Reinhold
  * @author Mike McCloskey
  * @author JSR-51 Expert Group
  * @since 1.4
  */
 
-public abstract class AbstractSelectableChannel
-    extends SelectableChannel
-{
+public abstract class AbstractSelectableChannel extends SelectableChannel {
 
     // The provider that created this channel
     private final SelectorProvider provider;
@@ -80,7 +77,7 @@ public abstract class AbstractSelectableChannel
     /**
      * Returns the provider that created this channel.
      *
-     * @return  The provider that created this channel
+     * @return The provider that created this channel
      */
     public final SelectorProvider provider() {
         return provider;
@@ -94,17 +91,14 @@ public abstract class AbstractSelectableChannel
             int i = 0;
             if ((keys != null) && (keyCount < keys.length)) {
                 // Find empty element of key array
-                for (i = 0; i < keys.length; i++)
-                    if (keys[i] == null)
-                        break;
+                for (i = 0; i < keys.length; i++) { if (keys[i] == null) { break; } }
             } else if (keys == null) {
-                keys =  new SelectionKey[3];
+                keys = new SelectionKey[3];
             } else {
                 // Grow key array
                 int n = keys.length * 2;
-                SelectionKey[] ks =  new SelectionKey[n];
-                for (i = 0; i < keys.length; i++)
-                    ks[i] = keys[i];
+                SelectionKey[] ks = new SelectionKey[n];
+                for (i = 0; i < keys.length; i++) { ks[i] = keys[i]; }
                 keys = ks;
                 i = keyCount;
             }
@@ -115,33 +109,31 @@ public abstract class AbstractSelectableChannel
 
     private SelectionKey findKey(Selector sel) {
         synchronized (keyLock) {
-            if (keys == null)
-                return null;
-            for (int i = 0; i < keys.length; i++)
-                if ((keys[i] != null) && (keys[i].selector() == sel))
-                    return keys[i];
+            if (keys == null) { return null; }
+            for (int i = 0; i < keys.length; i++) {
+                if ((keys[i] != null) && (keys[i].selector() == sel)) { return keys[i]; }
+            }
             return null;
         }
     }
 
     void removeKey(SelectionKey k) {                    // package-private
         synchronized (keyLock) {
-            for (int i = 0; i < keys.length; i++)
+            for (int i = 0; i < keys.length; i++) {
                 if (keys[i] == k) {
                     keys[i] = null;
                     keyCount--;
                 }
-            ((AbstractSelectionKey)k).invalidate();
+            }
+            ((AbstractSelectionKey) k).invalidate();
         }
     }
 
     private boolean haveValidKeys() {
         synchronized (keyLock) {
-            if (keyCount == 0)
-                return false;
+            if (keyCount == 0) { return false; }
             for (int i = 0; i < keys.length; i++) {
-                if ((keys[i] != null) && keys[i].isValid())
-                    return true;
+                if ((keys[i] != null) && keys[i].isValid()) { return true; }
             }
             return false;
         }
@@ -176,27 +168,17 @@ public abstract class AbstractSelectableChannel
      * resulting key is added to this channel's key set before being returned.
      * </p>
      *
-     * @throws  ClosedSelectorException {@inheritDoc}
-     *
-     * @throws  IllegalBlockingModeException {@inheritDoc}
-     *
-     * @throws  IllegalSelectorException {@inheritDoc}
-     *
-     * @throws  CancelledKeyException {@inheritDoc}
-     *
-     * @throws  IllegalArgumentException {@inheritDoc}
+     * @throws ClosedSelectorException      {@inheritDoc}
+     * @throws IllegalBlockingModeException {@inheritDoc}
+     * @throws IllegalSelectorException     {@inheritDoc}
+     * @throws CancelledKeyException        {@inheritDoc}
+     * @throws IllegalArgumentException     {@inheritDoc}
      */
-    public final SelectionKey register(Selector sel, int ops,
-                                       Object att)
-        throws ClosedChannelException
-    {
-        if (!isOpen())
-            throw new ClosedChannelException();
-        if ((ops & ~validOps()) != 0)
-            throw new IllegalArgumentException();
+    public final SelectionKey register(Selector sel, int ops, Object att) throws ClosedChannelException {
+        if (!isOpen()) { throw new ClosedChannelException(); }
+        if ((ops & ~validOps()) != 0) { throw new IllegalArgumentException(); }
         synchronized (regLock) {
-            if (blocking)
-                throw new IllegalBlockingModeException();
+            if (blocking) { throw new IllegalBlockingModeException(); }
             SelectionKey k = findKey(sel);
             if (k != null) {
                 k.interestOps(ops);
@@ -204,7 +186,7 @@ public abstract class AbstractSelectableChannel
             }
             if (k == null) {
                 // New registration
-                k = ((AbstractSelector)sel).register(this, ops, att);
+                k = ((AbstractSelector) sel).register(this, ops, att);
                 addKey(k);
             }
             return k;
@@ -230,8 +212,7 @@ public abstract class AbstractSelectableChannel
             int count = (keys == null) ? 0 : keys.length;
             for (int i = 0; i < count; i++) {
                 SelectionKey k = keys[i];
-                if (k != null)
-                    k.cancel();
+                if (k != null) { k.cancel(); }
             }
         }
     }
@@ -272,16 +253,11 @@ public abstract class AbstractSelectableChannel
      * implConfigureBlocking} method, while holding the appropriate locks, in
      * order to change the mode.  </p>
      */
-    public final SelectableChannel configureBlocking(boolean block)
-        throws IOException
-    {
-        if (!isOpen())
-            throw new ClosedChannelException();
+    public final SelectableChannel configureBlocking(boolean block) throws IOException {
+        if (!isOpen()) { throw new ClosedChannelException(); }
         synchronized (regLock) {
-            if (blocking == block)
-                return this;
-            if (block && haveValidKeys())
-                throw new IllegalBlockingModeException();
+            if (blocking == block) { return this; }
+            if (block && haveValidKeys()) { throw new IllegalBlockingModeException(); }
             implConfigureBlocking(block);
             blocking = block;
         }
@@ -296,10 +272,8 @@ public abstract class AbstractSelectableChannel
      * changing the blocking mode.  This method is only invoked if the new mode
      * is different from the current mode.  </p>
      *
-     * @throws IOException
-     *         If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
-    protected abstract void implConfigureBlocking(boolean block)
-        throws IOException;
+    protected abstract void implConfigureBlocking(boolean block) throws IOException;
 
 }

@@ -47,7 +47,7 @@
  * The following low-level information summarizes relevant parts of the
  * Java Virtual Machine specification.  For full details, please see the
  * current version of that specification.
- *
+ * <p>
  * Each occurrence of an {@code invokedynamic} instruction is called a <em>dynamic call site</em>.
  * <h3><a name="indyinsn"></a>{@code invokedynamic} instructions</h3>
  * A dynamic call site is originally in an unlinked state.  In this state, there is
@@ -122,7 +122,7 @@
  * all threads.  Any other bootstrap method calls are allowed to complete, but their
  * results are ignored, and their dynamic call site invocations proceed with the originally
  * chosen target object.
-
+ *
  * <p style="font-size:smaller;">
  * <em>Discussion:</em>
  * These rules do not enable the JVM to duplicate dynamic call sites,

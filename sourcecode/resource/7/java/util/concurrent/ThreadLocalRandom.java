@@ -58,8 +58,8 @@ import java.util.Random;
  * <p>This class also provides additional commonly used bounded random
  * generation methods.
  *
- * @since 1.7
  * @author Doug Lea
+ * @since 1.7
  */
 public class ThreadLocalRandom extends Random {
     // same constants as Random, but must be redeclared because private
@@ -88,11 +88,10 @@ public class ThreadLocalRandom extends Random {
     /**
      * The actual ThreadLocal
      */
-    private static final ThreadLocal<ThreadLocalRandom> localRandom =
-        new ThreadLocal<ThreadLocalRandom>() {
-            protected ThreadLocalRandom initialValue() {
-                return new ThreadLocalRandom();
-            }
+    private static final ThreadLocal<ThreadLocalRandom> localRandom = new ThreadLocal<ThreadLocalRandom>() {
+        protected ThreadLocalRandom initialValue() {
+            return new ThreadLocalRandom();
+        }
     };
 
 
@@ -120,14 +119,13 @@ public class ThreadLocalRandom extends Random {
      * @throws UnsupportedOperationException always
      */
     public void setSeed(long seed) {
-        if (initialized)
-            throw new UnsupportedOperationException();
+        if (initialized) { throw new UnsupportedOperationException(); }
         rnd = (seed ^ multiplier) & mask;
     }
 
     protected int next(int bits) {
         rnd = (rnd * multiplier + addend) & mask;
-        return (int) (rnd >>> (48-bits));
+        return (int) (rnd >>> (48 - bits));
     }
 
     /**
@@ -136,13 +134,12 @@ public class ThreadLocalRandom extends Random {
      *
      * @param least the least value returned
      * @param bound the upper bound (exclusive)
-     * @throws IllegalArgumentException if least greater than or equal
-     * to bound
      * @return the next value
+     * @throws IllegalArgumentException if least greater than or equal
+     *                                  to bound
      */
     public int nextInt(int least, int bound) {
-        if (least >= bound)
-            throw new IllegalArgumentException();
+        if (least >= bound) { throw new IllegalArgumentException(); }
         return nextInt(bound - least) + least;
     }
 
@@ -151,13 +148,12 @@ public class ThreadLocalRandom extends Random {
      * between 0 (inclusive) and the specified value (exclusive).
      *
      * @param n the bound on the random number to be returned.  Must be
-     *        positive.
+     *          positive.
      * @return the next value
      * @throws IllegalArgumentException if n is not positive
      */
     public long nextLong(long n) {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive");
+        if (n <= 0) { throw new IllegalArgumentException("n must be positive"); }
         // Divide n by two until small enough for nextInt. On each
         // iteration (at most 31 of them but usually much less),
         // randomly choose both whether to include high bit in result
@@ -168,8 +164,7 @@ public class ThreadLocalRandom extends Random {
             int bits = next(2);
             long half = n >>> 1;
             long nextn = ((bits & 2) == 0) ? half : n - half;
-            if ((bits & 1) == 0)
-                offset += n - nextn;
+            if ((bits & 1) == 0) { offset += n - nextn; }
             n = nextn;
         }
         return offset + nextInt((int) n);
@@ -183,11 +178,10 @@ public class ThreadLocalRandom extends Random {
      * @param bound the upper bound (exclusive)
      * @return the next value
      * @throws IllegalArgumentException if least greater than or equal
-     * to bound
+     *                                  to bound
      */
     public long nextLong(long least, long bound) {
-        if (least >= bound)
-            throw new IllegalArgumentException();
+        if (least >= bound) { throw new IllegalArgumentException(); }
         return nextLong(bound - least) + least;
     }
 
@@ -196,13 +190,12 @@ public class ThreadLocalRandom extends Random {
      * between 0 (inclusive) and the specified value (exclusive).
      *
      * @param n the bound on the random number to be returned.  Must be
-     *        positive.
+     *          positive.
      * @return the next value
      * @throws IllegalArgumentException if n is not positive
      */
     public double nextDouble(double n) {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive");
+        if (n <= 0) { throw new IllegalArgumentException("n must be positive"); }
         return nextDouble() * n;
     }
 
@@ -214,11 +207,10 @@ public class ThreadLocalRandom extends Random {
      * @param bound the upper bound (exclusive)
      * @return the next value
      * @throws IllegalArgumentException if least greater than or equal
-     * to bound
+     *                                  to bound
      */
     public double nextDouble(double least, double bound) {
-        if (least >= bound)
-            throw new IllegalArgumentException();
+        if (least >= bound) { throw new IllegalArgumentException(); }
         return nextDouble() * (bound - least) + least;
     }
 

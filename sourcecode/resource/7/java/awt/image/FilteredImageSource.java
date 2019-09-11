@@ -47,9 +47,8 @@ import java.awt.image.ColorModel;
  *
  * </pre>
  *
+ * @author Jim Graham
  * @see ImageProducer
- *
- * @author      Jim Graham
  */
 public class FilteredImageSource implements ImageProducer {
     ImageProducer src;
@@ -58,6 +57,7 @@ public class FilteredImageSource implements ImageProducer {
     /**
      * Constructs an ImageProducer object from an existing ImageProducer
      * and a filter object.
+     *
      * @param orig the specified <code>ImageProducer</code>
      * @param imgf the specified <code>ImageFilter</code>
      * @see ImageFilter
@@ -89,7 +89,7 @@ public class FilteredImageSource implements ImageProducer {
      * It should not be called from user code,
      * and its behavior if called from user code is unspecified.
      *
-     * @param ic  the consumer for the filtered image
+     * @param ic the consumer for the filtered image
      * @see ImageConsumer
      */
     public synchronized void addConsumer(ImageConsumer ic) {
@@ -168,7 +168,7 @@ public class FilteredImageSource implements ImageProducer {
      * It should not be called from user code,
      * and its behavior if called from user code is unspecified.
      *
-     * @param ic  the consumer for the filtered image
+     * @param ic the consumer for the filtered image
      * @see ImageConsumer
      */
     public void startProduction(ImageConsumer ic) {

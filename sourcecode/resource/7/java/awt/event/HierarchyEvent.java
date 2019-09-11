@@ -83,11 +83,11 @@ import java.awt.Container;
  * </ul>
  * Assigning the value different from listed above will cause unspecified behavior.
  *
- * @author      David Mendenhall
- * @see         HierarchyListener
- * @see         HierarchyBoundsAdapter
- * @see         HierarchyBoundsListener
- * @since       1.3
+ * @author David Mendenhall
+ * @see HierarchyListener
+ * @see HierarchyBoundsAdapter
+ * @see HierarchyBoundsListener
+ * @since 1.3
  */
 public class HierarchyEvent extends AWTEvent {
     /*
@@ -164,7 +164,7 @@ public class HierarchyEvent extends AWTEvent {
 
     Component changed;
     Container changedParent;
-    long      changeFlags;
+    long changeFlags;
 
     /**
      * Constructs an <code>HierarchyEvent</code> object to identify a
@@ -173,25 +173,24 @@ public class HierarchyEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source          The <code>Component</code> object that
-     *                        originated the event
-     * @param id              An integer indicating the type of event.
-     *                        For information on allowable values, see
-     *                        the class description for {@link HierarchyEvent}
-     * @param changed         The <code>Component</code> at the top of
-     *                        the hierarchy which was changed
-     * @param changedParent   The parent of the <code>changed</code> component.
-     *                        This
-     *                        may be the parent before or after the
-     *                        change, depending on the type of change
+     * @param source        The <code>Component</code> object that
+     *                      originated the event
+     * @param id            An integer indicating the type of event.
+     *                      For information on allowable values, see
+     *                      the class description for {@link HierarchyEvent}
+     * @param changed       The <code>Component</code> at the top of
+     *                      the hierarchy which was changed
+     * @param changedParent The parent of the <code>changed</code> component.
+     *                      This
+     *                      may be the parent before or after the
+     *                      change, depending on the type of change
      * @throws IllegalArgumentException if <code>source</code> is {@code null}
      * @see #getSource()
      * @see #getID()
      * @see #getChanged()
      * @see #getChangedParent()
      */
-    public HierarchyEvent(Component source, int id, Component changed,
-                          Container changedParent) {
+    public HierarchyEvent(Component source, int id, Component changed, Container changedParent) {
         super(source, id);
         this.changed = changed;
         this.changedParent = changedParent;
@@ -204,22 +203,22 @@ public class HierarchyEvent extends AWTEvent {
      * <code>IllegalArgumentException</code> if <code>source</code>
      * is <code>null</code>.
      *
-     * @param source          The <code>Component</code> object that
-     *                        originated the event
-     * @param id              An integer indicating the type of event.
-     *                        For information on allowable values, see
-     *                        the class description for {@link HierarchyEvent}
-     * @param changed         The <code>Component</code> at the top
-     *                        of the hierarchy which was changed
-     * @param changedParent   The parent of the <code>changed</code> component.
-     *                        This
-     *                        may be the parent before or after the
-     *                        change, depending on the type of change
-     * @param changeFlags     A bitmask which indicates the type(s) of
-     *                        the <code>HIERARCHY_CHANGED</code> events
-     *                        represented in this event object.
-     *                        For information on allowable values, see
-     *                        the class description for {@link HierarchyEvent}
+     * @param source        The <code>Component</code> object that
+     *                      originated the event
+     * @param id            An integer indicating the type of event.
+     *                      For information on allowable values, see
+     *                      the class description for {@link HierarchyEvent}
+     * @param changed       The <code>Component</code> at the top
+     *                      of the hierarchy which was changed
+     * @param changedParent The parent of the <code>changed</code> component.
+     *                      This
+     *                      may be the parent before or after the
+     *                      change, depending on the type of change
+     * @param changeFlags   A bitmask which indicates the type(s) of
+     *                      the <code>HIERARCHY_CHANGED</code> events
+     *                      represented in this event object.
+     *                      For information on allowable values, see
+     *                      the class description for {@link HierarchyEvent}
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getSource()
      * @see #getID()
@@ -227,8 +226,7 @@ public class HierarchyEvent extends AWTEvent {
      * @see #getChangedParent()
      * @see #getChangeFlags()
      */
-    public HierarchyEvent(Component source, int id, Component changed,
-                          Container changedParent, long changeFlags) {
+    public HierarchyEvent(Component source, int id, Component changed, Container changedParent, long changeFlags) {
         super(source, id);
         this.changed = changed;
         this.changedParent = changedParent;
@@ -243,7 +241,7 @@ public class HierarchyEvent extends AWTEvent {
      * <code>Component</code>.
      */
     public Component getComponent() {
-        return (source instanceof Component) ? (Component)source : null;
+        return (source instanceof Component) ? (Component) source : null;
     }
 
     /**
@@ -293,44 +291,44 @@ public class HierarchyEvent extends AWTEvent {
      */
     public String paramString() {
         String typeStr;
-        switch(id) {
-          case ANCESTOR_MOVED:
-              typeStr = "ANCESTOR_MOVED ("+changed+","+changedParent+")";
-              break;
-          case ANCESTOR_RESIZED:
-              typeStr = "ANCESTOR_RESIZED ("+changed+","+changedParent+")";
-              break;
-          case HIERARCHY_CHANGED: {
-              typeStr = "HIERARCHY_CHANGED (";
-              boolean first = true;
-              if ((changeFlags & PARENT_CHANGED) != 0) {
-                  first = false;
-                  typeStr += "PARENT_CHANGED";
-              }
-              if ((changeFlags & DISPLAYABILITY_CHANGED) != 0) {
-                  if (first) {
-                      first = false;
-                  } else {
-                      typeStr += ",";
-                  }
-                  typeStr += "DISPLAYABILITY_CHANGED";
-              }
-              if ((changeFlags & SHOWING_CHANGED) != 0) {
-                  if (first) {
-                      first = false;
-                  } else {
-                      typeStr += ",";
-                  }
-                  typeStr += "SHOWING_CHANGED";
-              }
-              if (!first) {
-                  typeStr += ",";
-              }
-              typeStr += changed + "," + changedParent + ")";
-              break;
-          }
-          default:
-              typeStr = "unknown type";
+        switch (id) {
+            case ANCESTOR_MOVED:
+                typeStr = "ANCESTOR_MOVED (" + changed + "," + changedParent + ")";
+                break;
+            case ANCESTOR_RESIZED:
+                typeStr = "ANCESTOR_RESIZED (" + changed + "," + changedParent + ")";
+                break;
+            case HIERARCHY_CHANGED: {
+                typeStr = "HIERARCHY_CHANGED (";
+                boolean first = true;
+                if ((changeFlags & PARENT_CHANGED) != 0) {
+                    first = false;
+                    typeStr += "PARENT_CHANGED";
+                }
+                if ((changeFlags & DISPLAYABILITY_CHANGED) != 0) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        typeStr += ",";
+                    }
+                    typeStr += "DISPLAYABILITY_CHANGED";
+                }
+                if ((changeFlags & SHOWING_CHANGED) != 0) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        typeStr += ",";
+                    }
+                    typeStr += "SHOWING_CHANGED";
+                }
+                if (!first) {
+                    typeStr += ",";
+                }
+                typeStr += changed + "," + changedParent + ")";
+                break;
+            }
+            default:
+                typeStr = "unknown type";
         }
         return typeStr;
     }

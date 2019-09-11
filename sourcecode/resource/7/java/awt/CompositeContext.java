@@ -35,6 +35,7 @@ import java.awt.image.WritableRaster;
  * compositing operations.  In a multi-threaded environment, several
  * contexts can exist simultaneously for a single {@link Composite}
  * object.
+ *
  * @see Composite
  */
 
@@ -54,15 +55,14 @@ public interface CompositeContext {
      * <code>dstColorModel</code> passed to the
      * {@link Composite#createContext(java.awt.image.ColorModel, java.awt.image.ColorModel, java.awt.RenderingHints) createContext}
      * method of the <code>Composite</code> interface.
-     * @param src the first source for the compositing operation
-     * @param dstIn the second source for the compositing operation
+     *
+     * @param src    the first source for the compositing operation
+     * @param dstIn  the second source for the compositing operation
      * @param dstOut the <code>WritableRaster</code> into which the
-     * result of the operation is stored
+     *               result of the operation is stored
      * @see Composite
      */
-    public void compose(Raster src,
-                        Raster dstIn,
-                        WritableRaster dstOut);
+    public void compose(Raster src, Raster dstIn, WritableRaster dstOut);
 
 
 }

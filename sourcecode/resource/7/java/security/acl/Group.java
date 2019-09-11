@@ -31,14 +31,14 @@ import java.security.Principal;
 /**
  * This interface is used to represent a group of principals. (A principal
  * represents an entity such as an individual user or a company). <p>
- *
+ * <p>
  * Note that Group extends Principal. Thus, either a Principal or a Group can
  * be passed as an argument to methods containing a Principal parameter. For
  * example, you can add either a Principal or a Group to a Group object by
  * calling the object's <code>addMember</code> method, passing it the
  * Principal or Group.
  *
- * @author      Satish Dharmaraj
+ * @author Satish Dharmaraj
  */
 public interface Group extends Principal {
 
@@ -46,7 +46,6 @@ public interface Group extends Principal {
      * Adds the specified member to the group.
      *
      * @param user the principal to add to this group.
-     *
      * @return true if the member was successfully added,
      * false if the principal was already a member.
      */
@@ -56,7 +55,6 @@ public interface Group extends Principal {
      * Removes the specified member from the group.
      *
      * @param user the principal to remove from this group.
-     *
      * @return true if the principal was removed, or
      * false if the principal was not a member.
      */
@@ -68,7 +66,6 @@ public interface Group extends Principal {
      * group which is a member of this group, true is returned.
      *
      * @param member the principal whose membership is to be checked.
-     *
      * @return true if the principal is a member of this group,
      * false otherwise.
      */

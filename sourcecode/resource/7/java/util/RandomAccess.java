@@ -64,5 +64,4 @@ package java.util;
  *
  * @since 1.4
  */
-public interface RandomAccess {
-}
+public interface RandomAccess { }

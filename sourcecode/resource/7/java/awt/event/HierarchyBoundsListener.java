@@ -44,10 +44,10 @@ import java.util.EventListener;
  * that GUI layout works properly regardless of whether a
  * program registers an <code>HierarchyBoundsListener</code> or not.
  *
- * @author      David Mendenhall
- * @see         HierarchyBoundsAdapter
- * @see         HierarchyEvent
- * @since       1.3
+ * @author David Mendenhall
+ * @see HierarchyBoundsAdapter
+ * @see HierarchyEvent
+ * @since 1.3
  */
 public interface HierarchyBoundsListener extends EventListener {
     /**

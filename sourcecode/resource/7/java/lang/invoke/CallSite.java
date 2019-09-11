@@ -27,6 +27,7 @@ package java.lang.invoke;
 
 import sun.invoke.empty.Empty;
 import sun.misc.Unsafe;
+
 import static java.lang.invoke.MethodHandleStatics.*;
 import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
 
@@ -61,39 +62,38 @@ import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
  * <p>
  * Here is a sample use of call sites and bootstrap methods which links every
  * dynamic call site to print its arguments:
-<blockquote><pre><!-- see indy-demo/src/PrintArgsDemo.java -->
-static void test() throws Throwable {
-    // THE FOLLOWING LINE IS PSEUDOCODE FOR A JVM INSTRUCTION
-    InvokeDynamic[#bootstrapDynamic].baz("baz arg", 2, 3.14);
-}
-private static void printArgs(Object... args) {
-  System.out.println(java.util.Arrays.deepToString(args));
-}
-private static final MethodHandle printArgs;
-static {
-  MethodHandles.Lookup lookup = MethodHandles.lookup();
-  Class thisClass = lookup.lookupClass();  // (who am I?)
-  printArgs = lookup.findStatic(thisClass,
-      "printArgs", MethodType.methodType(void.class, Object[].class));
-}
-private static CallSite bootstrapDynamic(MethodHandles.Lookup caller, String name, MethodType type) {
-  // ignore caller and name, but match the type:
-  return new ConstantCallSite(printArgs.asType(type));
-}
-</pre></blockquote>
+ * <blockquote><pre><!-- see indy-demo/src/PrintArgsDemo.java -->
+ * static void test() throws Throwable {
+ * // THE FOLLOWING LINE IS PSEUDOCODE FOR A JVM INSTRUCTION
+ * InvokeDynamic[#bootstrapDynamic].baz("baz arg", 2, 3.14);
+ * }
+ * private static void printArgs(Object... args) {
+ * System.out.println(java.util.Arrays.deepToString(args));
+ * }
+ * private static final MethodHandle printArgs;
+ * static {
+ * MethodHandles.Lookup lookup = MethodHandles.lookup();
+ * Class thisClass = lookup.lookupClass();  // (who am I?)
+ * printArgs = lookup.findStatic(thisClass,
+ * "printArgs", MethodType.methodType(void.class, Object[].class));
+ * }
+ * private static CallSite bootstrapDynamic(MethodHandles.Lookup caller, String name, MethodType type) {
+ * // ignore caller and name, but match the type:
+ * return new ConstantCallSite(printArgs.asType(type));
+ * }
+ * </pre></blockquote>
+ *
  * @author John Rose, JSR 292 EG
  */
-abstract
-public class CallSite {
+abstract public class CallSite {
     static { MethodHandleImpl.initStatics(); }
 
     // Fields used only by the JVM.  Do not use or change.
     private MemberName vmmethod; // supplied by the JVM (ref. to calling method)
-    private int        vmindex;  // supplied by the JVM (BCI within calling method)
+    private int vmindex;  // supplied by the JVM (BCI within calling method)
 
     // The actual payload of this call site:
-    /*package-private*/
-    MethodHandle target;
+    /*package-private*/ MethodHandle target;
 
     /**
      * Make a blank call site object with the given method type.
@@ -103,6 +103,7 @@ public class CallSite {
      * Before this {@code CallSite} object is returned from a bootstrap method,
      * it is usually provided with a more useful target method,
      * via a call to {@link CallSite#setTarget(MethodHandle) setTarget}.
+     *
      * @throws NullPointerException if the proposed type is null
      */
     /*package-private*/
@@ -112,6 +113,7 @@ public class CallSite {
 
     /**
      * Make a call site object equipped with an initial target method handle.
+     *
      * @param target the method handle which will be the initial target of the call site
      * @throws NullPointerException if the proposed target is null
      */
@@ -123,13 +125,14 @@ public class CallSite {
 
     /**
      * Make a call site object equipped with an initial target method handle.
-     * @param targetType the desired type of the call site
+     *
+     * @param targetType       the desired type of the call site
      * @param createTargetHook a hook which will bind the call site to the target method handle
      * @throws WrongMethodTypeException if the hook cannot be invoked on the required arguments,
-     *         or if the target returned by the hook is not of the given {@code targetType}
-     * @throws NullPointerException if the hook returns a null value
-     * @throws ClassCastException if the hook returns something other than a {@code MethodHandle}
-     * @throws Throwable anything else thrown by the the hook function
+     *                                  or if the target returned by the hook is not of the given {@code targetType}
+     * @throws NullPointerException     if the hook returns a null value
+     * @throws ClassCastException       if the hook returns something other than a {@code MethodHandle}
+     * @throws Throwable                anything else thrown by the the hook function
      */
     /*package-private*/
     CallSite(MethodType targetType, MethodHandle createTargetHook) throws Throwable {
@@ -145,6 +148,7 @@ public class CallSite {
      * Although targets may change, any call site's type is permanent, and can never change to an unequal type.
      * The {@code setTarget} method enforces this invariant by refusing any new target that does
      * not have the previous target's type.
+     *
      * @return the type of the current target, which is also the type of any future target
      */
     public MethodType type() {
@@ -152,13 +156,11 @@ public class CallSite {
         return target.type();
     }
 
-    /** Called from JVM (or low-level Java code) after the BSM returns the newly created CallSite.
-     *  The parameters are JVM-specific.
+    /**
+     * Called from JVM (or low-level Java code) after the BSM returns the newly created CallSite.
+     * The parameters are JVM-specific.
      */
-    void initializeFromJVM(String name,
-                           MethodType type,
-                           MemberName callerMethod,
-                           int        callerBCI) {
+    void initializeFromJVM(String name, MethodType type, MemberName callerMethod, int callerBCI) {
         if (this.vmmethod != null) {
             // FIXME
             throw new BootstrapMethodError("call site has already been linked to an invokedynamic instruction");
@@ -166,7 +168,7 @@ public class CallSite {
         if (!this.type().equals(type)) {
             throw wrongTargetType(target, type);
         }
-        this.vmindex  = callerBCI;
+        this.vmindex = callerBCI;
         this.vmmethod = callerMethod;
     }
 
@@ -196,9 +198,9 @@ public class CallSite {
      * the type of the old target.
      *
      * @param newTarget the new target
-     * @throws NullPointerException if the proposed new target is null
+     * @throws NullPointerException     if the proposed new target is null
      * @throws WrongMethodTypeException if the proposed new target
-     *         has a method type that differs from the previous target
+     *                                  has a method type that differs from the previous target
      * @see CallSite#getTarget
      * @see ConstantCallSite#setTarget
      * @see MutableCallSite#setTarget
@@ -209,12 +211,11 @@ public class CallSite {
     void checkTargetChange(MethodHandle oldTarget, MethodHandle newTarget) {
         MethodType oldType = oldTarget.type();
         MethodType newType = newTarget.type();  // null check!
-        if (!newType.equals(oldType))
-            throw wrongTargetType(newTarget, oldType);
+        if (!newType.equals(oldType)) { throw wrongTargetType(newTarget, oldType); }
     }
 
     private static WrongMethodTypeException wrongTargetType(MethodHandle target, MethodType type) {
-        return new WrongMethodTypeException(String.valueOf(target)+" should be of type "+type);
+        return new WrongMethodTypeException(String.valueOf(target) + " should be of type " + type);
     }
 
     /**
@@ -240,6 +241,7 @@ public class CallSite {
     }
 
     private static final MethodHandle GET_TARGET;
+
     static {
         try {
             GET_TARGET = IMPL_LOOKUP.
@@ -269,10 +271,12 @@ public class CallSite {
     void setTargetNormal(MethodHandle newTarget) {
         target = newTarget;
     }
+
     /*package-private*/
     MethodHandle getTargetVolatile() {
         return (MethodHandle) unsafe.getObjectVolatile(this, TARGET_OFFSET);
     }
+
     /*package-private*/
     void setTargetVolatile(MethodHandle newTarget) {
         unsafe.putObjectVolatile(this, TARGET_OFFSET, newTarget);
@@ -280,12 +284,12 @@ public class CallSite {
 
     // this implements the upcall from the JVM, MethodHandleNatives.makeDynamicCallSite:
     static CallSite makeSite(MethodHandle bootstrapMethod,
-                             // Callee information:
-                             String name, MethodType type,
-                             // Extra arguments for BSM, if any:
-                             Object info,
-                             // Caller information:
-                             MemberName callerMethod, int callerBCI) {
+        // Callee information:
+        String name, MethodType type,
+        // Extra arguments for BSM, if any:
+        Object info,
+        // Caller information:
+        MemberName callerMethod, int callerBCI) {
         Class<?> callerClass = callerMethod.getDeclaringClass();
         Object caller = IMPL_LOOKUP.in(callerClass);
         CallSite site;
@@ -299,29 +303,28 @@ public class CallSite {
             } else {
                 Object[] argv = (Object[]) info;
                 maybeReBoxElements(argv);
-                if (3 + argv.length > 255)
-                    throw new BootstrapMethodError("too many bootstrap method arguments");
+                if (3 + argv.length > 255) { throw new BootstrapMethodError("too many bootstrap method arguments"); }
                 MethodType bsmType = bootstrapMethod.type();
-                if (bsmType.parameterCount() == 4 && bsmType.parameterType(3) == Object[].class)
+                if (bsmType.parameterCount() == 4 && bsmType.parameterType(3) == Object[].class) {
                     binding = bootstrapMethod.invoke(caller, name, type, argv);
-                else
-                    binding = MethodHandles.spreadInvoker(bsmType, 3)
-                        .invoke(bootstrapMethod, caller, name, type, argv);
+                } else {
+                    binding = MethodHandles.spreadInvoker(bsmType, 3).invoke(bootstrapMethod, caller, name, type, argv);
+                }
             }
             //System.out.println("BSM for "+name+type+" => "+binding);
             if (binding instanceof CallSite) {
                 site = (CallSite) binding;
-            }  else {
+            } else {
                 throw new ClassCastException("bootstrap method failed to produce a CallSite");
             }
-            if (!site.getTarget().type().equals(type))
-                throw new WrongMethodTypeException("wrong type: "+site.getTarget());
+            if (!site.getTarget().type().equals(type)) {
+                throw new WrongMethodTypeException("wrong type: " + site.getTarget());
+            }
         } catch (Throwable ex) {
             BootstrapMethodError bex;
-            if (ex instanceof BootstrapMethodError)
-                bex = (BootstrapMethodError) ex;
-            else
+            if (ex instanceof BootstrapMethodError) { bex = (BootstrapMethodError) ex; } else {
                 bex = new BootstrapMethodError("call site initialization exception", ex);
+            }
             throw bex;
         }
         return site;
@@ -330,11 +333,13 @@ public class CallSite {
     private static Object maybeReBox(Object x) {
         if (x instanceof Integer) {
             int xi = (int) x;
-            if (xi == (byte) xi)
+            if (xi == (byte) xi) {
                 x = xi;  // must rebox; see JLS 5.1.7
+            }
         }
         return x;
     }
+
     private static void maybeReBoxElements(Object[] xa) {
         for (int i = 0; i < xa.length; i++) {
             xa[i] = maybeReBox(xa[i]);

@@ -46,7 +46,6 @@ import java.util.EventListener;
  * @see DragSource
  * @see DragSourceListener
  * @see DragSourceAdapter
- *
  * @since 1.4
  */
 

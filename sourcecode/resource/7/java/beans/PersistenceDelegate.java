@@ -78,11 +78,10 @@ package java.beans;
  * <li>
  * Performing the initialization of the object.
  * </ul>
- * @see XMLEncoder
- *
- * @since 1.4
  *
  * @author Philip Milne
+ * @see XMLEncoder
+ * @since 1.4
  */
 
 public abstract class PersistenceDelegate {
@@ -104,8 +103,7 @@ public abstract class PersistenceDelegate {
      * is called to create a new candidate for this object.
      *
      * @param oldInstance The instance that will be created by this expression.
-     * @param out The stream to which this expression will be written.
-     *
+     * @param out         The stream to which this expression will be written.
      * @throws NullPointerException if {@code out} is {@code null}
      */
     public void writeObject(Object oldInstance, Encoder out) {
@@ -113,8 +111,7 @@ public abstract class PersistenceDelegate {
         if (!mutatesTo(oldInstance, newInstance)) {
             out.remove(oldInstance);
             out.writeExpression(instantiate(oldInstance, out));
-        }
-        else {
+        } else {
             initialize(oldInstance.getClass(), oldInstance, newInstance, out);
         }
     }
@@ -136,11 +133,10 @@ public abstract class PersistenceDelegate {
      * @param oldInstance The instance to be copied.
      * @param newInstance The instance that is to be modified.
      * @return True if an equivalent copy of <code>newInstance</code> may be
-     *         created by applying a series of mutations to <code>oldInstance</code>.
+     * created by applying a series of mutations to <code>oldInstance</code>.
      */
     protected boolean mutatesTo(Object oldInstance, Object newInstance) {
-        return (newInstance != null && oldInstance != null &&
-                oldInstance.getClass() == newInstance.getClass());
+        return (newInstance != null && oldInstance != null && oldInstance.getClass() == newInstance.getClass());
     }
 
     /**
@@ -158,9 +154,8 @@ public abstract class PersistenceDelegate {
      * will be identical to <code>oldInstance</code>.
      *
      * @param oldInstance The instance that will be created by this expression.
-     * @param out The stream to which this expression will be written.
+     * @param out         The stream to which this expression will be written.
      * @return An expression whose value is <code>oldInstance</code>.
-     *
      * @throws NullPointerException if {@code out} is {@code null}
      */
     protected abstract Expression instantiate(Object oldInstance, Encoder out);
@@ -199,14 +194,10 @@ public abstract class PersistenceDelegate {
      *
      * @param oldInstance The instance to be copied.
      * @param newInstance The instance that is to be modified.
-     * @param out The stream to which any initialization statements should be written.
-     *
+     * @param out         The stream to which any initialization statements should be written.
      * @throws NullPointerException if {@code out} is {@code null}
      */
-    protected void initialize(Class<?> type,
-                              Object oldInstance, Object newInstance,
-                              Encoder out)
-    {
+    protected void initialize(Class<?> type, Object oldInstance, Object newInstance, Encoder out) {
         Class superType = type.getSuperclass();
         PersistenceDelegate info = out.getPersistenceDelegate(superType);
         info.initialize(superType, oldInstance, newInstance, out);

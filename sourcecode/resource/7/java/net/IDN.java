@@ -70,7 +70,6 @@ import sun.text.normalizer.UCharacterIterator;
  *
  * @author Edward Wang
  * @since 1.6
- *
  */
 public final class IDN {
     /**
@@ -101,23 +100,20 @@ public final class IDN {
      * used as label separators, this method also changes all of them to &#0092;u002E (full stop)
      * in output translated string.
      *
-     * @param input     the string to be processed
-     * @param flag      process flag; can be 0 or any logical OR of possible flags
-     *
-     * @return          the translated <tt>String</tt>
-     *
-     * @throws IllegalArgumentException   if the input string doesn't conform to RFC 3490 specification
+     * @param input the string to be processed
+     * @param flag  process flag; can be 0 or any logical OR of possible flags
+     * @return the translated <tt>String</tt>
+     * @throws IllegalArgumentException if the input string doesn't conform to RFC 3490 specification
      */
-    public static String toASCII(String input, int flag)
-    {
+    public static String toASCII(String input, int flag) {
         int p = 0, q = 0;
         StringBuffer out = new StringBuffer();
 
         while (p < input.length()) {
             q = searchDots(input, p);
-            out.append(toASCIIInternal(input.substring(p, q),  flag));
+            out.append(toASCIIInternal(input.substring(p, q), flag));
             p = q + 1;
-            if (p < input.length()) out.append('.');
+            if (p < input.length()) { out.append('.'); }
         }
 
         return out.toString();
@@ -134,11 +130,9 @@ public final class IDN {
      * {@link #toASCII(String, int) toASCII}(input,&nbsp;0);
      * </tt></blockquote>
      *
-     * @param input     the string to be processed
-     *
-     * @return          the translated <tt>String</tt>
-     *
-     * @throws IllegalArgumentException   if the input string doesn't conform to RFC 3490 specification
+     * @param input the string to be processed
+     * @return the translated <tt>String</tt>
+     * @throws IllegalArgumentException if the input string doesn't conform to RFC 3490 specification
      */
     public static String toASCII(String input) {
         return toASCII(input, 0);
@@ -158,10 +152,9 @@ public final class IDN {
      * &#0092;u002E (full stop), &#0092;u3002 (ideographic full stop), &#0092;uFF0E (fullwidth full stop),
      * and &#0092;uFF61 (halfwidth ideographic full stop).
      *
-     * @param input     the string to be processed
-     * @param flag      process flag; can be 0 or any logical OR of possible flags
-     *
-     * @return          the translated <tt>String</tt>
+     * @param input the string to be processed
+     * @param flag  process flag; can be 0 or any logical OR of possible flags
+     * @return the translated <tt>String</tt>
      */
     public static String toUnicode(String input, int flag) {
         int p = 0, q = 0;
@@ -169,9 +162,9 @@ public final class IDN {
 
         while (p < input.length()) {
             q = searchDots(input, p);
-            out.append(toUnicodeInternal(input.substring(p, q),  flag));
+            out.append(toUnicodeInternal(input.substring(p, q), flag));
             p = q + 1;
-            if (p < input.length()) out.append('.');
+            if (p < input.length()) { out.append('.'); }
         }
 
         return out.toString();
@@ -188,9 +181,8 @@ public final class IDN {
      * {@link #toUnicode(String, int) toUnicode}(input,&nbsp;0);
      * </tt></blockquote>
      *
-     * @param input     the string to be processed
-     *
-     * @return          the translated <tt>String</tt>
+     * @param input the string to be processed
+     * @return the translated <tt>String</tt>
      */
     public static String toUnicode(String input) {
         return toUnicode(input, 0);
@@ -203,7 +195,7 @@ public final class IDN {
     private static final String ACE_PREFIX = "xn--";
     private static final int ACE_PREFIX_LENGTH = ACE_PREFIX.length();
 
-    private static final int MAX_LABEL_LENGTH   = 63;
+    private static final int MAX_LABEL_LENGTH = 63;
 
     // single instance of nameprep
     private static StringPrep namePrep = null;
@@ -243,11 +235,10 @@ public final class IDN {
     //
     // toASCII operation; should only apply to a single label
     //
-    private static String toASCIIInternal(String label, int flag)
-    {
+    private static String toASCIIInternal(String label, int flag) {
         // step 1
         // Check if the string contains code points outside the ASCII range 0..0x7c.
-        boolean isASCII  = isAllASCII(label);
+        boolean isASCII = isAllASCII(label);
         StringBuffer dest;
 
         // step 2
@@ -287,7 +278,7 @@ public final class IDN {
             if (!isAllASCII(dest.toString())) {
                 // step 5
                 // verify the sequence does not begin with ACE prefix
-                if(!startsWithACEPrefix(dest)){
+                if (!startsWithACEPrefix(dest)) {
 
                     // step 6
                     // encode the sequence with punycode
@@ -311,7 +302,7 @@ public final class IDN {
 
         // step 8
         // the length must be inside 1..63
-        if(dest.length() > MAX_LABEL_LENGTH){
+        if (dest.length() > MAX_LABEL_LENGTH) {
             throw new IllegalArgumentException("The label in the input is too long");
         }
 
@@ -329,7 +320,7 @@ public final class IDN {
         // find out if all the codepoints in input are ASCII
         boolean isASCII = isAllASCII(label);
 
-        if(!isASCII){
+        if (!isASCII) {
             // step 2
             // perform the nameprep operation; flag ALLOW_UNASSIGNED is used here
             try {
@@ -345,7 +336,7 @@ public final class IDN {
 
         // step 3
         // verify ACE Prefix
-        if(startsWithACEPrefix(dest)) {
+        if (startsWithACEPrefix(dest)) {
 
             // step 4
             // Remove the ACE Prefix
@@ -383,17 +374,14 @@ public final class IDN {
     // <->
     // non-LDH = 0..0x2C, 0x2E..0x2F, 0x3A..0x40, 0x56..0x60, 0x7B..0x7F
     //
-    private static boolean isLDHChar(int ch){
+    private static boolean isLDHChar(int ch) {
         // high runner case
-        if(ch > 0x007A){
+        if (ch > 0x007A) {
             return false;
         }
         //['-' '0'..'9' 'A'..'Z' 'a'..'z']
-        if((ch == 0x002D) ||
-           (0x0030 <= ch && ch <= 0x0039) ||
-           (0x0041 <= ch && ch <= 0x005A) ||
-           (0x0061 <= ch && ch <= 0x007A)
-          ){
+        if ((ch == 0x002D) || (0x0030 <= ch && ch <= 0x0039) || (0x0041 <= ch && ch <= 0x005A) ||
+            (0x0061 <= ch && ch <= 0x007A)) {
             return true;
         }
         return false;
@@ -437,30 +425,30 @@ public final class IDN {
     //
     // to check if a string starts with ACE-prefix
     //
-    private static boolean startsWithACEPrefix(StringBuffer input){
+    private static boolean startsWithACEPrefix(StringBuffer input) {
         boolean startsWithPrefix = true;
 
-        if(input.length() < ACE_PREFIX_LENGTH){
+        if (input.length() < ACE_PREFIX_LENGTH) {
             return false;
         }
-        for(int i = 0; i < ACE_PREFIX_LENGTH; i++){
-            if(toASCIILower(input.charAt(i)) != ACE_PREFIX.charAt(i)){
+        for (int i = 0; i < ACE_PREFIX_LENGTH; i++) {
+            if (toASCIILower(input.charAt(i)) != ACE_PREFIX.charAt(i)) {
                 startsWithPrefix = false;
             }
         }
         return startsWithPrefix;
     }
 
-    private static char toASCIILower(char ch){
-        if('A' <= ch && ch <= 'Z'){
-            return (char)(ch + 'a' - 'A');
+    private static char toASCIILower(char ch) {
+        if ('A' <= ch && ch <= 'Z') {
+            return (char) (ch + 'a' - 'A');
         }
         return ch;
     }
 
-    private static StringBuffer toASCIILower(StringBuffer input){
+    private static StringBuffer toASCIILower(StringBuffer input) {
         StringBuffer dest = new StringBuffer();
-        for(int i = 0; i < input.length();i++){
+        for (int i = 0; i < input.length(); i++) {
             dest.append(toASCIILower(input.charAt(i)));
         }
         return dest;

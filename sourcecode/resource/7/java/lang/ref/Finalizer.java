@@ -42,9 +42,7 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
     static private Finalizer unfinalized = null;
     static private Object lock = new Object();
 
-    private Finalizer
-        next = null,
-        prev = null;
+    private Finalizer next = null, prev = null;
 
     private boolean hasBeenFinalized() {
         return (next == this);
@@ -92,7 +90,7 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
 
     private void runFinalizer() {
         synchronized (this) {
-            if (hasBeenFinalized()) return;
+            if (hasBeenFinalized()) { return; }
             remove();
         }
         try {
@@ -121,13 +119,10 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
        invokers of these methods from a stalled or deadlocked finalizer thread.
      */
     private static void forkSecondaryFinalizer(final Runnable proc) {
-        AccessController.doPrivileged(
-            new PrivilegedAction<Void>() {
-                public Void run() {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
                 ThreadGroup tg = Thread.currentThread().getThreadGroup();
-                for (ThreadGroup tgn = tg;
-                     tgn != null;
-                     tg = tgn, tgn = tg.getParent());
+                for (ThreadGroup tgn = tg; tgn != null; tg = tgn, tgn = tg.getParent()) { ; }
                 Thread sft = new Thread(tg, proc, "Secondary finalizer");
                 sft.start();
                 try {
@@ -136,16 +131,17 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
                     /* Ignore */
                 }
                 return null;
-                }});
+            }
+        });
     }
 
     /* Called by Runtime.runFinalization() */
     static void runFinalization() {
         forkSecondaryFinalizer(new Runnable() {
             public void run() {
-                for (;;) {
-                    Finalizer f = (Finalizer)queue.poll();
-                    if (f == null) break;
+                for (; ; ) {
+                    Finalizer f = (Finalizer) queue.poll();
+                    if (f == null) { break; }
                     f.runFinalizer();
                 }
             }
@@ -156,25 +152,28 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
     static void runAllFinalizers() {
         forkSecondaryFinalizer(new Runnable() {
             public void run() {
-                for (;;) {
+                for (; ; ) {
                     Finalizer f;
                     synchronized (lock) {
                         f = unfinalized;
-                        if (f == null) break;
+                        if (f == null) { break; }
                         unfinalized = f.next;
                     }
                     f.runFinalizer();
-                }}});
+                }
+            }
+        });
     }
 
     private static class FinalizerThread extends Thread {
         FinalizerThread(ThreadGroup g) {
             super(g, "Finalizer");
         }
+
         public void run() {
-            for (;;) {
+            for (; ; ) {
                 try {
-                    Finalizer f = (Finalizer)queue.remove();
+                    Finalizer f = (Finalizer) queue.remove();
                     f.runFinalizer();
                 } catch (InterruptedException x) {
                     continue;
@@ -185,9 +184,7 @@ final class Finalizer extends FinalReference { /* Package-private; must be in
 
     static {
         ThreadGroup tg = Thread.currentThread().getThreadGroup();
-        for (ThreadGroup tgn = tg;
-             tgn != null;
-             tg = tgn, tgn = tg.getParent());
+        for (ThreadGroup tgn = tg; tgn != null; tg = tgn, tgn = tg.getParent()) { ; }
         Thread finalizer = new FinalizerThread(tg);
         finalizer.setPriority(Thread.MAX_PRIORITY - 2);
         finalizer.setDaemon(true);

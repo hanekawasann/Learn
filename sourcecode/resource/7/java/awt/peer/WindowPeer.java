@@ -31,7 +31,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * The peer interface for {@link Window}.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -59,8 +59,7 @@ public interface WindowPeer extends ContainerPeer {
      * not.
      *
      * @param alwaysOnTop if the window should always stay on top of all other
-     *        windows or not
-     *
+     *                    windows or not
      * @see Window#setAlwaysOnTop(boolean)
      */
     void setAlwaysOnTop(boolean alwaysOnTop);
@@ -77,7 +76,7 @@ public interface WindowPeer extends ContainerPeer {
      *
      * @param blocker the blocking modal dialog
      * @param blocked {@code true} to block the window, {@code false}
-     *        to unblock it
+     *                to unblock it
      */
     void setModalBlocked(Dialog blocker, boolean blocked);
 

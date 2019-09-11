@@ -58,12 +58,12 @@ package java.awt;
  * <center><table COLS=2 WIDTH=600 summary="layout">
  * <tr ALIGN=CENTER>
  * <td><img SRC="doc-files/GridLayout-1.gif"
- *      alt="Shows 6 buttons in rows of 2. Row 1 shows buttons 1 then 2.
+ * alt="Shows 6 buttons in rows of 2. Row 1 shows buttons 1 then 2.
  * Row 2 shows buttons 3 then 4. Row 3 shows buttons 5 then 6.">
  * </td>
  *
  * <td ALIGN=CENTER><img SRC="doc-files/GridLayout-2.gif"
- *                   alt="Shows 6 buttons in rows of 2. Row 1 shows buttons 2 then 1.
+ * alt="Shows 6 buttons in rows of 2. Row 1 shows buttons 2 then 1.
  * Row 2 shows buttons 4 then 3. Row 3 shows buttons 6 then 5.">
  * </td>
  * </tr>
@@ -87,8 +87,8 @@ package java.awt;
  * the number of columns affects the layout only when the
  * number of rows is set to zero.
  *
- * @author  Arthur van Hoff
- * @since   JDK1.0
+ * @author Arthur van Hoff
+ * @since JDK1.0
  */
 public class GridLayout implements LayoutManager, java.io.Serializable {
     /*
@@ -144,6 +144,7 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
     /**
      * Creates a grid layout with a default of one column per component,
      * in a single row.
+     *
      * @since JDK1.1
      */
     public GridLayout() {
@@ -157,10 +158,11 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * One, but not both, of <code>rows</code> and <code>cols</code> can
      * be zero, which means that any number of objects can be placed in a
      * row or in a column.
-     * @param     rows   the rows, with the value zero meaning
-     *                   any number of rows.
-     * @param     cols   the columns, with the value zero meaning
-     *                   any number of columns.
+     *
+     * @param rows the rows, with the value zero meaning
+     *             any number of rows.
+     * @param cols the columns, with the value zero meaning
+     *             any number of columns.
      */
     public GridLayout(int rows, int cols) {
         this(rows, cols, 0, 0);
@@ -180,15 +182,16 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * row or in a column.
      * <p>
      * All <code>GridLayout</code> constructors defer to this one.
-     * @param     rows   the rows, with the value zero meaning
-     *                   any number of rows
-     * @param     cols   the columns, with the value zero meaning
-     *                   any number of columns
-     * @param     hgap   the horizontal gap
-     * @param     vgap   the vertical gap
-     * @exception   IllegalArgumentException  if the value of both
-     *                  <code>rows</code> and <code>cols</code> is
-     *                  set to zero
+     *
+     * @param rows the rows, with the value zero meaning
+     *             any number of rows
+     * @param cols the columns, with the value zero meaning
+     *             any number of columns
+     * @param hgap the horizontal gap
+     * @param vgap the vertical gap
+     * @throws IllegalArgumentException if the value of both
+     *                                  <code>rows</code> and <code>cols</code> is
+     *                                  set to zero
      */
     public GridLayout(int rows, int cols, int hgap, int vgap) {
         if ((rows == 0) && (cols == 0)) {
@@ -202,8 +205,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Gets the number of rows in this layout.
-     * @return    the number of rows in this layout
-     * @since     JDK1.1
+     *
+     * @return the number of rows in this layout
+     * @since JDK1.1
      */
     public int getRows() {
         return rows;
@@ -211,10 +215,11 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Sets the number of rows in this layout to the specified value.
-     * @param        rows   the number of rows in this layout
-     * @exception    IllegalArgumentException  if the value of both
-     *               <code>rows</code> and <code>cols</code> is set to zero
-     * @since        JDK1.1
+     *
+     * @param rows the number of rows in this layout
+     * @throws IllegalArgumentException if the value of both
+     *                                  <code>rows</code> and <code>cols</code> is set to zero
+     * @since JDK1.1
      */
     public void setRows(int rows) {
         if ((rows == 0) && (this.cols == 0)) {
@@ -225,8 +230,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Gets the number of columns in this layout.
-     * @return     the number of columns in this layout
-     * @since      JDK1.1
+     *
+     * @return the number of columns in this layout
+     * @since JDK1.1
      */
     public int getColumns() {
         return cols;
@@ -239,10 +245,11 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * the <tt>setRows</tt> method is non-zero. In that case, the number
      * of columns displayed in the layout is determined by the total
      * number of components and the number of rows specified.
-     * @param        cols   the number of columns in this layout
-     * @exception    IllegalArgumentException  if the value of both
-     *               <code>rows</code> and <code>cols</code> is set to zero
-     * @since        JDK1.1
+     *
+     * @param cols the number of columns in this layout
+     * @throws IllegalArgumentException if the value of both
+     *                                  <code>rows</code> and <code>cols</code> is set to zero
+     * @since JDK1.1
      */
     public void setColumns(int cols) {
         if ((cols == 0) && (this.rows == 0)) {
@@ -253,8 +260,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Gets the horizontal gap between components.
-     * @return       the horizontal gap between components
-     * @since        JDK1.1
+     *
+     * @return the horizontal gap between components
+     * @since JDK1.1
      */
     public int getHgap() {
         return hgap;
@@ -262,8 +270,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Sets the horizontal gap between components to the specified value.
-     * @param        hgap   the horizontal gap between components
-     * @since        JDK1.1
+     *
+     * @param hgap the horizontal gap between components
+     * @since JDK1.1
      */
     public void setHgap(int hgap) {
         this.hgap = hgap;
@@ -271,8 +280,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Gets the vertical gap between components.
-     * @return       the vertical gap between components
-     * @since        JDK1.1
+     *
+     * @return the vertical gap between components
+     * @since JDK1.1
      */
     public int getVgap() {
         return vgap;
@@ -280,8 +290,9 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Sets the vertical gap between components to the specified value.
-     * @param         vgap  the vertical gap between components
-     * @since        JDK1.1
+     *
+     * @param vgap the vertical gap between components
+     * @since JDK1.1
      */
     public void setVgap(int vgap) {
         this.vgap = vgap;
@@ -289,6 +300,7 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Adds the specified component with the specified name to the layout.
+     *
      * @param name the name of the component
      * @param comp the component to be added
      */
@@ -297,6 +309,7 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
 
     /**
      * Removes the specified component from the layout.
+     *
      * @param comp the component to be removed
      */
     public void removeLayoutComponent(Component comp) {
@@ -316,39 +329,39 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * rows, plus the vertical padding times the number of rows minus one,
      * plus the top and bottom insets of the target container.
      *
-     * @param     parent   the container in which to do the layout
-     * @return    the preferred dimensions to lay out the
-     *                      subcomponents of the specified container
-     * @see       java.awt.GridLayout#minimumLayoutSize
-     * @see       java.awt.Container#getPreferredSize()
+     * @param parent the container in which to do the layout
+     * @return the preferred dimensions to lay out the
+     * subcomponents of the specified container
+     * @see java.awt.GridLayout#minimumLayoutSize
+     * @see java.awt.Container#getPreferredSize()
      */
     public Dimension preferredLayoutSize(Container parent) {
-      synchronized (parent.getTreeLock()) {
-        Insets insets = parent.getInsets();
-        int ncomponents = parent.getComponentCount();
-        int nrows = rows;
-        int ncols = cols;
+        synchronized (parent.getTreeLock()) {
+            Insets insets = parent.getInsets();
+            int ncomponents = parent.getComponentCount();
+            int nrows = rows;
+            int ncols = cols;
 
-        if (nrows > 0) {
-            ncols = (ncomponents + nrows - 1) / nrows;
-        } else {
-            nrows = (ncomponents + ncols - 1) / ncols;
-        }
-        int w = 0;
-        int h = 0;
-        for (int i = 0 ; i < ncomponents ; i++) {
-            Component comp = parent.getComponent(i);
-            Dimension d = comp.getPreferredSize();
-            if (w < d.width) {
-                w = d.width;
+            if (nrows > 0) {
+                ncols = (ncomponents + nrows - 1) / nrows;
+            } else {
+                nrows = (ncomponents + ncols - 1) / ncols;
             }
-            if (h < d.height) {
-                h = d.height;
+            int w = 0;
+            int h = 0;
+            for (int i = 0; i < ncomponents; i++) {
+                Component comp = parent.getComponent(i);
+                Dimension d = comp.getPreferredSize();
+                if (w < d.width) {
+                    w = d.width;
+                }
+                if (h < d.height) {
+                    h = d.height;
+                }
             }
+            return new Dimension(insets.left + insets.right + ncols * w + (ncols - 1) * hgap,
+                insets.top + insets.bottom + nrows * h + (nrows - 1) * vgap);
         }
-        return new Dimension(insets.left + insets.right + ncols*w + (ncols-1)*hgap,
-                             insets.top + insets.bottom + nrows*h + (nrows-1)*vgap);
-      }
     }
 
     /**
@@ -365,39 +378,39 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * plus the vertical padding times the number of rows minus one, plus
      * the top and bottom insets of the target container.
      *
-     * @param       parent   the container in which to do the layout
-     * @return      the minimum dimensions needed to lay out the
-     *                      subcomponents of the specified container
-     * @see         java.awt.GridLayout#preferredLayoutSize
-     * @see         java.awt.Container#doLayout
+     * @param parent the container in which to do the layout
+     * @return the minimum dimensions needed to lay out the
+     * subcomponents of the specified container
+     * @see java.awt.GridLayout#preferredLayoutSize
+     * @see java.awt.Container#doLayout
      */
     public Dimension minimumLayoutSize(Container parent) {
-      synchronized (parent.getTreeLock()) {
-        Insets insets = parent.getInsets();
-        int ncomponents = parent.getComponentCount();
-        int nrows = rows;
-        int ncols = cols;
+        synchronized (parent.getTreeLock()) {
+            Insets insets = parent.getInsets();
+            int ncomponents = parent.getComponentCount();
+            int nrows = rows;
+            int ncols = cols;
 
-        if (nrows > 0) {
-            ncols = (ncomponents + nrows - 1) / nrows;
-        } else {
-            nrows = (ncomponents + ncols - 1) / ncols;
-        }
-        int w = 0;
-        int h = 0;
-        for (int i = 0 ; i < ncomponents ; i++) {
-            Component comp = parent.getComponent(i);
-            Dimension d = comp.getMinimumSize();
-            if (w < d.width) {
-                w = d.width;
+            if (nrows > 0) {
+                ncols = (ncomponents + nrows - 1) / nrows;
+            } else {
+                nrows = (ncomponents + ncols - 1) / ncols;
             }
-            if (h < d.height) {
-                h = d.height;
+            int w = 0;
+            int h = 0;
+            for (int i = 0; i < ncomponents; i++) {
+                Component comp = parent.getComponent(i);
+                Dimension d = comp.getMinimumSize();
+                if (w < d.width) {
+                    w = d.width;
+                }
+                if (h < d.height) {
+                    h = d.height;
+                }
             }
+            return new Dimension(insets.left + insets.right + ncols * w + (ncols - 1) * hgap,
+                insets.top + insets.bottom + nrows * h + (nrows - 1) * vgap);
         }
-        return new Dimension(insets.left + insets.right + ncols*w + (ncols-1)*hgap,
-                             insets.top + insets.bottom + nrows*h + (nrows-1)*vgap);
-      }
     }
 
     /**
@@ -414,68 +427,71 @@ public class GridLayout implements LayoutManager, java.io.Serializable {
      * size minus any insets and any specified horizontal or vertical
      * gap. All components in a grid layout are given the same size.
      *
-     * @param      parent   the container in which to do the layout
-     * @see        java.awt.Container
-     * @see        java.awt.Container#doLayout
+     * @param parent the container in which to do the layout
+     * @see java.awt.Container
+     * @see java.awt.Container#doLayout
      */
     public void layoutContainer(Container parent) {
-      synchronized (parent.getTreeLock()) {
-        Insets insets = parent.getInsets();
-        int ncomponents = parent.getComponentCount();
-        int nrows = rows;
-        int ncols = cols;
-        boolean ltr = parent.getComponentOrientation().isLeftToRight();
+        synchronized (parent.getTreeLock()) {
+            Insets insets = parent.getInsets();
+            int ncomponents = parent.getComponentCount();
+            int nrows = rows;
+            int ncols = cols;
+            boolean ltr = parent.getComponentOrientation().isLeftToRight();
 
-        if (ncomponents == 0) {
-            return;
-        }
-        if (nrows > 0) {
-            ncols = (ncomponents + nrows - 1) / nrows;
-        } else {
-            nrows = (ncomponents + ncols - 1) / ncols;
-        }
-        // 4370316. To position components in the center we should:
-        // 1. get an amount of extra space within Container
-        // 2. incorporate half of that value to the left/top position
-        // Note that we use trancating division for widthOnComponent
-        // The reminder goes to extraWidthAvailable
-        int totalGapsWidth = (ncols - 1) * hgap;
-        int widthWOInsets = parent.width - (insets.left + insets.right);
-        int widthOnComponent = (widthWOInsets - totalGapsWidth) / ncols;
-        int extraWidthAvailable = (widthWOInsets - (widthOnComponent * ncols + totalGapsWidth)) / 2;
+            if (ncomponents == 0) {
+                return;
+            }
+            if (nrows > 0) {
+                ncols = (ncomponents + nrows - 1) / nrows;
+            } else {
+                nrows = (ncomponents + ncols - 1) / ncols;
+            }
+            // 4370316. To position components in the center we should:
+            // 1. get an amount of extra space within Container
+            // 2. incorporate half of that value to the left/top position
+            // Note that we use trancating division for widthOnComponent
+            // The reminder goes to extraWidthAvailable
+            int totalGapsWidth = (ncols - 1) * hgap;
+            int widthWOInsets = parent.width - (insets.left + insets.right);
+            int widthOnComponent = (widthWOInsets - totalGapsWidth) / ncols;
+            int extraWidthAvailable = (widthWOInsets - (widthOnComponent * ncols + totalGapsWidth)) / 2;
 
-        int totalGapsHeight = (nrows - 1) * vgap;
-        int heightWOInsets = parent.height - (insets.top + insets.bottom);
-        int heightOnComponent = (heightWOInsets - totalGapsHeight) / nrows;
-        int extraHeightAvailable = (heightWOInsets - (heightOnComponent * nrows + totalGapsHeight)) / 2;
-        if (ltr) {
-            for (int c = 0, x = insets.left + extraWidthAvailable; c < ncols ; c++, x += widthOnComponent + hgap) {
-                for (int r = 0, y = insets.top + extraHeightAvailable; r < nrows ; r++, y += heightOnComponent + vgap) {
-                    int i = r * ncols + c;
-                    if (i < ncomponents) {
-                        parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
+            int totalGapsHeight = (nrows - 1) * vgap;
+            int heightWOInsets = parent.height - (insets.top + insets.bottom);
+            int heightOnComponent = (heightWOInsets - totalGapsHeight) / nrows;
+            int extraHeightAvailable = (heightWOInsets - (heightOnComponent * nrows + totalGapsHeight)) / 2;
+            if (ltr) {
+                for (int c = 0, x = insets.left + extraWidthAvailable; c < ncols; c++, x += widthOnComponent + hgap) {
+                    for (int r = 0, y = insets.top + extraHeightAvailable;
+                        r < nrows; r++, y += heightOnComponent + vgap) {
+                        int i = r * ncols + c;
+                        if (i < ncomponents) {
+                            parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
+                        }
+                    }
+                }
+            } else {
+                for (int c = 0, x = (parent.width - insets.right - widthOnComponent) - extraWidthAvailable;
+                    c < ncols; c++, x -= widthOnComponent + hgap) {
+                    for (int r = 0, y = insets.top + extraHeightAvailable;
+                        r < nrows; r++, y += heightOnComponent + vgap) {
+                        int i = r * ncols + c;
+                        if (i < ncomponents) {
+                            parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
+                        }
                     }
                 }
             }
-        } else {
-            for (int c = 0, x = (parent.width - insets.right - widthOnComponent) - extraWidthAvailable; c < ncols ; c++, x -= widthOnComponent + hgap) {
-                for (int r = 0, y = insets.top + extraHeightAvailable; r < nrows ; r++, y += heightOnComponent + vgap) {
-                    int i = r * ncols + c;
-                    if (i < ncomponents) {
-                        parent.getComponent(i).setBounds(x, y, widthOnComponent, heightOnComponent);
-                    }
-                }
-            }
         }
-      }
     }
 
     /**
      * Returns the string representation of this grid layout's values.
-     * @return     a string representation of this grid layout
+     *
+     * @return a string representation of this grid layout
      */
     public String toString() {
-        return getClass().getName() + "[hgap=" + hgap + ",vgap=" + vgap +
-                                       ",rows=" + rows + ",cols=" + cols + "]";
+        return getClass().getName() + "[hgap=" + hgap + ",vgap=" + vgap + ",rows=" + rows + ",cols=" + cols + "]";
     }
 }

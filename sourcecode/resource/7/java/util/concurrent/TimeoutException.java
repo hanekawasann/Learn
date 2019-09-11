@@ -43,8 +43,8 @@ package java.util.concurrent;
  * not possible or desirable then <tt>TimeoutException</tt> should be
  * declared and thrown.
  *
- * @since 1.5
  * @author Doug Lea
+ * @since 1.5
  */
 public class TimeoutException extends Exception {
     private static final long serialVersionUID = 1900926677490660714L;

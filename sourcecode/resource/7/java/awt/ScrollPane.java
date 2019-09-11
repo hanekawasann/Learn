@@ -27,7 +27,9 @@ package java.awt;
 import java.awt.peer.LightweightPeer;
 import java.awt.peer.ScrollPanePeer;
 import java.awt.event.*;
+
 import javax.accessibility.*;
+
 import sun.awt.ScrollPaneWheelScroller;
 import sun.awt.SunToolkit;
 
@@ -46,38 +48,38 @@ import java.io.IOException;
  * <LI>always: scrollbars created and always shown by the scrollpane
  * <LI>never: scrollbars never created or shown by the scrollpane
  * </OL>
- * <P>
+ * <p>
  * The state of the horizontal and vertical scrollbars is represented
  * by two <code>ScrollPaneAdjustable</code> objects (one for each
  * dimension) which implement the <code>Adjustable</code> interface.
  * The API provides methods to access those objects such that the
  * attributes on the Adjustable object (such as unitIncrement, value,
  * etc.) can be manipulated.
- * <P>
+ * <p>
  * Certain adjustable properties (minimum, maximum, blockIncrement,
  * and visibleAmount) are set internally by the scrollpane in accordance
  * with the geometry of the scrollpane and its child and these should
  * not be set by programs using the scrollpane.
- * <P>
+ * <p>
  * If the scrollbar display policy is defined as "never", then the
  * scrollpane can still be programmatically scrolled using the
  * setScrollPosition() method and the scrollpane will move and clip
  * the child's contents appropriately.  This policy is useful if the
  * program needs to create and manage its own adjustable controls.
- * <P>
+ * <p>
  * The placement of the scrollbars is controlled by platform-specific
  * properties set by the user outside of the program.
- * <P>
+ * <p>
  * The initial size of this container is set to 100x100, but can
  * be reset using setSize().
- * <P>
+ * <p>
  * Scrolling with the wheel on a wheel-equipped mouse is enabled by default.
  * This can be disabled using <code>setWheelScrollingEnabled</code>.
  * Wheel scrolling can be customized by setting the block and
  * unit increment of the horizontal and vertical Adjustables.
  * For information on how mouse wheel events are dispatched, see
  * the class description for {@link MouseWheelEvent}.
- * <P>
+ * <p>
  * Insets are used to define any space used by scrollbars and any
  * borders created by the scroll pane. getInsets() can be used
  * to get the current value for the insets.  If the value of
@@ -85,9 +87,9 @@ import java.io.IOException;
  * will change dynamically depending on whether the scrollbars are
  * currently visible or not.
  *
- * @author      Tom Ball
- * @author      Amy Fowler
- * @author      Tim Prinzing
+ * @author Tom Ball
+ * @author Amy Fowler
+ * @author Tim Prinzing
  */
 public class ScrollPane extends Container implements Accessible {
 
@@ -180,8 +182,9 @@ public class ScrollPane extends Container implements Accessible {
     /**
      * Create a new scrollpane container with a scrollbar display
      * policy of "as needed".
+     *
      * @throws HeadlessException if GraphicsEnvironment.isHeadless()
-     *     returns true
+     *                           returns true
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public ScrollPane() throws HeadlessException {
@@ -190,14 +193,15 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * Create a new scrollpane container.
+     *
      * @param scrollbarDisplayPolicy policy for when scrollbars should be shown
      * @throws IllegalArgumentException if the specified scrollbar
-     *     display policy is invalid
-     * @throws HeadlessException if GraphicsEnvironment.isHeadless()
-     *     returns true
+     *                                  display policy is invalid
+     * @throws HeadlessException        if GraphicsEnvironment.isHeadless()
+     *                                  returns true
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
-    @ConstructorProperties({"scrollbarDisplayPolicy"})
+    @ConstructorProperties( { "scrollbarDisplayPolicy" })
     public ScrollPane(int scrollbarDisplayPolicy) throws HeadlessException {
         GraphicsEnvironment.checkHeadless();
         this.layoutMgr = null;
@@ -213,10 +217,8 @@ public class ScrollPane extends Container implements Accessible {
                 throw new IllegalArgumentException("illegal scrollbar display policy");
         }
 
-        vAdjustable = new ScrollPaneAdjustable(this, new PeerFixer(this),
-                                               Adjustable.VERTICAL);
-        hAdjustable = new ScrollPaneAdjustable(this, new PeerFixer(this),
-                                               Adjustable.HORIZONTAL);
+        vAdjustable = new ScrollPaneAdjustable(this, new PeerFixer(this), Adjustable.VERTICAL);
+        hAdjustable = new ScrollPaneAdjustable(this, new PeerFixer(this), Adjustable.HORIZONTAL);
         setWheelScrollingEnabled(defaultWheelScroll);
     }
 
@@ -245,9 +247,10 @@ public class ScrollPane extends Container implements Accessible {
      * Adds the specified component to this scroll pane container.
      * If the scroll pane has an existing child component, that
      * component is removed and the new one is added.
-     * @param comp the component to be added
-     * @param constraints  not applicable
-     * @param index position of child component (must be <= 0)
+     *
+     * @param comp        the component to be added
+     * @param constraints not applicable
+     * @param index       position of child component (must be <= 0)
      */
     protected final void addImpl(Component comp, Object constraints, int index) {
         synchronized (getTreeLock()) {
@@ -268,6 +271,7 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * Returns the display policy for the scrollbars.
+     *
      * @return the display policy for the scrollbars
      */
     public int getScrollbarDisplayPolicy() {
@@ -276,24 +280,25 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * Returns the current size of the scroll pane's view port.
+     *
      * @return the size of the view port in pixels
      */
     public Dimension getViewportSize() {
         Insets i = getInsets();
-        return new Dimension(width - i.right - i.left,
-                             height - i.top - i.bottom);
+        return new Dimension(width - i.right - i.left, height - i.top - i.bottom);
     }
 
     /**
      * Returns the height that would be occupied by a horizontal
      * scrollbar, which is independent of whether it is currently
      * displayed by the scroll pane or not.
+     *
      * @return the height of a horizontal scrollbar in pixels
      */
     public int getHScrollbarHeight() {
         int h = 0;
         if (scrollbarDisplayPolicy != SCROLLBARS_NEVER) {
-            ScrollPanePeer peer = (ScrollPanePeer)this.peer;
+            ScrollPanePeer peer = (ScrollPanePeer) this.peer;
             if (peer != null) {
                 h = peer.getHScrollbarHeight();
             }
@@ -305,12 +310,13 @@ public class ScrollPane extends Container implements Accessible {
      * Returns the width that would be occupied by a vertical
      * scrollbar, which is independent of whether it is currently
      * displayed by the scroll pane or not.
+     *
      * @return the width of a vertical scrollbar in pixels
      */
     public int getVScrollbarWidth() {
         int w = 0;
         if (scrollbarDisplayPolicy != SCROLLBARS_NEVER) {
-            ScrollPanePeer peer = (ScrollPanePeer)this.peer;
+            ScrollPanePeer peer = (ScrollPanePeer) this.peer;
             if (peer != null) {
                 w = peer.getVScrollbarWidth();
             }
@@ -323,6 +329,7 @@ public class ScrollPane extends Container implements Accessible {
      * represents the state of the vertical scrollbar.
      * The declared return type of this method is
      * <code>Adjustable</code> to maintain backward compatibility.
+     *
      * @see java.awt.ScrollPaneAdjustable
      */
     public Adjustable getVAdjustable() {
@@ -334,6 +341,7 @@ public class ScrollPane extends Container implements Accessible {
      * represents the state of the horizontal scrollbar.
      * The declared return type of this method is
      * <code>Adjustable</code> to maintain backward compatibility.
+     *
      * @see java.awt.ScrollPaneAdjustable
      */
     public Adjustable getHAdjustable() {
@@ -350,14 +358,15 @@ public class ScrollPane extends Container implements Accessible {
      * height = (child height - view port height).
      * This is a convenience method which interfaces with the Adjustable
      * objects which represent the state of the scrollbars.
+     *
      * @param x the x position to scroll to
      * @param y the y position to scroll to
      * @throws NullPointerException if the scrollpane does not contain
-     *     a child
+     *                              a child
      */
     public void setScrollPosition(int x, int y) {
         synchronized (getTreeLock()) {
-            if (getComponentCount()==0) {
+            if (getComponentCount() == 0) {
                 throw new NullPointerException("child is null");
             }
             hAdjustable.setValue(x);
@@ -376,6 +385,7 @@ public class ScrollPane extends Container implements Accessible {
      * height = (child height - view port height).
      * This is a convenience method which interfaces with the Adjustable
      * objects which represent the state of the scrollbars.
+     *
      * @param p the Point representing the position to scroll to
      * @throws NullPointerException if {@code p} is {@code null}
      */
@@ -388,14 +398,15 @@ public class ScrollPane extends Container implements Accessible {
      * at the 0,0 location of the scrolled panel's view port.
      * This is a convenience method which interfaces with the adjustable
      * objects which represent the state of the scrollbars.
+     *
      * @return the coordinate position for the current scroll position
      * @throws NullPointerException if the scrollpane does not contain
-     *     a child
+     *                              a child
      */
     @Transient
     public Point getScrollPosition() {
         synchronized (getTreeLock()) {
-            if (getComponentCount()==0) {
+            if (getComponentCount() == 0) {
                 throw new NullPointerException("child is null");
             }
             return new Point(hAdjustable.getValue(), vAdjustable.getValue());
@@ -405,6 +416,7 @@ public class ScrollPane extends Container implements Accessible {
     /**
      * Sets the layout manager for this container.  This method is
      * overridden to prevent the layout mgr from being set.
+     *
      * @param mgr the specified layout manager
      */
     public final void setLayout(LayoutManager mgr) {
@@ -436,10 +448,10 @@ public class ScrollPane extends Container implements Accessible {
         // - don't use right/bottom insets since they vary depending
         //   on whether or not scrollbars were displayed on last resize
         //
-        Dimension       size = getSize();
-        Insets          insets = getInsets();
-        int             viewWidth = size.width - insets.left*2;
-        int             viewHeight = size.height - insets.top*2;
+        Dimension size = getSize();
+        Insets insets = getInsets();
+        int viewWidth = size.width - insets.left * 2;
+        int viewHeight = size.height - insets.top * 2;
 
         //
         // determine whether or not horz or vert scrollbars will be displayed
@@ -451,7 +463,7 @@ public class ScrollPane extends Container implements Accessible {
 
         if (scrollbarDisplayPolicy == SCROLLBARS_AS_NEEDED) {
             vbarOn = childSize.height > viewHeight;
-            hbarOn = childSize.width  > viewWidth;
+            hbarOn = childSize.width > viewWidth;
         } else if (scrollbarDisplayPolicy == SCROLLBARS_ALWAYS) {
             vbarOn = hbarOn = true;
         } else { // SCROLLBARS_NEVER
@@ -466,7 +478,7 @@ public class ScrollPane extends Container implements Accessible {
         if (vbarOn) {
             viewWidth -= vbarWidth;
         }
-        if(hbarOn) {
+        if (hbarOn) {
             viewHeight -= hbarHeight;
         }
 
@@ -489,7 +501,7 @@ public class ScrollPane extends Container implements Accessible {
      */
     @Deprecated
     public void layout() {
-        if (getComponentCount()==0) {
+        if (getComponentCount() == 0) {
             return;
         }
         Component c = getComponent(0);
@@ -499,7 +511,7 @@ public class ScrollPane extends Container implements Accessible {
         Insets i = getInsets();
 
         c.reshape(i.left - p.x, i.top - p.y, cs.width, cs.height);
-        ScrollPanePeer peer = (ScrollPanePeer)this.peer;
+        ScrollPanePeer peer = (ScrollPanePeer) this.peer;
         if (peer != null) {
             peer.childResized(cs.width, cs.height);
         }
@@ -514,12 +526,13 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * Prints the component in this scroll pane.
+     *
      * @param g the specified Graphics window
      * @see Component#print
      * @see Component#printAll
      */
     public void printComponents(Graphics g) {
-        if (getComponentCount()==0) {
+        if (getComponentCount() == 0) {
             return;
         }
         Component c = getComponent(0);
@@ -557,8 +570,7 @@ public class ScrollPane extends Container implements Accessible {
                 hAdjustable.setValue(0);
             }
 
-            if (peer == null)
-                peer = getToolkit().createScrollPane(this);
+            if (peer == null) { peer = getToolkit().createScrollPane(this); }
             super.addNotify();
 
             // Bug 4124460. Restore the adjustable values.
@@ -594,12 +606,11 @@ public class ScrollPane extends Container implements Accessible {
             default:
                 sdpStr = "invalid display policy";
         }
-        Point p = (getComponentCount()>0)? getScrollPosition() : new Point(0,0);
+        Point p = (getComponentCount() > 0) ? getScrollPosition() : new Point(0, 0);
         Insets i = getInsets();
-        return super.paramString()+",ScrollPosition=("+p.x+","+p.y+")"+
-            ",Insets=("+i.top+","+i.left+","+i.bottom+","+i.right+")"+
-            ",ScrollbarDisplayPolicy="+sdpStr+
-        ",wheelScrollingEnabled="+isWheelScrollingEnabled();
+        return super.paramString() + ",ScrollPosition=(" + p.x + "," + p.y + ")" + ",Insets=(" + i.top + "," + i.left +
+            "," + i.bottom + "," + i.right + ")" + ",ScrollbarDisplayPolicy=" + sdpStr + ",wheelScrollingEnabled=" +
+            isWheelScrollingEnabled();
     }
 
     void autoProcessMouseWheel(MouseWheelEvent e) {
@@ -613,7 +624,7 @@ public class ScrollPane extends Container implements Accessible {
      * the behavior is unspecified and may result in an
      * exception.
      *
-     * @param e  the mouse wheel event
+     * @param e the mouse wheel event
      * @since 1.4
      */
     protected void processMouseWheelEvent(MouseWheelEvent e) {
@@ -626,13 +637,13 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * If wheel scrolling is enabled, we return true for MouseWheelEvents
+     *
      * @since 1.4
      */
     protected boolean eventTypeEnabled(int type) {
         if (type == MouseEvent.MOUSE_WHEEL && isWheelScrollingEnabled()) {
             return true;
-        }
-        else {
+        } else {
             return super.eventTypeEnabled(type);
         }
     }
@@ -641,9 +652,9 @@ public class ScrollPane extends Container implements Accessible {
      * Enables/disables scrolling in response to movement of the mouse wheel.
      * Wheel scrolling is enabled by default.
      *
-     * @param handleWheel   <code>true</code> if scrolling should be done
-     *                      automatically for a MouseWheelEvent,
-     *                      <code>false</code> otherwise.
+     * @param handleWheel <code>true</code> if scrolling should be done
+     *                    automatically for a MouseWheelEvent,
+     *                    <code>false</code> otherwise.
      * @see #isWheelScrollingEnabled
      * @see java.awt.event.MouseWheelEvent
      * @see java.awt.event.MouseWheelListener
@@ -677,45 +688,41 @@ public class ScrollPane extends Container implements Accessible {
 
     /**
      * Reads default serializable fields to stream.
-     * @exception HeadlessException if
-     * <code>GraphicsEnvironment.isHeadless()</code> returns
-     * <code>true</code>
+     *
+     * @throws HeadlessException if
+     *                           <code>GraphicsEnvironment.isHeadless()</code> returns
+     *                           <code>true</code>
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
-    private void readObject(ObjectInputStream s)
-        throws ClassNotFoundException, IOException, HeadlessException
-    {
+    private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException, HeadlessException {
         GraphicsEnvironment.checkHeadless();
         // 4352819: Gotcha!  Cannot use s.defaultReadObject here and
         // then continue with reading optional data.  Use GetField instead.
         ObjectInputStream.GetField f = s.readFields();
 
         // Old fields
-        scrollbarDisplayPolicy = f.get("scrollbarDisplayPolicy",
-                                       SCROLLBARS_AS_NEEDED);
-        hAdjustable = (ScrollPaneAdjustable)f.get("hAdjustable", null);
-        vAdjustable = (ScrollPaneAdjustable)f.get("vAdjustable", null);
+        scrollbarDisplayPolicy = f.get("scrollbarDisplayPolicy", SCROLLBARS_AS_NEEDED);
+        hAdjustable = (ScrollPaneAdjustable) f.get("hAdjustable", null);
+        vAdjustable = (ScrollPaneAdjustable) f.get("vAdjustable", null);
 
         // Since 1.4
-        wheelScrollingEnabled = f.get("wheelScrollingEnabled",
-                                      defaultWheelScroll);
+        wheelScrollingEnabled = f.get("wheelScrollingEnabled", defaultWheelScroll);
 
-//      // Note to future maintainers
-//      if (f.defaulted("wheelScrollingEnabled")) {
-//          // We are reading pre-1.4 stream that doesn't have
-//          // optional data, not even the TC_ENDBLOCKDATA marker.
-//          // Reading anything after this point is unsafe as we will
-//          // read unrelated objects further down the stream (4352819).
-//      }
-//      else {
-//          // Reading data from 1.4 or later, it's ok to try to read
-//          // optional data as OptionalDataException with eof == true
-//          // will be correctly reported
-//      }
+        //      // Note to future maintainers
+        //      if (f.defaulted("wheelScrollingEnabled")) {
+        //          // We are reading pre-1.4 stream that doesn't have
+        //          // optional data, not even the TC_ENDBLOCKDATA marker.
+        //          // Reading anything after this point is unsafe as we will
+        //          // read unrelated objects further down the stream (4352819).
+        //      }
+        //      else {
+        //          // Reading data from 1.4 or later, it's ok to try to read
+        //          // optional data as OptionalDataException with eof == true
+        //          // will be correctly reported
+        //      }
     }
 
-    class PeerFixer implements AdjustmentListener, java.io.Serializable
-    {
+    class PeerFixer implements AdjustmentListener, java.io.Serializable {
         private static final long serialVersionUID = 1043664721353696630L;
 
         PeerFixer(ScrollPane scroller) {
@@ -734,15 +741,15 @@ public class ScrollPane extends Container implements Accessible {
             }
 
             Component c = scroller.getComponent(0);
-            switch(adj.getOrientation()) {
-            case Adjustable.VERTICAL:
-                c.move(c.getLocation().x, -(value));
-                break;
-            case Adjustable.HORIZONTAL:
-                c.move(-(value), c.getLocation().y);
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal adjustable orientation");
+            switch (adj.getOrientation()) {
+                case Adjustable.VERTICAL:
+                    c.move(c.getLocation().x, -(value));
+                    break;
+                case Adjustable.HORIZONTAL:
+                    c.move(-(value), c.getLocation().y);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Illegal adjustable orientation");
             }
         }
 
@@ -750,9 +757,9 @@ public class ScrollPane extends Container implements Accessible {
     }
 
 
-/////////////////
-// Accessibility support
-////////////////
+    /////////////////
+    // Accessibility support
+    ////////////////
 
     /**
      * Gets the AccessibleContext associated with this ScrollPane.
@@ -761,7 +768,7 @@ public class ScrollPane extends Container implements Accessible {
      * A new AccessibleAWTScrollPane instance is created if necessary.
      *
      * @return an AccessibleAWTScrollPane that serves as the
-     *         AccessibleContext of this ScrollPane
+     * AccessibleContext of this ScrollPane
      * @since 1.3
      */
     public AccessibleContext getAccessibleContext() {
@@ -776,10 +783,10 @@ public class ScrollPane extends Container implements Accessible {
      * <code>ScrollPane</code> class.  It provides an implementation of the
      * Java Accessibility API appropriate to scroll pane user-interface
      * elements.
+     *
      * @since 1.3
      */
-    protected class AccessibleAWTScrollPane extends AccessibleAWTContainer
-    {
+    protected class AccessibleAWTScrollPane extends AccessibleAWTContainer {
         /*
          * JDK 1.3 serialVersionUID
          */
@@ -833,15 +840,15 @@ class PeerFixer implements AdjustmentListener, java.io.Serializable {
         }
 
         Component c = scroller.getComponent(0);
-        switch(adj.getOrientation()) {
-        case Adjustable.VERTICAL:
-            c.move(c.getLocation().x, -(value));
-            break;
-        case Adjustable.HORIZONTAL:
-            c.move(-(value), c.getLocation().y);
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal adjustable orientation");
+        switch (adj.getOrientation()) {
+            case Adjustable.VERTICAL:
+                c.move(c.getLocation().x, -(value));
+                break;
+            case Adjustable.HORIZONTAL:
+                c.move(-(value), c.getLocation().y);
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal adjustable orientation");
         }
     }
 

@@ -39,8 +39,8 @@ package java.util.concurrent;
  * Exception thrown by an {@link Executor} when a task cannot be
  * accepted for execution.
  *
- * @since 1.5
  * @author Doug Lea
+ * @since 1.5
  */
 public class RejectedExecutionException extends RuntimeException {
     private static final long serialVersionUID = -375805702767069545L;
@@ -68,9 +68,9 @@ public class RejectedExecutionException extends RuntimeException {
      * Constructs a <tt>RejectedExecutionException</tt> with the
      * specified detail message and cause.
      *
-     * @param  message the detail message
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method)
+     * @param message the detail message
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method)
      */
     public RejectedExecutionException(String message, Throwable cause) {
         super(message, cause);
@@ -82,8 +82,8 @@ public class RejectedExecutionException extends RuntimeException {
      * null ? null : cause.toString())</pre> (which typically contains
      * the class and detail message of <tt>cause</tt>).
      *
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method)
+     * @param cause the cause (which is saved for later retrieval by the
+     *              {@link #getCause()} method)
      */
     public RejectedExecutionException(Throwable cause) {
         super(cause);

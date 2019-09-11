@@ -31,8 +31,8 @@ package java.rmi.server;
  * exactly the same set of remote interfaces defined by the actual
  * implementation of the remote object.
  *
- * @author  Ann Wollrath
- * @since   JDK1.1
+ * @author Ann Wollrath
+ * @since JDK1.1
  */
 abstract public class RemoteStub extends RemoteObject {
 
@@ -61,7 +61,7 @@ abstract public class RemoteStub extends RemoteObject {
      * Sets the remote reference inside the remote stub.
      *
      * @param stub the remote stub
-     * @param ref the remote reference
+     * @param ref  the remote reference
      * @since JDK1.1
      * @deprecated no replacement.  The <code>setRef</code> method
      * is not needed since <code>RemoteStub</code>s can be created with

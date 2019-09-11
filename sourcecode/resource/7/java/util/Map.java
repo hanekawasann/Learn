@@ -104,8 +104,7 @@ package java.util;
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
- *
- * @author  Josh Bloch
+ * @author Josh Bloch
  * @see HashMap
  * @see TreeMap
  * @see Hashtable
@@ -114,7 +113,7 @@ package java.util;
  * @see Set
  * @since 1.2
  */
-public interface Map<K,V> {
+public interface Map<K, V> {
     // Query Operations
 
     /**
@@ -142,13 +141,13 @@ public interface Map<K,V> {
      *
      * @param key key whose presence in this map is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified
-     *         key
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     * key
+     * @throws ClassCastException   if the key is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified key is null and this map
-     *         does not permit null keys
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                              does not permit null keys
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     boolean containsKey(Object key);
 
@@ -162,13 +161,13 @@ public interface Map<K,V> {
      *
      * @param value value whose presence in this map is to be tested
      * @return <tt>true</tt> if this map maps one or more keys to the
-     *         specified value
-     * @throws ClassCastException if the value is of an inappropriate type for
-     *         this map
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     * specified value
+     * @throws ClassCastException   if the value is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified value is null and this
-     *         map does not permit null values
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                              map does not permit null values
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     boolean containsValue(Object value);
 
@@ -189,13 +188,13 @@ public interface Map<K,V> {
      *
      * @param key the key whose associated value is to be returned
      * @return the value to which the specified key is mapped, or
-     *         {@code null} if this map contains no mapping for the key
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     * {@code null} if this map contains no mapping for the key
+     * @throws ClassCastException   if the key is of an inappropriate type for
+     *                              this map
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified key is null and this map
-     *         does not permit null keys
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                              does not permit null keys
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     V get(Object key);
 
@@ -209,21 +208,21 @@ public interface Map<K,V> {
      * if {@link #containsKey(Object) m.containsKey(k)} would return
      * <tt>true</tt>.)
      *
-     * @param key key with which the specified value is to be associated
+     * @param key   key with which the specified value is to be associated
      * @param value value to be associated with the specified key
      * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with <tt>key</tt>,
-     *         if the implementation supports <tt>null</tt> values.)
+     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with <tt>key</tt>,
+     * if the implementation supports <tt>null</tt> values.)
      * @throws UnsupportedOperationException if the <tt>put</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of the specified key or value
-     *         prevents it from being stored in this map
-     * @throws NullPointerException if the specified key or value is null
-     *         and this map does not permit null keys or values
-     * @throws IllegalArgumentException if some property of the specified key
-     *         or value prevents it from being stored in this map
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of the specified key or value
+     *                                       prevents it from being stored in this map
+     * @throws NullPointerException          if the specified key or value is null
+     *                                       and this map does not permit null keys or values
+     * @throws IllegalArgumentException      if some property of the specified key
+     *                                       or value prevents it from being stored in this map
      */
     V put(K key, V value);
 
@@ -247,15 +246,15 @@ public interface Map<K,V> {
      *
      * @param key key whose mapping is to be removed from the map
      * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this
-     *         map does not permit null keys
-     * (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the key is of an inappropriate type for
+     *                                       this map
+     *                                       (<a href="Collection.html#optional-restrictions">optional</a>)
+     * @throws NullPointerException          if the specified key is null and this
+     *                                       map does not permit null keys
+     *                                       (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     V remove(Object key);
 
@@ -265,21 +264,21 @@ public interface Map<K,V> {
     /**
      * Copies all of the mappings from the specified map to this map
      * (optional operation).  The effect of this call is equivalent to that
-     * of calling {@link #put(Object,Object) put(k, v)} on this map once
+     * of calling {@link #put(Object, Object) put(k, v)} on this map once
      * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
      * specified map.  The behavior of this operation is undefined if the
      * specified map is modified while the operation is in progress.
      *
      * @param m mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
-     *         is not supported by this map
-     * @throws ClassCastException if the class of a key or value in the
-     *         specified map prevents it from being stored in this map
-     * @throws NullPointerException if the specified map is null, or if
-     *         this map does not permit null keys or values, and the
-     *         specified map contains null keys or values
-     * @throws IllegalArgumentException if some property of a key or value in
-     *         the specified map prevents it from being stored in this map
+     *                                       is not supported by this map
+     * @throws ClassCastException            if the class of a key or value in the
+     *                                       specified map prevents it from being stored in this map
+     * @throws NullPointerException          if the specified map is null, or if
+     *                                       this map does not permit null keys or values, and the
+     *                                       specified map contains null keys or values
+     * @throws IllegalArgumentException      if some property of a key or value in
+     *                                       the specified map prevents it from being stored in this map
      */
     void putAll(Map<? extends K, ? extends V> m);
 
@@ -288,7 +287,7 @@ public interface Map<K,V> {
      * The map will be empty after this call returns.
      *
      * @throws UnsupportedOperationException if the <tt>clear</tt> operation
-     *         is not supported by this map
+     *                                       is not supported by this map
      */
     void clear();
 
@@ -360,14 +359,14 @@ public interface Map<K,V> {
      * @see Map#entrySet()
      * @since 1.2
      */
-    interface Entry<K,V> {
+    interface Entry<K, V> {
         /**
          * Returns the key corresponding to this entry.
          *
          * @return the key corresponding to this entry
          * @throws IllegalStateException implementations may, but are not
-         *         required to, throw this exception if the entry has been
-         *         removed from the backing map.
+         *                               required to, throw this exception if the entry has been
+         *                               removed from the backing map.
          */
         K getKey();
 
@@ -378,8 +377,8 @@ public interface Map<K,V> {
          *
          * @return the value corresponding to this entry
          * @throws IllegalStateException implementations may, but are not
-         *         required to, throw this exception if the entry has been
-         *         removed from the backing map.
+         *                               required to, throw this exception if the entry has been
+         *                               removed from the backing map.
          */
         V getValue();
 
@@ -392,16 +391,16 @@ public interface Map<K,V> {
          * @param value new value to be stored in this entry
          * @return old value corresponding to the entry
          * @throws UnsupportedOperationException if the <tt>put</tt> operation
-         *         is not supported by the backing map
-         * @throws ClassCastException if the class of the specified value
-         *         prevents it from being stored in the backing map
-         * @throws NullPointerException if the backing map does not permit
-         *         null values, and the specified value is null
-         * @throws IllegalArgumentException if some property of this value
-         *         prevents it from being stored in the backing map
-         * @throws IllegalStateException implementations may, but are not
-         *         required to, throw this exception if the entry has been
-         *         removed from the backing map.
+         *                                       is not supported by the backing map
+         * @throws ClassCastException            if the class of the specified value
+         *                                       prevents it from being stored in the backing map
+         * @throws NullPointerException          if the backing map does not permit
+         *                                       null values, and the specified value is null
+         * @throws IllegalArgumentException      if some property of this value
+         *                                       prevents it from being stored in the backing map
+         * @throws IllegalStateException         implementations may, but are not
+         *                                       required to, throw this exception if the entry has been
+         *                                       removed from the backing map.
          */
         V setValue(V value);
 
@@ -421,7 +420,7 @@ public interface Map<K,V> {
          *
          * @param o object to be compared for equality with this map entry
          * @return <tt>true</tt> if the specified object is equal to this map
-         *         entry
+         * entry
          */
         boolean equals(Object o);
 

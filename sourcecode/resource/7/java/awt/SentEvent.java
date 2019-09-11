@@ -42,8 +42,7 @@ class SentEvent extends AWTEvent implements ActiveEvent {
      */
     private static final long serialVersionUID = -383615247028828931L;
 
-    static final int ID =
-        java.awt.event.FocusEvent.FOCUS_LAST + 2;
+    static final int ID = java.awt.event.FocusEvent.FOCUS_LAST + 2;
 
     boolean dispatched;
     private AWTEvent nested;
@@ -52,14 +51,13 @@ class SentEvent extends AWTEvent implements ActiveEvent {
     SentEvent() {
         this(null);
     }
+
     SentEvent(AWTEvent nested) {
         this(nested, null);
     }
+
     SentEvent(AWTEvent nested, AppContext toNotify) {
-        super((nested != null)
-                  ? nested.getSource()
-                  : Toolkit.getDefaultToolkit(),
-              ID);
+        super((nested != null) ? nested.getSource() : Toolkit.getDefaultToolkit(), ID);
         this.nested = nested;
         this.toNotify = toNotify;
     }
@@ -79,6 +77,7 @@ class SentEvent extends AWTEvent implements ActiveEvent {
             }
         }
     }
+
     final void dispose() {
         dispatched = true;
         if (toNotify != null) {

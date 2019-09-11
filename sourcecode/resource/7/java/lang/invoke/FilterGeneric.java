@@ -33,6 +33,7 @@ import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
  * These adapters apply arbitrary conversions to arguments
  * on the way to a ultimate target.
  * For simplicity, these are all generically typed.
+ *
  * @author jrose
  */
 class FilterGeneric {
@@ -41,8 +42,9 @@ class FilterGeneric {
     // prototype adapters (clone and customize for each new target & conversion!)
     private final Adapter[] adapters;
 
-    /** Compute and cache information common to all filtering adapters
-     *  with the given generic type
+    /**
+     * Compute and cache information common to all filtering adapters
+     * with the given generic type
      */
     FilterGeneric(MethodType entryType) {
         this.entryType = entryType;
@@ -53,16 +55,15 @@ class FilterGeneric {
     Adapter getAdapter(Kind kind, int pos) {
         int index = kind.invokerIndex(pos);
         Adapter ad = adapters[index];
-        if (ad != null)  return ad;
+        if (ad != null) { return ad; }
         ad = findAdapter(entryType, kind, pos);
-        if (ad == null)
-            ad = buildAdapterFromBytecodes(entryType, kind, pos);
+        if (ad == null) { ad = buildAdapterFromBytecodes(entryType, kind, pos); }
         adapters[index] = ad;
         return ad;
     }
 
     static {
-        assert(MethodHandleNatives.workaroundWithoutRicochetFrames());  // this class is deprecated
+        assert (MethodHandleNatives.workaroundWithoutRicochetFrames());  // this class is deprecated
     }
 
     Adapter makeInstance(Kind kind, int pos, MethodHandle filter, MethodHandle target) {
@@ -70,9 +71,11 @@ class FilterGeneric {
         return ad.makeInstance(ad.prototypeEntryPoint(), filter, target);
     }
 
-    /** Build an adapter of the given generic type, which invokes filter
-     *  on the selected incoming argument before passing it to the target.
-     * @param pos the argument to filter
+    /**
+     * Build an adapter of the given generic type, which invokes filter
+     * on the selected incoming argument before passing it to the target.
+     *
+     * @param pos    the argument to filter
      * @param filter the function to call on the argument
      * @param target the target to call with the modified argument list
      * @return an adapter method handle
@@ -81,11 +84,13 @@ class FilterGeneric {
         return make(Kind.value, pos, filter, target);
     }
 
-    /** Build an adapter of the given generic type, which invokes a combiner
-     *  on a selected group of leading arguments.
-     *  The result of the combiner is prepended before all those arguments.
+    /**
+     * Build an adapter of the given generic type, which invokes a combiner
+     * on a selected group of leading arguments.
+     * The result of the combiner is prepended before all those arguments.
+     *
      * @param combiner the function to call on the selected leading arguments
-     * @param target the target to call with the modified argument list
+     * @param target   the target to call with the modified argument list
      * @return an adapter method handle
      */
     public static MethodHandle makeArgumentFolder(MethodHandle combiner, MethodHandle target) {
@@ -93,10 +98,12 @@ class FilterGeneric {
         return make(Kind.fold, num, combiner, target);
     }
 
-    /** Build an adapter of the given generic type, which invokes a filter
-     *  on the incoming arguments, reified as a group.
-     *  The argument may be modified (by side effects in the filter).
-     *  The arguments, possibly modified, are passed on to the target.
+    /**
+     * Build an adapter of the given generic type, which invokes a filter
+     * on the incoming arguments, reified as a group.
+     * The argument may be modified (by side effects in the filter).
+     * The arguments, possibly modified, are passed on to the target.
+     *
      * @param filter the function to call on the arguments
      * @param target the target to call with the possibly-modified argument list
      * @return an adapter method handle
@@ -105,11 +112,13 @@ class FilterGeneric {
         return make(Kind.flyby, 0, filter, target);
     }
 
-    /** Build an adapter of the given generic type, which invokes a collector
-     *  on the selected incoming argument and all following arguments.
-     *  The result of the collector replaces all those arguments.
+    /**
+     * Build an adapter of the given generic type, which invokes a collector
+     * on the selected incoming argument and all following arguments.
+     * The result of the collector replaces all those arguments.
+     *
      * @param collector the function to call on the selected trailing arguments
-     * @param target the target to call with the modified argument list
+     * @param target    the target to call with the modified argument list
      * @return an adapter method handle
      */
     public static MethodHandle makeArgumentCollector(MethodHandle collector, MethodHandle target) {
@@ -125,17 +134,15 @@ class FilterGeneric {
     /** Return the adapter information for this target and filter type. */
     static FilterGeneric of(Kind kind, int pos, MethodType filterType, MethodType targetType) {
         MethodType entryType = entryType(kind, pos, filterType, targetType);
-        if (entryType.generic() != entryType)
-            throw newIllegalArgumentException("must be generic: "+entryType);
+        if (entryType.generic() != entryType) { throw newIllegalArgumentException("must be generic: " + entryType); }
         MethodTypeForm form = entryType.form();
         FilterGeneric filterGen = form.filterGeneric;
-        if (filterGen == null)
-            form.filterGeneric = filterGen = new FilterGeneric(entryType);
+        if (filterGen == null) { form.filterGeneric = filterGen = new FilterGeneric(entryType); }
         return filterGen;
     }
 
     public String toString() {
-        return "FilterGeneric/"+entryType;
+        return "FilterGeneric/" + entryType;
     }
 
     static MethodType targetType(MethodType entryType, Kind kind, int pos, MethodType filterType) {
@@ -167,7 +174,7 @@ class FilterGeneric {
                 type = type.dropParameterTypes(0, 1);
                 break;
             case collect:
-                type = type.dropParameterTypes(pos, pos+1);
+                type = type.dropParameterTypes(pos, pos + 1);
                 type = type.insertParameterTypes(pos, filterType.parameterList());
                 break;
             default:
@@ -179,36 +186,36 @@ class FilterGeneric {
     /* Create an adapter that handles spreading calls for the given type. */
     static Adapter findAdapter(MethodType entryType, Kind kind, int pos) {
         int argc = entryType.parameterCount();
-        String cname0 = "F"+argc;
-        String cname1 = "F"+argc+kind.key;
+        String cname0 = "F" + argc;
+        String cname1 = "F" + argc + kind.key;
         String[] cnames = { cname0, cname1 };
         String iname = kind.invokerName(pos);
         // e.g., F5; invoke_C3
         for (String cname : cnames) {
             Class<? extends Adapter> acls = Adapter.findSubClass(cname);
-            if (acls == null)  continue;
+            if (acls == null) { continue; }
             // see if it has the required invoke method
             MethodHandle entryPoint = null;
             try {
                 entryPoint = IMPL_LOOKUP.findSpecial(acls, iname, entryType, acls);
             } catch (ReflectiveOperationException ex) {
             }
-            if (entryPoint == null)  continue;
+            if (entryPoint == null) { continue; }
             Constructor<? extends Adapter> ctor = null;
             try {
                 ctor = acls.getDeclaredConstructor(MethodHandle.class);
             } catch (NoSuchMethodException ex) {
             } catch (SecurityException ex) {
             }
-            if (ctor == null)  continue;
+            if (ctor == null) { continue; }
             try {
                 // Produce an instance configured as a prototype.
                 return ctor.newInstance(entryPoint);
             } catch (IllegalArgumentException ex) {
             } catch (InvocationTargetException wex) {
                 Throwable ex = wex.getTargetException();
-                if (ex instanceof Error)  throw (Error)ex;
-                if (ex instanceof RuntimeException)  throw (RuntimeException)ex;
+                if (ex instanceof Error) { throw (Error) ex; }
+                if (ex instanceof RuntimeException) { throw (RuntimeException) ex; }
             } catch (InstantiationException ex) {
             } catch (IllegalAccessException ex) {
             }
@@ -239,34 +246,36 @@ class FilterGeneric {
         }
 
         protected boolean isPrototype() { return target == null; }
+
         protected Adapter(MethodHandle entryPoint) {
             this(entryPoint, entryPoint, null);
-            assert(isPrototype());
+            assert (isPrototype());
         }
+
         protected MethodHandle prototypeEntryPoint() {
-            if (!isPrototype())  throw new InternalError();
+            if (!isPrototype()) { throw new InternalError(); }
             return filter;
         }
 
-        protected Adapter(MethodHandle entryPoint,
-                          MethodHandle filter, MethodHandle target) {
+        protected Adapter(MethodHandle entryPoint, MethodHandle filter, MethodHandle target) {
             super(entryPoint);
             this.filter = filter;
             this.target = target;
         }
 
         /** Make a copy of self, with new fields. */
-        protected abstract Adapter makeInstance(MethodHandle entryPoint,
-                MethodHandle filter, MethodHandle target);
+        protected abstract Adapter makeInstance(MethodHandle entryPoint, MethodHandle filter, MethodHandle target);
         // { return new ThisType(entryPoint, filter, target); }
 
         static private final String CLASS_PREFIX; // "java.lang.invoke.FilterGeneric$"
+
         static {
             String aname = Adapter.class.getName();
             String sname = Adapter.class.getSimpleName();
-            if (!aname.endsWith(sname))  throw new InternalError();
+            if (!aname.endsWith(sname)) { throw new InternalError(); }
             CLASS_PREFIX = aname.substring(0, aname.length() - sname.length());
         }
+
         /** Find a sibing class of Adapter. */
         static Class<? extends Adapter> findSubClass(String name) {
             String cname = Adapter.CLASS_PREFIX + name;
@@ -289,8 +298,11 @@ class FilterGeneric {
         static final int COUNT = LIMIT.ordinal();
 
         final char key;
+
         Kind(char key) { this.key = key; }
-        String invokerName(int pos) { return "invoke_"+key+""+pos; }
+
+        String invokerName(int pos) { return "invoke_" + key + "" + pos; }
+
         int invokerIndex(int pos) { return pos * COUNT + ordinal(); }
     }
 
@@ -331,21 +343,32 @@ class FilterGeneric {
     // This one is written by hand:
     static class F0 extends Adapter {
         protected F0(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F0(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F0 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F0(e, f, t); }
+            return new F0(e, f, t);
+        }
+
         protected Object invoke_F0() throws Throwable {
-            return target.invokeExact(filter.invokeExact()); }
+            return target.invokeExact(filter.invokeExact());
+        }
+
         protected Object invoke_C0() throws Throwable {
-            return target.invokeExact(filter.invokeExact()); }
-        static final Object[] NO_ARGS = { };
+            return target.invokeExact(filter.invokeExact());
+        }
+
+        static final Object[] NO_ARGS = {};
+
         protected Object invoke_Y0() throws Throwable {
             filter.invokeExact(NO_ARGS); // make the flyby
-            return target.invokeExact(); }
+            return target.invokeExact();
+        }
     }
 
-/*
+    /*
   : SHELL; n=FilterGeneric; cp -p $n.java $n.java-; sed < $n.java- > $n.java+ -e '/{{*{{/,/}}*}}/w /tmp/genclasses.java' -e '/}}*}}/q'; (cd /tmp; javac -d . genclasses.java; java -ea -cp . genclasses | sed 's| *[/]/ *$||') >> $n.java+; echo '}' >> $n.java+; mv $n.java+ $n.java; mv $n.java- $n.java~
 //{{{
 import java.util.*;
@@ -501,4000 +524,4595 @@ class genclasses {
     }
 }
 //}}} */
-//params=[1, 20]
+    //params=[1, 20]
     static class F1 extends Adapter {
         protected F1(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F1(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F1 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F1(e, f, t); }
+            return new F1(e, f, t);
+        }
+
         protected Object invoke_V0(Object a0) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0)); }
+            return target.invokeExact(filter.invokeExact(a0));
+        }
+
         protected Object invoke_F0(Object a0) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0); }
+            return target.invokeExact(filter.invokeExact(), a0);
+        }
+
         protected Object invoke_F1(Object a0) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0); }
+            return target.invokeExact(filter.invokeExact(a0), a0);
+        }
+
         protected Object invoke_C0(Object a0) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0)); }
+            return target.invokeExact(filter.invokeExact(a0));
+        }
+
         protected Object invoke_C1(Object a0) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact()); }
+            return target.invokeExact(a0, filter.invokeExact());
+        }
+
         protected Object invoke_Y0(Object a0) throws Throwable {
             Object[] av = { a0 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0]); }
+            return target.invokeExact(av[0]);
+        }
     }
+
     static class F2 extends Adapter {
         protected F2(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F2(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F2 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F2(e, f, t); }
+            return new F2(e, f, t);
+        }
+
         protected Object invoke_V0(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1); }
+            return target.invokeExact(filter.invokeExact(a0), a1);
+        }
+
         protected Object invoke_V1(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1)); }
+            return target.invokeExact(a0, filter.invokeExact(a1));
+        }
+
         protected Object invoke_F0(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1); }
+            return target.invokeExact(filter.invokeExact(), a0, a1);
+        }
+
         protected Object invoke_F1(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1); }
+            return target.invokeExact(filter.invokeExact(a0), a0, a1);
+        }
+
         protected Object invoke_F2(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1); }
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1);
+        }
+
         protected Object invoke_C0(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1)); }
+            return target.invokeExact(filter.invokeExact(a0, a1));
+        }
+
         protected Object invoke_C1(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1)); }
+            return target.invokeExact(a0, filter.invokeExact(a1));
+        }
+
         protected Object invoke_C2(Object a0, Object a1) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact()); }
+            return target.invokeExact(a0, a1, filter.invokeExact());
+        }
+
         protected Object invoke_Y0(Object a0, Object a1) throws Throwable {
             Object[] av = { a0, a1 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1]); }
+            return target.invokeExact(av[0], av[1]);
+        }
     }
+
     static class F3 extends Adapter {
         protected F3(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F3(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F3 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F3(e, f, t); }
+            return new F3(e, f, t);
+        }
+
         protected Object invoke_V0(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2); }
+            return target.invokeExact(filter.invokeExact(a0), a1, a2);
+        }
+
         protected Object invoke_V1(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2); }
+            return target.invokeExact(a0, filter.invokeExact(a1), a2);
+        }
+
         protected Object invoke_V2(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2)); }
+            return target.invokeExact(a0, a1, filter.invokeExact(a2));
+        }
+
         protected Object invoke_F0(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2); }
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2);
+        }
+
         protected Object invoke_F1(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2); }
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2);
+        }
+
         protected Object invoke_F2(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2); }
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2);
+        }
+
         protected Object invoke_F3(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2); }
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2);
+        }
+
         protected Object invoke_C0(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2)); }
+            return target.invokeExact(filter.invokeExact(a0, a1, a2));
+        }
+
         protected Object invoke_C1(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2)); }
+            return target.invokeExact(a0, filter.invokeExact(a1, a2));
+        }
+
         protected Object invoke_C2(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2)); }
+            return target.invokeExact(a0, a1, filter.invokeExact(a2));
+        }
+
         protected Object invoke_C3(Object a0, Object a1, Object a2) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact()); }
+            return target.invokeExact(a0, a1, a2, filter.invokeExact());
+        }
+
         protected Object invoke_Y0(Object a0, Object a1, Object a2) throws Throwable {
             Object[] av = { a0, a1, a2 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2]); }
+            return target.invokeExact(av[0], av[1], av[2]);
+        }
     }
+
     static class F4 extends Adapter {
         protected F4(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F4(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F4 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F4(e, f, t); }
+            return new F4(e, f, t);
+        }
+
         protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3);
+        }
+
         protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3); }
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3);
+        }
+
         protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3); }
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3);
+        }
+
         protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3)); }
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3));
+        }
+
         protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3);
+        }
+
         protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3);
+        }
+
         protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3);
+        }
+
         protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3);
+        }
+
         protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3); }
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3);
+        }
+
         protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3)); }
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3));
+        }
+
         protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3)); }
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3));
+        }
+
         protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3)); }
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3));
+        }
+
         protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3)); }
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3));
+        }
+
         protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact()); }
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact());
+        }
+
         protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3) throws Throwable {
             Object[] av = { a0, a1, a2, a3 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3]);
+        }
     }
+
     static class F5 extends Adapter {
         protected F5(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F5(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F5 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F5(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4) throws Throwable {
+            return new F5(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4]);
+        }
     }
+
     static class F6 extends Adapter {
         protected F6(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F6(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F6 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F6(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5) throws Throwable {
+            return new F6(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5]);
+        }
     }
+
     static class F7 extends Adapter {
         protected F7(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F7(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F7 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F7(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6) throws Throwable {
+            return new F7(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6)
+            throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6]);
+        }
     }
+
     static class F8 extends Adapter {
         protected F8(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F8(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F8 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F8(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7) throws Throwable {
+            return new F8(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7]);
+        }
     }
+
     static class F9 extends Adapter {
         protected F9(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F9(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F9 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F9(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8) throws Throwable {
+            return new F9(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8]);
+        }
     }
+
     static class F10 extends Adapter {
         protected F10(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F10(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F10 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F10(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9) throws Throwable {
+            return new F10(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9]);
+        }
     }
+
     static class F11 extends Adapter {
         protected F11(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F11(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F11 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F11(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10) throws Throwable {
+            return new F11(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10]); }
+            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10]);
+        }
     }
+
     static class F12 extends Adapter {
         protected F12(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F12(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F12 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F12(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return new F12(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10, a11));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10, a11));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11]);
+        }
     }
+
     static class F13 extends Adapter {
         protected F13(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F13(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F13 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F13(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12) throws Throwable {
+            return new F13(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10, a11, a12));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11, a12));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12]);
+        }
     }
+
     static class F14 extends Adapter {
         protected F14(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F14(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F14 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F14(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13) throws Throwable {
+            return new F14(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11, a12, a13));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12, a13));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13]);
+        }
     }
+
     static class F15 extends Adapter {
         protected F15(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F15(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F15 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F15(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14) throws Throwable {
+            return new F15(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11, a12, a13, a14));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12, a13, a14));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13, a14));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14)
+            throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14]);
+        }
     }
+
     static class F16 extends Adapter {
         protected F16(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F16(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F16 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F16(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14, a15); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14, a15); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14, a15); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14, a15); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14), a15); }
-        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14, a15)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14, a15)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14, a15)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14, a15)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15)); }
-        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15) throws Throwable {
+            return new F16(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14, a15);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14, a15);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14, a15);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14), a15);
+        }
+
+        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14, a15);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
+                    a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9, a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11, a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12, a13, a14, a15));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13, a14, a15));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14, a15));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15));
+        }
+
+        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15)
+            throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14], av[15]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14], av[15]);
+        }
     }
+
     static class F17 extends Adapter {
         protected F17(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F17(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F17 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F17(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
+            return new F17(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14), a15,
+                    a16);
+        }
+
+        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15),
+                    a16);
+        }
+
+        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15, a16);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
+                    a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16), a0, a1,
+                a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0,
+                filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1,
+                filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2,
+                filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3,
+                filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4,
+                filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5,
+                filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6,
+                filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7,
+                filter.invokeExact(a8, a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                filter.invokeExact(a9, a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
             return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14, a15, a16); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14, a15, a16); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14, a15, a16); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14), a15, a16); }
-        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15), a16); }
-        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14, a15, a16)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14, a15, a16)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14, a15, a16)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14, a15, a16)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15, a16)); }
-        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16)); }
-        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16) throws Throwable {
+                filter.invokeExact(a10, a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                filter.invokeExact(a11, a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                filter.invokeExact(a12, a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                filter.invokeExact(a13, a14, a15, a16));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                filter.invokeExact(a14, a15, a16));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                filter.invokeExact(a15, a16));
+        }
+
+        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16));
+        }
+
+        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14], av[15], av[16]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14], av[15], av[16]);
+        }
     }
+
     static class F18 extends Adapter {
         protected F18(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F18(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F18 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F18(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
+            return new F18(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14), a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15),
+                    a16, a17);
+        }
+
+        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16), a17);
+        }
+
+        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15, a16, a17);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
+                    a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16), a0, a1,
+                a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17), a0,
+                a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0,
+                filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1,
+                filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2,
+                filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3,
+                filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4,
+                filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5,
+                filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6,
+                filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7,
+                filter.invokeExact(a8, a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                filter.invokeExact(a9, a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
             return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14, a15, a16, a17); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14, a15, a16, a17); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14), a15, a16, a17); }
-        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15), a16, a17); }
-        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16), a17); }
-        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14, a15, a16, a17)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14, a15, a16, a17)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14, a15, a16, a17)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15, a16, a17)); }
-        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16, a17)); }
-        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17)); }
-        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17) throws Throwable {
+                filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                filter.invokeExact(a11, a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                filter.invokeExact(a12, a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                filter.invokeExact(a13, a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                filter.invokeExact(a14, a15, a16, a17));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                filter.invokeExact(a15, a16, a17));
+        }
+
+        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16, a17));
+        }
+
+        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17));
+        }
+
+        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+                filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14], av[15], av[16], av[17]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14], av[15], av[16], av[17]);
+        }
     }
+
     static class F19 extends Adapter {
         protected F19(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F19(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F19 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F19(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
+            return new F19(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14), a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15),
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16), a17, a18);
+        }
+
+        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17), a18);
+        }
+
+        protected Object invoke_V18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+                filter.invokeExact(a18));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
+                    a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16), a0, a1,
+                a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17), a0,
+                a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_F19(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18),
+                a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(filter
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0,
+                filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1,
+                filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2,
+                filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3,
+                filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4,
+                filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5,
+                filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6,
+                filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7,
+                filter.invokeExact(a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                filter.invokeExact(a9, a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
             return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14, a15, a16, a17, a18); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14), a15, a16, a17, a18); }
-        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15), a16, a17, a18); }
-        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16), a17, a18); }
-        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17), a18); }
-        protected Object invoke_V18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, filter.invokeExact(a18)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_F19(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14, a15, a16, a17, a18)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14, a15, a16, a17, a18)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15, a16, a17, a18)); }
-        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16, a17, a18)); }
-        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17, a18)); }
-        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, filter.invokeExact(a18)); }
-        protected Object invoke_C19(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18) throws Throwable {
+                filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                filter.invokeExact(a11, a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                filter.invokeExact(a12, a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                filter.invokeExact(a13, a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                filter.invokeExact(a14, a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                filter.invokeExact(a15, a16, a17, a18));
+        }
+
+        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16, a17, a18));
+        }
+
+        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17, a18));
+        }
+
+        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+                filter.invokeExact(a18));
+        }
+
+        protected Object invoke_C19(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18,
+                    filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14], av[15], av[16], av[17], av[18]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14], av[15], av[16], av[17], av[18]);
+        }
     }
+
     static class F20 extends Adapter {
         protected F20(MethodHandle entryPoint) { super(entryPoint); }  // to build prototype
+
         protected F20(MethodHandle e, MethodHandle f, MethodHandle t) {
-            super(e, f, t); }
+            super(e, f, t);
+        }
+
         protected F20 makeInstance(MethodHandle e, MethodHandle f, MethodHandle t) {
-            return new F20(e, f, t); }
-        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9),
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return new F20(e, f, t);
+        }
+
+        protected Object invoke_V0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, filter.invokeExact(a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, filter.invokeExact(a2), a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, filter.invokeExact(a3), a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, filter.invokeExact(a4), a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5), a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6), a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7), a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8), a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9), a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10), a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, filter.invokeExact(a11), a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, filter.invokeExact(a12), a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, filter.invokeExact(a13), a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, filter.invokeExact(a14), a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, filter.invokeExact(a15),
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16), a17, a18, a19);
+        }
+
+        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17), a18, a19);
+        }
+
+        protected Object invoke_V18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+                filter.invokeExact(a18), a19);
+        }
+
+        protected Object invoke_V19(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18,
+                    filter.invokeExact(a19));
+        }
+
+        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                    a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                    a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                    a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                    a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                    a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                    a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7), a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
+                    a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8), a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                    a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), a0, a1, a2, a3, a4, a5, a6, a7,
+                    a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10), a0, a1, a2, a3, a4, a5,
+                    a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11), a0, a1, a2, a3, a4,
+                    a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12), a0, a1, a2, a3,
+                    a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13), a0, a1, a2,
+                    a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14), a0,
+                    a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15),
+                    a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16), a0, a1,
+                a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17), a0,
+                a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F19(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(
+                filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18),
+                a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_F20(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(filter
+                    .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19),
+                a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19);
+        }
+
+        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(filter
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, filter
+                .invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1,
+                filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2,
+                filter.invokeExact(a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3,
+                filter.invokeExact(a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4,
+                filter.invokeExact(a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5,
+                filter.invokeExact(a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6,
+                filter.invokeExact(a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7,
+                filter.invokeExact(a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8,
+                filter.invokeExact(a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
             return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 filter.invokeExact(a10), a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11), a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12), a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13), a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_V14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14), a15, a16, a17, a18, a19); }
-        protected Object invoke_V15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15), a16, a17, a18, a19); }
-        protected Object invoke_V16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16), a17, a18, a19); }
-        protected Object invoke_V17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17), a18, a19); }
-        protected Object invoke_V18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, filter.invokeExact(a18), a19); }
-        protected Object invoke_V19(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, filter.invokeExact(a19)); }
-        protected Object invoke_F0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F19(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_F20(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19),
-                                 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19); }
-        protected Object invoke_C0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(filter.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C1(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, filter.invokeExact(a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C2(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, filter.invokeExact(a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C3(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, filter.invokeExact(a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C4(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, filter.invokeExact(a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C5(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, filter.invokeExact(a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C6(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, filter.invokeExact(a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C7(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, filter.invokeExact(a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C8(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, filter.invokeExact(a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C9(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, filter.invokeExact(a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C10(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, filter.invokeExact(a11, a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, filter.invokeExact(a12, a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, filter.invokeExact(a13, a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, filter.invokeExact(a14, a15, a16, a17, a18, a19)); }
-        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, filter.invokeExact(a15, a16, a17, a18, a19)); }
-        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, filter.invokeExact(a16, a17, a18, a19)); }
-        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, filter.invokeExact(a17, a18, a19)); }
-        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, filter.invokeExact(a18, a19)); }
-        protected Object invoke_C19(Object a0, Object a1, Object a2, Object a3,
-                                    Object a4, Object a5, Object a6, Object a7,
-                                    Object a8, Object a9, Object a10, Object a11,
-                                    Object a12, Object a13, Object a14, Object a15,
-                                    Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                                 a10, a11, a12, a13, a14, a15, a16, a17, a18, filter.invokeExact(a19)); }
-        protected Object invoke_C20(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
-            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, filter.invokeExact()); }
-        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3,
-                                   Object a4, Object a5, Object a6, Object a7,
-                                   Object a8, Object a9, Object a10, Object a11,
-                                   Object a12, Object a13, Object a14, Object a15,
-                                   Object a16, Object a17, Object a18, Object a19) throws Throwable {
+                filter.invokeExact(a10, a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C11(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
+                filter.invokeExact(a11, a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C12(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+                filter.invokeExact(a12, a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C13(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                filter.invokeExact(a13, a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C14(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+                filter.invokeExact(a14, a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C15(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14,
+                filter.invokeExact(a15, a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C16(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+                filter.invokeExact(a16, a17, a18, a19));
+        }
+
+        protected Object invoke_C17(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16,
+                filter.invokeExact(a17, a18, a19));
+        }
+
+        protected Object invoke_C18(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target.invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+                filter.invokeExact(a18, a19));
+        }
+
+        protected Object invoke_C19(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18,
+                    filter.invokeExact(a19));
+        }
+
+        protected Object invoke_C20(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
+            return target
+                .invokeExact(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19,
+                    filter.invokeExact());
+        }
+
+        protected Object invoke_Y0(Object a0, Object a1, Object a2, Object a3, Object a4, Object a5, Object a6,
+            Object a7, Object a8, Object a9, Object a10, Object a11, Object a12, Object a13, Object a14, Object a15,
+            Object a16, Object a17, Object a18, Object a19) throws Throwable {
             Object[] av = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19 };
             filter.invokeExact(av); // make the flyby
-            return target.invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11], av[12], av[13], av[14], av[15], av[16], av[17], av[18], av[19]); }
+            return target
+                .invokeExact(av[0], av[1], av[2], av[3], av[4], av[5], av[6], av[7], av[8], av[9], av[10], av[11],
+                    av[12], av[13], av[14], av[15], av[16], av[17], av[18], av[19]);
+        }
     }
 }

@@ -86,11 +86,12 @@ public final class Bidi {
 
     /**
      * Create Bidi from the given paragraph of text and base direction.
+     *
      * @param paragraph a paragraph of text
-     * @param flags a collection of flags that control the algorithm.  The
-     * algorithm understands the flags DIRECTION_LEFT_TO_RIGHT, DIRECTION_RIGHT_TO_LEFT,
-     * DIRECTION_DEFAULT_LEFT_TO_RIGHT, and DIRECTION_DEFAULT_RIGHT_TO_LEFT.
-     * Other values are reserved.
+     * @param flags     a collection of flags that control the algorithm.  The
+     *                  algorithm understands the flags DIRECTION_LEFT_TO_RIGHT, DIRECTION_RIGHT_TO_LEFT,
+     *                  DIRECTION_DEFAULT_LEFT_TO_RIGHT, and DIRECTION_DEFAULT_RIGHT_TO_LEFT.
+     *                  Other values are reserved.
      */
     public Bidi(String paragraph, int flags) {
         if (paragraph == null) {
@@ -120,7 +121,6 @@ public final class Bidi {
      * must be applied to all the text in the paragraph.
      *
      * @param paragraph a paragraph of text with optional character and paragraph attribute information
-     *
      * @see java.awt.font.TextAttribute#BIDI_EMBEDDING
      * @see java.awt.font.TextAttribute#NUMERIC_SHAPING
      * @see java.awt.font.TextAttribute#RUN_DIRECTION
@@ -140,16 +140,17 @@ public final class Bidi {
      * information.  Negative values from -1 to -61 indicate overrides at the absolute value
      * of the level.  Positive values from 1 to 61 indicate embeddings.  Where values are
      * zero, the base embedding level as determined by the base direction is assumed.
-     * @param text an array containing the paragraph of text to process.
-     * @param textStart the index into the text array of the start of the paragraph.
-     * @param embeddings an array containing embedding values for each character in the paragraph.
-     * This can be null, in which case it is assumed that there is no external embedding information.
-     * @param embStart the index into the embedding array of the start of the paragraph.
+     *
+     * @param text            an array containing the paragraph of text to process.
+     * @param textStart       the index into the text array of the start of the paragraph.
+     * @param embeddings      an array containing embedding values for each character in the paragraph.
+     *                        This can be null, in which case it is assumed that there is no external embedding information.
+     * @param embStart        the index into the embedding array of the start of the paragraph.
      * @param paragraphLength the length of the paragraph in the text and embeddings arrays.
-     * @param flags a collection of flags that control the algorithm.  The
-     * algorithm understands the flags DIRECTION_LEFT_TO_RIGHT, DIRECTION_RIGHT_TO_LEFT,
-     * DIRECTION_DEFAULT_LEFT_TO_RIGHT, and DIRECTION_DEFAULT_RIGHT_TO_LEFT.
-     * Other values are reserved.
+     * @param flags           a collection of flags that control the algorithm.  The
+     *                        algorithm understands the flags DIRECTION_LEFT_TO_RIGHT, DIRECTION_RIGHT_TO_LEFT,
+     *                        DIRECTION_DEFAULT_LEFT_TO_RIGHT, and DIRECTION_DEFAULT_RIGHT_TO_LEFT.
+     *                        Other values are reserved.
      */
     public Bidi(char[] text, int textStart, byte[] embeddings, int embStart, int paragraphLength, int flags) {
         if (text == null) {
@@ -159,14 +160,12 @@ public final class Bidi {
             throw new IllegalArgumentException("bad length: " + paragraphLength);
         }
         if (textStart < 0 || paragraphLength > text.length - textStart) {
-            throw new IllegalArgumentException("bad range: " + textStart +
-                                               " length: " + paragraphLength +
-                                               " for text of length: " + text.length);
+            throw new IllegalArgumentException(
+                "bad range: " + textStart + " length: " + paragraphLength + " for text of length: " + text.length);
         }
         if (embeddings != null && (embStart < 0 || paragraphLength > embeddings.length - embStart)) {
-            throw new IllegalArgumentException("bad range: " + embStart +
-                                               " length: " + paragraphLength +
-                                               " for embeddings of length: " + text.length);
+            throw new IllegalArgumentException(
+                "bad range: " + embStart + " length: " + paragraphLength + " for embeddings of length: " + text.length);
         }
 
         bidiBase = new BidiBase(text, textStart, embeddings, embStart, paragraphLength, flags);
@@ -176,6 +175,7 @@ public final class Bidi {
      * Create a Bidi object representing the bidi information on a line of text within
      * the paragraph represented by the current Bidi.  This call is not required if the
      * entire paragraph fits on one line.
+     *
      * @param lineStart the offset from the start of the paragraph to the start of the line.
      * @param lineLimit the offset from the start of the paragraph to the limit of the line.
      */
@@ -183,12 +183,13 @@ public final class Bidi {
         AttributedString astr = new AttributedString("");
         Bidi newBidi = new Bidi(astr.getIterator());
 
-        return bidiBase.setLine(this, bidiBase, newBidi, newBidi.bidiBase,lineStart, lineLimit);
+        return bidiBase.setLine(this, bidiBase, newBidi, newBidi.bidiBase, lineStart, lineLimit);
     }
 
     /**
      * Return true if the line is not left-to-right or right-to-left.  This means it either has mixed runs of left-to-right
      * and right-to-left text, or the base direction differs from the direction of the only run of text.
+     *
      * @return true if the line is not left-to-right or right-to-left.
      */
     public boolean isMixed() {
@@ -197,6 +198,7 @@ public final class Bidi {
 
     /**
      * Return true if the line is all left-to-right text and the base direction is left-to-right.
+     *
      * @return true if the line is all left-to-right text and the base direction is left-to-right
      */
     public boolean isLeftToRight() {
@@ -205,6 +207,7 @@ public final class Bidi {
 
     /**
      * Return true if the line is all right-to-left text, and the base direction is right-to-left.
+     *
      * @return true if the line is all right-to-left text, and the base direction is right-to-left
      */
     public boolean isRightToLeft() {
@@ -213,6 +216,7 @@ public final class Bidi {
 
     /**
      * Return the length of text in the line.
+     *
      * @return the length of text in the line
      */
     public int getLength() {
@@ -221,6 +225,7 @@ public final class Bidi {
 
     /**
      * Return true if the base direction is left-to-right.
+     *
      * @return true if the base direction is left-to-right
      */
     public boolean baseIsLeftToRight() {
@@ -229,6 +234,7 @@ public final class Bidi {
 
     /**
      * Return the base level (0 if left-to-right, 1 if right-to-left).
+     *
      * @return the base level
      */
     public int getBaseLevel() {
@@ -238,6 +244,7 @@ public final class Bidi {
     /**
      * Return the resolved level of the character at offset.  If offset is <0 or >=
      * the length of the line, return the base direction level.
+     *
      * @param offset the index of the character for which to return the level
      * @return the resolved level of the character at offset
      */
@@ -247,6 +254,7 @@ public final class Bidi {
 
     /**
      * Return the number of level runs.
+     *
      * @return the number of level runs
      */
     public int getRunCount() {
@@ -255,6 +263,7 @@ public final class Bidi {
 
     /**
      * Return the level of the nth logical run in this line.
+     *
      * @param run the index of the run, between 0 and <code>getRunCount()</code>
      * @return the level of the run
      */
@@ -265,6 +274,7 @@ public final class Bidi {
     /**
      * Return the index of the character at the start of the nth logical run in this line, as
      * an offset from the start of the line.
+     *
      * @param run the index of the run, between 0 and <code>getRunCount()</code>
      * @return the start of the run
      */
@@ -276,6 +286,7 @@ public final class Bidi {
      * Return the index of the character past the end of the nth logical run in this line, as
      * an offset from the start of the line.  For example, this will return the length
      * of the line for the last run on the line.
+     *
      * @param run the index of the run, between 0 and <code>getRunCount()</code>
      * @return limit the limit of the run
      */
@@ -289,7 +300,7 @@ public final class Bidi {
      * Text in the Arabic Presentation Forms area of Unicode is presumed to already be shaped
      * and ordered for display, and so will not cause this function to return true.
      *
-     * @param text the text containing the characters to test
+     * @param text  the text containing the characters to test
      * @param start the start of the range of characters to test
      * @param limit the limit of the range of characters to test
      * @return true if the range of characters requires bidi analysis
@@ -308,11 +319,11 @@ public final class Bidi {
      * each run of text has the level indicated by the corresponding element
      * in the levels array (at <code>index - objectStart + levelStart</code>).
      *
-     * @param levels an array representing the bidi level of each object
-     * @param levelStart the start position in the levels array
-     * @param objects the array of objects to be reordered into visual order
+     * @param levels      an array representing the bidi level of each object
+     * @param levelStart  the start position in the levels array
+     * @param objects     the array of objects to be reordered into visual order
      * @param objectStart the start position in the objects array
-     * @param count the number of objects to reorder
+     * @param count       the number of objects to reorder
      */
     public static void reorderVisually(byte[] levels, int levelStart, Object[] objects, int objectStart, int count) {
         BidiBase.reorderVisually(levels, levelStart, objects, objectStart, count);

@@ -33,17 +33,17 @@ import java.security.BasicPermission;
  * no actions list; you either have the named permission
  * or you don't.
  *
- * <P>
+ * <p>
  * The target name is the name of the AWT permission (see below). The naming
  * convention follows the hierarchical property naming convention.
  * Also, an asterisk could be used to represent all AWT permissions.
  *
- * <P>
+ * <p>
  * The following table lists all the possible <code>AWTPermission</code>
  * target names, and for each provides a description of what the
  * permission allows and a discussion of the risks of granting code
  * the permission.
- * <P>
+ * <p>
  *
  * <table border=1 cellpadding=5 summary="AWTPermission target names, descriptions, and associated risks.">
  * <tr>
@@ -185,15 +185,13 @@ import java.security.BasicPermission;
  * </tr>
  * </table>
  *
+ * @author Marianne Mueller
+ * @author Roland Schemers
  * @see java.security.BasicPermission
  * @see java.security.Permission
  * @see java.security.Permissions
  * @see java.security.PermissionCollection
  * @see java.lang.SecurityManager
- *
- *
- * @author Marianne Mueller
- * @author Roland Schemers
  */
 
 public final class AWTPermission extends BasicPermission {
@@ -208,13 +206,11 @@ public final class AWTPermission extends BasicPermission {
      * may be used to indicate all AWT permissions.
      *
      * @param name the name of the AWTPermission
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public AWTPermission(String name)
-    {
+    public AWTPermission(String name) {
         super(name);
     }
 
@@ -223,15 +219,13 @@ public final class AWTPermission extends BasicPermission {
      * The name is the symbolic name of the <code>AWTPermission</code>, and the
      * actions string is currently unused and should be <code>null</code>.
      *
-     * @param name the name of the <code>AWTPermission</code>
+     * @param name    the name of the <code>AWTPermission</code>
      * @param actions should be <code>null</code>
-     *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
+     * @throws NullPointerException     if <code>name</code> is <code>null</code>.
      * @throws IllegalArgumentException if <code>name</code> is empty.
      */
 
-    public AWTPermission(String name, String actions)
-    {
+    public AWTPermission(String name, String actions) {
         super(name, actions);
     }
 }

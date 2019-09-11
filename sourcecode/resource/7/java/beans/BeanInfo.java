@@ -41,11 +41,11 @@ package java.beans;
  * information as part of the various XyZDescriptor classes.  But
  * don't panic, you only really need to provide the minimal core
  * information required by the various constructors.
- * <P>
+ * <p>
  * See also the SimpleBeanInfo class which provides a convenient
  * "noop" base class for BeanInfo classes, which you can override
  * for those specific places where you want to return explicit info.
- * <P>
+ * <p>
  * To learn about all the behaviour of a bean see the Introspector class.
  */
 
@@ -54,7 +54,7 @@ public interface BeanInfo {
     /**
      * Gets the beans <code>BeanDescriptor</code>.
      *
-     * @return  A BeanDescriptor providing overall information about
+     * @return A BeanDescriptor providing overall information about
      * the bean, such as its displayName, its customizer, etc.  May
      * return null if the information should be obtained by automatic
      * analysis.
@@ -64,7 +64,7 @@ public interface BeanInfo {
     /**
      * Gets the beans <code>EventSetDescriptor</code>s.
      *
-     * @return  An array of EventSetDescriptors describing the kinds of
+     * @return An array of EventSetDescriptors describing the kinds of
      * events fired by this bean.  May return null if the information
      * should be obtained by automatic analysis.
      */
@@ -73,8 +73,9 @@ public interface BeanInfo {
     /**
      * A bean may have a "default" event that is the event that will
      * mostly commonly be used by humans when using the bean.
+     *
      * @return Index of default event in the EventSetDescriptor array
-     *          returned by getEventSetDescriptors.
+     * returned by getEventSetDescriptors.
      * <P>      Returns -1 if there is no default event.
      */
     int getDefaultEventIndex();
@@ -93,8 +94,8 @@ public interface BeanInfo {
      * is an {@code IndexedPropertyDescriptor}.
      *
      * @return an array of {@code PropertyDescriptor}s
-     *         describing all properties supported by the bean
-     *         or {@code null}
+     * describing all properties supported by the bean
+     * or {@code null}
      */
     PropertyDescriptor[] getPropertyDescriptors();
 
@@ -102,8 +103,9 @@ public interface BeanInfo {
      * A bean may have a "default" property that is the property that will
      * mostly commonly be initially chosen for update by human's who are
      * customizing the bean.
-     * @return  Index of default property in the PropertyDescriptor array
-     *          returned by getPropertyDescriptors.
+     *
+     * @return Index of default property in the PropertyDescriptor array
+     * returned by getPropertyDescriptors.
      * <P>      Returns -1 if there is no default property.
      */
     int getDefaultPropertyIndex();
@@ -121,7 +123,7 @@ public interface BeanInfo {
      * This method allows a BeanInfo object to return an arbitrary collection
      * of other BeanInfo objects that provide additional information on the
      * current bean.
-     * <P>
+     * <p>
      * If there are conflicts or overlaps between the information provided
      * by different BeanInfo objects, then the current BeanInfo takes precedence
      * over the getAdditionalBeanInfo objects, and later elements in the array
@@ -146,11 +148,11 @@ public interface BeanInfo {
      * We recommend that icons have a "transparent" background
      * so they can be rendered onto an existing background.
      *
-     * @param  iconKind  The kind of icon requested.  This should be
-     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32,
-     *    ICON_MONO_16x16, or ICON_MONO_32x32.
-     * @return  An image object representing the requested icon.  May
-     *    return null if no suitable icon is available.
+     * @param iconKind The kind of icon requested.  This should be
+     *                 one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32,
+     *                 ICON_MONO_16x16, or ICON_MONO_32x32.
+     * @return An image object representing the requested icon.  May
+     * return null if no suitable icon is available.
      */
     java.awt.Image getIcon(int iconKind);
 

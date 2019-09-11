@@ -24,6 +24,7 @@
  */
 
 package java.awt.print;
+
 import java.io.IOException;
 
 /**
@@ -44,6 +45,7 @@ public class PrinterIOException extends PrinterException {
 
     /**
      * The IO error that terminated the print job.
+     *
      * @serial
      */
     private IOException mException;
@@ -52,6 +54,7 @@ public class PrinterIOException extends PrinterException {
      * Constructs a new <code>PrinterIOException</code>
      * with the string representation of the specified
      * {@link IOException}.
+     *
      * @param exception the specified <code>IOException</code>
      */
     public PrinterIOException(IOException exception) {
@@ -79,8 +82,8 @@ public class PrinterIOException extends PrinterException {
      * Returns the the cause of this exception (the <code>IOException</code>
      * that terminated the print job).
      *
-     * @return  the cause of this exception.
-     * @since   1.4
+     * @return the cause of this exception.
+     * @since 1.4
      */
     public Throwable getCause() {
         return mException;

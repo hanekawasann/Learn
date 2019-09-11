@@ -38,7 +38,6 @@ public interface SystemTrayPeer {
      * Returns the size of the system tray icon.
      *
      * @return the size of the system tray icon
-     *
      * @see SystemTray#getTrayIconSize()
      */
     Dimension getTrayIconSize();

@@ -38,8 +38,8 @@ import java.io.FileDescriptor;
  * A "plain" socket implements these methods exactly as
  * described, without attempting to go through a firewall or proxy.
  *
- * @author  unascribed
- * @since   JDK1.0
+ * @author unascribed
+ * @since JDK1.0
  */
 public abstract class SocketImpl implements SocketOptions {
     /**
@@ -71,30 +71,30 @@ public abstract class SocketImpl implements SocketOptions {
     /**
      * Creates either a stream or a datagram socket.
      *
-     * @param      stream   if <code>true</code>, create a stream socket;
-     *                      otherwise, create a datagram socket.
-     * @exception  IOException  if an I/O error occurs while creating the
-     *               socket.
+     * @param stream if <code>true</code>, create a stream socket;
+     *               otherwise, create a datagram socket.
+     * @throws IOException if an I/O error occurs while creating the
+     *                     socket.
      */
     protected abstract void create(boolean stream) throws IOException;
 
     /**
      * Connects this socket to the specified port on the named host.
      *
-     * @param      host   the name of the remote host.
-     * @param      port   the port number.
-     * @exception  IOException  if an I/O error occurs when connecting to the
-     *               remote host.
+     * @param host the name of the remote host.
+     * @param port the port number.
+     * @throws IOException if an I/O error occurs when connecting to the
+     *                     remote host.
      */
     protected abstract void connect(String host, int port) throws IOException;
 
     /**
      * Connects this socket to the specified port number on the specified host.
      *
-     * @param      address   the IP address of the remote host.
-     * @param      port      the port number.
-     * @exception  IOException  if an I/O error occurs when attempting a
-     *               connection.
+     * @param address the IP address of the remote host.
+     * @param port    the port number.
+     * @throws IOException if an I/O error occurs when attempting a
+     *                     connection.
      */
     protected abstract void connect(InetAddress address, int port) throws IOException;
 
@@ -103,10 +103,10 @@ public abstract class SocketImpl implements SocketOptions {
      * A timeout of zero is interpreted as an infinite timeout. The connection
      * will then block until established or an error occurs.
      *
-     * @param      address   the Socket address of the remote host.
-     * @param     timeout  the timeout value, in milliseconds, or zero for no timeout.
-     * @exception  IOException  if an I/O error occurs when attempting a
-     *               connection.
+     * @param address the Socket address of the remote host.
+     * @param timeout the timeout value, in milliseconds, or zero for no timeout.
+     * @throws IOException if an I/O error occurs when attempting a
+     *                     connection.
      * @since 1.4
      */
     protected abstract void connect(SocketAddress address, int timeout) throws IOException;
@@ -114,9 +114,9 @@ public abstract class SocketImpl implements SocketOptions {
     /**
      * Binds this socket to the specified local IP address and port number.
      *
-     * @param      host   an IP address that belongs to a local interface.
-     * @param      port   the port number.
-     * @exception  IOException  if an I/O error occurs when binding this socket.
+     * @param host an IP address that belongs to a local interface.
+     * @param port the port number.
+     * @throws IOException if an I/O error occurs when binding this socket.
      */
     protected abstract void bind(InetAddress host, int port) throws IOException;
 
@@ -126,35 +126,35 @@ public abstract class SocketImpl implements SocketOptions {
      * connection indication arrives when the queue is full, the
      * connection is refused.
      *
-     * @param      backlog   the maximum length of the queue.
-     * @exception  IOException  if an I/O error occurs when creating the queue.
+     * @param backlog the maximum length of the queue.
+     * @throws IOException if an I/O error occurs when creating the queue.
      */
     protected abstract void listen(int backlog) throws IOException;
 
     /**
      * Accepts a connection.
      *
-     * @param      s   the accepted connection.
-     * @exception  IOException  if an I/O error occurs when accepting the
-     *               connection.
+     * @param s the accepted connection.
+     * @throws IOException if an I/O error occurs when accepting the
+     *                     connection.
      */
     protected abstract void accept(SocketImpl s) throws IOException;
 
     /**
      * Returns an input stream for this socket.
      *
-     * @return     a stream for reading from this socket.
-     * @exception  IOException  if an I/O error occurs when creating the
-     *               input stream.
-    */
+     * @return a stream for reading from this socket.
+     * @throws IOException if an I/O error occurs when creating the
+     *                     input stream.
+     */
     protected abstract InputStream getInputStream() throws IOException;
 
     /**
      * Returns an output stream for this socket.
      *
-     * @return     an output stream for writing to this socket.
-     * @exception  IOException  if an I/O error occurs when creating the
-     *               output stream.
+     * @return an output stream for writing to this socket.
+     * @throws IOException if an I/O error occurs when creating the
+     *                     output stream.
      */
     protected abstract OutputStream getOutputStream() throws IOException;
 
@@ -162,17 +162,17 @@ public abstract class SocketImpl implements SocketOptions {
      * Returns the number of bytes that can be read from this socket
      * without blocking.
      *
-     * @return     the number of bytes that can be read from this socket
-     *             without blocking.
-     * @exception  IOException  if an I/O error occurs when determining the
-     *               number of bytes available.
+     * @return the number of bytes that can be read from this socket
+     * without blocking.
+     * @throws IOException if an I/O error occurs when determining the
+     *                     number of bytes available.
      */
     protected abstract int available() throws IOException;
 
     /**
      * Closes this socket.
      *
-     * @exception  IOException  if an I/O error occurs when closing this socket.
+     * @throws IOException if an I/O error occurs when closing this socket.
      */
     protected abstract void close() throws IOException;
 
@@ -180,46 +180,46 @@ public abstract class SocketImpl implements SocketOptions {
      * Places the input stream for this socket at "end of stream".
      * Any data sent to this socket is acknowledged and then
      * silently discarded.
-     *
+     * <p>
      * If you read from a socket input stream after invoking
      * shutdownInput() on the socket, the stream will return EOF.
      *
-     * @exception IOException if an I/O error occurs when shutting down this
-     * socket.
+     * @throws IOException if an I/O error occurs when shutting down this
+     *                     socket.
      * @see java.net.Socket#shutdownOutput()
      * @see java.net.Socket#close()
      * @see java.net.Socket#setSoLinger(boolean, int)
      * @since 1.3
      */
     protected void shutdownInput() throws IOException {
-      throw new IOException("Method not implemented!");
+        throw new IOException("Method not implemented!");
     }
 
     /**
      * Disables the output stream for this socket.
      * For a TCP socket, any previously written data will be sent
      * followed by TCP's normal connection termination sequence.
-     *
+     * <p>
      * If you write to a socket output stream after invoking
      * shutdownOutput() on the socket, the stream will throw
      * an IOException.
      *
-     * @exception IOException if an I/O error occurs when shutting down this
-     * socket.
+     * @throws IOException if an I/O error occurs when shutting down this
+     *                     socket.
      * @see java.net.Socket#shutdownInput()
      * @see java.net.Socket#close()
      * @see java.net.Socket#setSoLinger(boolean, int)
      * @since 1.3
      */
     protected void shutdownOutput() throws IOException {
-      throw new IOException("Method not implemented!");
+        throw new IOException("Method not implemented!");
     }
 
     /**
      * Returns the value of this socket's <code>fd</code> field.
      *
-     * @return  the value of this socket's <code>fd</code> field.
-     * @see     java.net.SocketImpl#fd
+     * @return the value of this socket's <code>fd</code> field.
+     * @see java.net.SocketImpl#fd
      */
     protected FileDescriptor getFileDescriptor() {
         return fd;
@@ -228,8 +228,8 @@ public abstract class SocketImpl implements SocketOptions {
     /**
      * Returns the value of this socket's <code>address</code> field.
      *
-     * @return  the value of this socket's <code>address</code> field.
-     * @see     java.net.SocketImpl#address
+     * @return the value of this socket's <code>address</code> field.
+     * @see java.net.SocketImpl#address
      */
     protected InetAddress getInetAddress() {
         return address;
@@ -238,8 +238,8 @@ public abstract class SocketImpl implements SocketOptions {
     /**
      * Returns the value of this socket's <code>port</code> field.
      *
-     * @return  the value of this socket's <code>port</code> field.
-     * @see     java.net.SocketImpl#port
+     * @return the value of this socket's <code>port</code> field.
+     * @see java.net.SocketImpl#port
      */
     protected int getPort() {
         return port;
@@ -250,29 +250,30 @@ public abstract class SocketImpl implements SocketOptions {
      * urgent data. By default, false is returned
      * unless the method is overridden in a sub-class
      *
-     * @return  true if urgent data supported
-     * @see     java.net.SocketImpl#address
+     * @return true if urgent data supported
+     * @see java.net.SocketImpl#address
      * @since 1.4
      */
-    protected boolean supportsUrgentData () {
+    protected boolean supportsUrgentData() {
         return false; // must be overridden in sub-class
     }
 
     /**
      * Send one byte of urgent data on the socket.
      * The byte to be sent is the low eight bits of the parameter
+     *
      * @param data The byte of data to send
-     * @exception IOException if there is an error
-     *  sending the data.
+     * @throws IOException if there is an error
+     *                     sending the data.
      * @since 1.4
      */
-    protected abstract void sendUrgentData (int data) throws IOException;
+    protected abstract void sendUrgentData(int data) throws IOException;
 
     /**
      * Returns the value of this socket's <code>localport</code> field.
      *
-     * @return  the value of this socket's <code>localport</code> field.
-     * @see     java.net.SocketImpl#localport
+     * @return the value of this socket's <code>localport</code> field.
+     * @see java.net.SocketImpl#localport
      */
     protected int getLocalPort() {
         return localport;
@@ -297,11 +298,10 @@ public abstract class SocketImpl implements SocketOptions {
     /**
      * Returns the address and port of this socket as a <code>String</code>.
      *
-     * @return  a string representation of this socket.
+     * @return a string representation of this socket.
      */
     public String toString() {
-        return "Socket[addr=" + getInetAddress() +
-            ",port=" + getPort() + ",localport=" + getLocalPort()  + "]";
+        return "Socket[addr=" + getInetAddress() + ",port=" + getPort() + ",localport=" + getLocalPort() + "]";
     }
 
     void reset() throws IOException {
@@ -330,28 +330,19 @@ public abstract class SocketImpl implements SocketOptions {
      * <tt>(1, 0, 0)</tt>.  If the application prefers high bandwidth above low
      * latency, and low latency above short connection time, then it could
      * invoke this method with the values <tt>(0, 1, 2)</tt>.
-     *
+     * <p>
      * By default, this method does nothing, unless it is overridden in a
      * a sub-class.
      *
-     * @param  connectionTime
-     *         An <tt>int</tt> expressing the relative importance of a short
-     *         connection time
-     *
-     * @param  latency
-     *         An <tt>int</tt> expressing the relative importance of low
-     *         latency
-     *
-     * @param  bandwidth
-     *         An <tt>int</tt> expressing the relative importance of high
-     *         bandwidth
-     *
+     * @param connectionTime An <tt>int</tt> expressing the relative importance of a short
+     *                       connection time
+     * @param latency        An <tt>int</tt> expressing the relative importance of low
+     *                       latency
+     * @param bandwidth      An <tt>int</tt> expressing the relative importance of high
+     *                       bandwidth
      * @since 1.5
      */
-    protected void setPerformancePreferences(int connectionTime,
-                                          int latency,
-                                          int bandwidth)
-    {
+    protected void setPerformancePreferences(int connectionTime, int latency, int bandwidth) {
         /* Not implemented yet */
     }
 }

@@ -44,6 +44,7 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.MissingResourceException;
+
 import sun.text.CompactByteArray;
 import sun.text.SupplementaryCharacterData;
 
@@ -65,8 +66,8 @@ class BreakDictionary {
     //=========================================================================
 
     /**
-      * The version of the dictionary that was read in.
-      */
+     * The version of the dictionary that was read in.
+     */
     private static int supportedVersion = 1;
 
     /**
@@ -134,48 +135,42 @@ class BreakDictionary {
     // deserialization
     //=========================================================================
 
-    public BreakDictionary(String dictionaryName)
-        throws IOException, MissingResourceException {
+    public BreakDictionary(String dictionaryName) throws IOException, MissingResourceException {
 
         readDictionaryFile(dictionaryName);
     }
 
-    private void readDictionaryFile(final String dictionaryName)
-        throws IOException, MissingResourceException {
+    private void readDictionaryFile(final String dictionaryName) throws IOException, MissingResourceException {
 
         BufferedInputStream in;
         try {
-            in = (BufferedInputStream)AccessController.doPrivileged(
-                new PrivilegedExceptionAction() {
-                    public Object run() throws Exception {
-                        return new BufferedInputStream(getClass().getResourceAsStream("/sun/text/resources/" + dictionaryName));
-                    }
+            in = (BufferedInputStream) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws Exception {
+                    return new BufferedInputStream(
+                        getClass().getResourceAsStream("/sun/text/resources/" + dictionaryName));
                 }
-            );
-        }
-        catch (PrivilegedActionException e) {
+            });
+        } catch (PrivilegedActionException e) {
             throw new InternalError(e.toString());
         }
 
         byte[] buf = new byte[8];
         if (in.read(buf) != 8) {
-            throw new MissingResourceException("Wrong data length",
-                                               dictionaryName, "");
+            throw new MissingResourceException("Wrong data length", dictionaryName, "");
         }
 
         // check vesion
         int version = BreakIterator.getInt(buf, 0);
         if (version != supportedVersion) {
-            throw new MissingResourceException("Dictionary version(" + version + ") is unsupported",
-                                                           dictionaryName, "");
+            throw new MissingResourceException("Dictionary version(" + version + ") is unsupported", dictionaryName,
+                "");
         }
 
         // get data size
         int len = BreakIterator.getInt(buf, 4);
         buf = new byte[len];
         if (in.read(buf) != len) {
-            throw new MissingResourceException("Wrong data length",
-                                               dictionaryName, "");
+            throw new MissingResourceException("Wrong data length", dictionaryName, "");
         }
 
         // close the stream
@@ -189,7 +184,7 @@ class BreakDictionary {
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         short[] temp = new short[l];
-        for (int i = 0; i < l; i++, offset+=2) {
+        for (int i = 0; i < l; i++, offset += 2) {
             temp[i] = BreakIterator.getShort(buf, offset);
         }
         l = BreakIterator.getInt(buf, offset);
@@ -210,7 +205,7 @@ class BreakDictionary {
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         rowIndex = new short[l];
-        for (int i = 0; i < l; i++, offset+=2) {
+        for (int i = 0; i < l; i++, offset += 2) {
             rowIndex[i] = BreakIterator.getShort(buf, offset);
         }
 
@@ -218,13 +213,13 @@ class BreakDictionary {
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         rowIndexFlagsIndex = new short[l];
-        for (int i = 0; i < l; i++, offset+=2) {
+        for (int i = 0; i < l; i++, offset += 2) {
             rowIndexFlagsIndex[i] = BreakIterator.getShort(buf, offset);
         }
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         rowIndexFlags = new int[l];
-        for (int i = 0; i < l; i++, offset+=4) {
+        for (int i = 0; i < l; i++, offset += 4) {
             rowIndexFlags[i] = BreakIterator.getInt(buf, offset);
         }
 
@@ -240,7 +235,7 @@ class BreakDictionary {
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         table = new short[l];
-        for (int i = 0; i < l; i++, offset+=2) {
+        for (int i = 0; i < l; i++, offset += 2) {
             table[i] = BreakIterator.getShort(buf, offset);
         }
 
@@ -248,7 +243,7 @@ class BreakDictionary {
         l = BreakIterator.getInt(buf, offset);
         offset += 4;
         int[] temp3 = new int[l];
-        for (int i = 0; i < l; i++, offset+=4) {
+        for (int i = 0; i < l; i++, offset += 4) {
             temp3[i] = BreakIterator.getInt(buf, offset);
         }
         supplementaryCharColumnMap = new SupplementaryCharacterData(temp3);
@@ -261,14 +256,15 @@ class BreakDictionary {
     /**
      * Uses the column map to map the character to a column number, then
      * passes the row and column number to getNextState()
+     *
      * @param row The current state
-     * @param ch The character whose column we're interested in
+     * @param ch  The character whose column we're interested in
      * @return The new state to transition to
      */
     public final short getNextStateFromCharacter(int row, int ch) {
         int col;
         if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
-            col = columnMap.elementAt((char)ch);
+            col = columnMap.elementAt((char) ch);
         } else {
             col = supplementaryCharColumnMap.getValue(ch);
         }
@@ -281,9 +277,10 @@ class BreakDictionary {
      * a state number, the column number is an input, and the return value
      * is the row number of the new state to transition to.  (0 is the
      * "error" state, and -1 is the "end of word" state in a dictionary)
+     *
      * @param row The row number of the current state
      * @param col The column number of the input character (0 means "not a
-     * dictionary character")
+     *            dictionary character")
      * @return The row number of the new state to transition to
      */
     public final short getNextState(int row, int col) {
@@ -295,8 +292,7 @@ class BreakDictionary {
             // the shift amount.  Then we can use internalAt() to actually
             // get the value out of the table.
             return internalAt(rowIndex[row], col + rowIndexShifts[row]);
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -328,6 +324,7 @@ class BreakDictionary {
     /**
      * Implementation of getNextState() when we know the specified cell is
      * populated.
+     *
      * @param row The PHYSICAL row number of the cell
      * @param col The PHYSICAL column number of the cell
      * @return The value stored in the cell

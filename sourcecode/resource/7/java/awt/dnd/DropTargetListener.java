@@ -91,7 +91,8 @@ public interface DropTargetListener extends EventListener {
     /**
      * Called if the user has modified
      * the current drop gesture.
-     * <P>
+     * <p>
+     *
      * @param dtde the <code>DropTargetDragEvent</code>
      */
 
@@ -122,19 +123,19 @@ public interface DropTargetListener extends EventListener {
      * shall accept or reject the drop via the
      * acceptDrop(int dropAction) or rejectDrop() methods of the
      * <code>DropTargetDropEvent</code> parameter.
-     * <P>
+     * <p>
      * Subsequent to acceptDrop(), but not before,
      * <code>DropTargetDropEvent</code>'s getTransferable()
      * method may be invoked, and data transfer may be
      * performed via the returned <code>Transferable</code>'s
      * getTransferData() method.
-     * <P>
+     * <p>
      * At the completion of a drop, an implementation
      * of this method is required to signal the success/failure
      * of the drop by passing an appropriate
      * <code>boolean</code> to the <code>DropTargetDropEvent</code>'s
      * dropComplete(boolean success) method.
-     * <P>
+     * <p>
      * Note: The data transfer should be completed before the call  to the
      * <code>DropTargetDropEvent</code>'s dropComplete(boolean success) method.
      * After that, a call to the getTransferData() method of the
@@ -144,7 +145,8 @@ public interface DropTargetListener extends EventListener {
      * <code>DropTargetDropEvent.isLocalTransfer()</code> returns
      * <code>true</code>. Otherwise, the behavior of the call is
      * implementation-dependent.
-     * <P>
+     * <p>
+     *
      * @param dtde the <code>DropTargetDropEvent</code>
      */
 

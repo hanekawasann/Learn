@@ -63,8 +63,9 @@ public final class TransformAttribute implements Serializable {
      * If null is passed as the argument, this constructor behaves as though
      * it were the identity transform.  (Note that it is preferable to use
      * {@link #IDENTITY} in this case.)
+     *
      * @param transform the specified {@link AffineTransform} to be wrapped,
-     * or null.
+     *                  or null.
      */
     public TransformAttribute(AffineTransform transform) {
         if (transform != null && !transform.isIdentity()) {
@@ -74,6 +75,7 @@ public final class TransformAttribute implements Serializable {
 
     /**
      * Returns a copy of the wrapped transform.
+     *
      * @return a <code>AffineTransform</code> that is a copy of the wrapped
      * transform of this <code>TransformAttribute</code>.
      */
@@ -85,6 +87,7 @@ public final class TransformAttribute implements Serializable {
     /**
      * Returns <code>true</code> if the wrapped transform is
      * an identity transform.
+     *
      * @return <code>true</code> if the wrapped transform is
      * an identity transform; <code>false</code> otherwise.
      * @since 1.4
@@ -95,14 +98,13 @@ public final class TransformAttribute implements Serializable {
 
     /**
      * A <code>TransformAttribute</code> representing the identity transform.
+     *
      * @since 1.6
      */
     public static final TransformAttribute IDENTITY = new TransformAttribute(null);
 
     private void writeObject(java.io.ObjectOutputStream s)
-      throws java.lang.ClassNotFoundException,
-             java.io.IOException
-    {
+        throws java.lang.ClassNotFoundException, java.io.IOException {
         // sigh -- 1.3 expects transform is never null, so we need to always write one out
         if (this.transform == null) {
             this.transform = new AffineTransform();
@@ -134,6 +136,7 @@ public final class TransformAttribute implements Serializable {
      * Returns <code>true</code> if rhs is a <code>TransformAttribute</code>
      * whose transform is equal to this <code>TransformAttribute</code>'s
      * transform.
+     *
      * @param rhs the object to compare to
      * @return <code>true</code> if the argument is a <code>TransformAttribute</code>
      * whose transform is equal to this <code>TransformAttribute</code>'s
@@ -142,13 +145,12 @@ public final class TransformAttribute implements Serializable {
      */
     public boolean equals(Object rhs) {
         try {
-            TransformAttribute that = (TransformAttribute)rhs;
+            TransformAttribute that = (TransformAttribute) rhs;
             if (transform == null) {
                 return that.transform == null;
             }
             return transform.equals(that.transform);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
         }
         return false;
     }

@@ -79,36 +79,29 @@ public final class GlyphJustificationInfo {
     /**
      * Constructs information about the justification properties of a
      * glyph.
-     * @param weight the weight of this glyph when allocating space.  Must be non-negative.
-     * @param growAbsorb if <code>true</code> this glyph absorbs
-     * all extra space at this priority and lower priority levels when it
-     * grows
-     * @param growPriority the priority level of this glyph when it
-     * grows
-     * @param growLeftLimit the maximum amount by which the left side of this
-     * glyph can grow.  Must be non-negative.
-     * @param growRightLimit the maximum amount by which the right side of this
-     * glyph can grow.  Must be non-negative.
-     * @param shrinkAbsorb if <code>true</code>, this glyph absorbs all
-     * remaining shrinkage at this and lower priority levels when it
-     * shrinks
-     * @param shrinkPriority the priority level of this glyph when
-     * it shrinks
-     * @param shrinkLeftLimit the maximum amount by which the left side of this
-     * glyph can shrink.  Must be non-negative.
+     *
+     * @param weight           the weight of this glyph when allocating space.  Must be non-negative.
+     * @param growAbsorb       if <code>true</code> this glyph absorbs
+     *                         all extra space at this priority and lower priority levels when it
+     *                         grows
+     * @param growPriority     the priority level of this glyph when it
+     *                         grows
+     * @param growLeftLimit    the maximum amount by which the left side of this
+     *                         glyph can grow.  Must be non-negative.
+     * @param growRightLimit   the maximum amount by which the right side of this
+     *                         glyph can grow.  Must be non-negative.
+     * @param shrinkAbsorb     if <code>true</code>, this glyph absorbs all
+     *                         remaining shrinkage at this and lower priority levels when it
+     *                         shrinks
+     * @param shrinkPriority   the priority level of this glyph when
+     *                         it shrinks
+     * @param shrinkLeftLimit  the maximum amount by which the left side of this
+     *                         glyph can shrink.  Must be non-negative.
      * @param shrinkRightLimit the maximum amount by which the right side
-     * of this glyph can shrink.  Must be non-negative.
+     *                         of this glyph can shrink.  Must be non-negative.
      */
-     public GlyphJustificationInfo(float weight,
-                                  boolean growAbsorb,
-                                  int growPriority,
-                                  float growLeftLimit,
-                                  float growRightLimit,
-                                  boolean shrinkAbsorb,
-                                  int shrinkPriority,
-                                  float shrinkLeftLimit,
-                                  float shrinkRightLimit)
-    {
+    public GlyphJustificationInfo(float weight, boolean growAbsorb, int growPriority, float growLeftLimit,
+        float growRightLimit, boolean shrinkAbsorb, int shrinkPriority, float shrinkLeftLimit, float shrinkRightLimit) {
         if (weight < 0) {
             throw new IllegalArgumentException("weight is negative");
         }

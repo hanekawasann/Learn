@@ -30,7 +30,7 @@ import java.awt.ScrollPaneAdjustable;
 
 /**
  * The peer interface for {@link ScrollPane}.
- *
+ * <p>
  * The peer interfaces are intended only for use in porting
  * the AWT. They are not intended for use by application
  * developers, and developers should not implement peers
@@ -43,7 +43,6 @@ public interface ScrollPanePeer extends ContainerPeer {
      * Returns the height of the horizontal scroll bar.
      *
      * @return the height of the horizontal scroll bar
-     *
      * @see ScrollPane#getHScrollbarHeight()
      */
     int getHScrollbarHeight();
@@ -52,7 +51,6 @@ public interface ScrollPanePeer extends ContainerPeer {
      * Returns the width of the vertical scroll bar.
      *
      * @return the width of the vertical scroll bar
-     *
      * @see ScrollPane#getVScrollbarWidth()
      */
     int getVScrollbarWidth();
@@ -62,7 +60,6 @@ public interface ScrollPanePeer extends ContainerPeer {
      *
      * @param x the X coordinate of the scroll position
      * @param y the Y coordinate of the scroll position
-     *
      * @see ScrollPane#setScrollPosition(int, int)
      */
     void setScrollPosition(int x, int y);
@@ -72,7 +69,6 @@ public interface ScrollPanePeer extends ContainerPeer {
      *
      * @param w the new width of the child component
      * @param h the new height of the child component
-     *
      * @see ScrollPane#layout()
      */
     void childResized(int w, int h);
@@ -81,8 +77,7 @@ public interface ScrollPanePeer extends ContainerPeer {
      * Sets the unit increment of one of the scroll pane's adjustables.
      *
      * @param adj the scroll pane adjustable object
-     * @param u the unit increment
-     *
+     * @param u   the unit increment
      * @see ScrollPaneAdjustable#setUnitIncrement(int)
      */
     void setUnitIncrement(Adjustable adj, int u);
@@ -91,7 +86,7 @@ public interface ScrollPanePeer extends ContainerPeer {
      * Sets the value for one of the scroll pane's adjustables.
      *
      * @param adj the scroll pane adjustable object
-     * @param v the value to set
+     * @param v   the value to set
      */
     void setValue(Adjustable adj, int v);
 }

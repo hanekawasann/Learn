@@ -26,9 +26,11 @@
 package java.util;
 
 import java.io.*;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import org.w3c.dom.*;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -39,56 +41,44 @@ import javax.xml.transform.stream.*;
  * code outside of Properties helps reduce the number of classes loaded
  * when Properties is loaded.
  *
- * @author  Michael McCloskey
- * @since   1.3
+ * @author Michael McCloskey
+ * @since 1.3
  */
 class XMLUtils {
 
     // XML loading and saving methods for Properties
 
     // The required DTD URI for exported properties
-    private static final String PROPS_DTD_URI =
-    "http://java.sun.com/dtd/properties.dtd";
+    private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd";
 
-    private static final String PROPS_DTD =
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-    "<!-- DTD for properties -->"                +
-    "<!ELEMENT properties ( comment?, entry* ) >"+
-    "<!ATTLIST properties"                       +
-        " version CDATA #FIXED \"1.0\">"         +
-    "<!ELEMENT comment (#PCDATA) >"              +
-    "<!ELEMENT entry (#PCDATA) >"                +
-    "<!ATTLIST entry "                           +
-        " key CDATA #REQUIRED>";
+    private static final String PROPS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+        "<!-- DTD for properties -->" + "<!ELEMENT properties ( comment?, entry* ) >" + "<!ATTLIST properties" +
+        " version CDATA #FIXED \"1.0\">" + "<!ELEMENT comment (#PCDATA) >" + "<!ELEMENT entry (#PCDATA) >" +
+        "<!ATTLIST entry " + " key CDATA #REQUIRED>";
 
     /**
      * Version number for the format of exported properties files.
      */
     private static final String EXTERNAL_XML_VERSION = "1.0";
 
-    static void load(Properties props, InputStream in)
-        throws IOException, InvalidPropertiesFormatException
-    {
+    static void load(Properties props, InputStream in) throws IOException, InvalidPropertiesFormatException {
         Document doc = null;
         try {
             doc = getLoadingDoc(in);
         } catch (SAXException saxe) {
             throw new InvalidPropertiesFormatException(saxe);
         }
-        Element propertiesElement = (Element)doc.getChildNodes().item(1);
+        Element propertiesElement = (Element) doc.getChildNodes().item(1);
         String xmlVersion = propertiesElement.getAttribute("version");
-        if (xmlVersion.compareTo(EXTERNAL_XML_VERSION) > 0)
-            throw new InvalidPropertiesFormatException(
-                "Exported Properties file format version " + xmlVersion +
-                " is not supported. This java installation can read" +
-                " versions " + EXTERNAL_XML_VERSION + " or older. You" +
-                " may need to install a newer version of JDK.");
+        if (xmlVersion.compareTo(EXTERNAL_XML_VERSION) > 0) {
+            throw new InvalidPropertiesFormatException("Exported Properties file format version " + xmlVersion +
+                " is not supported. This java installation can read" + " versions " + EXTERNAL_XML_VERSION +
+                " or older. You" + " may need to install a newer version of JDK.");
+        }
         importProperties(props, propertiesElement);
     }
 
-    static Document getLoadingDoc(InputStream in)
-        throws SAXException, IOException
-    {
+    static Document getLoadingDoc(InputStream in) throws SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setIgnoringElementContentWhitespace(true);
         dbf.setValidating(true);
@@ -108,10 +98,9 @@ class XMLUtils {
     static void importProperties(Properties props, Element propertiesElement) {
         NodeList entries = propertiesElement.getChildNodes();
         int numEntries = entries.getLength();
-        int start = numEntries > 0 &&
-            entries.item(0).getNodeName().equals("comment") ? 1 : 0;
-        for (int i=start; i<numEntries; i++) {
-            Element entry = (Element)entries.item(i);
+        int start = numEntries > 0 && entries.item(0).getNodeName().equals("comment") ? 1 : 0;
+        for (int i = start; i < numEntries; i++) {
+            Element entry = (Element) entries.item(i);
             if (entry.hasAttribute("key")) {
                 Node n = entry.getFirstChild();
                 String val = (n == null) ? "" : n.getNodeValue();
@@ -120,31 +109,25 @@ class XMLUtils {
         }
     }
 
-    static void save(Properties props, OutputStream os, String comment,
-                     String encoding)
-        throws IOException
-    {
+    static void save(Properties props, OutputStream os, String comment, String encoding) throws IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;
         try {
             db = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException pce) {
-            assert(false);
+            assert (false);
         }
         Document doc = db.newDocument();
-        Element properties =  (Element)
-            doc.appendChild(doc.createElement("properties"));
+        Element properties = (Element) doc.appendChild(doc.createElement("properties"));
 
         if (comment != null) {
-            Element comments = (Element)properties.appendChild(
-                doc.createElement("comment"));
+            Element comments = (Element) properties.appendChild(doc.createElement("comment"));
             comments.appendChild(doc.createTextNode(comment));
         }
 
         synchronized (props) {
             for (String key : props.stringPropertyNames()) {
-                Element entry = (Element)properties.appendChild(
-                    doc.createElement("entry"));
+                Element entry = (Element) properties.appendChild(doc.createElement("entry"));
                 entry.setAttribute("key", key);
                 entry.appendChild(doc.createTextNode(props.getProperty(key)));
             }
@@ -152,9 +135,7 @@ class XMLUtils {
         emitDocument(doc, os, encoding);
     }
 
-    static void emitDocument(Document doc, OutputStream os, String encoding)
-        throws IOException
-    {
+    static void emitDocument(Document doc, OutputStream os, String encoding) throws IOException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer t = null;
         try {
@@ -164,7 +145,7 @@ class XMLUtils {
             t.setOutputProperty(OutputKeys.METHOD, "xml");
             t.setOutputProperty(OutputKeys.ENCODING, encoding);
         } catch (TransformerConfigurationException tce) {
-            assert(false);
+            assert (false);
         }
         DOMSource doms = new DOMSource(doc);
         StreamResult sr = new StreamResult(os);
@@ -178,9 +159,7 @@ class XMLUtils {
     }
 
     private static class Resolver implements EntityResolver {
-        public InputSource resolveEntity(String pid, String sid)
-            throws SAXException
-        {
+        public InputSource resolveEntity(String pid, String sid) throws SAXException {
             if (sid.equals(PROPS_DTD_URI)) {
                 InputSource is;
                 is = new InputSource(new StringReader(PROPS_DTD));
@@ -195,9 +174,11 @@ class XMLUtils {
         public void error(SAXParseException x) throws SAXException {
             throw x;
         }
+
         public void fatalError(SAXParseException x) throws SAXException {
             throw x;
         }
+
         public void warning(SAXParseException x) throws SAXException {
             throw x;
         }

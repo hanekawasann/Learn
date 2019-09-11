@@ -30,13 +30,14 @@ package java.lang;
  * Every class has {@code Object} as a superclass. All objects,
  * including arrays, implement the methods of this class.
  *
- * @author  unascribed
- * @see     java.lang.Class
- * @since   JDK1.0
+ * @author unascribed
+ * @see java.lang.Class
+ * @since JDK1.0
  */
 public class Object {
 
     private static native void registerNatives();
+
     static {
         registerNatives();
     }
@@ -57,9 +58,9 @@ public class Object {
      * </p>
      *
      * @return The {@code Class} object that represents the runtime
-     *         class of this object.
-     * @see    Class Literals, section 15.8.2 of
-     *         <cite>The Java&trade; Language Specification</cite>.
+     * class of this object.
+     * @see Class Literals, section 15.8.2 of
+     * <cite>The Java&trade; Language Specification</cite>.
      */
     public final native Class<?> getClass();
 
@@ -94,9 +95,9 @@ public class Object {
      * technique is not required by the
      * Java<font size="-2"><sup>TM</sup></font> programming language.)
      *
-     * @return  a hash code value for this object.
-     * @see     java.lang.Object#equals(java.lang.Object)
-     * @see     java.lang.System#identityHashCode
+     * @return a hash code value for this object.
+     * @see java.lang.Object#equals(java.lang.Object)
+     * @see java.lang.System#identityHashCode
      */
     public native int hashCode();
 
@@ -140,11 +141,11 @@ public class Object {
      * general contract for the {@code hashCode} method, which states
      * that equal objects must have equal hash codes.
      *
-     * @param   obj   the reference object with which to compare.
-     * @return  {@code true} if this object is the same as the obj
-     *          argument; {@code false} otherwise.
-     * @see     #hashCode()
-     * @see     java.util.HashMap
+     * @param obj the reference object with which to compare.
+     * @return {@code true} if this object is the same as the obj
+     * argument; {@code false} otherwise.
+     * @see #hashCode()
+     * @see java.util.HashMap
      */
     public boolean equals(Object obj) {
         return (this == obj);
@@ -202,12 +203,12 @@ public class Object {
      * whose class is {@code Object} will result in throwing an
      * exception at run time.
      *
-     * @return     a clone of this instance.
-     * @exception  CloneNotSupportedException  if the object's class does not
-     *               support the {@code Cloneable} interface. Subclasses
-     *               that override the {@code clone} method can also
-     *               throw this exception to indicate that an instance cannot
-     *               be cloned.
+     * @return a clone of this instance.
+     * @throws CloneNotSupportedException if the object's class does not
+     *                                    support the {@code Cloneable} interface. Subclasses
+     *                                    that override the {@code clone} method can also
+     *                                    throw this exception to indicate that an instance cannot
+     *                                    be cloned.
      * @see java.lang.Cloneable
      */
     protected native Object clone() throws CloneNotSupportedException;
@@ -231,7 +232,7 @@ public class Object {
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
      * </pre></blockquote>
      *
-     * @return  a string representation of the object.
+     * @return a string representation of the object.
      */
     public String toString() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
@@ -264,10 +265,10 @@ public class Object {
      * <p>
      * Only one thread at a time can own an object's monitor.
      *
-     * @exception  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
-     * @see        java.lang.Object#notifyAll()
-     * @see        java.lang.Object#wait()
+     * @throws IllegalMonitorStateException if the current thread is not
+     *                                      the owner of this object's monitor.
+     * @see java.lang.Object#notifyAll()
+     * @see java.lang.Object#wait()
      */
     public final native void notify();
 
@@ -288,10 +289,10 @@ public class Object {
      * description of the ways in which a thread can become the owner of
      * a monitor.
      *
-     * @exception  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
-     * @see        java.lang.Object#notify()
-     * @see        java.lang.Object#wait()
+     * @throws IllegalMonitorStateException if the current thread is not
+     *                                      the owner of this object's monitor.
+     * @see java.lang.Object#notify()
+     * @see java.lang.Object#wait()
      */
     public final native void notifyAll();
 
@@ -367,18 +368,18 @@ public class Object {
      * description of the ways in which a thread can become the owner of
      * a monitor.
      *
-     * @param      timeout   the maximum time to wait in milliseconds.
-     * @exception  IllegalArgumentException      if the value of timeout is
-     *               negative.
-     * @exception  IllegalMonitorStateException  if the current thread is not
-     *               the owner of the object's monitor.
-     * @exception  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
-     * @see        java.lang.Object#notify()
-     * @see        java.lang.Object#notifyAll()
+     * @param timeout the maximum time to wait in milliseconds.
+     * @throws IllegalArgumentException     if the value of timeout is
+     *                                      negative.
+     * @throws IllegalMonitorStateException if the current thread is not
+     *                                      the owner of the object's monitor.
+     * @throws InterruptedException         if any thread interrupted the
+     *                                      current thread before or while the current thread
+     *                                      was waiting for a notification.  The <i>interrupted
+     *                                      status</i> of the current thread is cleared when
+     *                                      this exception is thrown.
+     * @see java.lang.Object#notify()
+     * @see java.lang.Object#notifyAll()
      */
     public final native void wait(long timeout) throws InterruptedException;
 
@@ -430,19 +431,19 @@ public class Object {
      * description of the ways in which a thread can become the owner of
      * a monitor.
      *
-     * @param      timeout   the maximum time to wait in milliseconds.
-     * @param      nanos      additional time, in nanoseconds range
-     *                       0-999999.
-     * @exception  IllegalArgumentException      if the value of timeout is
-     *                      negative or the value of nanos is
-     *                      not in the range 0-999999.
-     * @exception  IllegalMonitorStateException  if the current thread is not
-     *               the owner of this object's monitor.
-     * @exception  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
+     * @param timeout the maximum time to wait in milliseconds.
+     * @param nanos   additional time, in nanoseconds range
+     *                0-999999.
+     * @throws IllegalArgumentException     if the value of timeout is
+     *                                      negative or the value of nanos is
+     *                                      not in the range 0-999999.
+     * @throws IllegalMonitorStateException if the current thread is not
+     *                                      the owner of this object's monitor.
+     * @throws InterruptedException         if any thread interrupted the
+     *                                      current thread before or while the current thread
+     *                                      was waiting for a notification.  The <i>interrupted
+     *                                      status</i> of the current thread is cleared when
+     *                                      this exception is thrown.
      */
     public final void wait(long timeout, int nanos) throws InterruptedException {
         if (timeout < 0) {
@@ -450,8 +451,7 @@ public class Object {
         }
 
         if (nanos < 0 || nanos > 999999) {
-            throw new IllegalArgumentException(
-                                "nanosecond timeout value out of range");
+            throw new IllegalArgumentException("nanosecond timeout value out of range");
         }
 
         if (nanos >= 500000 || (nanos != 0 && timeout == 0)) {
@@ -489,15 +489,15 @@ public class Object {
      * description of the ways in which a thread can become the owner of
      * a monitor.
      *
-     * @exception  IllegalMonitorStateException  if the current thread is not
-     *               the owner of the object's monitor.
-     * @exception  InterruptedException if any thread interrupted the
-     *             current thread before or while the current thread
-     *             was waiting for a notification.  The <i>interrupted
-     *             status</i> of the current thread is cleared when
-     *             this exception is thrown.
-     * @see        java.lang.Object#notify()
-     * @see        java.lang.Object#notifyAll()
+     * @throws IllegalMonitorStateException if the current thread is not
+     *                                      the owner of the object's monitor.
+     * @throws InterruptedException         if any thread interrupted the
+     *                                      current thread before or while the current thread
+     *                                      was waiting for a notification.  The <i>interrupted
+     *                                      status</i> of the current thread is cleared when
+     *                                      this exception is thrown.
+     * @see java.lang.Object#notify()
+     * @see java.lang.Object#notifyAll()
      */
     public final void wait() throws InterruptedException {
         wait(0);

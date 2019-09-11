@@ -31,7 +31,7 @@ import java.util.*;
  * A utility class to iterate over the path segments of a quadratic curve
  * segment through the PathIterator interface.
  *
- * @author      Jim Graham
+ * @author Jim Graham
  */
 class QuadIterator implements PathIterator {
     QuadCurve2D quad;
@@ -46,6 +46,7 @@ class QuadIterator implements PathIterator {
     /**
      * Return the winding rule for determining the insideness of the
      * path.
+     *
      * @see #WIND_EVEN_ODD
      * @see #WIND_NON_ZERO
      */
@@ -55,6 +56,7 @@ class QuadIterator implements PathIterator {
 
     /**
      * Tests if there are more points to read.
+     *
      * @return true if there are more points to read
      */
     public boolean isDone() {
@@ -82,6 +84,7 @@ class QuadIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO
@@ -122,6 +125,7 @@ class QuadIterator implements PathIterator {
      * SEG_QUADTO will return two points,
      * SEG_CUBICTO will return 3 points
      * and SEG_CLOSE will not return any points.
+     *
      * @see #SEG_MOVETO
      * @see #SEG_LINETO
      * @see #SEG_QUADTO

@@ -35,12 +35,11 @@ import java.util.EventListener;
  * thread-safe multi-cast event dispatching for the drag-and-drop events defined
  * in the java.awt.dnd package.
  *
- * @since       1.4
  * @see AWTEventMulticaster
+ * @since 1.4
  */
 
-class DnDEventMulticaster extends AWTEventMulticaster
-    implements DragSourceListener, DragSourceMotionListener {
+class DnDEventMulticaster extends AWTEventMulticaster implements DragSourceListener, DragSourceMotionListener {
 
     /**
      * Creates an event multicaster instance which chains listener-a
@@ -53,7 +52,7 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param b listener-b
      */
     protected DnDEventMulticaster(EventListener a, EventListener b) {
-        super(a,b);
+        super(a, b);
     }
 
     /**
@@ -63,8 +62,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param dsde the <code>DragSourceDragEvent</code>
      */
     public void dragEnter(DragSourceDragEvent dsde) {
-        ((DragSourceListener)a).dragEnter(dsde);
-        ((DragSourceListener)b).dragEnter(dsde);
+        ((DragSourceListener) a).dragEnter(dsde);
+        ((DragSourceListener) b).dragEnter(dsde);
     }
 
     /**
@@ -74,8 +73,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param e the <code>DragSourceDragEvent</code>
      */
     public void dragOver(DragSourceDragEvent dsde) {
-        ((DragSourceListener)a).dragOver(dsde);
-        ((DragSourceListener)b).dragOver(dsde);
+        ((DragSourceListener) a).dragOver(dsde);
+        ((DragSourceListener) b).dragOver(dsde);
     }
 
     /**
@@ -85,8 +84,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param dsde the <code>DragSourceDragEvent</code>
      */
     public void dropActionChanged(DragSourceDragEvent dsde) {
-        ((DragSourceListener)a).dropActionChanged(dsde);
-        ((DragSourceListener)b).dropActionChanged(dsde);
+        ((DragSourceListener) a).dropActionChanged(dsde);
+        ((DragSourceListener) b).dropActionChanged(dsde);
     }
 
     /**
@@ -96,8 +95,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param dse the <code>DragSourceEvent</code>
      */
     public void dragExit(DragSourceEvent dse) {
-        ((DragSourceListener)a).dragExit(dse);
-        ((DragSourceListener)b).dragExit(dse);
+        ((DragSourceListener) a).dragExit(dse);
+        ((DragSourceListener) b).dragExit(dse);
     }
 
     /**
@@ -107,8 +106,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param dsde the <code>DragSourceDropEvent</code>
      */
     public void dragDropEnd(DragSourceDropEvent dsde) {
-        ((DragSourceListener)a).dragDropEnd(dsde);
-        ((DragSourceListener)b).dragDropEnd(dsde);
+        ((DragSourceListener) a).dragDropEnd(dsde);
+        ((DragSourceListener) b).dragDropEnd(dsde);
     }
 
     /**
@@ -118,8 +117,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param dsde the <code>DragSourceDragEvent</code>
      */
     public void dragMouseMoved(DragSourceDragEvent dsde) {
-        ((DragSourceMotionListener)a).dragMouseMoved(dsde);
-        ((DragSourceMotionListener)b).dragMouseMoved(dsde);
+        ((DragSourceMotionListener) a).dragMouseMoved(dsde);
+        ((DragSourceMotionListener) b).dragMouseMoved(dsde);
     }
 
     /**
@@ -129,9 +128,8 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param a drag-source-listener-a
      * @param b drag-source-listener-b
      */
-    public static DragSourceListener add(DragSourceListener a,
-                                         DragSourceListener b) {
-        return (DragSourceListener)addInternal(a, b);
+    public static DragSourceListener add(DragSourceListener a, DragSourceListener b) {
+        return (DragSourceListener) addInternal(a, b);
     }
 
     /**
@@ -141,21 +139,19 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * @param a drag-source-motion-listener-a
      * @param b drag-source-motion-listener-b
      */
-    public static DragSourceMotionListener add(DragSourceMotionListener a,
-                                               DragSourceMotionListener b) {
-        return (DragSourceMotionListener)addInternal(a, b);
+    public static DragSourceMotionListener add(DragSourceMotionListener a, DragSourceMotionListener b) {
+        return (DragSourceMotionListener) addInternal(a, b);
     }
 
     /**
      * Removes the old drag-source-listener from drag-source-listener-l
      * and returns the resulting multicast listener.
      *
-     * @param l drag-source-listener-l
+     * @param l    drag-source-listener-l
      * @param oldl the drag-source-listener being removed
      */
-    public static DragSourceListener remove(DragSourceListener l,
-                                            DragSourceListener oldl) {
-        return (DragSourceListener)removeInternal(l, oldl);
+    public static DragSourceListener remove(DragSourceListener l, DragSourceListener oldl) {
+        return (DragSourceListener) removeInternal(l, oldl);
     }
 
     /**
@@ -163,12 +159,11 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * drag-source-motion-listener-l and returns the resulting multicast
      * listener.
      *
-     * @param l drag-source-motion-listener-l
+     * @param l  drag-source-motion-listener-l
      * @param ol the drag-source-motion-listener being removed
      */
-    public static DragSourceMotionListener remove(DragSourceMotionListener l,
-                                                  DragSourceMotionListener ol) {
-        return (DragSourceMotionListener)removeInternal(l, ol);
+    public static DragSourceMotionListener remove(DragSourceMotionListener l, DragSourceMotionListener ol) {
+        return (DragSourceMotionListener) removeInternal(l, ol);
     }
 
     /**
@@ -178,23 +173,25 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * If listener-b is null, it returns listener-a
      * If neither are null, then it creates and returns
      * a new AWTEventMulticaster instance which chains a with b.
+     *
      * @param a event listener-a
      * @param b event listener-b
      */
     protected static EventListener addInternal(EventListener a, EventListener b) {
-        if (a == null)  return b;
-        if (b == null)  return a;
+        if (a == null) { return b; }
+        if (b == null) { return a; }
         return new DnDEventMulticaster(a, b);
     }
 
     /**
      * Removes a listener from this multicaster and returns the
      * resulting multicast listener.
+     *
      * @param oldl the listener to be removed
      */
     protected EventListener remove(EventListener oldl) {
-        if (oldl == a)  return b;
-        if (oldl == b)  return a;
+        if (oldl == a) { return b; }
+        if (oldl == b) { return a; }
         EventListener a2 = removeInternal(a, oldl);
         EventListener b2 = removeInternal(b, oldl);
         if (a2 == a && b2 == b) {
@@ -211,21 +208,21 @@ class DnDEventMulticaster extends AWTEventMulticaster
      * Else if listener-l is an instance of AWTEventMulticaster,
      * then it removes the old listener from it.
      * Else, returns listener l.
-     * @param l the listener being removed from
+     *
+     * @param l    the listener being removed from
      * @param oldl the listener being removed
      */
     protected static EventListener removeInternal(EventListener l, EventListener oldl) {
         if (l == oldl || l == null) {
             return null;
         } else if (l instanceof DnDEventMulticaster) {
-            return ((DnDEventMulticaster)l).remove(oldl);
+            return ((DnDEventMulticaster) l).remove(oldl);
         } else {
             return l;           // it's not here
         }
     }
 
-    protected static void save(ObjectOutputStream s, String k, EventListener l)
-      throws IOException {
+    protected static void save(ObjectOutputStream s, String k, EventListener l) throws IOException {
         AWTEventMulticaster.save(s, k, l);
     }
 }
