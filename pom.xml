@@ -17,7 +17,8 @@
         <module>logback</module>
         <module>java</module>
         <module>freemarker</module>
-        <module>sourcecode</module>
+        <module>sourcecode7</module>
+        <module>sourcecode8</module>
         <module>tool</module>
     </modules>
 
@@ -26,8 +27,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
