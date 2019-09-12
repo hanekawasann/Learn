@@ -18,6 +18,7 @@
         <module>java</module>
         <module>freemarker</module>
         <module>sourcecode</module>
+        <module>tool</module>
     </modules>
 
     <name>learn</name>

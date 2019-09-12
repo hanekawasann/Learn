@@ -1,3 +1,5 @@
+package com.yukms.learn.tool;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -72,8 +74,8 @@ public class UpdatePackage {
     }
 
     public static void main(String[] args) {
-        //File file = new File("C:\\project\\Learn\\sourcecode\\src\\main\\java");
-        //updateFile(file);
+        File file = new File("");
+        updateFile(file);
     }
 
     private static void updateFile(File file) {
