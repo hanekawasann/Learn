@@ -399,11 +399,9 @@ public class Window extends Container implements Accessible {
             initIDs();
         }
 
-        String s = AccessController
-            .doPrivileged(new GetPropertyAction("java.awt.syncLWRequests"));
+        String s = AccessController.doPrivileged(new GetPropertyAction("java.awt.syncLWRequests"));
         systemSyncLWRequests = (s != null && s.equals("true"));
-        s = AccessController
-            .doPrivileged(new GetPropertyAction("java.awt.Window.locationByPlatform"));
+        s = AccessController.doPrivileged(new GetPropertyAction("java.awt.Window.locationByPlatform"));
         locationByPlatformProp = (s != null && s.equals("true"));
     }
 

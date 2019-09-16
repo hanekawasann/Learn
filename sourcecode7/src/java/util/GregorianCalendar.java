@@ -2430,7 +2430,8 @@ public class GregorianCalendar extends Calendar {
                         if (cdate.isLeapYear()) {
                             nextJan1++;
                         }
-                        long nextJan1st = AbstractCalendar.getDayOfWeekDateOnOrBefore(nextJan1 + 6, getFirstDayOfWeek());
+                        long nextJan1st = AbstractCalendar
+                            .getDayOfWeekDateOnOrBefore(nextJan1 + 6, getFirstDayOfWeek());
                         int ndays = (int) (nextJan1st - nextJan1);
                         if (ndays >= getMinimalDaysInFirstWeek() && fixedDate >= (nextJan1st - 7)) {
                             // The first days forms a week in which the date is included.
@@ -2754,14 +2755,16 @@ public class GregorianCalendar extends Calendar {
                 }
             } else {
                 if (isFieldSet(fieldMask, WEEK_OF_MONTH)) {
-                    long firstDayOfWeek = AbstractCalendar.getDayOfWeekDateOnOrBefore(fixedDate + 6, getFirstDayOfWeek());
+                    long firstDayOfWeek = AbstractCalendar
+                        .getDayOfWeekDateOnOrBefore(fixedDate + 6, getFirstDayOfWeek());
                     // If we have enough days in the first week, then
                     // move to the previous week.
                     if ((firstDayOfWeek - fixedDate) >= getMinimalDaysInFirstWeek()) {
                         firstDayOfWeek -= 7;
                     }
                     if (isFieldSet(fieldMask, DAY_OF_WEEK)) {
-                        firstDayOfWeek = AbstractCalendar.getDayOfWeekDateOnOrBefore(firstDayOfWeek + 6, internalGet(DAY_OF_WEEK));
+                        firstDayOfWeek = AbstractCalendar
+                            .getDayOfWeekDateOnOrBefore(firstDayOfWeek + 6, internalGet(DAY_OF_WEEK));
                     }
                     // In lenient mode, we treat days of the previous
                     // months as a part of the specified

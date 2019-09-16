@@ -774,7 +774,8 @@ final class Nodes {
         public Node<T> truncate(long from, long to, IntFunction<T[]> generator) {
             if (from == 0 && to == count()) { return this; }
             long leftCount = left.count();
-            if (from >= leftCount) { return right.truncate(from - leftCount, to - leftCount, generator); } else if (to <= leftCount) {
+            if (from >= leftCount) { return right.truncate(from - leftCount, to - leftCount, generator); } else if (
+                to <= leftCount) {
                 return left.truncate(from, to, generator);
             } else {
                 return Nodes.conc(getShape(), left.truncate(from, leftCount, generator),

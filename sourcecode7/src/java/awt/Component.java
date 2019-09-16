@@ -598,8 +598,7 @@ public abstract class Component implements ImageObserver, MenuContainer, Seriali
             initIDs();
         }
 
-        String s = AccessController
-            .doPrivileged(new GetPropertyAction("awt.image.incrementaldraw"));
+        String s = AccessController.doPrivileged(new GetPropertyAction("awt.image.incrementaldraw"));
         isInc = (s == null || s.equals("true"));
 
         s = AccessController.doPrivileged(new GetPropertyAction("awt.image.redrawrate"));

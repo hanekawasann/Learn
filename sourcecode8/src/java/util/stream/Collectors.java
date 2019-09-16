@@ -981,8 +981,7 @@ public final class Collectors {
         Function<? super T, ? extends K> classifier, Supplier<M> mapFactory, Collector<? super T, A, D> downstream) {
         Supplier<A> downstreamSupplier = downstream.supplier();
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
-        BinaryOperator<ConcurrentMap<K, A>> merger = Collectors.mapMerger(
-            downstream.combiner());
+        BinaryOperator<ConcurrentMap<K, A>> merger = Collectors.mapMerger(downstream.combiner());
         @SuppressWarnings("unchecked")
         Supplier<ConcurrentMap<K, A>> mangledFactory = (Supplier<ConcurrentMap<K, A>>) mapFactory;
         BiConsumer<ConcurrentMap<K, A>, T> accumulator;

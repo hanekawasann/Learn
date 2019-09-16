@@ -1846,7 +1846,8 @@ public class ForkJoinPool extends AbstractExecutorService {
                         break;
                     }
                     k = scans;
-                } else if ((s = task.status) < 0) { break; } else if ((q = ws[j & m]) != null && q.pollAndExecCC(task)) {
+                } else if ((s = task.status) < 0) { break; } else if ((q = ws[j & m]) != null &&
+                    q.pollAndExecCC(task)) {
                     if (--maxTasks <= 0) {
                         s = task.status;
                         break;
@@ -2250,7 +2251,8 @@ public class ForkJoinPool extends AbstractExecutorService {
                         break;
                     }
                     k = scans;
-                } else if ((s = task.status) < 0) { break; } else if ((q = ws[j & m]) != null && q.pollAndExecCC(task)) {
+                } else if ((s = task.status) < 0) { break; } else if ((q = ws[j & m]) != null &&
+                    q.pollAndExecCC(task)) {
                     if (--maxTasks <= 0) {
                         s = task.status;
                         break;

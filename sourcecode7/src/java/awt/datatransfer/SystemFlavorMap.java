@@ -220,9 +220,8 @@ public final class SystemFlavorMap implements FlavorMap, FlavorTable {
                     String fileName = System.getProperty("java.home") + File.separator + "lib" + File.separator +
                         "flavormap.properties";
                     try {
-                        return new BufferedReader(
-                            new InputStreamReader(new File(fileName).toURI().toURL().openStream(),
-                                StandardCharsets.ISO_8859_1));
+                        return new BufferedReader(new InputStreamReader(new File(fileName).toURI().toURL().openStream(),
+                            StandardCharsets.ISO_8859_1));
                     } catch (MalformedURLException e) {
                         System.err.println(
                             "MalformedURLException:" + e + " while loading default flavormap.properties file:" +
@@ -245,8 +244,8 @@ public final class SystemFlavorMap implements FlavorMap, FlavorTable {
                     }
 
                     try {
-                        return new BufferedReader(new InputStreamReader(new URL(url).openStream(),
-                            StandardCharsets.ISO_8859_1));
+                        return new BufferedReader(
+                            new InputStreamReader(new URL(url).openStream(), StandardCharsets.ISO_8859_1));
                     } catch (MalformedURLException e) {
                         System.err
                             .println("MalformedURLException:" + e + " while reading AWT.DnD.flavorMapFileURL:" + url);

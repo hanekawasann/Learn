@@ -526,7 +526,7 @@ public class GregorianCalendar extends Calendar {
      * The fixed date of the gregorianCutover.
      */
     private transient long gregorianCutoverDate = (((DEFAULT_GREGORIAN_CUTOVER + 1) / ONE_DAY) - 1) + EPOCH_OFFSET;
-        // == 577736
+    // == 577736
 
     /**
      * The normalized year of the gregorianCutover in Gregorian, with

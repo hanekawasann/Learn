@@ -113,7 +113,7 @@ class MethodHandleNatives {
             MN_REFERENCE_KIND_SHIFT = 24, // refKind
             MN_REFERENCE_KIND_MASK = 0x0F000000 >>
                 MN_REFERENCE_KIND_SHIFT, // The SEARCH_* bits are not for MN.flags but for the matchFlags argument of MHN.getMembers:
-        MN_SEARCH_SUPERCLASSES = 0x00100000, MN_SEARCH_INTERFACES = 0x00200000;
+            MN_SEARCH_SUPERCLASSES = 0x00100000, MN_SEARCH_INTERFACES = 0x00200000;
 
         /**
          * Basic types as encoded in the JVM.  These code values are not
@@ -122,8 +122,8 @@ class MethodHandleNatives {
          */
         static final int T_BOOLEAN = 4, T_CHAR = 5, T_FLOAT = 6, T_DOUBLE = 7, T_BYTE = 8, T_SHORT = 9, T_INT = 10,
             T_LONG = 11, T_OBJECT = 12, //T_ARRAY    = 13
-        T_VOID = 14, //T_ADDRESS  = 15
-        T_ILLEGAL = 99;
+            T_VOID = 14, //T_ADDRESS  = 15
+            T_ILLEGAL = 99;
 
         /**
          * Constant pool entry types.
@@ -141,7 +141,7 @@ class MethodHandleNatives {
             ACC_FINAL = 0x0010, ACC_SYNCHRONIZED = 0x0020, ACC_VOLATILE = 0x0040, ACC_TRANSIENT = 0x0080, ACC_NATIVE
             = 0x0100, ACC_INTERFACE = 0x0200, ACC_ABSTRACT = 0x0400, ACC_STRICT = 0x0800, ACC_SYNTHETIC = 0x1000,
             ACC_ANNOTATION = 0x2000, ACC_ENUM = 0x4000, // aliases:
-        ACC_SUPER = ACC_SYNCHRONIZED, ACC_BRIDGE = ACC_VOLATILE, ACC_VARARGS = ACC_TRANSIENT;
+            ACC_SUPER = ACC_SYNCHRONIZED, ACC_BRIDGE = ACC_VOLATILE, ACC_VARARGS = ACC_TRANSIENT;
 
         /**
          * Constant pool reference-kind codes, as used by CONSTANT_MethodHandle CP entries.

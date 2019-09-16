@@ -248,8 +248,8 @@ class XmlSupport {
             //Transformer resets the "indent" info if the "result" is a StreamResult with
             //an OutputStream object embedded, creating a Writer object on top of that
             //OutputStream object however works.
-            t.transform(new DOMSource(doc), new StreamResult(new BufferedWriter(new OutputStreamWriter(out,
-                StandardCharsets.UTF_8))));
+            t.transform(new DOMSource(doc),
+                new StreamResult(new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))));
         } catch (TransformerException e) {
             throw new AssertionError(e);
         }

@@ -239,6 +239,7 @@ public abstract class ClassLoader {
     // class loader is parallel capable.
     // Note: VM also uses this field to decide if the current class loader
     // is parallel capable and the appropriate lock object for class loading.
+    // 为每一个类映射一个锁
     private final ConcurrentHashMap<String, Object> parallelLockMap;
 
     // Hashtable that maps packages to certs
@@ -384,15 +385,17 @@ public abstract class ClassLoader {
      * @throws ClassNotFoundException If the class could not be found
      */
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        synchronized (getClassLoadingLock(name)) {
-            // First, check if the class has already been loaded
+        synchronized (getClassLoadingLock(name)) {// 获取锁
+            // 检查类是否已经被加载
             Class<?> c = findLoadedClass(name);
             if (c == null) {
                 long t0 = System.nanoTime();
                 try {
                     if (parent != null) {
+                        // 父类加载器加载
                         c = parent.loadClass(name, false);
                     } else {
+                        // 启动类加载器加载
                         c = findBootstrapClassOrNull(name);
                     }
                 } catch (ClassNotFoundException e) {
@@ -404,6 +407,7 @@ public abstract class ClassLoader {
                     // If still not found, then invoke findClass in order
                     // to find the class.
                     long t1 = System.nanoTime();
+                    // 本类加载
                     c = findClass(name);
 
                     // this is the defining class loader; record the stats
@@ -413,6 +417,7 @@ public abstract class ClassLoader {
                 }
             }
             if (resolve) {
+                // 连接：加载、验证、准备、解析
                 resolveClass(c);
             }
             return c;
@@ -1933,8 +1938,7 @@ class SystemClassLoaderAction implements PrivilegedExceptionAction<ClassLoader> 
             return parent;
         }
 
-        Constructor<?> ctor = Class.forName(cls, true, parent)
-            .getDeclaredConstructor(ClassLoader.class);
+        Constructor<?> ctor = Class.forName(cls, true, parent).getDeclaredConstructor(ClassLoader.class);
         ClassLoader sys = (ClassLoader) ctor.newInstance(new Object[] { parent });
         Thread.currentThread().setContextClassLoader(sys);
         return sys;

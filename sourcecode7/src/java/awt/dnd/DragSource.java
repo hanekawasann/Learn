@@ -861,8 +861,7 @@ public class DragSource implements Serializable {
      * @since 1.5
      */
     public static int getDragThreshold() {
-        int ts = AccessController.doPrivileged(new GetIntegerAction("awt.dnd.drag.threshold", 0))
-            .intValue();
+        int ts = AccessController.doPrivileged(new GetIntegerAction("awt.dnd.drag.threshold", 0)).intValue();
         if (ts > 0) {
             return ts;
         } else {

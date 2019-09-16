@@ -2307,8 +2307,7 @@ public abstract class KeyboardFocusManager implements KeyEventDispatcher, KeyEve
                     // acceptable value.
                     if (hwFocusRequest == HeavyweightFocusRequest.CLEAR_GLOBAL_FOCUS_OWNER) {
                         int size = heavyweightRequests.size();
-                        hwFocusRequest = (size >= 2) ? heavyweightRequests.get(size - 2)
-                            : null;
+                        hwFocusRequest = (size >= 2) ? heavyweightRequests.get(size - 2) : null;
                     }
                     if (focusedWindowChanged(heavyweight,
                         (hwFocusRequest != null) ? hwFocusRequest.heavyweight : nativeFocusedWindow)) {

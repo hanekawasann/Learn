@@ -2576,7 +2576,9 @@ public class ConcurrentSkipListMap<K, V> extends AbstractMap<K, V>
          */
         private Map.Entry<K, V> getNearEntry(K key, int rel) {
             if (isDescending) { // adjust relation for direction
-                if ((rel & ConcurrentSkipListMap.LT) == 0) { rel |= ConcurrentSkipListMap.LT; } else { rel &= ~ConcurrentSkipListMap.LT; }
+                if ((rel & ConcurrentSkipListMap.LT) == 0) { rel |= ConcurrentSkipListMap.LT; } else {
+                    rel &= ~ConcurrentSkipListMap.LT;
+                }
             }
             if (tooLow(key)) { return ((rel & ConcurrentSkipListMap.LT) != 0) ? null : lowestEntry(); }
             if (tooHigh(key)) { return ((rel & ConcurrentSkipListMap.LT) != 0) ? highestEntry() : null; }
@@ -2592,7 +2594,9 @@ public class ConcurrentSkipListMap<K, V> extends AbstractMap<K, V>
         // Almost the same as getNearEntry, except for keys
         private K getNearKey(K key, int rel) {
             if (isDescending) { // adjust relation for direction
-                if ((rel & ConcurrentSkipListMap.LT) == 0) { rel |= ConcurrentSkipListMap.LT; } else { rel &= ~ConcurrentSkipListMap.LT; }
+                if ((rel & ConcurrentSkipListMap.LT) == 0) { rel |= ConcurrentSkipListMap.LT; } else {
+                    rel &= ~ConcurrentSkipListMap.LT;
+                }
             }
             if (tooLow(key)) {
                 if ((rel & ConcurrentSkipListMap.LT) == 0) {

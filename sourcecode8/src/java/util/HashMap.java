@@ -782,7 +782,8 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             Node<K, V> node = null, e;
             K k;
             V v;
-            if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) { node = p; } else if ((e = p.next) != null) {
+            if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) { node = p; } else if (
+                (e = p.next) != null) {
                 if (p instanceof TreeNode) { node = ((TreeNode<K, V>) p).getTreeNode(hash, key); } else {
                     do {
                         if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
@@ -1285,7 +1286,8 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         }
         s.readInt();                // Read and ignore number of buckets
         int mappings = s.readInt(); // Read number of mappings (size)
-        if (mappings < 0) { throw new InvalidObjectException("Illegal mappings count: " + mappings); } else if (mappings > 0) { // (if zero, use defaults)
+        if (mappings < 0) { throw new InvalidObjectException("Illegal mappings count: " + mappings); } else if (
+            mappings > 0) { // (if zero, use defaults)
             // Size the table using given load factor only if within
             // range of 0.25...4.0
             float lf = Math.min(Math.max(0.25f, loadFactor), 4.0f);

@@ -1017,8 +1017,7 @@ class java_awt_CardLayout_PersistenceDelegate extends DefaultPersistenceDelegate
         if (tab != null) {
             for (Enumeration e = tab.keys(); e.hasMoreElements(); ) {
                 Object child = e.nextElement();
-                invokeStatement(oldInstance, "addLayoutComponent", new Object[] { child, tab.get(child) },
-                    out);
+                invokeStatement(oldInstance, "addLayoutComponent", new Object[] { child, tab.get(child) }, out);
             }
         }
     }

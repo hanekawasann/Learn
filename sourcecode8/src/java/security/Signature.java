@@ -172,9 +172,10 @@ public abstract class Signature extends SignatureSpi {
     private final static String RSA_CIPHER = "RSA/ECB/PKCS1Padding";
 
     // all the services we need to lookup for compatibility with Cipher
-    private final static List<ServiceId> rsaIds = Arrays.asList(new ServiceId("Signature", "NONEwithRSA"),
-        new ServiceId("Cipher", "RSA/ECB/PKCS1Padding"), new ServiceId("Cipher", "RSA/ECB"),
-        new ServiceId("Cipher", "RSA//PKCS1Padding"), new ServiceId("Cipher", "RSA"));
+    private final static List<ServiceId> rsaIds = Arrays
+        .asList(new ServiceId("Signature", "NONEwithRSA"), new ServiceId("Cipher", "RSA/ECB/PKCS1Padding"),
+            new ServiceId("Cipher", "RSA/ECB"), new ServiceId("Cipher", "RSA//PKCS1Padding"),
+            new ServiceId("Cipher", "RSA"));
 
     /**
      * Returns a Signature object that implements the specified signature

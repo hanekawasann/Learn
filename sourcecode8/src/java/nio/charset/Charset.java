@@ -563,7 +563,9 @@ public abstract class Charset implements Comparable<Charset> {
             synchronized (Charset.class) {
                 String csn = AccessController.doPrivileged(new GetPropertyAction("file.encoding"));
                 Charset cs = lookup(csn);
-                if (cs != null) { defaultCharset = cs; } else { defaultCharset = java.nio.charset.StandardCharsets.UTF_8; }
+                if (cs != null) { defaultCharset = cs; } else {
+                    defaultCharset = java.nio.charset.StandardCharsets.UTF_8;
+                }
             }
         }
         return defaultCharset;

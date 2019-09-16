@@ -57,7 +57,7 @@ import static sun.invoke.util.Wrapper.isWrapperType;
     final MethodType samMethodType;           // Type of the SAM method "(Object)Object"
     final MethodHandle implMethod;            // Raw method handle for the implementation method
     final MethodHandleInfo implInfo;
-        // Info about the implementation method handle "MethodHandleInfo[5 CC.impl(int)String]"
+    // Info about the implementation method handle "MethodHandleInfo[5 CC.impl(int)String]"
     final int implKind;                       // Invocation kind for implementation "5"=invokevirtual
     final boolean implIsInstanceMethod;       // Is the implementation an instance method "true"
     final Class<?> implDefiningClass;         // Type defining the implementation "class CC"

@@ -338,8 +338,8 @@ public class Cursor implements java.io.Serializable {
                 final int fy = y;
                 final String flocalized = localized;
 
-                cursor = java.security.AccessController.doPrivileged(
-                    new java.security.PrivilegedExceptionAction<Cursor>() {
+                cursor = java.security.AccessController
+                    .doPrivileged(new java.security.PrivilegedExceptionAction<Cursor>() {
                         public Cursor run() throws Exception {
                             Toolkit toolkit = Toolkit.getDefaultToolkit();
                             Image image = toolkit.getImage(systemCustomCursorDirPrefix + fileName);

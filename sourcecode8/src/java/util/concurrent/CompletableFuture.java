@@ -336,7 +336,8 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
                 if (nanos <= 0L) { throw new TimeoutException(); }
                 long d = System.nanoTime() + nanos;
                 q = new WaitNode(true, nanos, d == 0L ? 1L : d); // avoid 0
-            } else if (!queued) { queued = UNSAFE.compareAndSwapObject(this, WAITERS, q.next = waiters, q); } else if (q.interruptControl < 0) {
+            } else if (!queued) { queued = UNSAFE.compareAndSwapObject(this, WAITERS, q.next = waiters, q); } else if (
+                q.interruptControl < 0) {
                 removeWaiter(q);
                 throw new InterruptedException();
             } else if (q.nanos <= 0L) {

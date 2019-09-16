@@ -452,8 +452,7 @@ public class BasicStroke implements Stroke {
             }
 
             return java.util.Arrays.equals(dash, bs.dash);
-        } else
-            return bs.dash == null;
+        } else { return bs.dash == null; }
 
     }
 }

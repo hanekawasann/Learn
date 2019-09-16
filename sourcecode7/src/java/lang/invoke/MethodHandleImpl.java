@@ -970,7 +970,8 @@ import static java.lang.invoke.MethodHandles.Lookup.IMPL_LOOKUP;
             MethodType type = target.type();
             int nargs = type.parameterCount();
             if (nargs < INVOKES.length) {
-                assert !preferRicochetFrame(type) || (MethodHandleNatives.workaroundWithoutRicochetFrames());  // this code is deprecated
+                assert !preferRicochetFrame(type) ||
+                    (MethodHandleNatives.workaroundWithoutRicochetFrames());  // this code is deprecated
                 MethodHandle invoke = INVOKES[nargs];
                 MethodType gtype = type.generic();
                 assert (invoke.type().dropParameterTypes(0, 1) == gtype);

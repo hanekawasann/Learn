@@ -167,8 +167,7 @@ public abstract class PKIXRevocationChecker extends PKIXCertPathChecker {
      *                   against subsequent modification.
      */
     public void setOcspExtensions(List<Extension> extensions) {
-        this.ocspExtensions = (extensions == null) ? Collections.emptyList()
-            : new ArrayList<Extension>(extensions);
+        this.ocspExtensions = (extensions == null) ? Collections.emptyList() : new ArrayList<Extension>(extensions);
     }
 
     /**

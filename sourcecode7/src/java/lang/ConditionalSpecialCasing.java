@@ -410,11 +410,10 @@ final class ConditionalSpecialCasing {
             } else // CIRCLED LATIN CAPITAL LETTER A..CIRCLED LATIN CAPITAL LETTER Z
                 // CIRCLED LATIN SMALL LETTER A..CIRCLED LATIN SMALL LETTER Z
                 if ((ch >= 0x2160) && (ch <= 0x217F)) {
-                // ROMAN NUMERAL ONE..ROMAN NUMERAL ONE THOUSAND
-                // SMALL ROMAN NUMERAL ONE..SMALL ROMAN NUMERAL ONE THOUSAND
-                return true;
-            } else
-                    return (ch >= 0x24B6) && (ch <= 0x24E9);
+                    // ROMAN NUMERAL ONE..ROMAN NUMERAL ONE THOUSAND
+                    // SMALL ROMAN NUMERAL ONE..SMALL ROMAN NUMERAL ONE THOUSAND
+                    return true;
+                } else { return (ch >= 0x24B6) && (ch <= 0x24E9); }
         }
     }
 

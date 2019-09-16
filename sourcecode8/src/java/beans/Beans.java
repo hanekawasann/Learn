@@ -474,8 +474,7 @@ class ObjectInputStreamWithLoader extends ObjectInputStream {
      * Loader must be non-null;
      */
 
-    public ObjectInputStreamWithLoader(InputStream in, ClassLoader loader)
-        throws IOException {
+    public ObjectInputStreamWithLoader(InputStream in, ClassLoader loader) throws IOException {
 
         super(in);
         if (loader == null) {

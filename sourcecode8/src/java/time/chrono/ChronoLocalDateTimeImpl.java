@@ -283,8 +283,7 @@ final class ChronoLocalDateTimeImpl<D extends ChronoLocalDate>
         } else if (adjuster instanceof ChronoLocalDateTimeImpl) {
             return ChronoLocalDateTimeImpl.ensureValid(date.getChronology(), (ChronoLocalDateTimeImpl<?>) adjuster);
         }
-        return ChronoLocalDateTimeImpl
-            .ensureValid(date.getChronology(), adjuster.adjustInto(this));
+        return ChronoLocalDateTimeImpl.ensureValid(date.getChronology(), adjuster.adjustInto(this));
     }
 
     @Override

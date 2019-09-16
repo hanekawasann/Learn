@@ -1378,8 +1378,7 @@ public final class URI implements Comparable<URI>, Serializable {
         } else if (this.authority != null) {
             // Registry-based
             return equal(this.authority, that.authority);
-        } else
-            return this.authority == that.authority;
+        } else { return this.authority == that.authority; }
 
     }
 

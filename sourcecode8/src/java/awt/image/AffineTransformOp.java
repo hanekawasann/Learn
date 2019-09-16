@@ -227,7 +227,8 @@ public class AffineTransformOp implements BufferedImageOp, RasterOp {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() != dstCM.getColorSpace().getType()) {
                 int type = xform.getType();
-                boolean needTrans = ((type & (AffineTransform.TYPE_MASK_ROTATION | AffineTransform.TYPE_GENERAL_TRANSFORM)) != 0);
+                boolean needTrans = (
+                    (type & (AffineTransform.TYPE_MASK_ROTATION | AffineTransform.TYPE_GENERAL_TRANSFORM)) != 0);
                 if (!needTrans && type != AffineTransform.TYPE_TRANSLATION && type != AffineTransform.TYPE_IDENTITY) {
                     double[] mtx = new double[4];
                     xform.getMatrix(mtx);

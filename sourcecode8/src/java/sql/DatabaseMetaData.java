@@ -3269,8 +3269,8 @@ public interface DatabaseMetaData extends Wrapper {
      * @return A <code>ResultSet</code> object; each row is a supported client info
      * property
      * <p>
-     * @exception SQLException if a database access error occurs
-     * <p>
+     * @throws SQLException if a database access error occurs
+     *                      <p>
      * @since 1.6
      */
     ResultSet getClientInfoProperties() throws SQLException;

@@ -377,11 +377,9 @@ public class EventHandler implements InvocationHandler {
         try {
             Method getter = null;
             if (target != null) {
-                getter = Statement
-                    .getMethod(target.getClass(), "get" + NameGenerator.capitalize(first));
+                getter = Statement.getMethod(target.getClass(), "get" + NameGenerator.capitalize(first));
                 if (getter == null) {
-                    getter = Statement
-                        .getMethod(target.getClass(), "is" + NameGenerator.capitalize(first));
+                    getter = Statement.getMethod(target.getClass(), "is" + NameGenerator.capitalize(first));
                 }
                 if (getter == null) {
                     getter = Statement.getMethod(target.getClass(), first);

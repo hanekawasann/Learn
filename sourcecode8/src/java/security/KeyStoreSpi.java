@@ -491,7 +491,8 @@ public abstract class KeyStoreSpi {
                 // pre-1.5 style setKeyEntry required password
                 throw new KeyStoreException("non-null password required to create SecretKeyEntry");
             } else {
-                engineSetKeyEntry(alias, ((KeyStore.SecretKeyEntry) entry).getSecretKey(), pProtect.getPassword(), null);
+                engineSetKeyEntry(alias, ((KeyStore.SecretKeyEntry) entry).getSecretKey(), pProtect.getPassword(),
+                    null);
                 return;
             }
         }

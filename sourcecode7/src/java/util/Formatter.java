@@ -3395,8 +3395,7 @@ public final class Formatter implements Closeable, Flushable {
                 } else {
                     print(sb, value, l, f, Conversion.SCIENTIFIC, prec - 1, neg);
                 }
-            } else
-                assert c != Conversion.HEXADECIMAL_FLOAT;
+            } else { assert c != Conversion.HEXADECIMAL_FLOAT; }
         }
 
         private class BigDecimalLayout {

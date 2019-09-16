@@ -2236,8 +2236,7 @@ public class X509CertSelector implements CertSelector {
             ExtendedKeyUsageExtension ext = (ExtendedKeyUsageExtension) getExtensionObject(xcert,
                 EXTENDED_KEY_USAGE_ID);
             if (ext != null) {
-                Vector<ObjectIdentifier> certKeyPurposeVector = ext
-                    .get(ExtendedKeyUsageExtension.USAGES);
+                Vector<ObjectIdentifier> certKeyPurposeVector = ext.get(ExtendedKeyUsageExtension.USAGES);
                 if (!certKeyPurposeVector.contains(ANY_EXTENDED_KEY_USAGE) &&
                     !certKeyPurposeVector.containsAll(keyPurposeOIDSet)) {
                     if (debug != null) {

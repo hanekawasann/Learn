@@ -1172,8 +1172,7 @@ public class DecimalFormat extends NumberFormat {
             return true;
         } else if (scaledFractionalRoundoff < 0.0) {
             return false;
-        } else
-            return (scaledFractionalPartAsInt & 1) != 0;
+        } else { return (scaledFractionalPartAsInt & 1) != 0; }
 
         // ---- Taking the rounding decision end
     }

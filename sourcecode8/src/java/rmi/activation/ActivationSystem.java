@@ -72,8 +72,7 @@ public interface ActivationSystem extends Remote {
      * @throws RemoteException       if remote call fails
      * @since 1.2
      */
-    ActivationID registerObject(ActivationDesc desc)
-        throws ActivationException, UnknownGroupException, RemoteException;
+    ActivationID registerObject(ActivationDesc desc) throws ActivationException, UnknownGroupException, RemoteException;
 
     /**
      * Remove the activation id and associated descriptor previously
@@ -138,8 +137,7 @@ public interface ActivationSystem extends Remote {
      * @throws RemoteException       if remote call fails
      * @since 1.2
      */
-    void unregisterGroup(ActivationGroupID id)
-        throws ActivationException, UnknownGroupException, RemoteException;
+    void unregisterGroup(ActivationGroupID id) throws ActivationException, UnknownGroupException, RemoteException;
 
     /**
      * Shutdown the activation system. Destroys all groups spawned by

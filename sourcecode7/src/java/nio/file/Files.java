@@ -491,8 +491,7 @@ public final class Files {
      *                                       method is invoked to check write access to the new file.
      */
     public static Path createFile(Path path, FileAttribute<?>... attrs) throws IOException {
-        EnumSet<StandardOpenOption> options = EnumSet.of(StandardOpenOption.CREATE_NEW,
-            StandardOpenOption.WRITE);
+        EnumSet<StandardOpenOption> options = EnumSet.of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
         newByteChannel(path, options, attrs).close();
         return path;
     }

@@ -162,8 +162,7 @@ public class Cursor implements java.io.Serializable {
     private static final String systemCustomCursorDirPrefix = initCursorDir();
 
     private static String initCursorDir() {
-        String jhome = AccessController
-            .doPrivileged(new sun.security.action.GetPropertyAction("java.home"));
+        String jhome = AccessController.doPrivileged(new sun.security.action.GetPropertyAction("java.home"));
         return jhome + File.separator + "lib" + File.separator + "images" + File.separator + "cursors" + File.separator;
     }
 

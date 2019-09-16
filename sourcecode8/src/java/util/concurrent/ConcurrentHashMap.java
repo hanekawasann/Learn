@@ -1001,7 +1001,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
+            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
+                (f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 if (casTabAt(tab, i, null, new Node<K, V>(hash, key, value, null))) {
                     break;                   // no lock when adding to empty bin
                 }
@@ -1573,7 +1574,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if ((f = tabAt(tab, i = (n - 1) & h)) == null) {
+            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
+                (f = tabAt(tab, i = (n - 1) & h)) == null) {
                 Node<K, V> r = new ReservationNode<K, V>();
                 synchronized (r) {
                     if (casTabAt(tab, i, null, r)) {
@@ -1664,7 +1666,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if ((f = tabAt(tab, i = (n - 1) & h)) == null) {
+            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
+                (f = tabAt(tab, i = (n - 1) & h)) == null) {
                 break;
             } else if ((fh = f.hash) == MOVED) {
                 tab = helpTransfer(tab, f);
@@ -1737,7 +1740,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if ((f = tabAt(tab, i = (n - 1) & h)) == null) {
+            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
+                (f = tabAt(tab, i = (n - 1) & h)) == null) {
                 Node<K, V> r = new ReservationNode<K, V>();
                 synchronized (r) {
                     if (casTabAt(tab, i, null, r)) {
@@ -1838,7 +1842,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if ((f = tabAt(tab, i = (n - 1) & h)) == null) {
+            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
+                (f = tabAt(tab, i = (n - 1) & h)) == null) {
                 if (casTabAt(tab, i, null, new Node<K, V>(h, key, value, null))) {
                     delta = 1;
                     val = value;
