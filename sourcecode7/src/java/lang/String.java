@@ -258,7 +258,11 @@ public final class String implements java.io.Serializable, Comparable<String>, C
         int n = count;
         for (int i = offset; i < end; i++) {
             int c = codePoints[i];
-            if (Character.isBmpCodePoint(c)) { continue; } else if (Character.isValidCodePoint(c)) { n++; } else {
+            if (Character.isBmpCodePoint(c)) {
+                continue;
+            } else if (Character.isValidCodePoint(c)) {
+                n++;
+            } else {
                 throw new IllegalArgumentException(Integer.toString(c));
             }
         }
@@ -268,7 +272,11 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 
         for (int i = offset, j = 0; i < end; i++, j++) {
             int c = codePoints[i];
-            if (Character.isBmpCodePoint(c)) { v[j] = (char) c; } else { Character.toSurrogates(c, v, j++); }
+            if (Character.isBmpCodePoint(c)) {
+                v[j] = (char) c;
+            } else {
+                Character.toSurrogates(c, v, j++);
+            }
         }
 
         this.value = v;

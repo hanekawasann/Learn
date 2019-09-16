@@ -24,17 +24,15 @@
  */
 package java.lang;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessController;
 import java.security.AccessControlContext;
+import java.security.AccessController;
 import java.security.CodeSource;
-import java.security.Policy;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -44,11 +42,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.Map;
 import java.util.Vector;
-import java.util.Hashtable;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -589,7 +587,9 @@ public abstract class ClassLoader {
           package.
     */
     private ProtectionDomain preDefineClass(String name, ProtectionDomain pd) {
-        if (!checkName(name)) { throw new NoClassDefFoundError("IllegalName: " + name); }
+        if (!checkName(name)) {
+            throw new NoClassDefFoundError("IllegalName: " + name);
+        }
 
         if ((name != null) && name.startsWith("java.")) {
             throw new SecurityException("Prohibited package name: " + name.substring(0, name.lastIndexOf('.')));
@@ -598,7 +598,9 @@ public abstract class ClassLoader {
             pd = defaultDomain;
         }
 
-        if (name != null) { checkCerts(name, pd.getCodeSource()); }
+        if (name != null) {
+            checkCerts(name, pd.getCodeSource());
+        }
 
         return pd;
     }
@@ -615,7 +617,9 @@ public abstract class ClassLoader {
     private void postDefineClass(Class<?> c, ProtectionDomain pd) {
         if (pd.getCodeSource() != null) {
             Certificate[] certs = pd.getCodeSource().getCertificates();
-            if (certs != null) { setSigners(c, certs); }
+            if (certs != null) {
+                setSigners(c, certs);
+            }
         }
     }
 
@@ -755,7 +759,9 @@ public abstract class ClassLoader {
 
     // true if the name is null or has the potential to be a valid binary name
     private boolean checkName(String name) {
-        if ((name == null) || (name.length() == 0)) { return true; }
+        if ((name == null) || (name.length() == 0)) {
+            return true;
+        }
         return (name.indexOf('/') == -1) && (VM.allowArraySyntax() || (name.charAt(0) != '['));
     }
 

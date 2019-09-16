@@ -22,4 +22,12 @@ public class ClassLoaderTest {
         Map map = (Map) field.get(this.getClass().getClassLoader());
         map.forEach((key, value) -> System.out.println(value + "\t\t" + key));
     }
+
+    @Test
+    public void test_packages() throws NoSuchFieldException, IllegalAccessException {
+        Field field = ClassLoader.class.getDeclaredField("packages");
+        field.setAccessible(true);
+        Map map = (Map) field.get(this.getClass().getClassLoader());
+        map.forEach((key, value) -> System.out.println(key));
+    }
 }
