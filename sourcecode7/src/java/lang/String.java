@@ -368,9 +368,15 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * constructors.
      */
     private static void checkBounds(byte[] bytes, int offset, int length) {
-        if (length < 0) { throw new StringIndexOutOfBoundsException(length); }
-        if (offset < 0) { throw new StringIndexOutOfBoundsException(offset); }
-        if (offset > bytes.length - length) { throw new StringIndexOutOfBoundsException(offset + length); }
+        if (length < 0) {
+            throw new StringIndexOutOfBoundsException(length);
+        }
+        if (offset < 0) {
+            throw new StringIndexOutOfBoundsException(offset);
+        }
+        if (offset > bytes.length - length) {
+            throw new StringIndexOutOfBoundsException(offset + length);
+        }
     }
 
     /**
@@ -602,7 +608,8 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      *                                   string.
      */
     public char charAt(int index) {
-        if ((index < 0) || (index >= count)) {
+        // yukms note: 界限检查
+        if ((index < 0) || (index >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
         }
         return value[index + offset];
@@ -959,7 +966,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
             return true;
         }
         // Argument is a String
-        if (cs.equals(this)) { return true; }
+        if (cs.equals(this)) {
+            return true;
+        }
         // Argument is a generic CharSequence
         char[] v1 = value;
         int i = offset;
@@ -997,8 +1006,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @see #equals(Object)
      */
     public boolean equalsIgnoreCase(String anotherString) {
-        return (this == anotherString) || (anotherString != null) && (anotherString.count == count) &&
-            regionMatches(true, 0, anotherString, 0, count);
+        return (this == anotherString) || (anotherString != null)//
+            && (anotherString.count == count) //
+            && regionMatches(true, 0, anotherString, 0, count);
     }
 
     /**

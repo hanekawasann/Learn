@@ -332,9 +332,15 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * constructors.
      */
     private static void checkBounds(byte[] bytes, int offset, int length) {
-        if (length < 0) { throw new StringIndexOutOfBoundsException(length); }
-        if (offset < 0) { throw new StringIndexOutOfBoundsException(offset); }
-        if (offset > bytes.length - length) { throw new StringIndexOutOfBoundsException(offset + length); }
+        if (length < 0) {
+            throw new StringIndexOutOfBoundsException(length);
+        }
+        if (offset < 0) {
+            throw new StringIndexOutOfBoundsException(offset);
+        }
+        if (offset > bytes.length - length) {
+            throw new StringIndexOutOfBoundsException(offset + length);
+        }
     }
 
     /**
@@ -556,6 +562,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      *                                   string.
      */
     public char charAt(int index) {
+        // yukms note: 界限检查
         if ((index < 0) || (index >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
         }
@@ -928,7 +935,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
             }
         }
         // Argument is a String
-        if (cs.equals(this)) { return true; }
+        if (cs.equals(this)) {
+            return true;
+        }
         // Argument is a generic CharSequence
         char[] v1 = value;
         int n = v1.length;
@@ -969,8 +978,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @see #equals(Object)
      */
     public boolean equalsIgnoreCase(String anotherString) {
-        return (this == anotherString) || (anotherString != null) && (anotherString.value.length == value.length) &&
-            regionMatches(true, 0, anotherString, 0, value.length);
+        return (this == anotherString) || (anotherString != null)//
+            && (anotherString.value.length == value.length) //
+            && regionMatches(true, 0, anotherString, 0, value.length);
     }
 
     /**
@@ -1140,8 +1150,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
         char[] pa = other.value;
         int po = ooffset;
         // Note: toffset, ooffset, or len might be near -1>>>1.
-        if ((ooffset < 0) || (toffset < 0) || (toffset > (long) value.length - len) ||
-            (ooffset > (long) other.value.length - len)) {
+        if ((ooffset < 0)//
+            || (toffset < 0)//
+            || (toffset > (long) value.length - len)//
+            || (ooffset > (long) other.value.length - len)) {
             return false;
         }
         while (len-- > 0) {
@@ -1208,8 +1220,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
         char[] pa = other.value;
         int po = ooffset;
         // Note: toffset, ooffset, or len might be near -1>>>1.
-        if ((ooffset < 0) || (toffset < 0) || (toffset > (long) value.length - len) ||
-            (ooffset > (long) other.value.length - len)) {
+        if ((toffset < 0)//
+            || (ooffset < 0)//
+            || (toffset > (long) value.length - len)// len > (long) value.length - toffset
+            || (ooffset > (long) other.value.length - len)) { // len > (long) other.value.length - ooffset
             return false;
         }
         while (len-- > 0) {
@@ -1305,6 +1319,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * as determined by the {@link #equals(Object)} method.
      */
     public boolean endsWith(String suffix) {
+        // yukms note: 有趣
         return startsWith(suffix, value.length - suffix.value.length);
     }
 
@@ -1620,6 +1635,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
         char first = target[targetOffset];
         int max = sourceOffset + (sourceCount - targetCount);
 
+        // yukms note: i <= max
         for (int i = sourceOffset + fromIndex; i <= max; i++) {
             /* Look for first character. */
             if (source[i] != first) {

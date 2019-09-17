@@ -29,10 +29,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
@@ -40,9 +40,9 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 
 import sun.misc.MessageUtils;
-import sun.nio.cs.HistoricallyNamedCharset;
 import sun.nio.cs.ArrayDecoder;
 import sun.nio.cs.ArrayEncoder;
+import sun.nio.cs.HistoricallyNamedCharset;
 
 /**
  * Utility class for string encoding and decoding.
@@ -60,7 +60,9 @@ class StringCoding {
 
     private static <T> T deref(ThreadLocal<SoftReference<T>> tl) {
         SoftReference<T> sr = tl.get();
-        if (sr == null) { return null; }
+        if (sr == null) {
+            return null;
+        }
         return sr.get();
     }
 
@@ -71,7 +73,9 @@ class StringCoding {
     // Trim the given byte array to the given length
     //
     private static byte[] safeTrim(byte[] ba, int len, Charset cs, boolean isTrusted) {
-        if (len == ba.length && (isTrusted || System.getSecurityManager() == null)) { return ba; } else {
+        if (len == ba.length && (isTrusted || System.getSecurityManager() == null)) {
+            return ba;
+        } else {
             return Arrays.copyOf(ba, len);
         }
     }
@@ -79,7 +83,9 @@ class StringCoding {
     // Trim the given char array to the given length
     //
     private static char[] safeTrim(char[] ca, int len, Charset cs, boolean isTrusted) {
-        if (len == ca.length && (isTrusted || System.getSecurityManager() == null)) { return ca; } else {
+        if (len == ca.length && (isTrusted || System.getSecurityManager() == null)) {
+            return ca;
+        } else {
             return Arrays.copyOf(ca, len);
         }
     }
@@ -128,7 +134,9 @@ class StringCoding {
         }
 
         String charsetName() {
-            if (cs instanceof HistoricallyNamedCharset) { return ((HistoricallyNamedCharset) cs).historicalName(); }
+            if (cs instanceof HistoricallyNamedCharset) {
+                return ((HistoricallyNamedCharset) cs).historicalName();
+            }
             return cs.name();
         }
 
@@ -139,7 +147,9 @@ class StringCoding {
         char[] decode(byte[] ba, int off, int len) {
             int en = scale(len, cd.maxCharsPerByte());
             char[] ca = new char[en];
-            if (len == 0) { return ca; }
+            if (len == 0) {
+                return ca;
+            }
             if (cd instanceof ArrayDecoder) {
                 int clen = ((ArrayDecoder) cd).decode(ba, off, len, ca);
                 return safeTrim(ca, clen, cs, isTrusted);
@@ -149,9 +159,13 @@ class StringCoding {
                 CharBuffer cb = CharBuffer.wrap(ca);
                 try {
                     CoderResult cr = cd.decode(bb, cb, true);
-                    if (!cr.isUnderflow()) { cr.throwException(); }
+                    if (!cr.isUnderflow()) {
+                        cr.throwException();
+                    }
                     cr = cd.flush(cb);
-                    if (!cr.isUnderflow()) { cr.throwException(); }
+                    if (!cr.isUnderflow()) {
+                        cr.throwException();
+                    }
                 } catch (CharacterCodingException x) {
                     // Substitution is always enabled,
                     // so this shouldn't happen
@@ -164,16 +178,23 @@ class StringCoding {
 
     static char[] decode(String charsetName, byte[] ba, int off, int len) throws UnsupportedEncodingException {
         StringDecoder sd = deref(decoder);
+        // yukms note: 默认ISO-8859-1
         String csn = (charsetName == null) ? "ISO-8859-1" : charsetName;
         if ((sd == null) || !(csn.equals(sd.requestedCharsetName()) || csn.equals(sd.charsetName()))) {
+            // yukms note: 重新生成解码器
             sd = null;
             try {
                 Charset cs = lookupCharset(csn);
-                if (cs != null) { sd = new StringDecoder(cs, csn); }
-            } catch (IllegalCharsetNameException x) {}
-            if (sd == null) { throw new UnsupportedEncodingException(csn); }
+                if (cs != null) {
+                    sd = new StringDecoder(cs, csn);
+                }
+            } catch (IllegalCharsetNameException ignored) {}
+            if (sd == null) {
+                throw new UnsupportedEncodingException(csn);
+            }
             set(decoder, sd);
         }
+        // yukms note: 解码
         return sd.decode(ba, off, len);
     }
 
