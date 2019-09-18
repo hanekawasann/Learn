@@ -2020,6 +2020,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @since 1.4
      */
     public String replaceFirst(String regex, String replacement) {
+        // yukms TODO: 2019/9/18
         return Pattern.compile(regex).matcher(this).replaceFirst(replacement);
     }
 
@@ -2058,6 +2059,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @since 1.4
      */
     public String replaceAll(String regex, String replacement) {
+        //  yukms TODO: 2019/9/18
         return Pattern.compile(regex).matcher(this).replaceAll(replacement);
     }
 
@@ -2074,6 +2076,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @since 1.5
      */
     public String replace(CharSequence target, CharSequence replacement) {
+        // yukms TODO: 2019/9/18
         return Pattern.compile(target.toString(), Pattern.LITERAL).matcher(this)
             .replaceAll(Matcher.quoteReplacement(replacement.toString()));
     }
@@ -2262,6 +2265,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
         Objects.requireNonNull(delimiter);
         Objects.requireNonNull(elements);
         // Number of elements not likely worth Arrays.stream overhead.
+        // yukms TODO: 2019/9/18
         StringJoiner joiner = new StringJoiner(delimiter);
         for (CharSequence cs : elements) {
             joiner.add(cs);
@@ -2729,6 +2733,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * @since 1.5
      */
     public static String format(String format, Object... args) {
+        // yukms TODO: 2019/9/18
         return new Formatter().format(format, args).toString();
     }
 

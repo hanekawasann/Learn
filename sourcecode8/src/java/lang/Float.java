@@ -203,6 +203,7 @@ public final class Float extends Number implements Comparable<Float> {
      * @return a string representation of the argument.
      */
     public static String toString(float f) {
+        // yukms TODO: 2019/9/18
         return FloatingDecimal.toJavaFormatString(f);
     }
 

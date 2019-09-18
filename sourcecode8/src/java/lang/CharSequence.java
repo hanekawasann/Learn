@@ -121,6 +121,7 @@ public interface CharSequence {
      * @return an IntStream of char values from this sequence
      * @since 1.8
      */
+    // yukms TODO: 2019/9/18
     default IntStream chars() {
         class CharIterator implements PrimitiveIterator.OfInt {
             int cur = 0;
@@ -164,10 +165,10 @@ public interface CharSequence {
      * @return an IntStream of Unicode code points from this sequence
      * @since 1.8
      */
+    // yukms TODO: 2019/9/18
     default IntStream codePoints() {
         class CodePointIterator implements PrimitiveIterator.OfInt {
             int cur = 0;
-
             @Override
             public void forEachRemaining(IntConsumer block) {
                 final int length = length();
