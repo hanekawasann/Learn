@@ -372,7 +372,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *                                   negative or greater than or equal to <code>length()</code>.
      */
     public void setCharAt(int index, char ch) {
-        if ((index < 0) || (index >= count)) { throw new StringIndexOutOfBoundsException(index); }
+        if ((index < 0) || (index >= count)) {
+            throw new StringIndexOutOfBoundsException(index);
+        }
         value[index] = ch;
     }
 
