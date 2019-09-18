@@ -101,7 +101,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @param minimumCapacity the minimum desired capacity.
      */
     public void ensureCapacity(int minimumCapacity) {
-        if (minimumCapacity > 0) { ensureCapacityInternal(minimumCapacity); }
+        if (minimumCapacity > 0) {
+            ensureCapacityInternal(minimumCapacity);
+        }
     }
 
     /**
@@ -110,7 +112,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     private void ensureCapacityInternal(int minimumCapacity) {
         // overflow-conscious code
-        if (minimumCapacity - value.length > 0) { expandCapacity(minimumCapacity); }
+        if (minimumCapacity - value.length > 0) {
+            expandCapacity(minimumCapacity);
+        }
     }
 
     /**
@@ -119,10 +123,14 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     void expandCapacity(int minimumCapacity) {
         int newCapacity = value.length * 2 + 2;
-        if (newCapacity - minimumCapacity < 0) { newCapacity = minimumCapacity; }
+        if (newCapacity - minimumCapacity < 0) {
+            newCapacity = minimumCapacity;
+        }
         if (newCapacity < 0) {
-            if (minimumCapacity < 0) // overflow
-            { throw new OutOfMemoryError(); }
+            if (minimumCapacity < 0) {
+                // overflow
+                throw new OutOfMemoryError();
+            }
             newCapacity = Integer.MAX_VALUE;
         }
         value = Arrays.copyOf(value, newCapacity);
@@ -171,6 +179,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
         ensureCapacityInternal(newLength);
 
         if (count < newLength) {
+            // yukms note: 填充'\0'不会有问题吗
             for (; count < newLength; count++) { value[count] = '\0'; }
         } else {
             count = newLength;
@@ -195,7 +204,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *                                   negative or greater than or equal to <code>length()</code>.
      */
     public char charAt(int index) {
-        if ((index < 0) || (index >= count)) { throw new StringIndexOutOfBoundsException(index); }
+        if ((index < 0) || (index >= count)) {
+            throw new StringIndexOutOfBoundsException(index);
+        }
         return value[index];
     }
 

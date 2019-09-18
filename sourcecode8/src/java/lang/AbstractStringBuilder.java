@@ -108,7 +108,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @param minimumCapacity the minimum desired capacity.
      */
     public void ensureCapacity(int minimumCapacity) {
-        if (minimumCapacity > 0) { ensureCapacityInternal(minimumCapacity); }
+        if (minimumCapacity > 0) {
+            ensureCapacityInternal(minimumCapacity);
+        }
     }
 
     /**
@@ -117,7 +119,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     private void ensureCapacityInternal(int minimumCapacity) {
         // overflow-conscious code
-        if (minimumCapacity - value.length > 0) { expandCapacity(minimumCapacity); }
+        if (minimumCapacity - value.length > 0) {
+            expandCapacity(minimumCapacity);
+        }
     }
 
     /**
@@ -126,10 +130,14 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     void expandCapacity(int minimumCapacity) {
         int newCapacity = value.length * 2 + 2;
-        if (newCapacity - minimumCapacity < 0) { newCapacity = minimumCapacity; }
+        if (newCapacity - minimumCapacity < 0) {
+            newCapacity = minimumCapacity;
+        }
         if (newCapacity < 0) {
-            if (minimumCapacity < 0) // overflow
-            { throw new OutOfMemoryError(); }
+            if (minimumCapacity < 0) {
+                // overflow
+                throw new OutOfMemoryError();
+            }
             newCapacity = Integer.MAX_VALUE;
         }
         value = Arrays.copyOf(value, newCapacity);
@@ -174,10 +182,13 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *                                   {@code newLength} argument is negative.
      */
     public void setLength(int newLength) {
-        if (newLength < 0) { throw new StringIndexOutOfBoundsException(newLength); }
+        if (newLength < 0) {
+            throw new StringIndexOutOfBoundsException(newLength);
+        }
         ensureCapacityInternal(newLength);
 
         if (count < newLength) {
+            // yukms note: 填充'\0'不会有问题吗
             Arrays.fill(value, count, newLength, '\0');
         }
 
@@ -203,7 +214,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     @Override
     public char charAt(int index) {
-        if ((index < 0) || (index >= count)) { throw new StringIndexOutOfBoundsException(index); }
+        if ((index < 0) || (index >= count)) {
+            throw new StringIndexOutOfBoundsException(index);
+        }
         return value[index];
     }
 
