@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class FileCompare {
     public static void main(String[] args) throws IOException {
-        String comparePath = "lang";
+        String comparePath = "lang\\annotation";
         compare(JDKFilePath.JDK7(comparePath), JDKFilePath.JDK8(comparePath));
     }
 
