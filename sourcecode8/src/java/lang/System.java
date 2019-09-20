@@ -486,6 +486,7 @@ public final class System {
      * @return the hashCode
      * @since JDK1.1
      */
+    // yukms note: 返回Object.hashCode()的值
     public static native int identityHashCode(Object x);
 
     /**

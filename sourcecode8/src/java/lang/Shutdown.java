@@ -36,12 +36,14 @@ package java.lang;
 
 class Shutdown {
 
+    // yukms note: 三种状态
     /* Shutdown state */
     private static final int RUNNING = 0;
     private static final int HOOKS = 1;
     private static final int FINALIZERS = 2;
     private static int state = RUNNING;
 
+    // yukms note: 是否应该运行finalizers
     /* Should we run all finalizers upon exit? */
     private static boolean runFinalizersOnExit = false;
 
@@ -184,7 +186,8 @@ class Shutdown {
     }
 
 
-    /* Invoked by Runtime.exit, which does all the security checks.
+    /*
+     * Invoked by Runtime.exit, which does all the security checks.
      * Also invoked by handlers for system-provided termination events,
      * which should pass a nonzero status code.
      */
@@ -205,7 +208,8 @@ class Shutdown {
                         /* Halt immediately on nonzero status */
                         halt(status);
                     } else {
-                        /* Compatibility with old behavior:
+                        /*
+                         * Compatibility with old behavior:
                          * Run more finalizers and then halt
                          */
                         runMoreFinalizers = runFinalizersOnExit;
@@ -218,7 +222,8 @@ class Shutdown {
             halt(status);
         }
         synchronized (Shutdown.class) {
-            /* Synchronize on the class object, causing any other thread
+            /*
+             * Synchronize on the class object, causing any other thread
              * that attempts to initiate shutdown to stall indefinitely
              */
             sequence();
@@ -227,7 +232,8 @@ class Shutdown {
     }
 
 
-    /* Invoked by the JNI DestroyJavaVM procedure when the last non-daemon
+    /*
+     * Invoked by the JNI DestroyJavaVM procedure when the last non-daemon
      * thread has finished.  Unlike the exit method, this method does not
      * actually halt the VM.
      */
