@@ -347,7 +347,9 @@ public final class Integer extends Number implements Comparable<Integer> {
             r = i - ((q << 3) + (q << 1));  // r = i-(q*10) ...
             buf[--charPos] = digits[r];
             i = q;
-            if (i == 0) { break; }
+            if (i == 0) {
+                break;
+            }
         }
         if (sign != 0) {
             buf[--charPos] = sign;

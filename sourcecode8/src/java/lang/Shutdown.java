@@ -98,7 +98,9 @@ class Shutdown {
             }
 
             if (!registerShutdownInProgress) {
-                if (state > RUNNING) { throw new IllegalStateException("Shutdown in progress"); }
+                if (state > RUNNING) {
+                    throw new IllegalStateException("Shutdown in progress");
+                }
             } else {
                 if (state > HOOKS || (state == HOOKS && slot <= currentRunningHook)) {
                     throw new IllegalStateException("Shutdown in progress");
@@ -121,7 +123,9 @@ class Shutdown {
                     currentRunningHook = i;
                     hook = hooks[i];
                 }
-                if (hook != null) { hook.run(); }
+                if (hook != null) {
+                    hook.run();
+                }
             } catch (Throwable t) {
                 if (t instanceof ThreadDeath) {
                     ThreadDeath td = (ThreadDeath) t;
@@ -143,6 +147,7 @@ class Shutdown {
 
     static native void halt0(int status);
 
+    // yukms note: 与java.lang.Runtime.runFinalization0一样
     /* Wormhole for invoking java.lang.ref.Finalizer.runAllFinalizers */
     private static native void runAllFinalizers();
 
@@ -163,7 +168,9 @@ class Shutdown {
             /* Guard against the possibility of a daemon thread invoking exit
              * after DestroyJavaVM initiates the shutdown sequence
              */
-            if (state != HOOKS) { return; }
+            if (state != HOOKS) {
+                return;
+            }
         }
         runHooks();
         boolean rfoe;
@@ -171,7 +178,9 @@ class Shutdown {
             state = FINALIZERS;
             rfoe = runFinalizersOnExit;
         }
-        if (rfoe) { runAllFinalizers(); }
+        if (rfoe) {
+            runAllFinalizers();
+        }
     }
 
 
@@ -182,7 +191,9 @@ class Shutdown {
     static void exit(int status) {
         boolean runMoreFinalizers = false;
         synchronized (lock) {
-            if (status != 0) { runFinalizersOnExit = false; }
+            if (status != 0) {
+                runFinalizersOnExit = false;
+            }
             switch (state) {
                 case RUNNING:       /* Initiate shutdown */
                     state = HOOKS;

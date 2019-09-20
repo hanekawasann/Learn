@@ -24,7 +24,8 @@
  */
 package java.lang;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.IdentityHashMap;
 
 /*
  * Class to track and run user level shutdown hooks registered through
@@ -40,6 +41,7 @@ class ApplicationShutdownHooks {
 
     static {
         try {
+            // yukms note: 客户端添加的hook会先运行
             Shutdown.add(1 /* shutdown hook invocation order */, false /* not registered if shutdown in progress */,
                 new Runnable() {
                     public void run() {

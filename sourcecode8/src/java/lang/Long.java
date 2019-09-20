@@ -26,7 +26,7 @@
 package java.lang;
 
 import java.lang.annotation.Native;
-import java.math.*;
+import java.math.BigInteger;
 
 
 /**
@@ -474,7 +474,9 @@ public final class Long extends Number implements Comparable<Long> {
     static int stringSize(long x) {
         long p = 10;
         for (int i = 1; i < 19; i++) {
-            if (x < p) { return i; }
+            if (x < p) {
+                return i;
+            }
             p = 10 * p;
         }
         return 19;
