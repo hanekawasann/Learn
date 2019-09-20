@@ -20,6 +20,7 @@
         <module>sourcecode7</module>
         <module>sourcecode8</module>
         <module>tool</module>
+        <module>learn-apt</module>
     </modules>
 
     <name>learn</name>
