@@ -21,7 +21,7 @@
         <module>sourcecode8</module>
         <module>tool</module>
         <module>apt</module>
-        <module>dynamic-byte-code</module>
+        <module>dynamic-bytecode</module>
     </modules>
 
     <name>learn</name>
