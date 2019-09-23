@@ -20,7 +20,8 @@
         <module>sourcecode7</module>
         <module>sourcecode8</module>
         <module>tool</module>
-        <module>learn-apt</module>
+        <module>apt</module>
+        <module>dynamic-byte-code</module>
     </modules>
 
     <name>learn</name>
