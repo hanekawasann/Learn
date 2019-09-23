@@ -8,12 +8,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.yukms.learn.freemarker</groupId>
     <artifactId>learn-freemarker</artifactId>
-
-    <name>learn-freemarker</name>
-    <!-- FIXME change it to the project's website -->
+    <name>freemarker</name>
     <url>http://www.example.com</url>
 
     <dependencies>

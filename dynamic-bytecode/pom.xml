@@ -11,9 +11,7 @@
         <module>asm</module>
     </modules>
     <packaging>pom</packaging>
-
-    <name>learn-dynamic-bytecode</name>
-    <url>http://www.example.com</url>
+    <name>dynamic-bytecode</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
