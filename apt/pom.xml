@@ -36,6 +36,23 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.56</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8.0</version>
+            <scope>system</scope>
+            <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.netflix.devinsight.rewrite</groupId>-->
+<!--            <artifactId>rewrite-core</artifactId>-->
+<!--            <version>1.4.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.javaparser</groupId>-->
+<!--            <artifactId>javaparser-symbol-solver-core</artifactId>-->
+<!--            <version>3.14.159265359</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
