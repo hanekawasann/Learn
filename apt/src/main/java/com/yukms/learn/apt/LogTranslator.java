@@ -30,7 +30,7 @@ public class LogTranslator extends TreeTranslator {
             treeMaker.Apply(//
                 List.of(memberAccess("java.lang.String")),//
                 memberAccess("java.lang.System.out.println"),//
-                List.of(treeMaker.Ident(names.fromString("我是日志")))//
+                List.of(treeMaker.Literal("我是日志"))//
             )//
         );
         jcBlock.stats = jcBlock.getStatements().append(logStatement);
