@@ -101,7 +101,9 @@ public class ReferenceQueue<T> {
      * otherwise <code>null</code>
      */
     public Reference<? extends T> poll() {
-        if (head == null) { return null; }
+        if (head == null) {
+            return null;
+        }
         synchronized (lock) {
             return reallyPoll();
         }
@@ -128,12 +130,18 @@ public class ReferenceQueue<T> {
         }
         synchronized (lock) {
             Reference<? extends T> r = reallyPoll();
-            if (r != null) { return r; }
+            if (r != null) {
+                return r;
+            }
             for (; ; ) {
                 lock.wait(timeout);
                 r = reallyPoll();
-                if (r != null) { return r; }
-                if (timeout != 0) { return null; }
+                if (r != null) {
+                    return r;
+                }
+                if (timeout != 0) {
+                    return null;
+                }
             }
         }
     }
