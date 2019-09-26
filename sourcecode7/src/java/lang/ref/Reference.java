@@ -144,7 +144,9 @@ public abstract class Reference<T> {
                 }
 
                 ReferenceQueue q = r.queue;
-                if (q != ReferenceQueue.NULL) { q.enqueue(r); }
+                if (q != ReferenceQueue.NULL) {
+                    q.enqueue(r);
+                }
             }
         }
     }
