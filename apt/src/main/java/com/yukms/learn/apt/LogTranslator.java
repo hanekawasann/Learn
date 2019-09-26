@@ -26,15 +26,29 @@ public class LogTranslator extends TreeTranslator {
     @Override
     public void visitMethodDef(JCTree.JCMethodDecl jcMethodDecl) {
         JCTree.JCBlock jcBlock = jcMethodDecl.getBody();
-        JCTree.JCExpressionStatement logStatement = treeMaker.Exec(//
+        JCTree.JCExpressionStatement logStatement = getPrintfStatement();
+        jcBlock.stats = jcBlock.getStatements().append(logStatement);
+        super.visitMethodDef(jcMethodDecl);
+    }
+
+    private JCTree.JCExpressionStatement getLogStatement() {
+        return treeMaker.Exec(//
             treeMaker.Apply(//
                 List.of(memberAccess("java.lang.String")),//
                 memberAccess("java.lang.System.out.println"),//
                 List.of(treeMaker.Literal("我是日志"))//
             )//
         );
-        jcBlock.stats = jcBlock.getStatements().append(logStatement);
-        super.visitMethodDef(jcMethodDecl);
+    }
+
+    private JCTree.JCExpressionStatement getPrintfStatement() {
+        return treeMaker.Exec(//
+            treeMaker.Apply(//
+                List.of(memberAccess("java.lang.String")),//
+                memberAccess("com.yukms.learn.apt.PrintfUtil.print"),//
+                List.of(treeMaker.Literal("我是日志"))//
+            )//
+        );
     }
 
     private JCTree.JCExpression memberAccess(String components) {
