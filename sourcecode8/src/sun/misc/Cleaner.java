@@ -65,7 +65,7 @@ public class Cleaner extends PhantomReference<Object> {
 
     // Doubly-linked list of live cleaners, which prevents the cleaners themselves from being GC'd before their referents
     static private Cleaner first = null;
-
+    // yukms note: 活动清理程序的双重链接列表，防止Cleaner在引用之前被gc
     private Cleaner next = null, prev = null;
 
     private static synchronized Cleaner add(Cleaner cl) {
@@ -78,7 +78,6 @@ public class Cleaner extends PhantomReference<Object> {
     }
 
     private static synchronized boolean remove(Cleaner cl) {
-
         // If already removed, do nothing
         if (cl.next == cl) {
             return false;
@@ -86,10 +85,18 @@ public class Cleaner extends PhantomReference<Object> {
 
         // Update list
         if (first == cl) {
-            if (cl.next != null) { first = cl.next; } else { first = cl.prev; }
+            if (cl.next != null) {
+                first = cl.next;
+            } else {
+                first = cl.prev;
+            }
         }
-        if (cl.next != null) { cl.next.prev = cl.prev; }
-        if (cl.prev != null) { cl.prev.next = cl.next; }
+        if (cl.next != null) {
+            cl.next.prev = cl.prev;
+        }
+        if (cl.prev != null) {
+            cl.prev.next = cl.next;
+        }
 
         // Indicate removal by pointing the cleaner to itself
         cl.next = cl;
