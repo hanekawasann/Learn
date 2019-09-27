@@ -63,9 +63,7 @@ public class Cleaner extends PhantomReference<Object> {
     //
     private static final ReferenceQueue<Object> dummyQueue = new ReferenceQueue<>();
 
-    // Doubly-linked list of live cleaners, which prevents the cleaners
-    // themselves from being GC'd before their referents
-    //
+    // Doubly-linked list of live cleaners, which prevents the cleaners themselves from being GC'd before their referents
     static private Cleaner first = null;
 
     private Cleaner next = null, prev = null;
@@ -82,7 +80,9 @@ public class Cleaner extends PhantomReference<Object> {
     private static synchronized boolean remove(Cleaner cl) {
 
         // If already removed, do nothing
-        if (cl.next == cl) { return false; }
+        if (cl.next == cl) {
+            return false;
+        }
 
         // Update list
         if (first == cl) {
@@ -123,13 +123,17 @@ public class Cleaner extends PhantomReference<Object> {
      * Runs this cleaner, if it has not been run before.
      */
     public void clean() {
-        if (!remove(this)) { return; }
+        if (!remove(this)) {
+            return;
+        }
         try {
             thunk.run();
         } catch (final Throwable x) {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
                 public Void run() {
-                    if (System.err != null) { new Error("Cleaner terminated abnormally", x).printStackTrace(); }
+                    if (System.err != null) {
+                        new Error("Cleaner terminated abnormally", x).printStackTrace();
+                    }
                     System.exit(1);
                     return null;
                 }

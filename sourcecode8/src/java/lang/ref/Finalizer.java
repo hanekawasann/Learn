@@ -190,13 +190,14 @@ final class Finalizer extends FinalReference<Object> { /* Package-private; must 
         }
 
         public void run() {
-            if (running) { return; }
+            if (running) {
+                return;
+            }
 
-            // Finalizer thread starts before System.initializeSystemClass
-            // is called.  Wait until JavaLangAccess is available
+            // yukms note: 终结器线程在调用System.InitializeSystemClass之前启动
             while (!VM.isBooted()) {
-                // delay until VM completes initialization
                 try {
+                    // yukms note: 等待直到VM启动完毕
                     VM.awaitBooted();
                 } catch (InterruptedException x) {
                     // ignore and continue

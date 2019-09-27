@@ -41,50 +41,50 @@ public abstract class Reference<T> {
 
     /* A Reference instance is in one of four possible internal states:
      *
-     *     Active: Subject to special treatment by the garbage collector.  Some
-     *     time after the collector detects that the reachability of the
-     *     referent has changed to the appropriate state, it changes the
-     *     instance's state to either Pending or Inactive, depending upon
-     *     whether or not the instance was registered with a queue when it was
-     *     created.  In the former case it also adds the instance to the
-     *     pending-Reference list.  Newly-created instances are Active.
-     *
-     *     Pending: An element of the pending-Reference list, waiting to be
-     *     enqueued by the Reference-handler thread.  Unregistered instances
-     *     are never in this state.
-     *
-     *     Enqueued: An element of the queue with which the instance was
-     *     registered when it was created.  When an instance is removed from
-     *     its ReferenceQueue, it is made Inactive.  Unregistered instances are
-     *     never in this state.
-     *
-     *     Inactive: Nothing more to do.  Once an instance becomes Inactive its
-     *     state will never change again.
-     *
-     * The state is encoded in the queue and next fields as follows:
-     *
-     *     Active: queue = ReferenceQueue with which instance is registered, or
-     *     ReferenceQueue.NULL if it was not registered with a queue; next =
-     *     null.
-     *
-     *     Pending: queue = ReferenceQueue with which instance is registered;
-     *     next = this
-     *
-     *     Enqueued: queue = ReferenceQueue.ENQUEUED; next = Following instance
-     *     in queue, or this if at end of list.
-     *
-     *     Inactive: queue = ReferenceQueue.NULL; next = this.
-     *
-     * With this scheme the collector need only examine the next field in order
-     * to determine whether a Reference instance requires special treatment: If
-     * the next field is null then the instance is active; if it is non-null,
-     * then the collector should treat the instance normally.
-     *
-     * To ensure that a concurrent collector can discover active Reference
-     * objects without interfering with application threads that may apply
-     * the enqueue() method to those objects, collectors should link
-     * discovered objects through the discovered field. The discovered
-     * field is also used for linking Reference objects in the pending list.
+          Active: Subject to special treatment by the garbage collector.  Some
+          time after the collector detects that the reachability of the
+          referent has changed to the appropriate state, it changes the
+          instance's state to either Pending or Inactive, depending upon
+          whether or not the instance was registered with a queue when it was
+          created.  In the former case it also adds the instance to the
+          pending-Reference list.  Newly-created instances are Active.
+
+          Pending: An element of the pending-Reference list, waiting to be
+          enqueued by the Reference-handler thread.  Unregistered instances
+          are never in this state.
+
+          Enqueued: An element of the queue with which the instance was
+          registered when it was created.  When an instance is removed from
+          its ReferenceQueue, it is made Inactive.  Unregistered instances are
+          never in this state.
+
+          Inactive: Nothing more to do.  Once an instance becomes Inactive its
+          state will never change again.
+
+      The state is encoded in the queue and next fields as follows:
+
+          Active: queue = ReferenceQueue with which instance is registered, or
+          ReferenceQueue.NULL if it was not registered with a queue; next =
+          null.
+
+          Pending: queue = ReferenceQueue with which instance is registered;
+          next = this
+
+          Enqueued: queue = ReferenceQueue.ENQUEUED; next = Following instance
+          in queue, or this if at end of list.
+
+          Inactive: queue = ReferenceQueue.NULL; next = this.
+
+      With this scheme the collector need only examine the next field in order
+      to determine whether a Reference instance requires special treatment: If
+      the next field is null then the instance is active; if it is non-null,
+      then the collector should treat the instance normally.
+
+      To ensure that a concurrent collector can discover active Reference
+      objects without interfering with application threads that may apply
+      the enqueue() method to those objects, collectors should link
+      discovered objects through the discovered field. The discovered
+      field is also used for linking Reference objects in the pending list.
      */
 
     private T referent;         /* Treated specially by GC */
@@ -116,10 +116,11 @@ public abstract class Reference<T> {
     private static Lock lock = new Lock();
 
 
-    /* List of References waiting to be enqueued.  The collector adds
-     * References to this list, while the Reference-handler thread removes
-     * them.  This list is protected by the above lock object. The
-     * list uses the discovered field to link its elements.
+    /*
+      List of References waiting to be enqueued.  The collector adds
+      References to this list, while the Reference-handler thread removes
+      them.  This list is protected by the above lock object. The
+      list uses the discovered field to link its elements.
      */
     private static Reference<Object> pending = null;
 
@@ -155,6 +156,7 @@ public abstract class Reference<T> {
                         // class again.
                         try {
                             try {
+                                // yukms note: 没有被挂起的引用，进入等待状态
                                 lock.wait();
                             } catch (OutOfMemoryError x) { }
                         } catch (InterruptedException x) { }
@@ -164,6 +166,7 @@ public abstract class Reference<T> {
 
                 // Fast path for cleaners
                 if (r instanceof Cleaner) {
+                    // yukms note: 清理
                     ((Cleaner) r).clean();
                     continue;
                 }
@@ -180,9 +183,7 @@ public abstract class Reference<T> {
         ThreadGroup tg = Thread.currentThread().getThreadGroup();
         for (ThreadGroup tgn = tg; tgn != null; tg = tgn, tgn = tg.getParent()) { }
         Thread handler = new ReferenceHandler(tg, "Reference Handler");
-        /* If there were a special system-only priority greater than
-         * MAX_PRIORITY, it would be used here
-         */
+        // yukms note: 最高优先级
         handler.setPriority(Thread.MAX_PRIORITY);
         handler.setDaemon(true);
         handler.start();
