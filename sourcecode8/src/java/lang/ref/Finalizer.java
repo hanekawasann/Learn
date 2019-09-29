@@ -37,6 +37,7 @@ final class Finalizer extends FinalReference<Object> { /* Package-private; must 
                                                           class */
 
     private static ReferenceQueue<Object> queue = new ReferenceQueue<>();
+    // yukms note: 与Cleaner一样
     private static Finalizer unfinalized = null;
     private static final Object lock = new Object();
 
@@ -88,16 +89,16 @@ final class Finalizer extends FinalReference<Object> { /* Package-private; must 
 
     private void runFinalizer(JavaLangAccess jla) {
         synchronized (this) {
-            if (hasBeenFinalized()) { return; }
+            if (hasBeenFinalized()) {
+                return;
+            }
             remove();
         }
         try {
             Object finalizee = this.get();
             if (finalizee != null && !(finalizee instanceof java.lang.Enum)) {
                 jla.invokeFinalize(finalizee);
-
-                /* Clear stack slot containing this variable, to decrease
-                   the chances of false retention with a conservative GC */
+                /* Clear stack slot containing this variable, to decrease the chances of false retention with a conservative GC */
                 finalizee = null;
             }
         } catch (Throwable x) { }
