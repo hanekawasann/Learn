@@ -73,6 +73,7 @@ public class Cleaner extends PhantomReference<Object> {
             cl.next = first;
             first.prev = cl;
         }
+        // yukms note: cl作为first
         first = cl;
         return cl;
     }
@@ -80,10 +81,10 @@ public class Cleaner extends PhantomReference<Object> {
     private static synchronized boolean remove(Cleaner cl) {
         // If already removed, do nothing
         if (cl.next == cl) {
+            // yukms note: 如果已经删除，那么什么都不做
             return false;
         }
 
-        // Update list
         if (first == cl) {
             if (cl.next != null) {
                 first = cl.next;
@@ -103,7 +104,6 @@ public class Cleaner extends PhantomReference<Object> {
         cl.next = cl;
         cl.prev = cl;
         return true;
-
     }
 
     private final Runnable thunk;
@@ -123,7 +123,9 @@ public class Cleaner extends PhantomReference<Object> {
      * @return The new cleaner
      */
     public static Cleaner create(Object ob, Runnable thunk) {
-        if (thunk == null) { return null; }
+        if (thunk == null) {
+            return null;
+        }
         return add(new Cleaner(ob, thunk));
     }
 
@@ -148,5 +150,4 @@ public class Cleaner extends PhantomReference<Object> {
             });
         }
     }
-
 }
