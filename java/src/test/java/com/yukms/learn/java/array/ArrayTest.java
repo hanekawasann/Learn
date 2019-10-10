@@ -10,7 +10,8 @@ public class ArrayTest {
     @Test
     public void test_class() {
         String[] stringArray1 = {};
-        Assert.assertSame(stringArray1.getClass(), String[].class);
-        Assert.assertNotSame(stringArray1.getClass(), Integer[].class);
+        Class<?> clazz = stringArray1.getClass();
+        Assert.assertSame(clazz, String[].class);
+        Assert.assertNotSame(clazz, Integer[].class);
     }
 }

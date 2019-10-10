@@ -225,7 +225,11 @@ public final class Field extends AccessibleObject implements Member {
      * @since 1.5
      */
     public Type getGenericType() {
-        if (getGenericSignature() != null) { return getGenericInfo().getGenericType(); } else { return getType(); }
+        if (getGenericSignature() != null) {
+            return getGenericInfo().getGenericType();
+        } else {
+            return getType();
+        }
     }
 
 
@@ -866,9 +870,15 @@ public final class Field extends AccessibleObject implements Member {
         // First check to see if one has been created yet, and take it
         // if so
         FieldAccessor tmp = null;
-        if (root != null) { tmp = root.getFieldAccessor(overrideFinalCheck); }
+        if (root != null) {
+            tmp = root.getFieldAccessor(overrideFinalCheck);
+        }
         if (tmp != null) {
-            if (overrideFinalCheck) { overrideFieldAccessor = tmp; } else { fieldAccessor = tmp; }
+            if (overrideFinalCheck) {
+                overrideFieldAccessor = tmp;
+            } else {
+                fieldAccessor = tmp;
+            }
         } else {
             // Otherwise fabricate one and propagate it up to the root
             tmp = reflectionFactory.newFieldAccessor(this, overrideFinalCheck);
@@ -887,7 +897,11 @@ public final class Field extends AccessibleObject implements Member {
     // Sets the FieldAccessor for this Field object and
     // (recursively) its root
     private void setFieldAccessor(FieldAccessor accessor, boolean overrideFinalCheck) {
-        if (overrideFinalCheck) { overrideFieldAccessor = accessor; } else { fieldAccessor = accessor; }
+        if (overrideFinalCheck) {
+            overrideFieldAccessor = accessor;
+        } else {
+            fieldAccessor = accessor;
+        }
         // Propagate up
         if (root != null) {
             root.setFieldAccessor(accessor, overrideFinalCheck);
