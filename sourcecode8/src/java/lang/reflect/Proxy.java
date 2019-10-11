@@ -233,9 +233,7 @@ public class Proxy implements java.io.Serializable {
     /** parameter types of a proxy class constructor */
     private static final Class<?>[] constructorParams = { InvocationHandler.class };
 
-    /**
-     * a cache of proxy classes
-     */
+    /** a cache of proxy classes */
     private static final WeakCache<ClassLoader, Class<?>[], Class<?>> proxyClassCache = new WeakCache<>(
         new KeyFactory(), new ProxyClassFactory());
 
@@ -539,50 +537,37 @@ public class Proxy implements java.io.Serializable {
     private static final class ProxyClassFactory implements BiFunction<ClassLoader, Class<?>[], Class<?>> {
         // prefix for all proxy class names
         private static final String proxyClassNamePrefix = "$Proxy";
-
         // next number to use for generation of unique proxy class names
         private static final AtomicLong nextUniqueNumber = new AtomicLong();
 
         @Override
         public Class<?> apply(ClassLoader loader, Class<?>[] interfaces) {
-
             Map<Class<?>, Boolean> interfaceSet = new IdentityHashMap<>(interfaces.length);
             for (Class<?> intf : interfaces) {
-                /*
-                 * Verify that the class loader resolves the name of this
-                 * interface to the same Class object.
-                 */
+                // Verify that the class loader resolves the name of this interface to the same Class object.
                 Class<?> interfaceClass = null;
                 try {
                     interfaceClass = Class.forName(intf.getName(), false, loader);
-                } catch (ClassNotFoundException e) {
-                }
+                } catch (ClassNotFoundException e) { }
                 if (interfaceClass != intf) {
                     throw new IllegalArgumentException(intf + " is not visible from class loader");
                 }
-                /*
-                 * Verify that the Class object actually represents an
-                 * interface.
-                 */
+                // Verify that the Class object actually represents an interface.
                 if (!interfaceClass.isInterface()) {
                     throw new IllegalArgumentException(interfaceClass.getName() + " is not an interface");
                 }
-                /*
-                 * Verify that this interface is not a duplicate.
-                 */
+                // Verify that this interface is not a duplicate.
                 if (interfaceSet.put(interfaceClass, Boolean.TRUE) != null) {
                     throw new IllegalArgumentException("repeated interface: " + interfaceClass.getName());
                 }
             }
 
-            String proxyPkg = null;     // package to define proxy class in
+            // package to define proxy class in
+            String proxyPkg = null;
             int accessFlags = Modifier.PUBLIC | Modifier.FINAL;
 
-            /*
-             * Record the package of a non-public proxy interface so that the
-             * proxy class will be defined in the same package.  Verify that
-             * all non-public proxy interfaces are in the same package.
-             */
+            // Record the package of a non-public proxy interface so that the proxy class will be defined in the same package.
+            // Verify that all non-public proxy interfaces are in the same package.
             for (Class<?> intf : interfaces) {
                 int flags = intf.getModifiers();
                 if (!Modifier.isPublic(flags)) {
@@ -603,26 +588,15 @@ public class Proxy implements java.io.Serializable {
                 proxyPkg = ReflectUtil.PROXY_PACKAGE + ".";
             }
 
-            /*
-             * Choose a name for the proxy class to generate.
-             */
+            // Choose a name for the proxy class to generate.
             long num = nextUniqueNumber.getAndIncrement();
             String proxyName = proxyPkg + proxyClassNamePrefix + num;
 
-            /*
-             * Generate the specified proxy class.
-             */
+            // Generate the specified proxy class.
             byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);
             try {
                 return defineClass0(loader, proxyName, proxyClassFile, 0, proxyClassFile.length);
             } catch (ClassFormatError e) {
-                /*
-                 * A ClassFormatError here means that (barring bugs in the
-                 * proxy class generation code) there was some other
-                 * invalid aspect of the arguments supplied to the proxy
-                 * class creation (such as virtual machine limitations
-                 * exceeded).
-                 */
                 throw new IllegalArgumentException(e.toString());
             }
         }
@@ -683,21 +657,16 @@ public class Proxy implements java.io.Serializable {
             checkProxyAccess(Reflection.getCallerClass(), loader, interfaces);
         }
 
-        /*
-         * Look up or generate the designated proxy class.
-         */
+        // Look up or generate the designated proxy class
         Class<?> cl = getProxyClass0(loader, interfaces);
 
-        /*
-         * Invoke its constructor with the designated invocation handler.
-         */
+        // Invoke its constructor with the designated invocation handler
         try {
             if (sm != null) {
                 checkNewProxyPermission(Reflection.getCallerClass(), cl);
             }
 
             final Constructor<?> cons = cl.getConstructor(constructorParams);
-            final InvocationHandler ih = h;
             if (!Modifier.isPublic(cl.getModifiers())) {
                 AccessController.doPrivileged(new PrivilegedAction<Void>() {
                     public Void run() {
