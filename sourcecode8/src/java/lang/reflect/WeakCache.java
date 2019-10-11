@@ -58,6 +58,7 @@ final class WeakCache<K, P, V> {
 
     private final ReferenceQueue<K> refQueue = new ReferenceQueue<>();
     // the key type is Object for supporting null key
+    // ClassLoader ->> interfaces
     private final ConcurrentMap<Object, ConcurrentMap<Object, Supplier<V>>> map = new ConcurrentHashMap<>();
     private final ConcurrentMap<Supplier<V>, Boolean> reverseMap = new ConcurrentHashMap<>();
     private final BiFunction<K, P, ?> subKeyFactory;
@@ -110,8 +111,7 @@ final class WeakCache<K, P, V> {
             }
         }
 
-        // create subKey and retrieve the possible Supplier<V> stored by that
-        // subKey from valuesMap
+        // create subKey and retrieve the possible Supplier<V> stored by that subKey from valuesMap
         Object subKey = Objects.requireNonNull(subKeyFactory.apply(key, parameter));
         Supplier<V> supplier = valuesMap.get(subKey);
         Factory factory = null;
@@ -207,6 +207,7 @@ final class WeakCache<K, P, V> {
         @Override
         public synchronized V get() { // serialize access
             // re-check
+            // yukms note: ???
             Supplier<V> supplier = valuesMap.get(subKey);
             if (supplier != this) {
                 // something changed while we were waiting:
