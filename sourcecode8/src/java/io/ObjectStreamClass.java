@@ -2138,8 +2138,7 @@ public class ObjectStreamClass implements Serializable {
     }
 
     /**
-     * Removes from the specified map any keys that have been enqueued
-     * on the specified reference queue.
+     * Removes from the specified map any keys that have been enqueued on the specified reference queue.
      */
     static void processQueue(ReferenceQueue<Class<?>> queue, ConcurrentMap<? extends WeakReference<Class<?>>, ?> map) {
         Reference<? extends Class<?>> ref;
