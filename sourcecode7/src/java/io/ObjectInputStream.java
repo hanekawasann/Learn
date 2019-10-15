@@ -2076,8 +2076,7 @@ public class ObjectInputStream extends InputStream implements ObjectInput, Objec
     }
 
     /**
-     * Prioritized list of callbacks to be performed once object graph has been
-     * completely deserialized.
+     * Prioritized list of callbacks to be performed once object graph has been completely deserialized.
      */
     private static class ValidationList {
 
