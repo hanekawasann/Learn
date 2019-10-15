@@ -4,6 +4,7 @@ import java.lang.reflect.Proxy;
 
 import lombok.Data;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -45,6 +46,7 @@ public class ProxyTest {
         Assert.assertEquals(Proxy.getProxyClass(classLoader, classes), Proxy.getProxyClass(classLoader, classes));
     }
 
+    @Ignore
     @Test
     public void test_getProxyClass_02() {
         ClassLoader classLoader = People.class.getClassLoader();

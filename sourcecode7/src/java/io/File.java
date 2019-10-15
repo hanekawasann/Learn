@@ -372,21 +372,35 @@ public class File implements Serializable, Comparable<File> {
     public File(URI uri) {
 
         // Check our many preconditions
-        if (!uri.isAbsolute()) { throw new IllegalArgumentException("URI is not absolute"); }
-        if (uri.isOpaque()) { throw new IllegalArgumentException("URI is not hierarchical"); }
+        if (!uri.isAbsolute()) {
+            throw new IllegalArgumentException("URI is not absolute");
+        }
+        if (uri.isOpaque()) {
+            throw new IllegalArgumentException("URI is not hierarchical");
+        }
         String scheme = uri.getScheme();
         if ((scheme == null) || !scheme.equalsIgnoreCase("file")) {
             throw new IllegalArgumentException("URI scheme is not \"file\"");
         }
-        if (uri.getAuthority() != null) { throw new IllegalArgumentException("URI has an authority component"); }
-        if (uri.getFragment() != null) { throw new IllegalArgumentException("URI has a fragment component"); }
-        if (uri.getQuery() != null) { throw new IllegalArgumentException("URI has a query component"); }
+        if (uri.getAuthority() != null) {
+            throw new IllegalArgumentException("URI has an authority component");
+        }
+        if (uri.getFragment() != null) {
+            throw new IllegalArgumentException("URI has a fragment component");
+        }
+        if (uri.getQuery() != null) {
+            throw new IllegalArgumentException("URI has a query component");
+        }
         String p = uri.getPath();
-        if (p.equals("")) { throw new IllegalArgumentException("URI path component is empty"); }
+        if (p.equals("")) {
+            throw new IllegalArgumentException("URI path component is empty");
+        }
 
         // Okay, now initialize
         p = fs.fromURIPath(p);
-        if (File.separatorChar != '/') { p = p.replace('/', File.separatorChar); }
+        if (File.separatorChar != '/') {
+            p = p.replace('/', File.separatorChar);
+        }
         this.path = fs.normalize(p);
         this.prefixLength = fs.prefixLength(this.path);
     }
@@ -406,7 +420,9 @@ public class File implements Serializable, Comparable<File> {
      */
     public String getName() {
         int index = path.lastIndexOf(separatorChar);
-        if (index < prefixLength) { return path.substring(prefixLength); }
+        if (index < prefixLength) {
+            return path.substring(prefixLength);
+        }
         return path.substring(index + 1);
     }
 
@@ -426,7 +442,9 @@ public class File implements Serializable, Comparable<File> {
     public String getParent() {
         int index = path.lastIndexOf(separatorChar);
         if (index < prefixLength) {
-            if ((prefixLength > 0) && (path.length() > prefixLength)) { return path.substring(0, prefixLength); }
+            if ((prefixLength > 0) && (path.length() > prefixLength)) {
+                return path.substring(0, prefixLength);
+            }
             return null;
         }
         return path.substring(0, index);
@@ -449,7 +467,9 @@ public class File implements Serializable, Comparable<File> {
      */
     public File getParentFile() {
         String p = this.getParent();
-        if (p == null) { return null; }
+        if (p == null) {
+            return null;
+        }
         return new File(p, this.prefixLength);
     }
 
@@ -579,9 +599,15 @@ public class File implements Serializable, Comparable<File> {
 
     private static String slashify(String path, boolean isDirectory) {
         String p = path;
-        if (File.separatorChar != '/') { p = p.replace(File.separatorChar, '/'); }
-        if (!p.startsWith("/")) { p = "/" + p; }
-        if (!p.endsWith("/") && isDirectory) { p = p + "/"; }
+        if (File.separatorChar != '/') {
+            p = p.replace(File.separatorChar, '/');
+        }
+        if (!p.startsWith("/")) {
+            p = "/" + p;
+        }
+        if (!p.endsWith("/") && isDirectory) {
+            p = p + "/";
+        }
         return p;
     }
 
@@ -1683,8 +1709,12 @@ public class File implements Serializable, Comparable<File> {
      * @since 1.2
      */
     public static File createTempFile(String prefix, String suffix, File directory) throws IOException {
-        if (prefix.length() < 3) { throw new IllegalArgumentException("Prefix string too short"); }
-        if (suffix == null) { suffix = ".tmp"; }
+        if (prefix.length() < 3) {
+            throw new IllegalArgumentException("Prefix string too short");
+        }
+        if (suffix == null) {
+            suffix = ".tmp";
+        }
 
         File tmpdir = (directory != null) ? directory : TempDirectory.location();
         SecurityManager sm = System.getSecurityManager();
@@ -1696,7 +1726,9 @@ public class File implements Serializable, Comparable<File> {
                     sm.checkWrite(f.getPath());
                 } catch (SecurityException se) {
                     // don't reveal temporary directory location
-                    if (directory == null) { throw new SecurityException("Unable to create temporary file"); }
+                    if (directory == null) {
+                        throw new SecurityException("Unable to create temporary file");
+                    }
                     throw se;
                 }
             }
