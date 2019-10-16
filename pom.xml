@@ -22,6 +22,7 @@
         <module>tool</module>
         <module>apt</module>
         <module>dynamic-bytecode</module>
+        <module>netty</module>
     </modules>
 
     <name>learn</name>
