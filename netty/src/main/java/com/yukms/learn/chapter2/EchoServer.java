@@ -21,8 +21,8 @@ public class EchoServer {
         EchoServerHandler handler = new EchoServerHandler();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            ServerBootstrap service = new ServerBootstrap();
-            service.group(group)//
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(group)//
                 .channel(NioServerSocketChannel.class)//
                 .localAddress(new InetSocketAddress(port))//
                 .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -32,7 +32,7 @@ public class EchoServer {
                     }
                 });
 
-            ChannelFuture future = service.bind().sync();
+            ChannelFuture future = bootstrap.bind().sync();
             System.out.println(
                 getClass().getName() + " started and listening for connections on " + future.channel().localAddress());
             future.channel().closeFuture().sync();

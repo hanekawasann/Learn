@@ -23,21 +23,20 @@ public class EchoClient {
         EchoClientHandler handler = new EchoClientHandler();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            Bootstrap b = new Bootstrap();
-            b.group(group)//
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group)//
                 .channel(NioSocketChannel.class)//
-                .remoteAddress(new InetSocketAddress(host, port))//`
+                .remoteAddress(new InetSocketAddress(host, port))//
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(handler);
                     }
                 });
-            ChannelFuture f = b.connect().sync();
-            f.channel().closeFuture().sync();
+            ChannelFuture future = bootstrap.connect().sync();
+            future.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully().sync();
         }
     }
 }
-
