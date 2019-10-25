@@ -1085,7 +1085,7 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
     }
 
     /**
-     * Underlying writeObject/writeUnshared implementation.
+     * nderlying writeObject/writeUnshared implementation.
      */
     private void writeObject0(Object obj, boolean unshared) throws IOException {
         boolean oldMode = bout.setBlockDataMode(false);
@@ -2301,8 +2301,7 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
     }
 
     /**
-     * Lightweight identity hash table which maps objects to replacement
-     * objects.
+     * Lightweight identity hash table which maps objects to replacement objects.
      */
     private static class ReplaceTable {
 
