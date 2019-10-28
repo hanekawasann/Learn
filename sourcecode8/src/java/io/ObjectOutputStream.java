@@ -1111,8 +1111,7 @@ public class ObjectOutputStream extends OutputStream implements ObjectOutput, Ob
             Object orig = obj;
             Class<?> cl = obj.getClass();
             ObjectStreamClass desc;
-            for (; ; ) {
-                // REMIND: skip this check for strings/arrays?
+            for (; ; ) {                // REMIND: skip this check for strings/arrays?
                 Class<?> repCl;
                 desc = ObjectStreamClass.lookup(cl, true);
                 if (!desc.hasWriteReplaceMethod() || (obj = desc.invokeWriteReplace(obj)) == null ||
