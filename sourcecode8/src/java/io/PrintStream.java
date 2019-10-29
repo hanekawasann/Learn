@@ -460,7 +460,9 @@ public class PrintStream extends FilterOutputStream implements Appendable, Close
                 textOut.write(s);
                 textOut.flushBuffer();
                 charOut.flushBuffer();
-                if (autoFlush && (s.indexOf('\n') >= 0)) { out.flush(); }
+                if (autoFlush && (s.indexOf('\n') >= 0)) {
+                    out.flush();
+                }
             }
         } catch (InterruptedIOException x) {
             Thread.currentThread().interrupt();
@@ -476,7 +478,9 @@ public class PrintStream extends FilterOutputStream implements Appendable, Close
                 textOut.newLine();
                 textOut.flushBuffer();
                 charOut.flushBuffer();
-                if (autoFlush) { out.flush(); }
+                if (autoFlush) {
+                    out.flush();
+                }
             }
         } catch (InterruptedIOException x) {
             Thread.currentThread().interrupt();
@@ -909,7 +913,9 @@ public class PrintStream extends FilterOutputStream implements Appendable, Close
         try {
             synchronized (this) {
                 ensureOpen();
-                if ((formatter == null) || (formatter.locale() != l)) { formatter = new Formatter(this, l); }
+                if ((formatter == null) || (formatter.locale() != l)) {
+                    formatter = new Formatter(this, l);
+                }
                 formatter.format(l, format, args);
             }
         } catch (InterruptedIOException x) {
