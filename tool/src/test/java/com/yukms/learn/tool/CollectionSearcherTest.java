@@ -23,11 +23,15 @@ public class CollectionSearcherTest {
     }
 
     private static List<People> create(int num) {
-        List<People> peoples = new ArrayList<>();
+        List<Integer> integers = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            peoples.add(new People(String.valueOf(i)));
+            integers.add(i);
         }
-        Collections.shuffle(peoples);
+        List<People> peoples = new ArrayList<>();
+        Collections.shuffle(integers);
+        for (Integer integer: integers) {
+            peoples.add(new People(integer.toString()));
+        }
         return peoples;
     }
 
