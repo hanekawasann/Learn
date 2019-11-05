@@ -29,7 +29,7 @@ public class CollectionSearcherTest {
         }
         List<People> peoples = new ArrayList<>();
         Collections.shuffle(integers);
-        for (Integer integer: integers) {
+        for (Integer integer : integers) {
             peoples.add(new People(integer.toString()));
         }
         return peoples;
@@ -37,15 +37,26 @@ public class CollectionSearcherTest {
 
     @Test
     public void test_searcher() {
-        compare(10);
-        compare(100);
-        compare(1000);
-        compare(10000);
+        searcherCompareFastSearcher(10);
+        searcherCompareFastSearcher(100);
+        searcherCompareFastSearcher(1000);
+        searcherCompareFastSearcher(10000);
+        searcherCompareFastSearcher(100000);
     }
 
-    private void compare(Integer no) {
+    private void listCompareSearcher(Integer no) {
         List<People> peoples = create(no);
         list(no, peoples).printlnCompare(searcher(no, peoples));
+    }
+
+    private void listCompareFastSearcher(Integer no) {
+        List<People> peoples = create(no);
+        list(no, peoples).printlnCompare(fastSearcher(no, peoples));
+    }
+
+    private void searcherCompareFastSearcher(Integer no) {
+        List<People> peoples = create(no);
+        searcher(no, peoples).printlnCompare(fastSearcher(no, peoples));
     }
 
     private Timer list(Integer no, List<People> peoples) {
@@ -61,6 +72,17 @@ public class CollectionSearcherTest {
     public Timer searcher(Integer no, List<People> peoples) {
         Timer timer = Timer.start("searcher");
         CollectionSearcher<String, People> searcher = CollectionSearcher.newInstance(peoples, People::getNo);
+        for (int i = 0; i < no; i++) {
+            People people = searcher.get(String.valueOf(i));
+            Assert.assertNotNull(people);
+        }
+        timer.end();
+        return timer;
+    }
+
+    public Timer fastSearcher(Integer no, List<People> peoples) {
+        Timer timer = Timer.start("fastSearcher");
+        FastCollectionSearcher<String, People> searcher = FastCollectionSearcher.newInstance(peoples, People::getNo);
         for (int i = 0; i < no; i++) {
             People people = searcher.get(String.valueOf(i));
             Assert.assertNotNull(people);
