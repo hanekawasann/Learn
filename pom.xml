@@ -23,6 +23,7 @@
         <module>apt</module>
         <module>dynamic-bytecode</module>
         <module>netty</module>
+        <module>jpcap</module>
     </modules>
 
     <name>learn</name>

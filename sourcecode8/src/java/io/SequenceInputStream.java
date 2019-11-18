@@ -25,7 +25,6 @@
 
 package java.io;
 
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
