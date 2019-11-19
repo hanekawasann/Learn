@@ -70,7 +70,9 @@ public class PushbackInputStream extends FilterInputStream {
      * Check to make sure that this stream has not been closed
      */
     private void ensureOpen() throws IOException {
-        if (in == null) { throw new IOException("Stream closed"); }
+        if (in == null) {
+            throw new IOException("Stream closed");
+        }
     }
 
     /**
@@ -371,7 +373,9 @@ public class PushbackInputStream extends FilterInputStream {
      * @throws IOException if an I/O error occurs.
      */
     public synchronized void close() throws IOException {
-        if (in == null) { return; }
+        if (in == null) {
+            return;
+        }
         in.close();
         in = null;
         buf = null;

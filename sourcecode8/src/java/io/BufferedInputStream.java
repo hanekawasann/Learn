@@ -153,7 +153,9 @@ public class BufferedInputStream extends FilterInputStream {
      */
     private InputStream getInIfOpen() throws IOException {
         InputStream input = in;
-        if (input == null) { throw new IOException("Stream closed"); }
+        if (input == null) {
+            throw new IOException("Stream closed");
+        }
         return input;
     }
 
@@ -163,7 +165,9 @@ public class BufferedInputStream extends FilterInputStream {
      */
     private byte[] getBufIfOpen() throws IOException {
         byte[] buffer = buf;
-        if (buffer == null) { throw new IOException("Stream closed"); }
+        if (buffer == null) {
+            throw new IOException("Stream closed");
+        }
         return buffer;
     }
 
@@ -208,21 +212,30 @@ public class BufferedInputStream extends FilterInputStream {
      */
     private void fill() throws IOException {
         byte[] buffer = getBufIfOpen();
-        if (markpos < 0) { pos = 0;            /* no mark: throw away the buffer */ } else if (pos >=
-            buffer.length)  /* no room left in buffer */ {
-            if (markpos > 0) {  /* can throw away early part of the buffer */
+        if (markpos < 0) {
+            /* no mark: throw away the buffer */
+            pos = 0;
+        } else if (pos >= buffer.length) {
+            /* no room left in buffer */
+            if (markpos > 0) {
+                /* can throw away early part of the buffer */
                 int sz = pos - markpos;
                 System.arraycopy(buffer, markpos, buffer, 0, sz);
                 pos = sz;
                 markpos = 0;
             } else if (buffer.length >= marklimit) {
-                markpos = -1;   /* buffer got too big, invalidate mark */
-                pos = 0;        /* drop buffer contents */
+                /* buffer got too big, invalidate mark */
+                markpos = -1;
+                /* drop buffer contents */
+                pos = 0;
             } else if (buffer.length >= MAX_BUFFER_SIZE) {
                 throw new OutOfMemoryError("Required array size too large");
-            } else {            /* grow buffer */
+            } else {
+                /* grow buffer */
                 int nsz = (pos <= MAX_BUFFER_SIZE - pos) ? pos * 2 : MAX_BUFFER_SIZE;
-                if (nsz > marklimit) { nsz = marklimit; }
+                if (nsz > marklimit) {
+                    nsz = marklimit;
+                }
                 byte[] nbuf = new byte[nsz];
                 System.arraycopy(buffer, 0, nbuf, 0, pos);
                 if (!bufUpdater.compareAndSet(this, buffer, nbuf)) {
@@ -238,7 +251,9 @@ public class BufferedInputStream extends FilterInputStream {
         }
         count = pos;
         int n = getInIfOpen().read(buffer, pos, buffer.length - pos);
-        if (n > 0) { count = n + pos; }
+        if (n > 0) {
+            count = n + pos;
+        }
     }
 
     /**
@@ -256,7 +271,9 @@ public class BufferedInputStream extends FilterInputStream {
     public synchronized int read() throws IOException {
         if (pos >= count) {
             fill();
-            if (pos >= count) { return -1; }
+            if (pos >= count) {
+                return -1;
+            }
         }
         return getBufIfOpen()[pos++] & 0xff;
     }
@@ -277,7 +294,9 @@ public class BufferedInputStream extends FilterInputStream {
             }
             fill();
             avail = count - pos;
-            if (avail <= 0) { return -1; }
+            if (avail <= 0) {
+                return -1;
+            }
         }
         int cnt = (avail < len) ? avail : len;
         System.arraycopy(getBufIfOpen(), pos, b, off, cnt);
@@ -333,12 +352,18 @@ public class BufferedInputStream extends FilterInputStream {
         int n = 0;
         for (; ; ) {
             int nread = read1(b, off + n, len - n);
-            if (nread <= 0) { return (n == 0) ? nread : n; }
+            if (nread <= 0) {
+                return (n == 0) ? nread : n;
+            }
             n += nread;
-            if (n >= len) { return n; }
+            if (n >= len) {
+                return n;
+            }
             // if not closed but no bytes available, return
             InputStream input = in;
-            if (input != null && input.available() <= 0) { return n; }
+            if (input != null && input.available() <= 0) {
+                return n;
+            }
         }
     }
 
@@ -360,12 +385,16 @@ public class BufferedInputStream extends FilterInputStream {
 
         if (avail <= 0) {
             // If no mark position set then don't keep in buffer
-            if (markpos < 0) { return getInIfOpen().skip(n); }
+            if (markpos < 0) {
+                return getInIfOpen().skip(n);
+            }
 
             // Fill in buffer to save bytes for reset
             fill();
             avail = count - pos;
-            if (avail <= 0) { return 0; }
+            if (avail <= 0) {
+                return 0;
+            }
         }
 
         long skipped = (avail < n) ? avail : n;
@@ -427,7 +456,9 @@ public class BufferedInputStream extends FilterInputStream {
      */
     public synchronized void reset() throws IOException {
         getBufIfOpen(); // Cause exception if closed
-        if (markpos < 0) { throw new IOException("Resetting to invalid mark"); }
+        if (markpos < 0) {
+            throw new IOException("Resetting to invalid mark");
+        }
         pos = markpos;
     }
 
@@ -461,7 +492,9 @@ public class BufferedInputStream extends FilterInputStream {
             if (bufUpdater.compareAndSet(this, buffer, null)) {
                 InputStream input = in;
                 in = null;
-                if (input != null) { input.close(); }
+                if (input != null) {
+                    input.close();
+                }
                 return;
             }
             // Else retry in case a new buf was CASed in fill()

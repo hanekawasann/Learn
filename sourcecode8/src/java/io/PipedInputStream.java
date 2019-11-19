@@ -52,10 +52,13 @@ public class PipedInputStream extends InputStream {
     volatile boolean closedByReader = false;
     boolean connected = false;
 
-    /* REMIND: identification of the read and write sides needs to be
-       more sophisticated.  Either using thread groups (but what about
-       pipes within a thread?) or using finalization (but it may be a
-       long time until the next GC). */ Thread readSide;
+    /**
+     * REMIND: identification of the read and write sides needs to be
+     * more sophisticated.  Either using thread groups (but what about
+     * pipes within a thread?) or using finalization (but it may be a
+     * long time until the next GC).
+     */
+    Thread readSide;
     Thread writeSide;
 
     private static final int DEFAULT_PIPE_SIZE = 1024;
@@ -203,7 +206,9 @@ public class PipedInputStream extends InputStream {
     protected synchronized void receive(int b) throws IOException {
         checkStateForReceive();
         writeSide = Thread.currentThread();
-        if (in == out) { awaitSpace(); }
+        if (in == out) {
+            awaitSpace();
+        }
         if (in < 0) {
             in = 0;
             out = 0;
@@ -230,7 +235,9 @@ public class PipedInputStream extends InputStream {
         writeSide = Thread.currentThread();
         int bytesToTransfer = len;
         while (bytesToTransfer > 0) {
-            if (in == out) { awaitSpace(); }
+            if (in == out) {
+                awaitSpace();
+            }
             int nextTransferAmount = 0;
             if (out < in) {
                 nextTransferAmount = buffer.length - in;
@@ -242,7 +249,9 @@ public class PipedInputStream extends InputStream {
                     nextTransferAmount = out - in;
                 }
             }
-            if (nextTransferAmount > bytesToTransfer) { nextTransferAmount = bytesToTransfer; }
+            if (nextTransferAmount > bytesToTransfer) {
+                nextTransferAmount = bytesToTransfer;
+            }
             assert (nextTransferAmount > 0);
             System.arraycopy(b, off, buffer, in, nextTransferAmount);
             bytesToTransfer -= nextTransferAmount;
