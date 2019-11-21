@@ -260,7 +260,9 @@ public class PrintWriter extends Writer {
 
     /** Checks to make sure that the stream has not been closed */
     private void ensureOpen() throws IOException {
-        if (out == null) { throw new IOException("Stream closed"); }
+        if (out == null) {
+            throw new IOException("Stream closed");
+        }
     }
 
     /**
@@ -429,7 +431,9 @@ public class PrintWriter extends Writer {
             synchronized (lock) {
                 ensureOpen();
                 out.write(lineSeparator);
-                if (autoFlush) { out.flush(); }
+                if (autoFlush) {
+                    out.flush();
+                }
             }
         } catch (InterruptedIOException x) {
             Thread.currentThread().interrupt();
@@ -821,7 +825,9 @@ public class PrintWriter extends Writer {
                     formatter = new Formatter(this);
                 }
                 formatter.format(Locale.getDefault(), format, args);
-                if (autoFlush) { out.flush(); }
+                if (autoFlush) {
+                    out.flush();
+                }
             }
         } catch (InterruptedIOException x) {
             Thread.currentThread().interrupt();
@@ -865,9 +871,13 @@ public class PrintWriter extends Writer {
         try {
             synchronized (lock) {
                 ensureOpen();
-                if ((formatter == null) || (formatter.locale() != l)) { formatter = new Formatter(this, l); }
+                if ((formatter == null) || (formatter.locale() != l)) {
+                    formatter = new Formatter(this, l);
+                }
                 formatter.format(l, format, args);
-                if (autoFlush) { out.flush(); }
+                if (autoFlush) {
+                    out.flush();
+                }
             }
         } catch (InterruptedIOException x) {
             Thread.currentThread().interrupt();
@@ -899,7 +909,11 @@ public class PrintWriter extends Writer {
      * @since 1.5
      */
     public PrintWriter append(CharSequence csq) {
-        if (csq == null) { write("null"); } else { write(csq.toString()); }
+        if (csq == null) {
+            write("null");
+        } else {
+            write(csq.toString());
+        }
         return this;
     }
 

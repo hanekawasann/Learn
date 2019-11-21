@@ -176,7 +176,9 @@ public class BufferedReader extends Reader {
             for (; ; ) {
                 if (nextChar >= nChars) {
                     fill();
-                    if (nextChar >= nChars) { return -1; }
+                    if (nextChar >= nChars) {
+                        return -1;
+                    }
                 }
                 if (skipLF) {
                     skipLF = false;

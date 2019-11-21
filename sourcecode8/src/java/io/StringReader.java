@@ -52,7 +52,9 @@ public class StringReader extends Reader {
 
     /** Check to make sure that the stream has not been closed */
     private void ensureOpen() throws IOException {
-        if (str == null) { throw new IOException("Stream closed"); }
+        if (str == null) {
+            throw new IOException("Stream closed");
+        }
     }
 
     /**
@@ -65,7 +67,9 @@ public class StringReader extends Reader {
     public int read() throws IOException {
         synchronized (lock) {
             ensureOpen();
-            if (next >= length) { return -1; }
+            if (next >= length) {
+                return -1;
+            }
             return str.charAt(next++);
         }
     }
