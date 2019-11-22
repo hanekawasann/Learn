@@ -194,11 +194,17 @@ public class RandomAccessFile implements DataOutput, DataInput, Closeable {
     public RandomAccessFile(File file, String mode) throws FileNotFoundException {
         String name = (file != null ? file.getPath() : null);
         int imode = -1;
-        if (mode.equals("r")) { imode = O_RDONLY; } else if (mode.startsWith("rw")) {
+        if (mode.equals("r")) {
+            imode = O_RDONLY;
+        } else if (mode.startsWith("rw")) {
             imode = O_RDWR;
             rw = true;
             if (mode.length() > 2) {
-                if (mode.equals("rws")) { imode |= O_SYNC; } else if (mode.equals("rwd")) { imode |= O_DSYNC; } else {
+                if (mode.equals("rws")) {
+                    imode |= O_SYNC;
+                } else if (mode.equals("rwd")) {
+                    imode |= O_DSYNC;
+                } else {
                     imode = -1;
                 }
             }
