@@ -98,9 +98,17 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     public boolean contains(Object o) {
         Iterator<E> it = iterator();
         if (o == null) {
-            while (it.hasNext()) { if (it.next() == null) { return true; } }
+            while (it.hasNext()) {
+                if (it.next() == null) {
+                    return true;
+                }
+            }
         } else {
-            while (it.hasNext()) { if (o.equals(it.next())) { return true; } }
+            while (it.hasNext()) {
+                if (o.equals(it.next())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -132,8 +140,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
         Object[] r = new Object[size()];
         Iterator<E> it = iterator();
         for (int i = 0; i < r.length; i++) {
-            if (!it.hasNext()) // fewer elements than expected
-            { return Arrays.copyOf(r, i); }
+            if (!it.hasNext()) {
+                // fewer elements than expected
+                return Arrays.copyOf(r, i);
+            }
             r[i] = it.next();
         }
         return it.hasNext() ? finishToArray(r, it) : r;
@@ -170,16 +180,21 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     public <T> T[] toArray(T[] a) {
         // Estimate size of array; be prepared to see more or fewer elements
         int size = size();
+        // a的长度小于实际长度则扩容
         T[] r = a.length >= size ? a : (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
         Iterator<E> it = iterator();
 
         for (int i = 0; i < r.length; i++) {
             if (!it.hasNext()) { // fewer elements than expected
+                // 集合元素变少
                 if (a == r) {
+                    // 如果未扩容
                     r[i] = null; // null-terminate
                 } else if (a.length < i) {
+                    // 如果已扩容
                     return Arrays.copyOf(r, i);
                 } else {
+                    // ???前面条件不就是二分了吗
                     System.arraycopy(r, 0, a, 0, i);
                     if (a.length > i) {
                         a[i] = null;
@@ -219,7 +234,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
             if (i == cap) {
                 int newCap = cap + (cap >> 1) + 1;
                 // overflow-conscious code
-                if (newCap - MAX_ARRAY_SIZE > 0) { newCap = hugeCapacity(cap + 1); }
+                if (newCap - MAX_ARRAY_SIZE > 0) {
+                    newCap = hugeCapacity(cap + 1);
+                }
                 r = Arrays.copyOf(r, newCap);
             }
             r[i++] = (T) it.next();
@@ -229,8 +246,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) // overflow
-        { throw new OutOfMemoryError("Required array size too large"); }
+        if (minCapacity < 0) {
+            // overflow
+            throw new OutOfMemoryError("Required array size too large");
+        }
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
     }
 
@@ -304,7 +323,11 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @see #contains(Object)
      */
     public boolean containsAll(Collection<?> c) {
-        for (Object e : c) { if (!contains(e)) { return false; } }
+        for (Object e : c) {
+            if (!contains(e)) {
+                return false;
+            }
+        }
         return true;
     }
 
