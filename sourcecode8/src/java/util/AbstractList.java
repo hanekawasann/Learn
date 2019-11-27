@@ -177,9 +177,17 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     public int indexOf(Object o) {
         ListIterator<E> it = listIterator();
         if (o == null) {
-            while (it.hasNext()) { if (it.next() == null) { return it.previousIndex(); } }
+            while (it.hasNext()) {
+                if (it.next() == null) {
+                    return it.previousIndex();
+                }
+            }
         } else {
-            while (it.hasNext()) { if (o.equals(it.next())) { return it.previousIndex(); } }
+            while (it.hasNext()) {
+                if (o.equals(it.next())) {
+                    return it.previousIndex();
+                }
+            }
         }
         return -1;
     }
@@ -198,9 +206,17 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     public int lastIndexOf(Object o) {
         ListIterator<E> it = listIterator(size());
         if (o == null) {
-            while (it.hasPrevious()) { if (it.previous() == null) { return it.nextIndex(); } }
+            while (it.hasPrevious()) {
+                if (it.previous() == null) {
+                    return it.nextIndex();
+                }
+            }
         } else {
-            while (it.hasPrevious()) { if (o.equals(it.previous())) { return it.nextIndex(); } }
+            while (it.hasPrevious()) {
+                if (o.equals(it.previous())) {
+                    return it.nextIndex();
+                }
+            }
         }
         return -1;
     }
@@ -358,13 +374,18 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
 
         public void remove() {
-            if (lastRet < 0) { throw new IllegalStateException(); }
+            if (lastRet < 0) {
+                throw new IllegalStateException();
+            }
             checkForComodification();
 
             try {
                 AbstractList.this.remove(lastRet);
-                if (lastRet < cursor) { cursor--; }
+                if (lastRet < cursor) {
+                    cursor--;
+                }
                 lastRet = -1;
+                // 更新modCount
                 expectedModCount = modCount;
             } catch (IndexOutOfBoundsException e) {
                 throw new ConcurrentModificationException();
@@ -372,7 +393,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
 
         final void checkForComodification() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -407,7 +430,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
 
         public void set(E e) {
-            if (lastRet < 0) { throw new IllegalStateException(); }
+            if (lastRet < 0) {
+                throw new IllegalStateException();
+            }
             checkForComodification();
 
             try {
@@ -469,8 +494,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      *                                   {@code (fromIndex > toIndex)}
      */
     public List<E> subList(int fromIndex, int toIndex) {
-        return (this instanceof RandomAccess ? new RandomAccessSubList<>(this, fromIndex, toIndex)
-            : new SubList<>(this, fromIndex, toIndex));
+        return this instanceof RandomAccess//
+            ? new RandomAccessSubList<>(this, fromIndex, toIndex)//
+            : new SubList<>(this, fromIndex, toIndex);
     }
 
     // Comparison and hashing
@@ -584,7 +610,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     protected transient int modCount = 0;
 
     private void rangeCheckForAdd(int index) {
-        if (index < 0 || index > size()) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     private String outOfBoundsMsg(int index) {
@@ -598,8 +626,12 @@ class SubList<E> extends AbstractList<E> {
     private int size;
 
     SubList(AbstractList<E> list, int fromIndex, int toIndex) {
-        if (fromIndex < 0) { throw new IndexOutOfBoundsException("fromIndex = " + fromIndex); }
-        if (toIndex > list.size()) { throw new IndexOutOfBoundsException("toIndex = " + toIndex); }
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        }
+        if (toIndex > list.size()) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        }
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
