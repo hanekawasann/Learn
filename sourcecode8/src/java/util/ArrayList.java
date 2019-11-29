@@ -1355,6 +1355,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
             if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
             }
+            // yukms note: 为什么++？？
             modCount++;
         }
 
