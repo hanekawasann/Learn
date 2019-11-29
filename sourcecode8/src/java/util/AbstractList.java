@@ -697,7 +697,9 @@ class SubList<E> extends AbstractList<E> {
     public boolean addAll(int index, Collection<? extends E> c) {
         rangeCheckForAdd(index);
         int cSize = c.size();
-        if (cSize == 0) { return false; }
+        if (cSize == 0) {
+            return false;
+        }
 
         checkForComodification();
         l.addAll(offset + index, c);
@@ -722,7 +724,11 @@ class SubList<E> extends AbstractList<E> {
             }
 
             public E next() {
-                if (hasNext()) { return i.next(); } else { throw new NoSuchElementException(); }
+                if (hasNext()) {
+                    return i.next();
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
 
             public boolean hasPrevious() {
@@ -730,7 +736,11 @@ class SubList<E> extends AbstractList<E> {
             }
 
             public E previous() {
-                if (hasPrevious()) { return i.previous(); } else { throw new NoSuchElementException(); }
+                if (hasPrevious()) {
+                    return i.previous();
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
 
             public int nextIndex() {
@@ -764,7 +774,9 @@ class SubList<E> extends AbstractList<E> {
     }
 
     private void rangeCheck(int index) {
-        if (index < 0 || index >= size) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     private void rangeCheckForAdd(int index) {
@@ -776,7 +788,9 @@ class SubList<E> extends AbstractList<E> {
     }
 
     private void checkForComodification() {
-        if (this.modCount != l.modCount) { throw new ConcurrentModificationException(); }
+        if (this.modCount != l.modCount) {
+            throw new ConcurrentModificationException();
+        }
     }
 }
 

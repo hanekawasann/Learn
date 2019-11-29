@@ -140,7 +140,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      */
     public ArrayList(int initialCapacity) {
         super();
-        if (initialCapacity < 0) { throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity); }
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+        }
         this.elementData = new Object[initialCapacity];
     }
 
@@ -1319,9 +1321,11 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         // any exception thrown from the filter predicate at this stage
         // will leave the collection unmodified
         int removeCount = 0;
+        // yukms note: 标记
         final BitSet removeSet = new BitSet(size);
         final int expectedModCount = modCount;
         final int size = this.size;
+        // yukms note: 随时检查modCount
         for (int i = 0; modCount == expectedModCount && i < size; i++) {
             @SuppressWarnings("unchecked")
             final E element = (E) elementData[i];
@@ -1338,10 +1342,12 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         final boolean anyToRemove = removeCount > 0;
         if (anyToRemove) {
             final int newSize = size - removeCount;
+            // yukms note: 将元素向前移动
             for (int i = 0, j = 0; (i < size) && (j < newSize); i++, j++) {
                 i = removeSet.nextClearBit(i);
                 elementData[j] = elementData[i];
             }
+            // yukms note: 清空被删除的元素
             for (int k = newSize; k < size; k++) {
                 elementData[k] = null;  // Let gc do its work
             }
