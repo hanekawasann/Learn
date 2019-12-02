@@ -191,20 +191,23 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * @param minCapacity the desired minimum capacity
      */
     public void ensureCapacity(int minCapacity) {
+        // yukms note: 不怎么明白为什么要这么做
         int minExpand = (elementData != EMPTY_ELEMENTDATA)
             // any size if real element table
             ? 0
-            // larger than default for empty table. It's already supposed to be
-            // at default size.
+            // larger than default for empty table. It's already supposed to be at default size.
             : DEFAULT_CAPACITY;
 
+        // yukms note: 为什么不用这样的方式——minCapacity > elementData.length
         if (minCapacity > minExpand) {
             ensureExplicitCapacity(minCapacity);
         }
     }
 
+    // yukms note: “Internal”（内部的）这里是为了区别“ensureCapacity”（外部用）
     private void ensureCapacityInternal(int minCapacity) {
         if (elementData == EMPTY_ELEMENTDATA) {
+            // yukms note: 初始化容量至少DEFAULT_CAPACITY=10
             minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
         }
 
@@ -212,10 +215,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
     }
 
     private void ensureExplicitCapacity(int minCapacity) {
+        // yukms note: 标记容器大小被修改
         modCount++;
 
         // overflow-conscious code
-        if (minCapacity - elementData.length > 0) { grow(minCapacity); }
+        if (minCapacity - elementData.length > 0) {
+            grow(minCapacity);
+        }
     }
 
     /**
@@ -235,16 +241,25 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
+        // yukms note: 扩容1.5倍
         int newCapacity = oldCapacity + (oldCapacity >> 1);
-        if (newCapacity - minCapacity < 0) { newCapacity = minCapacity; }
-        if (newCapacity - MAX_ARRAY_SIZE > 0) { newCapacity = hugeCapacity(minCapacity); }
+        // yukms note: 扩容后容量（可能溢出Integer.MAX_VALUE）比期望最小容量小
+        if (newCapacity - minCapacity < 0) {
+            newCapacity = minCapacity;
+        }
+        if (newCapacity - MAX_ARRAY_SIZE > 0) {
+            newCapacity = hugeCapacity(minCapacity);
+        }
         // minCapacity is usually close to size, so this is a win:
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) // overflow
-        { throw new OutOfMemoryError(); }
+        if (minCapacity < 0) {
+            // overflow
+            throw new OutOfMemoryError();
+        }
+        // yukms note: 最大容量Integer.MAX_VALUE
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
     }
 
@@ -287,10 +302,19 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * or -1 if there is no such index.
      */
     public int indexOf(Object o) {
+        // yukms note: 注意这里的分支
         if (o == null) {
-            for (int i = 0; i < size; i++) { if (elementData[i] == null) { return i; } }
+            for (int i = 0; i < size; i++) {
+                if (elementData[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = 0; i < size; i++) { if (o.equals(elementData[i])) { return i; } }
+            for (int i = 0; i < size; i++) {
+                if (o.equals(elementData[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -304,9 +328,17 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      */
     public int lastIndexOf(Object o) {
         if (o == null) {
-            for (int i = size - 1; i >= 0; i--) { if (elementData[i] == null) { return i; } }
+            for (int i = size - 1; i >= 0; i--) {
+                if (elementData[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = size - 1; i >= 0; i--) { if (o.equals(elementData[i])) { return i; } }
+            for (int i = size - 1; i >= 0; i--) {
+                if (o.equals(elementData[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -344,6 +376,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * proper sequence
      */
     public Object[] toArray() {
+        // yukms note: 注意与AbstractCollection.toArray()的区别
         return Arrays.copyOf(elementData, size);
     }
 
@@ -373,11 +406,17 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        if (a.length < size)
-        // Make a new array of a's runtime type, but my contents:
-        { return (T[]) Arrays.copyOf(elementData, size, a.getClass()); }
+        // yukms note: 给定数组长度不够
+        if (a.length < size) {
+            // Make a new array of a's runtime type, but my contents:
+            return (T[]) Arrays.copyOf(elementData, size, a.getClass());
+        }
+        // yukms note: 给定数组长度足够
         System.arraycopy(elementData, 0, a, 0, size);
-        if (a.length > size) { a[size] = null; }
+        // yukms note: 为什么要置空一个元素
+        if (a.length > size) {
+            a[size] = null;
+        }
         return a;
     }
 
@@ -425,7 +464,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * @return <tt>true</tt> (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
+        // yukms note: 检查容量
         ensureCapacityInternal(size + 1);  // Increments modCount!!
+        // yukms note: 放置元素
         elementData[size++] = e;
         return true;
     }
@@ -443,7 +484,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         rangeCheckForAdd(index);
 
         ensureCapacityInternal(size + 1);  // Increments modCount!!
+        // yukms note: 分配出空位
         System.arraycopy(elementData, index, elementData, index + 1, size - index);
+        // yukms note: 将新元素置入空位
         elementData[index] = element;
         size++;
     }
@@ -464,7 +507,11 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         E oldValue = elementData(index);
 
         int numMoved = size - index - 1;
-        if (numMoved > 0) { System.arraycopy(elementData, index + 1, elementData, index, numMoved); }
+        // yukms note: 移动元素
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index + 1, elementData, index, numMoved);
+        }
+        // yukms note: 置空多余元素
         elementData[--size] = null; // clear to let GC do its work
 
         return oldValue;
@@ -509,7 +556,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
     private void fastRemove(int index) {
         modCount++;
         int numMoved = size - index - 1;
-        if (numMoved > 0) { System.arraycopy(elementData, index + 1, elementData, index, numMoved); }
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index + 1, elementData, index, numMoved);
+        }
         elementData[--size] = null; // clear to let GC do its work
     }
 
@@ -521,7 +570,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         modCount++;
 
         // clear to let GC do its work
-        for (int i = 0; i < size; i++) { elementData[i] = null; }
+        for (int i = 0; i < size; i++) {
+            elementData[i] = null;
+        }
 
         size = 0;
     }
@@ -571,8 +622,11 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         ensureCapacityInternal(size + numNew);  // Increments modCount
 
         int numMoved = size - index;
-        if (numMoved > 0) { System.arraycopy(elementData, index, elementData, index + numNew, numMoved); }
-
+        // yukms note: 空出位置
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+        }
+        // yukms note: 填充位置
         System.arraycopy(a, 0, elementData, index, numNew);
         size += numNew;
         return numNew != 0;
@@ -593,10 +647,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      *                                   toIndex < fromIndex})
      */
     protected void removeRange(int fromIndex, int toIndex) {
+        // yukms note: 标记集合发生变化
         modCount++;
+        // yukms note: 元素左移
         int numMoved = size - toIndex;
         System.arraycopy(elementData, toIndex, elementData, fromIndex, numMoved);
 
+        // yukms note: 将多余位置置空
         // clear to let GC do its work
         int newSize = size - (toIndex - fromIndex);
         for (int i = newSize; i < size; i++) {
@@ -612,14 +669,18 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * which throws an ArrayIndexOutOfBoundsException if index is negative.
      */
     private void rangeCheck(int index) {
-        if (index >= size) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (index >= size) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     /**
      * A version of rangeCheck used by add and addAll.
      */
     private void rangeCheckForAdd(int index) {
-        if (index > size || index < 0) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (index > size || index < 0) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     /**
@@ -674,22 +735,30 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
 
     private boolean batchRemove(Collection<?> c, boolean complement) {
         final Object[] elementData = this.elementData;
-        int r = 0, w = 0;
+        int r = 0;
+        int w = 0;
         boolean modified = false;
         try {
             for (; r < size; r++) {
-                if (c.contains(elementData[r]) == complement) { elementData[w++] = elementData[r]; }
+                if (c.contains(elementData[r]) == complement) {
+                    // yukms note: 保留条件成立的元素
+                    elementData[w++] = elementData[r];
+                }
             }
         } finally {
-            // Preserve behavioral compatibility with AbstractCollection,
-            // even if c.contains() throws.
+            // Preserve behavioral compatibility with AbstractCollection, even if c.contains() throws.
+            // yukms note: try块报错，把中间的空位补上
             if (r != size) {
                 System.arraycopy(elementData, r, elementData, w, size - r);
                 w += size - r;
             }
+            // yukms note: 有元素被移除
             if (w != size) {
                 // clear to let GC do its work
-                for (int i = w; i < size; i++) { elementData[i] = null; }
+                // yukms note: 把末尾的元素置空
+                for (int i = w; i < size; i++) {
+                    elementData[i] = null;
+                }
                 modCount += size - w;
                 size = w;
                 modified = true;
@@ -762,7 +831,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public ListIterator<E> listIterator(int index) {
-        if (index < 0 || index > size) { throw new IndexOutOfBoundsException("Index: " + index); }
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
         return new ListItr(index);
     }
 
@@ -805,15 +876,21 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         public E next() {
             checkForComodification();
             int i = cursor;
-            if (i >= size) { throw new NoSuchElementException(); }
+            if (i >= size) {
+                throw new NoSuchElementException();
+            }
             Object[] elementData = ArrayList.this.elementData;
-            if (i >= elementData.length) { throw new ConcurrentModificationException(); }
+            if (i >= elementData.length) {
+                throw new ConcurrentModificationException();
+            }
             cursor = i + 1;
             return (E) elementData[lastRet = i];
         }
 
         public void remove() {
-            if (lastRet < 0) { throw new IllegalStateException(); }
+            if (lastRet < 0) {
+                throw new IllegalStateException();
+            }
             checkForComodification();
 
             try {
@@ -849,7 +926,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         }
 
         final void checkForComodification() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -878,15 +957,21 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         public E previous() {
             checkForComodification();
             int i = cursor - 1;
-            if (i < 0) { throw new NoSuchElementException(); }
+            if (i < 0) {
+                throw new NoSuchElementException();
+            }
             Object[] elementData = ArrayList.this.elementData;
-            if (i >= elementData.length) { throw new ConcurrentModificationException(); }
+            if (i >= elementData.length) {
+                throw new ConcurrentModificationException();
+            }
             cursor = i;
             return (E) elementData[lastRet = i];
         }
 
         public void set(E e) {
-            if (lastRet < 0) { throw new IllegalStateException(); }
+            if (lastRet < 0) {
+                throw new IllegalStateException();
+            }
             checkForComodification();
 
             try {
@@ -946,8 +1031,12 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
     }
 
     static void subListRangeCheck(int fromIndex, int toIndex, int size) {
-        if (fromIndex < 0) { throw new IndexOutOfBoundsException("fromIndex = " + fromIndex); }
-        if (toIndex > size) { throw new IndexOutOfBoundsException("toIndex = " + toIndex); }
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        }
+        if (toIndex > size) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        }
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
         }
@@ -1177,6 +1266,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         @SuppressWarnings("unchecked")
         final E[] elementData = (E[]) this.elementData;
         final int size = this.size;
+
         for (int i = 0; modCount == expectedModCount && i < size; i++) {
             action.accept(elementData[i]);
         }
@@ -1321,7 +1411,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         // any exception thrown from the filter predicate at this stage
         // will leave the collection unmodified
         int removeCount = 0;
-        // yukms note: 标记
+        // yukms note: 标记需要被移除的元素位置
         final BitSet removeSet = new BitSet(size);
         final int expectedModCount = modCount;
         final int size = this.size;
@@ -1339,6 +1429,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         }
 
         // shift surviving elements left over the spaces left by removed elements
+        // // yukms note: 移除
         final boolean anyToRemove = removeCount > 0;
         if (anyToRemove) {
             final int newSize = size - removeCount;
@@ -1355,7 +1446,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
             if (modCount != expectedModCount) {
                 throw new ConcurrentModificationException();
             }
-            // yukms note: 为什么++？？
+            // yukms note: 标志集合已被修改
             modCount++;
         }
 
