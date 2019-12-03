@@ -20,12 +20,6 @@ public class ArrayListTest {
     }
 
     @Test
-    public void test_capacity() {
-        ArrayList<Object> list = new ArrayList<>();
-        //list.ensureCapacity(Integer.MAX_VALUE - 8);
-    }
-
-    @Test
     public void test_toArray() {
         List<Integer> list = new ArrayList<>();
         list.add(1);
