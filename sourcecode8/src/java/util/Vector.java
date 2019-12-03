@@ -126,7 +126,9 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     public Vector(int initialCapacity, int capacityIncrement) {
         super();
-        if (initialCapacity < 0) { throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity); }
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+        }
         this.elementData = new Object[initialCapacity];
         this.capacityIncrement = capacityIncrement;
     }
@@ -238,7 +240,9 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     private void ensureCapacityHelper(int minCapacity) {
         // overflow-conscious code
-        if (minCapacity - elementData.length > 0) { grow(minCapacity); }
+        if (minCapacity - elementData.length > 0) {
+            grow(minCapacity);
+        }
     }
 
     /**
@@ -252,15 +256,22 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
+        // yukms note: 与ArrayList扩容规则不一样
         int newCapacity = oldCapacity + ((capacityIncrement > 0) ? capacityIncrement : oldCapacity);
-        if (newCapacity - minCapacity < 0) { newCapacity = minCapacity; }
-        if (newCapacity - MAX_ARRAY_SIZE > 0) { newCapacity = hugeCapacity(minCapacity); }
+        if (newCapacity - minCapacity < 0) {
+            newCapacity = minCapacity;
+        }
+        if (newCapacity - MAX_ARRAY_SIZE > 0) {
+            newCapacity = hugeCapacity(minCapacity);
+        }
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) // overflow
-        { throw new OutOfMemoryError(); }
+        if (minCapacity < 0) {
+            // overflow
+            throw new OutOfMemoryError();
+        }
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
     }
 
@@ -390,9 +401,17 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     public synchronized int indexOf(Object o, int index) {
         if (o == null) {
-            for (int i = index; i < elementCount; i++) { if (elementData[i] == null) { return i; } }
+            for (int i = index; i < elementCount; i++) {
+                if (elementData[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = index; i < elementCount; i++) { if (o.equals(elementData[i])) { return i; } }
+            for (int i = index; i < elementCount; i++) {
+                if (o.equals(elementData[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -429,12 +448,22 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      *                                   than or equal to the current size of this vector
      */
     public synchronized int lastIndexOf(Object o, int index) {
-        if (index >= elementCount) { throw new IndexOutOfBoundsException(index + " >= " + elementCount); }
+        if (index >= elementCount) {
+            throw new IndexOutOfBoundsException(index + " >= " + elementCount);
+        }
 
         if (o == null) {
-            for (int i = index; i >= 0; i--) { if (elementData[i] == null) { return i; } }
+            for (int i = index; i >= 0; i--) {
+                if (elementData[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = index; i >= 0; i--) { if (o.equals(elementData[i])) { return i; } }
+            for (int i = index; i >= 0; i--) {
+                if (o.equals(elementData[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -632,7 +661,9 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
     public synchronized void removeAllElements() {
         modCount++;
         // Let gc do its work
-        for (int i = 0; i < elementCount; i++) { elementData[i] = null; }
+        for (int i = 0; i < elementCount; i++) {
+            elementData[i] = null;
+        }
 
         elementCount = 0;
     }
@@ -692,11 +723,15 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     @SuppressWarnings("unchecked")
     public synchronized <T> T[] toArray(T[] a) {
-        if (a.length < elementCount) { return (T[]) Arrays.copyOf(elementData, elementCount, a.getClass()); }
+        if (a.length < elementCount) {
+            return (T[]) Arrays.copyOf(elementData, elementCount, a.getClass());
+        }
 
         System.arraycopy(elementData, 0, a, 0, elementCount);
 
-        if (a.length > elementCount) { a[elementCount] = null; }
+        if (a.length > elementCount) {
+            a[elementCount] = null;
+        }
 
         return a;
     }
@@ -718,7 +753,9 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      * @since 1.2
      */
     public synchronized E get(int index) {
-        if (index >= elementCount) { throw new ArrayIndexOutOfBoundsException(index); }
+        if (index >= elementCount) {
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
 
         return elementData(index);
     }
@@ -735,7 +772,9 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      * @since 1.2
      */
     public synchronized E set(int index, E element) {
-        if (index >= elementCount) { throw new ArrayIndexOutOfBoundsException(index); }
+        if (index >= elementCount) {
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
 
         E oldValue = elementData(index);
         elementData[index] = element;
@@ -799,11 +838,15 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     public synchronized E remove(int index) {
         modCount++;
-        if (index >= elementCount) { throw new ArrayIndexOutOfBoundsException(index); }
+        if (index >= elementCount) {
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
         E oldValue = elementData(index);
 
         int numMoved = elementCount - index - 1;
-        if (numMoved > 0) { System.arraycopy(elementData, index + 1, elementData, index, numMoved); }
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index + 1, elementData, index, numMoved);
+        }
         elementData[--elementCount] = null; // Let gc do its work
 
         return oldValue;
@@ -876,6 +919,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      * @since 1.2
      */
     public synchronized boolean removeAll(Collection<?> c) {
+        // yukms note: 性能没有ArrayList好
         return super.removeAll(c);
     }
 
@@ -899,6 +943,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      * @since 1.2
      */
     public synchronized boolean retainAll(Collection<?> c) {
+        // yukms note: 性能没有ArrayList好
         return super.retainAll(c);
     }
 
@@ -921,14 +966,18 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
      */
     public synchronized boolean addAll(int index, Collection<? extends E> c) {
         modCount++;
-        if (index < 0 || index > elementCount) { throw new ArrayIndexOutOfBoundsException(index); }
+        if (index < 0 || index > elementCount) {
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
 
         Object[] a = c.toArray();
         int numNew = a.length;
         ensureCapacityHelper(elementCount + numNew);
 
         int numMoved = elementCount - index;
-        if (numMoved > 0) { System.arraycopy(elementData, index, elementData, index + numNew, numMoved); }
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+        }
 
         System.arraycopy(a, 0, elementData, index, numNew);
         elementCount += numNew;
@@ -1018,7 +1067,10 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 
         // Let gc do its work
         int newElementCount = elementCount - (toIndex - fromIndex);
-        while (elementCount != newElementCount) { elementData[--elementCount] = null; }
+        // yukms note: 更加简洁
+        while (elementCount != newElementCount) {
+            elementData[--elementCount] = null;
+        }
     }
 
     /**
@@ -1097,14 +1149,18 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
             synchronized (Vector.this) {
                 checkForComodification();
                 int i = cursor;
-                if (i >= elementCount) { throw new NoSuchElementException(); }
+                if (i >= elementCount) {
+                    throw new NoSuchElementException();
+                }
                 cursor = i + 1;
                 return elementData(lastRet = i);
             }
         }
 
         public void remove() {
-            if (lastRet == -1) { throw new IllegalStateException(); }
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
             synchronized (Vector.this) {
                 checkForComodification();
                 Vector.this.remove(lastRet);
@@ -1168,14 +1224,18 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
             synchronized (Vector.this) {
                 checkForComodification();
                 int i = cursor - 1;
-                if (i < 0) { throw new NoSuchElementException(); }
+                if (i < 0) {
+                    throw new NoSuchElementException();
+                }
                 cursor = i;
                 return elementData(lastRet = i);
             }
         }
 
         public void set(E e) {
-            if (lastRet == -1) { throw new IllegalStateException(); }
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
             synchronized (Vector.this) {
                 checkForComodification();
                 Vector.this.set(lastRet, e);

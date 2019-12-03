@@ -103,7 +103,7 @@ import java.util.function.UnaryOperator;
  * @since 1.2
  */
 
-public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
+public class ArrayList<E> extends AbstractList<E> implements  List<E>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
@@ -730,6 +730,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
      */
     public boolean retainAll(Collection<?> c) {
         Objects.requireNonNull(c);
+        // yukms note: 比Vector的性能（除开内置锁）好一些
         return batchRemove(c, true);
     }
 
@@ -781,9 +782,11 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         s.defaultWriteObject();
 
         // Write out size as capacity for behavioural compatibility with clone()
+        // yukms note: 写入size
         s.writeInt(size);
 
         // Write out all elements in the proper order.
+        // yukms note: 将每个元素分别写入
         for (int i = 0; i < size; i++) {
             s.writeObject(elementData[i]);
         }
@@ -804,6 +807,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         s.defaultReadObject();
 
         // Read in capacity
+        // yukms note: 忽略原size
         s.readInt(); // ignored
 
         if (size > 0) {
@@ -812,6 +816,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
 
             Object[] a = elementData;
             // Read in all elements in the proper order.
+            // yukms note: 依照当前size读取数据
             for (int i = 0; i < size; i++) {
                 a[i] = s.readObject();
             }
@@ -1106,7 +1111,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         public boolean addAll(int index, Collection<? extends E> c) {
             rangeCheckForAdd(index);
             int cSize = c.size();
-            if (cSize == 0) { return false; }
+            if (cSize == 0) {
+                return false;
+            }
 
             checkForComodification();
             parent.addAll(parentOffset + index, c);
@@ -1137,9 +1144,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
                 public E next() {
                     checkForComodification();
                     int i = cursor;
-                    if (i >= SubList.this.size) { throw new NoSuchElementException(); }
+                    if (i >= SubList.this.size) {
+                        throw new NoSuchElementException();
+                    }
                     Object[] elementData = ArrayList.this.elementData;
-                    if (offset + i >= elementData.length) { throw new ConcurrentModificationException(); }
+                    if (offset + i >= elementData.length) {
+                        throw new ConcurrentModificationException();
+                    }
                     cursor = i + 1;
                     return (E) elementData[offset + (lastRet = i)];
                 }
@@ -1152,9 +1163,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
                 public E previous() {
                     checkForComodification();
                     int i = cursor - 1;
-                    if (i < 0) { throw new NoSuchElementException(); }
+                    if (i < 0) {
+                        throw new NoSuchElementException();
+                    }
                     Object[] elementData = ArrayList.this.elementData;
-                    if (offset + i >= elementData.length) { throw new ConcurrentModificationException(); }
+                    if (offset + i >= elementData.length) {
+                        throw new ConcurrentModificationException();
+                    }
                     cursor = i;
                     return (E) elementData[offset + (lastRet = i)];
                 }
@@ -1188,7 +1203,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
                 }
 
                 public void remove() {
-                    if (lastRet < 0) { throw new IllegalStateException(); }
+                    if (lastRet < 0) {
+                        throw new IllegalStateException();
+                    }
                     checkForComodification();
 
                     try {
@@ -1202,7 +1219,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
                 }
 
                 public void set(E e) {
-                    if (lastRet < 0) { throw new IllegalStateException(); }
+                    if (lastRet < 0) {
+                        throw new IllegalStateException();
+                    }
                     checkForComodification();
 
                     try {
@@ -1227,7 +1246,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
                 }
 
                 final void checkForComodification() {
-                    if (expectedModCount != ArrayList.this.modCount) { throw new ConcurrentModificationException(); }
+                    if (expectedModCount != ArrayList.this.modCount) {
+                        throw new ConcurrentModificationException();
+                    }
                 }
             };
         }
@@ -1250,7 +1271,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
         }
 
         private void checkForComodification() {
-            if (ArrayList.this.modCount != this.modCount) { throw new ConcurrentModificationException(); }
+            if (ArrayList.this.modCount != this.modCount) {
+                throw new ConcurrentModificationException();
+            }
         }
 
         public Spliterator<E> spliterator() {

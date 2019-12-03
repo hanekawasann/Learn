@@ -97,7 +97,9 @@ public class Stack<E> extends Vector<E> {
     public synchronized E peek() {
         int len = size();
 
-        if (len == 0) { throw new EmptyStackException(); }
+        if (len == 0) {
+            throw new EmptyStackException();
+        }
         return elementAt(len - 1);
     }
 
@@ -126,6 +128,7 @@ public class Stack<E> extends Vector<E> {
      * indicates that the object is not on the stack.
      */
     public synchronized int search(Object o) {
+        // yukms note: 后进先出，所以用lastIndexOf
         int i = lastIndexOf(o);
 
         if (i >= 0) {
