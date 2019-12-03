@@ -11,6 +11,15 @@ import org.junit.Test;
  */
 public class ArrayListTest {
     @Test
+    public void test_maxSize() {
+        ArrayList<Object> list = new ArrayList<>();
+        int i = Integer.MAX_VALUE - 8;
+        // 换台内存大的机器试试
+        list.ensureCapacity(i);
+        list.add(i, "1");
+    }
+
+    @Test
     public void test_capacity() {
         ArrayList<Object> list = new ArrayList<>();
         //list.ensureCapacity(Integer.MAX_VALUE - 8);
