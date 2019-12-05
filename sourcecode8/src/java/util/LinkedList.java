@@ -124,8 +124,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         final Node<E> f = first;
         final Node<E> newNode = new Node<>(null, e, f);
         first = newNode;
-        if (f == null) { last = newNode; } else { f.prev = newNode; }
+        if (f == null) {
+            // yukms note: 如果原first为空（空集合）
+            last = newNode;
+        } else {
+            // yukms note: 将原first的prev指向现first
+            f.prev = newNode;
+        }
+        // yukms note: 递增szie
         size++;
+        // yukms note: 标志集合已被修改
         modCount++;
     }
 
@@ -134,9 +142,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     void linkLast(E e) {
         final Node<E> l = last;
+        // yukms note: 新建尾节点
         final Node<E> newNode = new Node<>(l, e, null);
         last = newNode;
-        if (l == null) { first = newNode; } else { l.next = newNode; }
+        if (l == null) {
+            // yukms note: 链表为空，没有头尾节点，设置first=last=newNode
+            first = newNode;
+        } else {
+            // yukms note: 将元素放置在链表末尾
+            l.next = newNode;
+        }
         size++;
         modCount++;
     }
@@ -149,7 +164,13 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         final Node<E> pred = succ.prev;
         final Node<E> newNode = new Node<>(pred, e, succ);
         succ.prev = newNode;
-        if (pred == null) { first = newNode; } else { pred.next = newNode; }
+        if (pred == null) {
+            // yukms note: succ是头结点
+            first = newNode;
+        } else {
+            // yukms note: succ不是头结点
+            pred.next = newNode;
+        }
         size++;
         modCount++;
     }
@@ -163,8 +184,15 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         final Node<E> next = f.next;
         f.item = null;
         f.next = null; // help GC
+        // yukms note: 将下一个节点设置为first
         first = next;
-        if (next == null) { last = null; } else { next.prev = null; }
+        if (next == null) {
+            // yukms note: first的next为null，表示该集合只有一个元素
+            last = null;
+        } else {
+            // yukms note: 将下一个节点的prev设置为null
+            next.prev = null;
+        }
         size--;
         modCount++;
         return element;
@@ -179,8 +207,15 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         final Node<E> prev = l.prev;
         l.item = null;
         l.prev = null; // help GC
+        // yukms note: 将尾节点设置为当前节点的上一个节点
         last = prev;
-        if (prev == null) { first = null; } else { prev.next = null; }
+        if (prev == null) {
+            // yukms note: 当前节点的上一个节点为null，表示该集合只有一个元素
+            first = null;
+        } else {
+            // yukms note: 清空当前节点的上一个节点的next
+            prev.next = null;
+        }
         size--;
         modCount++;
         return element;
@@ -195,22 +230,37 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         final Node<E> next = x.next;
         final Node<E> prev = x.prev;
 
+        // yukms note: 处理prev
         if (prev == null) {
+            // yukms note: 当前节点是头结点
             first = next;
         } else {
+            // yukms note: 当前节点不是头结点
+
+            // yukms note: 将上一个节点的next指向当前节点的下一个节点
             prev.next = next;
+            // yukms note: 将当前节点prev置空
             x.prev = null;
         }
 
+        // yukms note: 处理next
         if (next == null) {
+            // yukms note: 当前节点是尾节点
             last = prev;
         } else {
+            // yukms note: 当前节点不是尾节点
+
+            // yukms note: 将下一个节点的prev指向当前节点的上一个节点
             next.prev = prev;
+            // yukms note: 将当前节点的next置空
             x.next = null;
         }
 
+        // yukms note: 置空当前节点的item
         x.item = null;
+        // yukms note: 减少size
         size--;
+        // yukms note: 标志集合已被修改
         modCount++;
         return element;
     }
@@ -223,7 +273,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     public E getFirst() {
         final Node<E> f = first;
-        if (f == null) { throw new NoSuchElementException(); }
+        if (f == null) {
+            throw new NoSuchElementException();
+        }
         return f.item;
     }
 
@@ -235,7 +287,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     public E getLast() {
         final Node<E> l = last;
-        if (l == null) { throw new NoSuchElementException(); }
+        if (l == null) {
+            throw new NoSuchElementException();
+        }
         return l.item;
     }
 
@@ -247,7 +301,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     public E removeFirst() {
         final Node<E> f = first;
-        if (f == null) { throw new NoSuchElementException(); }
+        if (f == null) {
+            throw new NoSuchElementException();
+        }
         return unlinkFirst(f);
     }
 
@@ -259,7 +315,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     public E removeLast() {
         final Node<E> l = last;
-        if (l == null) { throw new NoSuchElementException(); }
+        if (l == null) {
+            throw new NoSuchElementException();
+        }
         return unlinkLast(l);
     }
 
@@ -386,10 +444,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
 
         Object[] a = c.toArray();
         int numNew = a.length;
-        if (numNew == 0) { return false; }
+        if (numNew == 0) {
+            return false;
+        }
 
-        Node<E> pred, succ;
+        // yukms note: 插入位置的前一个元素
+        Node<E> pred;
+        // yukms note: 当前插入位置的元素
+        Node<E> succ;
         if (index == size) {
+            // yukms note: 插入末尾
             succ = null;
             pred = last;
         } else {
@@ -401,10 +465,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
             @SuppressWarnings("unchecked")
             E e = (E) o;
             Node<E> newNode = new Node<>(pred, e, null);
-            if (pred == null) { first = newNode; } else { pred.next = newNode; }
+            if (pred == null) {
+                // yukms note: 链表为空
+                first = newNode;
+            } else {
+                pred.next = newNode;
+            }
             pred = newNode;
         }
 
+        // yukms note: 将最后一个节点连接到链表
         if (succ == null) {
             last = pred;
         } else {
@@ -423,11 +493,11 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     public void clear() {
         // Clearing all of the links between nodes is "unnecessary", but:
-        // - helps a generational GC if the discarded nodes inhabit
-        //   more than one generation
+        // - helps a generational GC if the discarded nodes inhabit more than one generation
         // - is sure to free memory even if there is a reachable Iterator
         for (Node<E> x = first; x != null; ) {
             Node<E> next = x.next;
+            // yukms note: 这里为什么置空，前面有解释
             x.item = null;
             x.next = null;
             x.prev = null;
@@ -482,7 +552,12 @@ public class LinkedList<E> extends AbstractSequentialList<E>
     public void add(int index, E element) {
         checkPositionIndex(index);
 
-        if (index == size) { linkLast(element); } else { linkBefore(element, node(index)); }
+        if (index == size) {
+            // yukms note: 插入末尾
+            linkLast(element);
+        } else {
+            linkBefore(element, node(index));
+        }
     }
 
     /**
@@ -507,14 +582,6 @@ public class LinkedList<E> extends AbstractSequentialList<E>
     }
 
     /**
-     * Tells if the argument is the index of a valid position for an
-     * iterator or an add operation.
-     */
-    private boolean isPositionIndex(int index) {
-        return index >= 0 && index <= size;
-    }
-
-    /**
      * Constructs an IndexOutOfBoundsException detail message.
      * Of the many possible refactorings of the error handling code,
      * this "outlining" performs best with both server and client VMs.
@@ -523,12 +590,24 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         return "Index: " + index + ", Size: " + size;
     }
 
+    /**
+     * Tells if the argument is the index of a valid position for an
+     * iterator or an add operation.
+     */
+    private boolean isPositionIndex(int index) {
+        return index >= 0 && index <= size;
+    }
+
     private void checkElementIndex(int index) {
-        if (!isElementIndex(index)) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (!isElementIndex(index)) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     private void checkPositionIndex(int index) {
-        if (!isPositionIndex(index)) { throw new IndexOutOfBoundsException(outOfBoundsMsg(index)); }
+        if (!isPositionIndex(index)) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
     }
 
     /**
@@ -538,12 +617,20 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         // assert isElementIndex(index);
 
         if (index < (size >> 1)) {
+            // yukms note: 所需节点离first比较近
             Node<E> x = first;
-            for (int i = 0; i < index; i++) { x = x.next; }
+            // yukms note: 顺序
+            for (int i = 0; i < index; i++) {
+                x = x.next;
+            }
             return x;
         } else {
+            // yukms note: 所需节点离last比较近
             Node<E> x = last;
-            for (int i = size - 1; i > index; i--) { x = x.prev; }
+            // yukms note: 逆序
+            for (int i = size - 1; i > index; i--) {
+                x = x.prev;
+            }
             return x;
         }
     }
@@ -565,12 +652,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         int index = 0;
         if (o == null) {
             for (Node<E> x = first; x != null; x = x.next) {
-                if (x.item == null) { return index; }
+                if (x.item == null) {
+                    return index;
+                }
                 index++;
             }
         } else {
             for (Node<E> x = first; x != null; x = x.next) {
-                if (o.equals(x.item)) { return index; }
+                if (o.equals(x.item)) {
+                    return index;
+                }
                 index++;
             }
         }
@@ -593,12 +684,16 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         if (o == null) {
             for (Node<E> x = last; x != null; x = x.prev) {
                 index--;
-                if (x.item == null) { return index; }
+                if (x.item == null) {
+                    return index;
+                }
             }
         } else {
             for (Node<E> x = last; x != null; x = x.prev) {
                 index--;
-                if (o.equals(x.item)) { return index; }
+                if (o.equals(x.item)) {
+                    return index;
+                }
             }
         }
         return -1;
@@ -842,7 +937,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
 
         ListItr(int index) {
             // assert isPositionIndex(index);
+            // yukms note: 获取index位置的节点
             next = (index == size) ? null : node(index);
+            // yukms note: 设置index
             nextIndex = index;
         }
 
@@ -852,25 +949,21 @@ public class LinkedList<E> extends AbstractSequentialList<E>
 
         public E next() {
             checkForComodification();
-            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
 
+            // yukms note: lastReturned设置为当前节点
             lastReturned = next;
+            // yukms note: next设置为当前节点的下一个节点
             next = next.next;
+            // yukms note: 递增序号
             nextIndex++;
             return lastReturned.item;
         }
 
         public boolean hasPrevious() {
             return nextIndex > 0;
-        }
-
-        public E previous() {
-            checkForComodification();
-            if (!hasPrevious()) { throw new NoSuchElementException(); }
-
-            lastReturned = next = (next == null) ? last : next.prev;
-            nextIndex--;
-            return lastReturned.item;
         }
 
         public int nextIndex() {
@@ -881,19 +974,41 @@ public class LinkedList<E> extends AbstractSequentialList<E>
             return nextIndex - 1;
         }
 
+        public E previous() {
+            checkForComodification();
+            if (!hasPrevious()) {
+                throw new NoSuchElementException();
+            }
+
+            // yukms note: “next == null”的情况时，表示遍历器已遍历结束
+            lastReturned = next = (next == null) ? last : next.prev;
+            nextIndex--;
+            return lastReturned.item;
+        }
+
         public void remove() {
             checkForComodification();
-            if (lastReturned == null) { throw new IllegalStateException(); }
+            if (lastReturned == null) {
+                throw new IllegalStateException();
+            }
 
             Node<E> lastNext = lastReturned.next;
             unlink(lastReturned);
-            if (next == lastReturned) { next = lastNext; } else { nextIndex--; }
+            if (next == lastReturned) {
+                // yukms note: previous后的情况
+                next = lastNext;
+            } else {
+                // yukms note: 正常next情况
+                nextIndex--;
+            }
             lastReturned = null;
             expectedModCount++;
         }
 
         public void set(E e) {
-            if (lastReturned == null) { throw new IllegalStateException(); }
+            if (lastReturned == null) {
+                throw new IllegalStateException();
+            }
             checkForComodification();
             lastReturned.item = e;
         }
@@ -901,7 +1016,13 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         public void add(E e) {
             checkForComodification();
             lastReturned = null;
-            if (next == null) { linkLast(e); } else { linkBefore(e, next); }
+            if (next == null) {
+                // yukms note: 遍历器在末尾
+                linkLast(e);
+            } else {
+                // yukms note: 遍历器没在末尾
+                linkBefore(e, next);
+            }
             nextIndex++;
             expectedModCount++;
         }
@@ -918,7 +1039,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         }
 
         final void checkForComodification() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -944,6 +1067,7 @@ public class LinkedList<E> extends AbstractSequentialList<E>
     /**
      * Adapter to provide descending iterators via ListItr.previous
      */
+    // yukms note: 这里很有趣，直接复用ListItr
     private class DescendingIterator implements Iterator<E> {
         private final ListItr itr = new ListItr(size());
 
@@ -978,13 +1102,17 @@ public class LinkedList<E> extends AbstractSequentialList<E>
     public Object clone() {
         LinkedList<E> clone = superClone();
 
+        // yukms note: 将属性清空
         // Put clone into "virgin" state
         clone.first = clone.last = null;
         clone.size = 0;
         clone.modCount = 0;
 
+        // yukms note: 依次置入元素
         // Initialize clone with our elements
-        for (Node<E> x = first; x != null; x = x.next) { clone.add(x.item); }
+        for (Node<E> x = first; x != null; x = x.next) {
+            clone.add(x.item);
+        }
 
         return clone;
     }
@@ -1006,7 +1134,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
     public Object[] toArray() {
         Object[] result = new Object[size];
         int i = 0;
-        for (Node<E> x = first; x != null; x = x.next) { result[i++] = x.item; }
+        for (Node<E> x = first; x != null; x = x.next) {
+            result[i++] = x.item;
+        }
         return result;
     }
 
@@ -1050,12 +1180,20 @@ public class LinkedList<E> extends AbstractSequentialList<E>
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        if (a.length < size) { a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size); }
+        if (a.length < size) {
+            // yukms note: a数组长度不够放置集合所有元素
+            a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+        }
         int i = 0;
         Object[] result = a;
-        for (Node<E> x = first; x != null; x = x.next) { result[i++] = x.item; }
+        for (Node<E> x = first; x != null; x = x.next) {
+            result[i++] = x.item;
+        }
 
-        if (a.length > size) { a[size] = null; }
+        // yukms question: 为何这里要置空？？？
+        if (a.length > size) {
+            a[size] = null;
+        }
 
         return a;
     }
@@ -1078,7 +1216,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         s.writeInt(size);
 
         // Write out all elements in the proper order.
-        for (Node<E> x = first; x != null; x = x.next) { s.writeObject(x.item); }
+        for (Node<E> x = first; x != null; x = x.next) {
+            s.writeObject(x.item);
+        }
     }
 
     /**
@@ -1094,7 +1234,9 @@ public class LinkedList<E> extends AbstractSequentialList<E>
         int size = s.readInt();
 
         // Read in all elements in the proper order.
-        for (int i = 0; i < size; i++) { linkLast((E) s.readObject()); }
+        for (int i = 0; i < size; i++) {
+            linkLast((E) s.readObject());
+        }
     }
 
     /**
