@@ -132,11 +132,13 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
             initialCapacity |= (initialCapacity >>> 4);
             initialCapacity |= (initialCapacity >>> 8);
             initialCapacity |= (initialCapacity >>> 16);
+            // yukms note: 多一个空位用来放置tail
             initialCapacity++;
 
-            if (initialCapacity < 0)   // Too many elements, must back off
-            {
-                initialCapacity >>>= 1;// Good luck allocating 2 ^ 30 elements
+            // Too many elements, must back off
+            if (initialCapacity < 0) {
+                // Good luck allocating 2 ^ 30 elements
+                initialCapacity >>>= 1;
             }
         }
         elements = new Object[initialCapacity];
@@ -237,9 +239,13 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * @throws NullPointerException if the specified element is null
      */
     public void addLast(E e) {
-        if (e == null) { throw new NullPointerException(); }
+        if (e == null) {
+            throw new NullPointerException();
+        }
         elements[tail] = e;
-        if ((tail = (tail + 1) & (elements.length - 1)) == head) { doubleCapacity(); }
+        if ((tail = (tail + 1) & (elements.length - 1)) == head) {
+            doubleCapacity();
+        }
     }
 
     /**
@@ -732,11 +738,14 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         int h = head;
         int t = tail;
         if (h != t) { // clear all cells
+            // yukms note: 重置游标
             head = tail = 0;
             int i = h;
             int mask = elements.length - 1;
             do {
+                // yukms note: 重置元素
                 elements[i] = null;
+                // yukms note: 注意这里的逻辑
                 i = (i + 1) & mask;
             } while (i != t);
         }
