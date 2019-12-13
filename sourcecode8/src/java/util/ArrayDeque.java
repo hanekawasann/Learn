@@ -125,6 +125,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         int initialCapacity = MIN_INITIAL_CAPACITY;
         // Find the best power of two to hold elements.
         // Tests "<=" because arrays aren't kept full.
+        // yukms note: 注意这里的逻辑
         if (numElements >= initialCapacity) {
             initialCapacity = numElements;
             initialCapacity |= (initialCapacity >>> 1);
@@ -132,7 +133,6 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
             initialCapacity |= (initialCapacity >>> 4);
             initialCapacity |= (initialCapacity >>> 8);
             initialCapacity |= (initialCapacity >>> 16);
-            // yukms note: 多一个空位用来放置tail
             initialCapacity++;
 
             // Too many elements, must back off
@@ -153,12 +153,17 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         int p = head;
         int n = elements.length;
         int r = n - p; // number of elements to the right of p
+        // yukms note: n * 2
         int newCapacity = n << 1;
-        if (newCapacity < 0) { throw new IllegalStateException("Sorry, deque too big"); }
+        if (newCapacity < 0) {
+            throw new IllegalStateException("Sorry, deque too big");
+        }
         Object[] a = new Object[newCapacity];
+        // yukms note: 分两段拷贝
         System.arraycopy(elements, p, a, 0, r);
         System.arraycopy(elements, 0, a, r, p);
         elements = a;
+        // yukms note: 重置head与tail
         head = 0;
         tail = n;
     }
@@ -225,9 +230,13 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * @throws NullPointerException if the specified element is null
      */
     public void addFirst(E e) {
-        if (e == null) { throw new NullPointerException(); }
+        if (e == null) {
+            throw new NullPointerException();
+        }
         elements[head = (head - 1) & (elements.length - 1)] = e;
-        if (head == tail) { doubleCapacity(); }
+        if (head == tail) {
+            doubleCapacity();
+        }
     }
 
     /**
@@ -243,6 +252,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
             throw new NullPointerException();
         }
         elements[tail] = e;
+        // yukms note: 注意这里的逻辑
         if ((tail = (tail + 1) & (elements.length - 1)) == head) {
             doubleCapacity();
         }
@@ -277,7 +287,9 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      */
     public E removeFirst() {
         E x = pollFirst();
-        if (x == null) { throw new NoSuchElementException(); }
+        if (x == null) {
+            throw new NoSuchElementException();
+        }
         return x;
     }
 
@@ -286,7 +298,9 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      */
     public E removeLast() {
         E x = pollLast();
-        if (x == null) { throw new NoSuchElementException(); }
+        if (x == null) {
+            throw new NoSuchElementException();
+        }
         return x;
     }
 
@@ -295,7 +309,10 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         @SuppressWarnings("unchecked")
         E result = (E) elements[h];
         // Element is null if deque empty
-        if (result == null) { return null; }
+        if (result == null) {
+            return null;
+        }
+        // yukms note: 清空
         elements[h] = null;     // Must null out slot
         head = (h + 1) & (elements.length - 1);
         return result;
@@ -305,7 +322,10 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         int t = (tail - 1) & (elements.length - 1);
         @SuppressWarnings("unchecked")
         E result = (E) elements[t];
-        if (result == null) { return null; }
+        if (result == null) {
+            return null;
+        }
+        // yukms note: 清空
         elements[t] = null;
         tail = t;
         return result;
@@ -317,7 +337,9 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
     public E getFirst() {
         @SuppressWarnings("unchecked")
         E result = (E) elements[head];
-        if (result == null) { throw new NoSuchElementException(); }
+        if (result == null) {
+            throw new NoSuchElementException();
+        }
         return result;
     }
 
@@ -327,7 +349,9 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
     public E getLast() {
         @SuppressWarnings("unchecked")
         E result = (E) elements[(tail - 1) & (elements.length - 1)];
-        if (result == null) { throw new NoSuchElementException(); }
+        if (result == null) {
+            throw new NoSuchElementException();
+        }
         return result;
     }
 
@@ -355,7 +379,9 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * @return {@code true} if the deque contained the specified element
      */
     public boolean removeFirstOccurrence(Object o) {
-        if (o == null) { return false; }
+        if (o == null) {
+            return false;
+        }
         int mask = elements.length - 1;
         int i = head;
         Object x;
@@ -702,12 +728,16 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * @return {@code true} if this deque contains the specified element
      */
     public boolean contains(Object o) {
-        if (o == null) { return false; }
+        if (o == null) {
+            return false;
+        }
         int mask = elements.length - 1;
         int i = head;
         Object x;
         while ((x = elements[i]) != null) {
-            if (o.equals(x)) { return true; }
+            if (o.equals(x)) {
+                return true;
+            }
             i = (i + 1) & mask;
         }
         return false;
