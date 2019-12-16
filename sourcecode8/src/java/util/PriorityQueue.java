@@ -161,7 +161,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
     public PriorityQueue(int initialCapacity, Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
-        if (initialCapacity < 1) { throw new IllegalArgumentException(); }
+        if (initialCapacity < 1) {
+            throw new IllegalArgumentException();
+        }
         this.queue = new Object[initialCapacity];
         this.comparator = comparator;
     }
@@ -242,6 +244,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
             this.queue = c.toArray();
             this.size = c.size();
         } else {
+            // yukms note: 继承的类
             initFromCollection(c);
         }
     }
@@ -249,10 +252,17 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
     private void initElementsFromCollection(Collection<? extends E> c) {
         Object[] a = c.toArray();
         // If c.toArray incorrectly doesn't return Object[], copy it.
-        if (a.getClass() != Object[].class) { a = Arrays.copyOf(a, a.length, Object[].class); }
+        if (a.getClass() != Object[].class) {
+            a = Arrays.copyOf(a, a.length, Object[].class);
+        }
         int len = a.length;
+        // yukms note: 如果不为空集合，那么检查元素不能为null
         if (len == 1 || this.comparator != null) {
-            for (int i = 0; i < len; i++) { if (a[i] == null) { throw new NullPointerException(); } }
+            for (int i = 0; i < len; i++) {
+                if (a[i] == null) {
+                    throw new NullPointerException();
+                }
+            }
         }
         this.queue = a;
         this.size = a.length;
