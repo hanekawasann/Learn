@@ -345,7 +345,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
 
     private int indexOf(Object o) {
         if (o != null) {
-            for (int i = 0; i < size; i++) { if (o.equals(queue[i])) { return i; } }
+            for (int i = 0; i < size; i++) {
+                if (o.equals(queue[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
