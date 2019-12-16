@@ -93,6 +93,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * other.  We also guarantee that all array cells not holding
      * deque elements are always null.
      */
+    // yukms note: 不允许置入null元素
     transient Object[] elements; // non-private to simplify nested class access
 
     /**
@@ -176,6 +177,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
      * @return its argument
      */
     private <T> T[] copyElements(T[] a) {
+        // yukms note: 分两种情况复制
         if (head < tail) {
             System.arraycopy(elements, head, a, 0, size());
         } else if (head > tail) {
@@ -536,10 +538,17 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         return removeFirst();
     }
 
+    // yukms note: 检查该类中的约束
     private void checkInvariants() {
+        // yukms note: tail指向下一个元素位置，一定要是null
         assert elements[tail] == null;
-        assert head == tail ? elements[head] == null
-            : (elements[head] != null && elements[(tail - 1) & (elements.length - 1)] != null);
+        assert head == tail//
+            // yukms note: 如果“head == tail”，只可能是ArrayDeque一个元素都没有
+            ? elements[head] == null//
+            // yukms note: 如果“head != tail”，那么ArrayDeque有元素，所以“elements[head] != null”；tail的上一个元素不为null
+            : (elements[head] != null //
+                && elements[(tail - 1) & (elements.length - 1)] != null);
+        // yukms note: head的上一个元素一定为null
         assert elements[(head - 1) & (elements.length - 1)] == null;
     }
 
@@ -559,34 +568,65 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         final int mask = elements.length - 1;
         final int h = head;
         final int t = tail;
+        // yukms note: i与head的距离
         final int front = (i - h) & mask;
+        // yukms note: i与tail的距离
         final int back = (t - i) & mask;
 
         // Invariant: head <= i < tail mod circularity
-        if (front >= ((t - h) & mask)) { throw new ConcurrentModificationException(); }
+        if (front >= ((t - h) & mask)) {
+            throw new ConcurrentModificationException();
+        }
 
         // Optimize for least element motion
         if (front < back) {
+            // yukms note: i离head更近
             if (h <= i) {
+                // yukms note: 两种情况：
+                // yukms note: [-----head+++i++++++tail------]  右移
+                // yukms note: [++++++++++tail------head+++i+]  右移
+                // yukms note: 从h开始的front个元素，向后移动一个位置
                 System.arraycopy(elements, h, elements, h + 1, front);
-            } else { // Wrap around
+            } else {
+                // yukms note: [+i+++++++++++tail------head++]  右移
+                // Wrap around
+                // yukms note: 从0开始的i个元素，向后移动一个位置
                 System.arraycopy(elements, 0, elements, 1, i);
+                // yukms note: 将最后一个元素，放到0位置
                 elements[0] = elements[mask];
+                // yukms note: 把h开始的后面的所有元素（除最后一个元素外），向后移动一个位置
                 System.arraycopy(elements, h, elements, h + 1, mask - h);
             }
+            // yukms note: 应为从h开始的部分元素，向后移动一个位置，所以原h位置的元素置为null
             elements[h] = null;
+            // yukms note: head增加1
             head = (h + 1) & mask;
+            // yukms note: head被修改
             return false;
         } else {
-            if (i < t) { // Copy the null tail as well
+            // yukms note: i离tail更近
+            if (i < t) {
+                // Copy the null tail as well
+                // yukms note: 两种情况：
+                // yukms note: [-----head++++++i+++tail------]  左移
+                // yukms note: [++++++i+++tail------head+++++]  左移
+                // yukms note: tail向前移动
                 System.arraycopy(elements, i + 1, elements, i, back);
+                // yukms note: 更新tail
                 tail = t - 1;
-            } else { // Wrap around
+            } else {
+                // Wrap around
+                // yukms note: [++tail------head+++++++++++i+]  左移
+                // yukms note: 从i到倒数第二的元素，向前移动一个位置
                 System.arraycopy(elements, i + 1, elements, i, mask - i);
+                // yukms note: 将第一个元素，放置到最后一个元素的位置
                 elements[mask] = elements[0];
+                // yukms note: 从0到tail的元素，向前移动一份位置
                 System.arraycopy(elements, 1, elements, 0, t);
+                // yukms note: 更新tail
                 tail = (t - 1) & mask;
             }
+            // yukms note: tail被修改
             return true;
         }
     }
@@ -650,36 +690,58 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         }
 
         public E next() {
-            if (cursor == fence) { throw new NoSuchElementException(); }
+            if (cursor == fence) {
+                // yukms note: 如果通过hasNext()检测，那么cursor != fence
+                throw new NoSuchElementException();
+            }
             @SuppressWarnings("unchecked")
             E result = (E) elements[cursor];
-            // This check doesn't catch all possible comodifications,
-            // but does catch the ones that corrupt traversal
-            if (tail != fence || result == null) { throw new ConcurrentModificationException(); }
+            // This check doesn't catch all possible comodifications, but does catch the ones that corrupt traversal
+            if (tail != fence || result == null) {
+                // yukms note: 检测集合被修改和元素null检测
+                throw new ConcurrentModificationException();
+            }
+            // yukms note: 记录最后一次返回的元素光标
             lastRet = cursor;
+            // yukms note: 重新计算当前光标
             cursor = (cursor + 1) & (elements.length - 1);
             return result;
         }
 
         public void remove() {
-            if (lastRet < 0) { throw new IllegalStateException(); }
-            if (delete(lastRet)) { // if left-shifted, undo increment in next()
+            if (lastRet < 0) {
+                // yukms note: 最后一次返回的元素必须存在
+                throw new IllegalStateException();
+            }
+            if (delete(lastRet)) {
+                // yukms note: [-----head++++++i+++tail------]  左移
+                // yukms note: [++++++i+++tail------head+++++]  左移
+                // yukms note: [++tail------head+++++++++++i+]  左移
+                // if left-shifted, undo increment in next()
+                // yukms note: 更新cursor
                 cursor = (cursor - 1) & (elements.length - 1);
+                // yukms note: 更新fence
                 fence = tail;
             }
+            // yukms note: 清空lastRet
             lastRet = -1;
         }
 
         public void forEachRemaining(Consumer<? super E> action) {
             Objects.requireNonNull(action);
             Object[] a = elements;
-            int m = a.length - 1, f = fence, i = cursor;
+            int m = a.length - 1;
+            int i = cursor;
+            int f = fence;
+            // yukms note: 更新cursor为fence（tail），注意，如果迭代过程中报错，cursor的位置实际上是错误的
             cursor = f;
             while (i != f) {
                 @SuppressWarnings("unchecked")
                 E e = (E) a[i];
                 i = (i + 1) & m;
-                if (e == null) { throw new ConcurrentModificationException(); }
+                if (e == null) {
+                    throw new ConcurrentModificationException();
+                }
                 action.accept(e);
             }
         }
@@ -691,6 +753,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
          * tail instead of head for initial cursor, and head instead of
          * tail for fence.
          */
+        // yukms note: 与DeqIterator相比就是反向赋值
         private int cursor = tail;
         private int fence = head;
         private int lastRet = -1;
@@ -700,21 +763,38 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         }
 
         public E next() {
-            if (cursor == fence) { throw new NoSuchElementException(); }
+            if (cursor == fence) {
+                // yukms note: 如果通过hasNext()检测，那么cursor != fence
+                throw new NoSuchElementException();
+            }
+            // yukms note: 光标-1
             cursor = (cursor - 1) & (elements.length - 1);
             @SuppressWarnings("unchecked")
             E result = (E) elements[cursor];
-            if (head != fence || result == null) { throw new ConcurrentModificationException(); }
+            if (head != fence || result == null) {
+                // yukms note: 检测集合被修改和元素null检测
+                throw new ConcurrentModificationException();
+            }
+            // yukms note: 记录最后一次返回的元素光标
             lastRet = cursor;
             return result;
         }
 
         public void remove() {
-            if (lastRet < 0) { throw new IllegalStateException(); }
+            if (lastRet < 0) {
+                // yukms note: 最后一次返回的元素必须存在
+                throw new IllegalStateException();
+            }
             if (!delete(lastRet)) {
+                // yukms note: [-----head+++i++++++tail------]  右移
+                // yukms note: [++++++++++tail------head+++i+]  右移
+                // yukms note: [+i+++++++++++tail------head++]  右移
+                // yukms note: 更新cursor
                 cursor = (cursor + 1) & (elements.length - 1);
+                // yukms note: 更新head
                 fence = head;
             }
+            // yukms note: 清空lastRet
             lastRet = -1;
         }
     }
@@ -837,9 +917,15 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         int size = size();
-        if (a.length < size) { a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size); }
+        if (a.length < size) {
+            // yukms note: 长度不够，新建数组
+            a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+        }
         copyElements(a);
-        if (a.length > size) { a[size] = null; }
+        // yukms note: 每一个toArray(T[] a)都有这个逻辑
+        if (a.length > size) {
+            a[size] = null;
+        }
         return a;
     }
 
@@ -854,6 +940,7 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         try {
             @SuppressWarnings("unchecked")
             ArrayDeque<E> result = (ArrayDeque<E>) super.clone();
+            // yukms note: 设置elements
             result.elements = Arrays.copyOf(elements, elements.length);
             return result;
         } catch (CloneNotSupportedException e) {
@@ -874,11 +961,15 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         s.defaultWriteObject();
 
         // Write out size
+        // yukms note: 写入size
         s.writeInt(size());
 
         // Write out elements in order.
         int mask = elements.length - 1;
-        for (int i = head; i != tail; i = (i + 1) & mask) { s.writeObject(elements[i]); }
+        // yukms note: 写入element
+        for (int i = head; i != tail; i = (i + 1) & mask) {
+            s.writeObject(elements[i]);
+        }
     }
 
     /**
@@ -888,13 +979,18 @@ public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cl
         s.defaultReadObject();
 
         // Read in size and allocate array
+        // yukms note: 读取size
         int size = s.readInt();
+        // yukms note: 扩容
         allocateElements(size);
         head = 0;
         tail = size;
 
         // Read in all elements in the proper order.
-        for (int i = 0; i < size; i++) { elements[i] = s.readObject(); }
+        // yukms note: 读取element
+        for (int i = 0; i < size; i++) {
+            elements[i] = s.readObject();
+        }
     }
 
     /**

@@ -8,6 +8,13 @@ import org.junit.Test;
  */
 public class ArrayDequeTest {
     @Test
+    public void test_mask() {
+        int length = 8;
+        Assert.assertEquals(2, 2 & (length - 1));
+        Assert.assertEquals(7, -1 & (length - 1));
+    }
+
+    @Test
     public void test_allocateElements() {
         // yukms note: 2的幂次方
         Assert.assertEquals(16, allocateElements(8));
