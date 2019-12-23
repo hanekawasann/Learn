@@ -329,12 +329,20 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      * @throws NullPointerException if the specified element is null
      */
     public boolean offer(E e) {
-        if (e == null) { throw new NullPointerException(); }
+        if (e == null) {
+            throw new NullPointerException();
+        }
         modCount++;
         int i = size;
-        if (i >= queue.length) { grow(i + 1); }
+        if (i >= queue.length) {
+            grow(i + 1);
+        }
         size = i + 1;
-        if (i == 0) { queue[0] = e; } else { siftUp(i, e); }
+        if (i == 0) {
+            queue[0] = e;
+        } else {
+            siftUp(i, e);
+        }
         return true;
     }
 
@@ -657,7 +665,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      * @param x the item to insert
      */
     private void siftDown(int k, E x) {
-        if (comparator != null) { siftDownUsingComparator(k, x); } else { siftDownComparable(k, x); }
+        if (comparator != null) {
+            siftDownUsingComparator(k, x);
+        } else {
+            siftDownComparable(k, x);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -671,7 +683,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
             if (right < size && ((Comparable<? super E>) c).compareTo((E) queue[right]) > 0) {
                 c = queue[child = right];
             }
-            if (key.compareTo((E) c) <= 0) { break; }
+            if (key.compareTo((E) c) <= 0) {
+                break;
+            }
             queue[k] = c;
             k = child;
         }
@@ -685,8 +699,12 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
             int child = (k << 1) + 1;
             Object c = queue[child];
             int right = child + 1;
-            if (right < size && comparator.compare((E) c, (E) queue[right]) > 0) { c = queue[child = right]; }
-            if (comparator.compare(x, (E) c) <= 0) { break; }
+            if (right < size && comparator.compare((E) c, (E) queue[right]) > 0) {
+                c = queue[child = right];
+            }
+            if (comparator.compare(x, (E) c) <= 0) {
+                break;
+            }
             queue[k] = c;
             k = child;
         }
@@ -699,7 +717,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      */
     @SuppressWarnings("unchecked")
     private void heapify() {
-        for (int i = (size >>> 1) - 1; i >= 0; i--) { siftDown(i, (E) queue[i]); }
+        // yukms note: size >>> 1 == size / 2
+        for (int i = (size >>> 1) - 1; i >= 0; i--) {
+            siftDown(i, (E) queue[i]);
+        }
     }
 
     /**
