@@ -293,16 +293,20 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      */
     private void grow(int minCapacity) {
         int oldCapacity = queue.length;
-        // Double size if small; else grow by 50%
+        // yukms note: 如果容量小于64，那么增加2，否则双倍扩容
         int newCapacity = oldCapacity + ((oldCapacity < 64) ? (oldCapacity + 2) : (oldCapacity >> 1));
         // overflow-conscious code
-        if (newCapacity - MAX_ARRAY_SIZE > 0) { newCapacity = hugeCapacity(minCapacity); }
+        if (newCapacity - MAX_ARRAY_SIZE > 0) {
+            newCapacity = hugeCapacity(minCapacity);
+        }
         queue = Arrays.copyOf(queue, newCapacity);
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) // overflow
-        { throw new OutOfMemoryError(); }
+        if (minCapacity < 0) {
+            // overflow
+            throw new OutOfMemoryError();
+        }
         return (minCapacity > MAX_ARRAY_SIZE) ? Integer.MAX_VALUE : MAX_ARRAY_SIZE;
     }
 
@@ -348,6 +352,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
 
     @SuppressWarnings("unchecked")
     public E peek() {
+        // yukms note: 第一个元素就是最小的
         return (size == 0) ? null : (E) queue[0];
     }
 
@@ -375,7 +380,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      */
     public boolean remove(Object o) {
         int i = indexOf(o);
-        if (i == -1) { return false; } else {
+        if (i == -1) {
+            return false;
+        } else {
             removeAt(i);
             return true;
         }
@@ -569,19 +576,26 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      */
     public void clear() {
         modCount++;
-        for (int i = 0; i < size; i++) { queue[i] = null; }
+        for (int i = 0; i < size; i++) {
+            queue[i] = null;
+        }
         size = 0;
     }
 
     @SuppressWarnings("unchecked")
     public E poll() {
-        if (size == 0) { return null; }
+        if (size == 0) {
+            return null;
+        }
         int s = --size;
         modCount++;
         E result = (E) queue[0];
+        // yukms note: 让最后一个元素顶替该位置
         E x = (E) queue[s];
         queue[s] = null;
-        if (s != 0) { siftDown(0, x); }
+        if (s != 0) {
+            siftDown(0, x);
+        }
         return result;
     }
 
@@ -602,14 +616,21 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
         // assert i >= 0 && i < size;
         modCount++;
         int s = --size;
-        if (s == i) // removed last element
-        { queue[i] = null; } else {
+        if (s == i) {
+            // yukms note: 如果是最后一个元素，那么直接去掉
+            queue[i] = null;
+        } else {
             E moved = (E) queue[s];
             queue[s] = null;
+            // yukms note: 用最后一个元素填充被移除的元素，然后下移
             siftDown(i, moved);
-            if (queue[i] == moved) {
+            if (queue[i] == moved) { // yukms note: 下移操作完成之后发现，元素没有下移
+                // yukms note: 所以试试能不能上移
                 siftUp(i, moved);
-                if (queue[i] != moved) { return moved; }
+                if (queue[i] != moved) {// yukms note: 上移啦
+                    // yukms question: 为什么上移了才返回啊？？？
+                    return moved;
+                }
             }
         }
         return null;
@@ -628,16 +649,25 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      * @param x the item to insert
      */
     private void siftUp(int k, E x) {
-        if (comparator != null) { siftUpUsingComparator(k, x); } else { siftUpComparable(k, x); }
+        // yukms note: 向上移动指定的元素
+        if (comparator != null) {
+            siftUpUsingComparator(k, x);
+        } else {
+            siftUpComparable(k, x);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private void siftUpComparable(int k, E x) {
         Comparable<? super E> key = (Comparable<? super E>) x;
         while (k > 0) {
+            // yukms note: (nodeNo - 1) / 2
             int parent = (k - 1) >>> 1;
             Object e = queue[parent];
-            if (key.compareTo((E) e) >= 0) { break; }
+            if (key.compareTo((E) e) >= 0) {
+                break;
+            }
+            // yukms note: 如果父节点比x小，那么交换
             queue[k] = e;
             k = parent;
         }
@@ -649,7 +679,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
         while (k > 0) {
             int parent = (k - 1) >>> 1;
             Object e = queue[parent];
-            if (comparator.compare(x, (E) e) >= 0) { break; }
+            if (comparator.compare(x, (E) e) >= 0) {
+                break;
+            }
             queue[k] = e;
             k = parent;
         }
@@ -665,9 +697,13 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      * @param x the item to insert
      */
     private void siftDown(int k, E x) {
+        // yukms note: 注意这里取名字的方式
         if (comparator != null) {
+            // yukms note: 有comparator
             siftDownUsingComparator(k, x);
         } else {
+            // yukms note: 没有comparator
+            // yukms note: 逻辑完全与siftDownUsingComparator一样
             siftDownComparable(k, x);
         }
     }
@@ -696,16 +732,22 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
     private void siftDownUsingComparator(int k, E x) {
         int half = size >>> 1;
         while (k < half) {
+            // yukms note: leftNo
             int child = (k << 1) + 1;
             Object c = queue[child];
+            // yukms note: rightNo
             int right = child + 1;
+            // yukms note: 取left和right中，最小的一个
             if (right < size && comparator.compare((E) c, (E) queue[right]) > 0) {
                 c = queue[child = right];
             }
+            // yukms note: 如果x比left和right中最小的还小，表示符合排序规则
             if (comparator.compare(x, (E) c) <= 0) {
                 break;
             }
+            // yukms note: 否则将x与left和right中最小的元素交换位置
             queue[k] = c;
+            // yukms note:
             k = child;
         }
         queue[k] = x;
@@ -717,7 +759,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements java.io.Serial
      */
     @SuppressWarnings("unchecked")
     private void heapify() {
+        // yukms note: 该方法将最小的放置到根节点
+
         // yukms note: size >>> 1 == size / 2
+        // yukms note: 注意(size >>> 1) - 1
         for (int i = (size >>> 1) - 1; i >= 0; i--) {
             siftDown(i, (E) queue[i]);
         }
