@@ -106,9 +106,13 @@ public abstract class EnumSet<E extends Enum<E>> extends AbstractSet<E> implemen
      */
     public static <E extends Enum<E>> EnumSet<E> noneOf(Class<E> elementType) {
         Enum<?>[] universe = getUniverse(elementType);
-        if (universe == null) { throw new ClassCastException(elementType + " not an enum"); }
+        if (universe == null) {
+            throw new ClassCastException(elementType + " not an enum");
+        }
 
-        if (universe.length <= 64) { return new RegularEnumSet<>(elementType, universe); } else {
+        if (universe.length <= 64) {
+            return new RegularEnumSet<>(elementType, universe);
+        } else {
             return new JumboEnumSet<>(elementType, universe);
         }
     }
@@ -166,11 +170,15 @@ public abstract class EnumSet<E extends Enum<E>> extends AbstractSet<E> implemen
         if (c instanceof EnumSet) {
             return ((EnumSet<E>) c).clone();
         } else {
-            if (c.isEmpty()) { throw new IllegalArgumentException("Collection is empty"); }
+            if (c.isEmpty()) {
+                throw new IllegalArgumentException("Collection is empty");
+            }
             Iterator<E> i = c.iterator();
             E first = i.next();
             EnumSet<E> result = EnumSet.of(first);
-            while (i.hasNext()) { result.add(i.next()); }
+            while (i.hasNext()) {
+                result.add(i.next());
+            }
             return result;
         }
     }
@@ -329,7 +337,9 @@ public abstract class EnumSet<E extends Enum<E>> extends AbstractSet<E> implemen
     public static <E extends Enum<E>> EnumSet<E> of(E first, E... rest) {
         EnumSet<E> result = noneOf(first.getDeclaringClass());
         result.add(first);
-        for (E e : rest) { result.add(e); }
+        for (E e : rest) {
+            result.add(e);
+        }
         return result;
     }
 
@@ -348,7 +358,9 @@ public abstract class EnumSet<E extends Enum<E>> extends AbstractSet<E> implemen
      * @throws IllegalArgumentException if {@code from.compareTo(to) > 0}
      */
     public static <E extends Enum<E>> EnumSet<E> range(E from, E to) {
-        if (from.compareTo(to) > 0) { throw new IllegalArgumentException(from + " > " + to); }
+        if (from.compareTo(to) > 0) {
+            throw new IllegalArgumentException(from + " > " + to);
+        }
         EnumSet<E> result = noneOf(from.getDeclaringClass());
         result.addRange(from, to);
         return result;
@@ -431,7 +443,9 @@ public abstract class EnumSet<E extends Enum<E>> extends AbstractSet<E> implemen
         @SuppressWarnings("unchecked")
         private Object readResolve() {
             EnumSet<E> result = EnumSet.noneOf(elementType);
-            for (Enum<?> e : elements) { result.add((E) e); }
+            for (Enum<?> e : elements) {
+                result.add((E) e);
+            }
             return result;
         }
 

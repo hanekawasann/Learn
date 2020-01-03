@@ -50,7 +50,9 @@ class RegularEnumSet<E extends Enum<E>> extends EnumSet<E> {
     }
 
     void addAll() {
-        if (universe.length != 0) { elements = -1L >>> -universe.length; }
+        if (universe.length != 0) {
+            elements = -1L >>> -universe.length;
+        }
     }
 
     void complement() {

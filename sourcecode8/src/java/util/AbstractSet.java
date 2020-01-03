@@ -82,11 +82,17 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
      * @return <tt>true</tt> if the specified object is equal to this set
      */
     public boolean equals(Object o) {
-        if (o == this) { return true; }
+        if (o == this) {
+            return true;
+        }
 
-        if (!(o instanceof Set)) { return false; }
+        if (!(o instanceof Set)) {
+            return false;
+        }
         Collection<?> c = (Collection<?>) o;
-        if (c.size() != size()) { return false; }
+        if (c.size() != size()) {
+            return false;
+        }
         try {
             return containsAll(c);
         } catch (ClassCastException unused) {
@@ -118,7 +124,9 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
         Iterator<E> i = iterator();
         while (i.hasNext()) {
             E obj = i.next();
-            if (obj != null) { h += obj.hashCode(); }
+            if (obj != null) {
+                h += obj.hashCode();
+            }
         }
         return h;
     }
@@ -164,9 +172,15 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
         Objects.requireNonNull(c);
         boolean modified = false;
 
+        // yukms note: 遍历小的集合
+        // yukms question: 这里真的能减少遍历次数吗？？？
         if (size() > c.size()) {
-            for (Iterator<?> i = c.iterator(); i.hasNext(); ) { modified |= remove(i.next()); }
+            // yukms note: 内部集合的size更大
+            for (Iterator<?> i = c.iterator(); i.hasNext(); ) {
+                modified |= remove(i.next());
+            }
         } else {
+            // yukms note: 外部集合的size更大
             for (Iterator<?> i = iterator(); i.hasNext(); ) {
                 if (c.contains(i.next())) {
                     i.remove();
