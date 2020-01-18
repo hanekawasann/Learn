@@ -43,4 +43,11 @@ public class ArrayListTest {
         Assert.assertEquals(1, clone.get(0).intValue());
         Assert.assertEquals(1, clone.size());
     }
+
+    @Test
+    public void test_() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        Assert.assertEquals(0, list.subList(0, 0).size());
+    }
 }
