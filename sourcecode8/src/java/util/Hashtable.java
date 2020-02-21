@@ -25,11 +25,11 @@
 
 package java.util;
 
-import java.io.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.io.IOException;
+import java.io.StreamCorruptedException;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * This class implements a hash table, which maps keys to values. Any
@@ -152,6 +152,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      *
      * @serial
      */
+    // yukms note: 加载因子
     private float loadFactor;
 
     /**
@@ -176,14 +177,20 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      *                                  than zero, or if the load factor is nonpositive.
      */
     public Hashtable(int initialCapacity, float loadFactor) {
-        if (initialCapacity < 0) { throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity); }
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+        }
         if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
             throw new IllegalArgumentException("Illegal Load: " + loadFactor);
         }
 
-        if (initialCapacity == 0) { initialCapacity = 1; }
+        if (initialCapacity == 0) {
+            // yukms note: 默认为1
+            initialCapacity = 1;
+        }
         this.loadFactor = loadFactor;
         table = new Entry<?, ?>[initialCapacity];
+        // yukms question: 为什么这里的最大值是MAX_ARRAY_SIZE + 1，而ArrayList的最大值是MAX_ARRAY_SIZE
         threshold = (int) Math.min(initialCapacity * loadFactor, MAX_ARRAY_SIZE + 1);
     }
 
@@ -196,6 +203,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      *                                  than zero.
      */
     public Hashtable(int initialCapacity) {
+        // yukms note: loadFactor默认0.75f
         this(initialCapacity, 0.75f);
     }
 
@@ -204,6 +212,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * and load factor (0.75).
      */
     public Hashtable() {
+        // yukms note: 初始化容量默认11
         this(11, 0.75f);
     }
 
@@ -217,6 +226,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * @since 1.2
      */
     public Hashtable(Map<? extends K, ? extends V> t) {
+        // yukms question: 初始化容量为什么是Map的两倍
         this(Math.max(2 * t.size(), 11), 0.75f);
         putAll(t);
     }
@@ -387,24 +397,32 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
         Entry<?, ?>[] oldMap = table;
 
         // overflow-conscious code
+        // yukms note: 2n+1
         int newCapacity = (oldCapacity << 1) + 1;
+        // yukms note: 防止容量溢出
         if (newCapacity - MAX_ARRAY_SIZE > 0) {
-            if (oldCapacity == MAX_ARRAY_SIZE)
-            // Keep running with MAX_ARRAY_SIZE buckets
-            { return; }
+            if (oldCapacity == MAX_ARRAY_SIZE) {
+                // Keep running with MAX_ARRAY_SIZE buckets
+                // yukms note: 达到最大容量就不再rehash了
+                return;
+            }
             newCapacity = MAX_ARRAY_SIZE;
         }
+        // yukms note: 创建新table
         Entry<?, ?>[] newMap = new Entry<?, ?>[newCapacity];
 
         modCount++;
+        // yukms question: 这里的最大值可以达到MAX_ARRAY_SIZE + 1！
         threshold = (int) Math.min(newCapacity * loadFactor, MAX_ARRAY_SIZE + 1);
         table = newMap;
 
+        // yukms note: 注意这种写法
         for (int i = oldCapacity; i-- > 0; ) {
             for (Entry<K, V> old = (Entry<K, V>) oldMap[i]; old != null; ) {
                 Entry<K, V> e = old;
                 old = old.next;
 
+                // yukms note: 重新放置
                 int index = (e.hash & 0x7FFFFFFF) % newCapacity;
                 e.next = (Entry<K, V>) newMap[index];
                 newMap[index] = e;
@@ -428,7 +446,9 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
         // Creates the new entry.
         @SuppressWarnings("unchecked")
         Entry<K, V> e = (Entry<K, V>) tab[index];
+        // yukms note: 注意这里链表的顺序，插入在头部
         tab[index] = new Entry<>(hash, key, value, e);
+        // yukms note: 递增
         count++;
     }
 
@@ -458,6 +478,8 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
         // Makes sure the key is not already in the hashtable.
         Entry<?, ?>[] tab = table;
         int hash = key.hashCode();
+        // yukms note: 0x7fffffff = Integer.MAX_VALUE
+        // yukms note: 除留余数法
         int index = (hash & 0x7FFFFFFF) % tab.length;
         @SuppressWarnings("unchecked")
         Entry<K, V> entry = (Entry<K, V>) tab[index];
@@ -515,7 +537,9 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * @since 1.2
      */
     public synchronized void putAll(Map<? extends K, ? extends V> t) {
-        for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
@@ -1336,17 +1360,26 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
         }
 
         public T next() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
             return nextElement();
         }
 
         public void remove() {
-            if (!iterator) { throw new UnsupportedOperationException(); }
-            if (lastReturned == null) { throw new IllegalStateException("Hashtable Enumerator"); }
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (!iterator) {
+                throw new UnsupportedOperationException();
+            }
+            if (lastReturned == null) {
+                throw new IllegalStateException("Hashtable Enumerator");
+            }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
 
             synchronized (Hashtable.this) {
                 Entry<?, ?>[] tab = Hashtable.this.table;
+                // yukms note: 没有直接使用Enumerator.index是因为当前元素不一定是在当前的index桶内
                 int index = (lastReturned.hash & 0x7FFFFFFF) % tab.length;
 
                 @SuppressWarnings("unchecked")

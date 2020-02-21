@@ -1,5 +1,6 @@
 package com.yukms.learn.java.array;
 
+import lombok.AllArgsConstructor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,5 +14,9 @@ public class ArrayTest {
         Class<?> clazz = stringArray1.getClass();
         Assert.assertSame(clazz, String[].class);
         Assert.assertNotSame(clazz, Integer[].class);
+    }
+
+    public void test_maxLength() {
+        String[] str1 = new String[Integer.MAX_VALUE - 1];
     }
 }
