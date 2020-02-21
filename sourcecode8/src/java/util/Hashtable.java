@@ -1379,7 +1379,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
 
             synchronized (Hashtable.this) {
                 Entry<?, ?>[] tab = Hashtable.this.table;
-                // yukms note: 没有直接使用Enumerator.index是因为当前元素不一定是在当前的index桶内
+                // yukms note: 这里应该是可以直接使用Enumerator.index，因为index与lastReturned的关系是一致的
                 int index = (lastReturned.hash & 0x7FFFFFFF) % tab.length;
 
                 @SuppressWarnings("unchecked")
