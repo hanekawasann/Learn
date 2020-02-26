@@ -51,12 +51,4 @@ public class ArrayListTest {
         list.add(1);
         Assert.assertEquals(0, list.subList(0, 0).size());
     }
-
-    @Test
-    public void test_() {
-        String[] strings = new String[2];
-        List<String> list = Arrays.asList(strings);
-        Assert.assertEquals(null, list.get(0));
-        Assert.assertEquals(null, list.get(1));
-    }
 }
