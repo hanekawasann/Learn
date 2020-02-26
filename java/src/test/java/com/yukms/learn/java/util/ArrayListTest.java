@@ -1,6 +1,7 @@
 package com.yukms.learn.java.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -45,9 +46,17 @@ public class ArrayListTest {
     }
 
     @Test
-    public void test_() {
+    public void test_subList() {
         List<Integer> list = new ArrayList<>();
         list.add(1);
         Assert.assertEquals(0, list.subList(0, 0).size());
+    }
+
+    @Test
+    public void test_() {
+        String[] strings = new String[2];
+        List<String> list = Arrays.asList(strings);
+        Assert.assertEquals(null, list.get(0));
+        Assert.assertEquals(null, list.get(1));
     }
 }
