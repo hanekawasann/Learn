@@ -3,6 +3,7 @@ package com.yukms.learn.java.array;
 import java.util.Arrays;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,5 +35,16 @@ public class ArrayTest {
     public void test_copyOf() {
         Assert.assertArrayEquals(new String[] {}, Arrays.copyOf(new String[] {}, 0, String[].class));
         Assert.assertArrayEquals(new String[1], Arrays.copyOf(new String[2], 1, String[].class));
+    }
+
+    @Test
+    public void test_fill() {
+        int[] ints = new int[] { 2, 4, 8, 16, 32, 64, 128 };
+        String str = "004063";
+        for (int i : ints) {
+            String[] strings = new String[i];
+            Arrays.fill(strings, str);
+            System.out.println(JSON.toJSONString(strings));
+        }
     }
 }
