@@ -520,6 +520,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
                 }
                 count--;
                 V oldValue = e.value;
+                // yukms note: 清空引用
                 e.value = null;
                 return oldValue;
             }
@@ -548,7 +549,10 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
     public synchronized void clear() {
         Entry<?, ?>[] tab = table;
         modCount++;
-        for (int index = tab.length; --index >= 0; ) { tab[index] = null; }
+        for (int index = tab.length; --index >= 0; ) {
+            // yukms note: 清空桶
+            tab[index] = null;
+        }
         count = 0;
     }
 
@@ -566,6 +570,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
             for (int i = table.length; i-- > 0; ) {
                 t.table[i] = (table[i] != null) ? (Entry<?, ?>) table[i].clone() : null;
             }
+            // yukms note: 清空无用的属性
             t.keySet = null;
             t.entrySet = null;
             t.values = null;
@@ -652,7 +657,9 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * @since 1.2
      */
     public Set<K> keySet() {
-        if (keySet == null) { keySet = Collections.synchronizedSet(new KeySet(), this); }
+        if (keySet == null) {
+            keySet = Collections.synchronizedSet(new KeySet(), this);
+        }
         return keySet;
     }
 
@@ -695,7 +702,9 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * @since 1.2
      */
     public Set<Map.Entry<K, V>> entrySet() {
-        if (entrySet == null) { entrySet = Collections.synchronizedSet(new EntrySet(), this); }
+        if (entrySet == null) {
+            entrySet = Collections.synchronizedSet(new EntrySet(), this);
+        }
         return entrySet;
     }
 
@@ -804,11 +813,17 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
      * @since 1.2
      */
     public synchronized boolean equals(Object o) {
-        if (o == this) { return true; }
+        if (o == this) {
+            return true;
+        }
 
-        if (!(o instanceof Map)) { return false; }
+        if (!(o instanceof Map)) {
+            return false;
+        }
         Map<?, ?> t = (Map<?, ?>) o;
-        if (t.size() != size()) { return false; }
+        if (t.size() != size()) {
+            return false;
+        }
 
         try {
             Iterator<Map.Entry<K, V>> i = entrySet().iterator();
@@ -817,9 +832,13 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
                 K key = e.getKey();
                 V value = e.getValue();
                 if (value == null) {
-                    if (!(t.get(key) == null && t.containsKey(key))) { return false; }
+                    if (!(t.get(key) == null && t.containsKey(key))) {
+                        return false;
+                    }
                 } else {
-                    if (!value.equals(t.get(key))) { return false; }
+                    if (!value.equals(t.get(key))) {
+                        return false;
+                    }
                 }
             }
         } catch (ClassCastException unused) {
@@ -1014,6 +1033,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
         Entry<K, V> e = (Entry<K, V>) tab[index];
         for (; e != null; e = e.next) {
             if (e.hash == hash && e.key.equals(key)) {
+                // yukms note: 已经存在就返回旧值
                 // Hashtable not accept null value
                 return e.value;
             }
@@ -1388,7 +1408,11 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
                     if (e == lastReturned) {
                         modCount++;
                         expectedModCount++;
-                        if (prev == null) { tab[index] = e.next; } else { prev.next = e.next; }
+                        if (prev == null) {
+                            tab[index] = e.next;
+                        } else {
+                            prev.next = e.next;
+                        }
                         count--;
                         lastReturned = null;
                         return;

@@ -39,7 +39,7 @@ public class ArrayTest {
 
     @Test
     public void test_fill() {
-        int[] ints = new int[] { 2, 4, 8, 16, 32, 64, 128 };
+        int[] ints = new int[] { 2, 4, 8, 16, 32, 64, 128, 256 };
         String str = "004063";
         for (int i : ints) {
             String[] strings = new String[i];
