@@ -53,12 +53,11 @@ public final class SqlBuilder {
         StringBuilder updatePart = new StringBuilder();
         for (String columnName : columnNames) {
             insertPart.append("\t`").append(columnName).append("`,\n");
-            String fieldName = underline2CamelCase(columnName);
-            valuePart.append("\t\t#{item.").append(fieldName).append("},\n");
+            valuePart.append("\t\t#{item.").append(underline2CamelCase(columnName)).append("},\n");
             if (columnName.equals(keyName)) {
                 continue;
             }
-            updatePart.append("\t`").append(columnName).append("`=VALUES(").append(fieldName).append("),\n");
+            updatePart.append("\t`").append(columnName).append("`=VALUES(`").append(columnName).append("`),\n");
         }
         removeLastComma(insertPart);
         removeLastComma(valuePart);

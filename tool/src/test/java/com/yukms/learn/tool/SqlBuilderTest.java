@@ -33,8 +33,8 @@ public class SqlBuilderTest {
             + "\t\t)\n"//
             + "\t</foreach>\n"//
             + "\tON DUPLICATE KEY UPDATE\n"//
-            + "\t`deal_price`=VALUES(dealPrice),\n"//
-            + "\t`pay_method`=VALUES(payMethod)\n"//
+            + "\t`deal_price`=VALUES(`deal_price`),\n"//
+            + "\t`pay_method`=VALUES(`pay_method`)\n"//
             + "</insert>";
         Assert.assertEquals(expectedSql, sqlBuilder.getSaveOrUpdateBatchSql());
     }
