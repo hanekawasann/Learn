@@ -38,4 +38,21 @@ public class SqlBuilderTest {
             + "</insert>";
         Assert.assertEquals(expectedSql, sqlBuilder.getSaveOrUpdateBatchSql());
     }
+
+    @Test
+    public void test_() {
+        String ddl = "CREATE TABLE `order_action` (\n" +
+            "  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水号ID',\n" +
+            "  `order_status` varchar(50) DEFAULT NULL COMMENT '订单状态',\n" +
+            "  `payment_status` int(10) unsigned DEFAULT NULL COMMENT '支付单状态',\n" +
+            "  `reason` varchar(255) DEFAULT NULL,\n" + "  `action_note` varchar(255) DEFAULT NULL COMMENT '操作备注',\n" +
+            "  `create_time` datetime DEFAULT NULL COMMENT '操作时间',\n" +
+            "  `order_id` varchar(50) DEFAULT NULL COMMENT '订单号',\n" +
+            "  `handler_type` varchar(45) DEFAULT NULL COMMENT '处理人类型：系统，买家，各种角色',\n" +
+            "  `handler_name` varchar(45) DEFAULT NULL COMMENT '处理人名称',\n" +
+            "  `operator` varchar(255) DEFAULT NULL,\n" + "  `type` varchar(50) DEFAULT NULL COMMENT '操作类型',\n" +
+            "  PRIMARY KEY (`id`),\n" + "  KEY `order_sn_index` (`order_id`)\n" +
+            ") ENGINE=InnoDB AUTO_INCREMENT=1233281076369743874 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;";
+        System.out.println(new SqlBuilder(ddl).getSaveOrUpdateBatchSql());
+    }
 }
