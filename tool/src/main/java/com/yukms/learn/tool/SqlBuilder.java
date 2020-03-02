@@ -58,7 +58,7 @@ public final class SqlBuilder {
             if (columnName.equals(keyName)) {
                 continue;
             }
-            updatePart.append("\t").append(columnName).append("=VALUES(").append(fieldName).append("),\n");
+            updatePart.append("\t`").append(columnName).append("`=VALUES(").append(fieldName).append("),\n");
         }
         removeLastComma(insertPart);
         removeLastComma(valuePart);
