@@ -725,6 +725,7 @@ public interface Map<K, V> {
      */
     default V putIfAbsent(K key, V value) {
         V v = get(key);
+        // yukms note: 如果不存在，则放入
         if (v == null) {
             v = put(key, value);
         }
@@ -980,7 +981,7 @@ public interface Map<K, V> {
      * present.
      * @since 1.8
      */
-    default V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    default V computefPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
         V oldValue;
         if ((oldValue = get(key)) != null) {

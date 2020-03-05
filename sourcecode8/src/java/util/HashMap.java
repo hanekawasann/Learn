@@ -230,6 +230,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     /**
      * The default initial capacity - MUST be a power of two.
      */
+    // yukms note: 默认容量
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -237,11 +238,13 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * by either of the constructors with arguments.
      * MUST be a power of two <= 1<<30.
      */
+    // yukms note: 最大容量
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
      * The load factor used when none specified in constructor.
      */
+    // yukms note: 默认加载因子
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
