@@ -417,6 +417,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * addEntry.
      */
     private void putForCreate(K key, V value) {
+        // yukms note: null key 总是映射到0
         int hash = (key == null) ? 0 : hash(key.hashCode());
         int i = indexFor(hash, table.length);
 
