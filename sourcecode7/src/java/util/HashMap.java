@@ -25,7 +25,8 @@
 
 package java.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Hash table based implementation of the <tt>Map</tt> interface.  This
@@ -133,6 +134,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * by either of the constructors with arguments.
      * MUST be a power of two <= 1<<30.
      */
+    // yukms note: 1,073,741,824‬ = (Integer.MAX_VALUE / 2) + 1
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
@@ -155,6 +157,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      *
      * @serial
      */
+    // yukms note: 当容量达到该值时，进行扩容
     int threshold;
 
     /**
@@ -162,6 +165,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      *
      * @serial
      */
+    // yukms note: 加载因子
     final float loadFactor;
 
     /**
@@ -312,11 +316,15 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * @see #put(Object, Object)
      */
     public V get(Object key) {
-        if (key == null) { return getForNullKey(); }
+        if (key == null) {
+            return getForNullKey();
+        }
         int hash = hash(key.hashCode());
         for (Entry<K, V> e = table[indexFor(hash, table.length)]; e != null; e = e.next) {
             Object k;
-            if (e.hash == hash && ((k = e.key) == key || key.equals(k))) { return e.value; }
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
+                return e.value;
+            }
         }
         return null;
     }
@@ -329,8 +337,11 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * others.
      */
     private V getForNullKey() {
+        // yukms note: null key永远放在0捅的位置
         for (Entry<K, V> e = table[0]; e != null; e = e.next) {
-            if (e.key == null) { return e.value; }
+            if (e.key == null) {
+                return e.value;
+            }
         }
         return null;
     }
@@ -356,7 +367,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         int hash = (key == null) ? 0 : hash(key.hashCode());
         for (Entry<K, V> e = table[indexFor(hash, table.length)]; e != null; e = e.next) {
             Object k;
-            if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) { return e; }
+            if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
+                return e;
+            }
         }
         return null;
     }
@@ -375,7 +388,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * previously associated <tt>null</tt> with <tt>key</tt>.)
      */
     public V put(K key, V value) {
-        if (key == null) { return putForNullKey(value); }
+        if (key == null) {
+            return putForNullKey(value);
+        }
         int hash = hash(key.hashCode());
         int i = indexFor(hash, table.length);
         for (Entry<K, V> e = table[i]; e != null; e = e.next) {
@@ -461,13 +476,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
         if (oldCapacity == MAXIMUM_CAPACITY) {
+            // yukms note: 2,147,483,647‬
             threshold = Integer.MAX_VALUE;
+            // yukms note: 已经达到最大的容量，不能再扩容了
             return;
         }
 
         Entry[] newTable = new Entry[newCapacity];
         transfer(newTable);
         table = newTable;
+        // yukms note: 下次扩容的大小
         threshold = (int) (newCapacity * loadFactor);
     }
 
@@ -502,7 +520,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      */
     public void putAll(Map<? extends K, ? extends V> m) {
         int numKeysToBeAdded = m.size();
-        if (numKeysToBeAdded == 0) { return; }
+        if (numKeysToBeAdded == 0) {
+            return;
+        }
 
         /*
          * Expand the map if the map if the number of mappings to be added
@@ -513,15 +533,26 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
          * By using the conservative calculation, we subject ourself
          * to at most one extra resize.
          */
+        // yukms note: 如果需要增加的键值对数量大于阀值（上面说的保守计算）
+        // yukms note: 如果在保守计算的情况下仍然需要扩容，那就真的需要扩容了
         if (numKeysToBeAdded > threshold) {
             int targetCapacity = (int) (numKeysToBeAdded / loadFactor + 1);
-            if (targetCapacity > MAXIMUM_CAPACITY) { targetCapacity = MAXIMUM_CAPACITY; }
+            if (targetCapacity > MAXIMUM_CAPACITY) {
+                targetCapacity = MAXIMUM_CAPACITY;
+            }
             int newCapacity = table.length;
-            while (newCapacity < targetCapacity) { newCapacity <<= 1; }
-            if (newCapacity > table.length) { resize(newCapacity); }
+            while (newCapacity < targetCapacity) {
+                // yukms note: *2 *2 再*2，还是扩容2n
+                newCapacity <<= 1;
+            }
+            if (newCapacity > table.length) {
+                resize(newCapacity);
+            }
         }
 
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
@@ -555,7 +586,12 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
                 modCount++;
                 size--;
-                if (prev == e) { table[i] = next; } else { prev.next = next; }
+                if (prev == e) {
+                    // yukms note: 被移除的节点为头结点
+                    table[i] = next;
+                } else {
+                    prev.next = next;
+                }
                 e.recordRemoval(this);
                 return e;
             }
@@ -570,7 +606,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * Special version of remove for EntrySet.
      */
     final Entry<K, V> removeMapping(Object o) {
-        if (!(o instanceof Map.Entry)) { return null; }
+        if (!(o instanceof Map.Entry)) {
+            return null;
+        }
 
         Map.Entry<K, V> entry = (Map.Entry<K, V>) o;
         Object key = entry.getKey();
@@ -584,7 +622,11 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             if (e.hash == hash && e.equals(entry)) {
                 modCount++;
                 size--;
-                if (prev == e) { table[i] = next; } else { prev.next = next; }
+                if (prev == e) {
+                    table[i] = next;
+                } else {
+                    prev.next = next;
+                }
                 e.recordRemoval(this);
                 return e;
             }
@@ -602,7 +644,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     public void clear() {
         modCount++;
         Entry[] tab = table;
-        for (int i = 0; i < tab.length; i++) { tab[i] = null; }
+        for (int i = 0; i < tab.length; i++) {
+            tab[i] = null;
+        }
         size = 0;
     }
 
@@ -615,11 +659,17 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * specified value
      */
     public boolean containsValue(Object value) {
-        if (value == null) { return containsNullValue(); }
+        if (value == null) {
+            return containsNullValue();
+        }
 
         Entry[] tab = table;
         for (int i = 0; i < tab.length; i++) {
-            for (Entry e = tab[i]; e != null; e = e.next) { if (value.equals(e.value)) { return true; } }
+            for (Entry e = tab[i]; e != null; e = e.next) {
+                if (value.equals(e.value)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -630,7 +680,11 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     private boolean containsNullValue() {
         Entry[] tab = table;
         for (int i = 0; i < tab.length; i++) {
-            for (Entry e = tab[i]; e != null; e = e.next) { if (e.value == null) { return true; } }
+            for (Entry e = tab[i]; e != null; e = e.next) {
+                if (e.value == null) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -735,7 +789,10 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     void addEntry(int hash, K key, V value, int bucketIndex) {
         Entry<K, V> e = table[bucketIndex];
         table[bucketIndex] = new Entry<>(hash, key, value, e);
-        if (size++ >= threshold) { resize(2 * table.length); }
+        if (size++ >= threshold) {
+            // yukms note: 扩容2n
+            resize(2 * table.length);
+        }
     }
 
     /**
@@ -760,6 +817,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
 
         HashIterator() {
             expectedModCount = modCount;
+            // yukms note: 找到第一个等待返回的Entry
             if (size > 0) { // advance to first entry
                 Entry[] t = table;
                 while (index < t.length && (next = t[index++]) == null) { }
@@ -771,11 +829,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         }
 
         final Entry<K, V> nextEntry() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
             Entry<K, V> e = next;
-            if (e == null) { throw new NoSuchElementException(); }
+            if (e == null) {
+                throw new NoSuchElementException();
+            }
 
             if ((next = e.next) == null) {
+                // yukms note: 去下一个桶找
                 Entry[] t = table;
                 while (index < t.length && (next = t[index++]) == null) { }
             }
@@ -784,8 +847,12 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         }
 
         public void remove() {
-            if (current == null) { throw new IllegalStateException(); }
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (current == null) {
+                throw new IllegalStateException();
+            }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
             Object k = current.key;
             current = null;
             HashMap.this.removeEntryForKey(k);
