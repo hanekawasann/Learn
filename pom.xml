@@ -24,6 +24,8 @@
         <module>dynamic-bytecode</module>
         <module>netty</module>
         <module>jpcap</module>
+        <module>ast</module>
+        <module>ast</module>
     </modules>
 
     <name>learn</name>
