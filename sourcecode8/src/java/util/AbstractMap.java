@@ -109,12 +109,16 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         if (value == null) {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (e.getValue() == null) { return true; }
+                if (e.getValue() == null) {
+                    return true;
+                }
             }
         } else {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (value.equals(e.getValue())) { return true; }
+                if (value.equals(e.getValue())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -137,12 +141,16 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         if (key == null) {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (e.getKey() == null) { return true; }
+                if (e.getKey() == null) {
+                    return true;
+                }
             }
         } else {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (key.equals(e.getKey())) { return true; }
+                if (key.equals(e.getKey())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -165,12 +173,16 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         if (key == null) {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (e.getKey() == null) { return e.getValue(); }
+                if (e.getKey() == null) {
+                    return e.getValue();
+                }
             }
         } else {
             while (i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (key.equals(e.getKey())) { return e.getValue(); }
+                if (key.equals(e.getKey())) {
+                    return e.getValue();
+                }
             }
         }
         return null;
@@ -219,12 +231,16 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         if (key == null) {
             while (correctEntry == null && i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (e.getKey() == null) { correctEntry = e; }
+                if (e.getKey() == null) {
+                    correctEntry = e;
+                }
             }
         } else {
             while (correctEntry == null && i.hasNext()) {
                 Entry<K, V> e = i.next();
-                if (key.equals(e.getKey())) { correctEntry = e; }
+                if (key.equals(e.getKey())) {
+                    correctEntry = e;
+                }
             }
         }
 
@@ -255,7 +271,9 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * the <tt>put</tt> operation and the specified map is nonempty.
      */
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
