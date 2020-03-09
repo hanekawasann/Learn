@@ -278,6 +278,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      */
     static class Node<K, V> implements Map.Entry<K, V> {
         final int hash;
+        // yukms note: key是final
         final K key;
         V value;
         Node<K, V> next;
@@ -343,19 +344,26 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * Comparable<C>", else null.
      */
     static Class<?> comparableClassFor(Object x) {
+        // yukms note: 判断类C是否实现了comparable<C>接口
         if (x instanceof Comparable) {
             Class<?> c;
             Type[] ts, as;
             Type t;
             ParameterizedType p;
-            if ((c = x.getClass()) == String.class) // bypass checks
-            { return c; }
+            if ((c = x.getClass()) == String.class) {
+                // bypass checks
+                return c;
+            }
             if ((ts = c.getGenericInterfaces()) != null) {
-                for (int i = 0; i < ts.length; ++i) {
-                    if (((t = ts[i]) instanceof ParameterizedType) &&
-                        ((p = (ParameterizedType) t).getRawType() == Comparable.class) &&
-                        (as = p.getActualTypeArguments()) != null && as.length == 1 && as[0] == c) // type arg is c
-                    { return c; }
+                for (Type type : ts) {
+                    if (((t = type) instanceof ParameterizedType)//
+                        && ((p = (ParameterizedType) t).getRawType() == Comparable.class)//
+                        && (as = p.getActualTypeArguments()) != null //
+                        && as.length == 1 //
+                        && as[0] == c) {
+                        // type arg is c
+                        return c;
+                    }
                 }
             }
         }
@@ -398,6 +406,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * Holds cached entrySet(). Note that AbstractMap fields are used
      * for keySet() and values().
      */
+    // yukms note: 缓存
     transient Set<Map.Entry<K, V>> entrySet;
 
     /**
@@ -444,8 +453,12 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      *                                  or the load factor is nonpositive
      */
     public HashMap(int initialCapacity, float loadFactor) {
-        if (initialCapacity < 0) { throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity); }
-        if (initialCapacity > MAXIMUM_CAPACITY) { initialCapacity = MAXIMUM_CAPACITY; }
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+        }
+        if (initialCapacity > MAXIMUM_CAPACITY) {
+            initialCapacity = MAXIMUM_CAPACITY;
+        }
         if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
             throw new IllegalArgumentException("Illegal load factor: " + loadFactor);
         }
@@ -495,17 +508,24 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      */
     final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
         int s = m.size();
-        if (s > 0) {
-            if (table == null) { // pre-size
-                float ft = ((float) s / loadFactor) + 1.0F;
-                int t = ((ft < (float) MAXIMUM_CAPACITY) ? (int) ft : MAXIMUM_CAPACITY);
-                if (t > threshold) { threshold = tableSizeFor(t); }
-            } else if (s > threshold) { resize(); }
-            for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
-                K key = e.getKey();
-                V value = e.getValue();
-                putVal(hash(key), key, value, false, evict);
+        if (s <= 0) {
+            return;
+        }
+        if (table == null) {
+            // pre-size
+            float ft = ((float) s / loadFactor) + 1.0F;
+            int t = (ft < (float) MAXIMUM_CAPACITY) ? (int) ft : MAXIMUM_CAPACITY;
+            if (t > threshold) {
+                threshold = tableSizeFor(t);
             }
+        } else if (s > threshold) {
+            // yukms note: 保守计算
+            resize();
+        }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            K key = e.getKey();
+            V value = e.getValue();
+            putVal(hash(key), key, value, false, evict);
         }
     }
 
@@ -660,21 +680,36 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      */
     final Node<K, V>[] resize() {
         Node<K, V>[] oldTab = table;
+        // yukms note: 旧容量
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        // yukms note: 旧阀值
         int oldThr = threshold;
-        int newCap, newThr = 0;
+        // yukms note: 新容量
+        int newCap;
+        // yukms note: 新阀值
+        int newThr = 0;
         if (oldCap > 0) {
+            // yukms note: 旧容量存在
             if (oldCap >= MAXIMUM_CAPACITY) {
+                // yukms note: 已经无法扩容
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
             } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY) {
-                newThr = oldThr << 1; // double threshold
+                // yukms note: 如果扩容之后大小正常，那么就正常扩容2n
+                // double threshold
+                newThr = oldThr << 1;
             }
-        } else if (oldThr > 0) // initial capacity was placed in threshold
-        { newCap = oldThr; } else {               // zero initial threshold signifies using defaults
+        } else if (oldThr > 0) {
+            // yukms note: 旧容量不存在，且旧阀值存在
+            // initial capacity was placed in threshold
+            newCap = oldThr;
+        } else {
+            // yukms note: 旧容量和旧阀值都不存在，那么初始化
+            // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
+        // yukms note: 重新计算新阀值
         if (newThr == 0) {
             float ft = (float) newCap * loadFactor;
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY ? (int) ft : Integer.MAX_VALUE);
@@ -683,24 +718,39 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         @SuppressWarnings( { "rawtypes", "unchecked" })
         Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
         table = newTab;
+        // yukms note: 重新放置
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K, V> e;
                 if ((e = oldTab[j]) != null) {
+                    // yukms note: 取消引用
                     oldTab[j] = null;
-                    if (e.next == null) { newTab[e.hash & (newCap - 1)] = e; } else if (e instanceof TreeNode) {
+                    if (e.next == null) {
+                        // yukms note: 该桶下只有一个元素
+                        newTab[e.hash & (newCap - 1)] = e;
+                    } else if (e instanceof TreeNode) {
+                        // yukms note: 树结构特殊处理
                         ((TreeNode<K, V>) e).split(this, newTab, j, oldCap);
-                    } else { // preserve order
+                    } else {
+                        // preserve order
                         Node<K, V> loHead = null, loTail = null;
                         Node<K, V> hiHead = null, hiTail = null;
                         Node<K, V> next;
                         do {
                             next = e.next;
                             if ((e.hash & oldCap) == 0) {
-                                if (loTail == null) { loHead = e; } else { loTail.next = e; }
+                                if (loTail == null) {
+                                    loHead = e;
+                                } else {
+                                    loTail.next = e;
+                                }
                                 loTail = e;
                             } else {
-                                if (hiTail == null) { hiHead = e; } else { hiTail.next = e; }
+                                if (hiTail == null) {
+                                    hiHead = e;
+                                } else {
+                                    hiTail.next = e;
+                                }
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
@@ -1922,11 +1972,19 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                 next = (TreeNode<K, V>) e.next;
                 e.next = null;
                 if ((e.hash & bit) == 0) {
-                    if ((e.prev = loTail) == null) { loHead = e; } else { loTail.next = e; }
+                    if ((e.prev = loTail) == null) {
+                        loHead = e;
+                    } else {
+                        loTail.next = e;
+                    }
                     loTail = e;
                     ++lc;
                 } else {
-                    if ((e.prev = hiTail) == null) { hiHead = e; } else { hiTail.next = e; }
+                    if ((e.prev = hiTail) == null) {
+                        hiHead = e;
+                    } else {
+                        hiTail.next = e;
+                    }
                     hiTail = e;
                     ++hc;
                 }
@@ -1935,14 +1993,20 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             if (loHead != null) {
                 if (lc <= UNTREEIFY_THRESHOLD) { tab[index] = loHead.untreeify(map); } else {
                     tab[index] = loHead;
-                    if (hiHead != null) // (else is already treeified)
-                    { loHead.treeify(tab); }
+                    if (hiHead != null) {
+                        // (else is already treeified)
+                        loHead.treeify(tab);
+                    }
                 }
             }
             if (hiHead != null) {
-                if (hc <= UNTREEIFY_THRESHOLD) { tab[index + bit] = hiHead.untreeify(map); } else {
+                if (hc <= UNTREEIFY_THRESHOLD) {
+                    tab[index + bit] = hiHead.untreeify(map);
+                } else {
                     tab[index + bit] = hiHead;
-                    if (loHead != null) { hiHead.treeify(tab); }
+                    if (loHead != null) {
+                        hiHead.treeify(tab);
+                    }
                 }
             }
         }
