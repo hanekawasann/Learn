@@ -519,9 +519,10 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                 threshold = tableSizeFor(t);
             }
         } else if (s > threshold) {
-            // yukms note: 保守计算
+            // yukms note: 预先（保守）计算是否重新计算容量
             resize();
         }
+        // yukms note: 逐个置入
         for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
             K key = e.getKey();
             V value = e.getValue();
@@ -582,12 +583,21 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         int n;
         K k;
         if ((tab = table) != null && (n = tab.length) > 0 && (first = tab[(n - 1) & hash]) != null) {
-            if (first.hash == hash && // always check first node
-                ((k = first.key) == key || (key != null && key.equals(k)))) { return first; }
+            // yukms note: table不等于null && table的长度要大于0 && 该桶的第一个阶段不为null
+            if (first.hash == hash // always check first node
+                && ((k = first.key) == key || (key != null && key.equals(k)))) {
+                // yukms note: 和putVal方法一样，先校验第一个节点
+                return first;
+            }
             if ((e = first.next) != null) {
-                if (first instanceof TreeNode) { return ((TreeNode<K, V>) first).getTreeNode(hash, key); }
+                if (first instanceof TreeNode) {
+                    // yukms note: 数特殊处理
+                    return ((TreeNode<K, V>) first).getTreeNode(hash, key);
+                }
                 do {
-                    if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) { return e; }
+                    if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
+                        return e;
+                    }
                 } while ((e = e.next) != null);
             }
         }
@@ -628,43 +638,73 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * @param hash         hash for key
      * @param key          the key
      * @param value        the value to put
-     * @param onlyIfAbsent if true, don't change existing value
-     * @param evict        if false, the table is in creation mode.
+     * @param onlyIfAbsent if true, don't change existing value 如果true，则不更改现有值
+     * @param evict        if false, the table is in creation mode. 如果false，表处于创建模式
      * @return previous value, or null if none
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
+        // yukms note: table
         Node<K, V>[] tab;
+        // yukms note: 当前桶的头结点
         Node<K, V> p;
-        int n, i;
-        if ((tab = table) == null || (n = tab.length) == 0) { n = (tab = resize()).length; }
-        if ((p = tab[i = (n - 1) & hash]) == null) { tab[i] = newNode(hash, key, value, null); } else {
+        // yukms note: table.length
+        int n;
+        // yukms note: 当前桶index
+        int i;
+        if ((tab = table) == null || (n = tab.length) == 0) {
+            // yukms note: 初始化桶
+            n = (tab = resize()).length;
+        }
+        if ((p = tab[i = (n - 1) & hash]) == null) {
+            // yukms note: 该桶下还没有节点
+            tab[i] = newNode(hash, key, value, null);
+        } else {
+            // yukms note: 该桶下已经有节点了
+            // yukms note:
             Node<K, V> e;
             K k;
             if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) {
                 e = p;
             } else if (p instanceof TreeNode) {
+                // yukms note: 树结构特殊处理
                 e = ((TreeNode<K, V>) p).putTreeVal(this, tab, hash, key, value);
             } else {
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
+                        // yukms note: 到链表的末尾
                         p.next = newNode(hash, key, value, null);
-                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                        { treeifyBin(tab, hash); }
+                        if (binCount >= TREEIFY_THRESHOLD - 1) {
+                            // yukms note: 如果链表元素个数大于等于TREEIFY_THRESHOLD，那么将当前桶从链表转化为树
+                            // -1 for 1st
+                            treeifyBin(tab, hash);
+                        }
                         break;
                     }
-                    if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) { break; }
+                    if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
+                        // yukms note: key找到已有的节点
+                        break;
+                    }
                     p = e;
                 }
             }
             if (e != null) { // existing mapping for key
+                // yukms note: Map内有存在有键为key的映射关系，即上面的“key找到已有的节点”
                 V oldValue = e.value;
-                if (!onlyIfAbsent || oldValue == null) { e.value = value; }
+                // yukms note: 根据情况是否替换旧值
+                if (!onlyIfAbsent || oldValue == null) {
+                    e.value = value;
+                }
                 afterNodeAccess(e);
+                // yukms note: 返回旧值
                 return oldValue;
             }
         }
         ++modCount;
-        if (++size > threshold) { resize(); }
+        // yukms note: 自增szie
+        if (++size > threshold) {
+            // yukms note: 重新调整容量
+            resize();
+        }
         afterNodeInsertion(evict);
         return null;
     }
@@ -682,11 +722,11 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         Node<K, V>[] oldTab = table;
         // yukms note: 旧容量
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
-        // yukms note: 旧阀值
+        // yukms note: 旧阈值
         int oldThr = threshold;
         // yukms note: 新容量
         int newCap;
-        // yukms note: 新阀值
+        // yukms note: 新阈值
         int newThr = 0;
         if (oldCap > 0) {
             // yukms note: 旧容量存在
@@ -700,16 +740,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                 newThr = oldThr << 1;
             }
         } else if (oldThr > 0) {
-            // yukms note: 旧容量不存在，且旧阀值存在
+            // yukms note: 旧容量不存在，且旧阈值存在
             // initial capacity was placed in threshold
             newCap = oldThr;
         } else {
-            // yukms note: 旧容量和旧阀值都不存在，那么初始化
+            // yukms note: 旧容量和旧阈值都不存在，那么初始化
             // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
-        // yukms note: 重新计算新阀值
+        // yukms note: 重新计算新阈值
         if (newThr == 0) {
             float ft = (float) newCap * loadFactor;
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY ? (int) ft : Integer.MAX_VALUE);
@@ -718,12 +758,12 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         @SuppressWarnings( { "rawtypes", "unchecked" })
         Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
         table = newTab;
-        // yukms note: 重新放置
+        // yukms note: oldTab存在才需要重新放置
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K, V> e;
                 if ((e = oldTab[j]) != null) {
-                    // yukms note: 取消引用
+                    // yukms note: 取消引用（便于垃圾回收？）
                     oldTab[j] = null;
                     if (e.next == null) {
                         // yukms note: 该桶下只有一个元素
@@ -733,12 +773,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                         ((TreeNode<K, V>) e).split(this, newTab, j, oldCap);
                     } else {
                         // preserve order
+                        // yukms note: 把当前桶的链表分成两个链表lo与hi
+                        // yukms note: 不会首位倒置（Java7会）
                         Node<K, V> loHead = null, loTail = null;
                         Node<K, V> hiHead = null, hiTail = null;
                         Node<K, V> next;
                         do {
                             next = e.next;
+                            // yukms note: (e.hash & oldCap) == 0 作为lo
                             if ((e.hash & oldCap) == 0) {
+                                // yukms note: 尾插法（Java7使用头插法）
                                 if (loTail == null) {
                                     loHead = e;
                                 } else {
@@ -746,6 +790,8 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                                 }
                                 loTail = e;
                             } else {
+                                // yukms note: (e.hash & oldCap) != 0 作为hi
+                                // yukms note: 尾插法（Java7使用头插法）
                                 if (hiTail == null) {
                                     hiHead = e;
                                 } else {
@@ -754,12 +800,18 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
+                        // yukms note: 如果链表lo存在
                         if (loTail != null) {
+                            // yukms note: 注意这里
                             loTail.next = null;
+                            // yukms note: lo不动，为什么？因为
                             newTab[j] = loHead;
                         }
+                        // yukms note: 如果链表hi存在
                         if (hiTail != null) {
+                            // yukms note: 注意这里
                             hiTail.next = null;
+                            // yukms note: hi向后移动oldCap位
                             newTab[j + oldCap] = hiHead;
                         }
                     }
@@ -774,20 +826,26 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
      * table is too small, in which case resizes instead.
      */
     final void treeifyBin(Node<K, V>[] tab, int hash) {
-        int n, index;
+        int n;
+        int index;
         Node<K, V> e;
-        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY) { resize(); } else if (
-            (e = tab[index = (n - 1) & hash]) != null) {
+        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY) {
+            resize();
+        } else if ((e = tab[index = (n - 1) & hash]) != null) {
             TreeNode<K, V> hd = null, tl = null;
             do {
                 TreeNode<K, V> p = replacementTreeNode(e, null);
-                if (tl == null) { hd = p; } else {
+                if (tl == null) {
+                    hd = p;
+                } else {
                     p.prev = tl;
                     tl.next = p;
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            if ((tab[index] = hd) != null) { hd.treeify(tab); }
+            if ((tab[index] = hd) != null) {
+                hd.treeify(tab);
+            }
         }
     }
 
@@ -830,14 +888,20 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     final Node<K, V> removeNode(int hash, Object key, Object value, boolean matchValue, boolean movable) {
         Node<K, V>[] tab;
         Node<K, V> p;
-        int n, index;
+        int n;
+        int index;
         if ((tab = table) != null && (n = tab.length) > 0 && (p = tab[index = (n - 1) & hash]) != null) {
-            Node<K, V> node = null, e;
+            Node<K, V> node = null;
+            Node<K, V> e;
             K k;
             V v;
-            if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) { node = p; } else if (
-                (e = p.next) != null) {
-                if (p instanceof TreeNode) { node = ((TreeNode<K, V>) p).getTreeNode(hash, key); } else {
+            if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k)))) {
+                // yukms note: 常规先检查头节点
+                node = p;
+            } else if ((e = p.next) != null) {
+                if (p instanceof TreeNode) {
+                    node = ((TreeNode<K, V>) p).getTreeNode(hash, key);
+                } else {
                     do {
                         if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
                             node = e;
@@ -848,8 +912,14 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                 }
             }
             if (node != null && (!matchValue || (v = node.value) == value || (value != null && value.equals(v)))) {
-                if (node instanceof TreeNode) { ((TreeNode<K, V>) node).removeTreeNode(this, tab, movable); } else if (
-                    node == p) { tab[index] = node.next; } else { p.next = node.next; }
+                // yukms note: Map中存在该key的映射关系
+                if (node instanceof TreeNode) {
+                    ((TreeNode<K, V>) node).removeTreeNode(this, tab, movable);
+                } else if (node == p) {
+                    tab[index] = node.next;
+                } else {
+                    p.next = node.next;
+                }
                 ++modCount;
                 --size;
                 afterNodeRemoval(node);
@@ -868,7 +938,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
-            for (int i = 0; i < tab.length; ++i) { tab[i] = null; }
+            for (int i = 0; i < tab.length; ++i) {
+                tab[i] = null;
+            }
         }
     }
 
@@ -886,7 +958,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         if ((tab = table) != null && size > 0) {
             for (int i = 0; i < tab.length; ++i) {
                 for (Node<K, V> e = tab[i]; e != null; e = e.next) {
-                    if ((v = e.value) == value || (value != null && value.equals(v))) { return true; }
+                    if ((v = e.value) == value || (value != null && value.equals(v))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -932,13 +1006,19 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
 
         public final void forEach(Consumer<? super K> action) {
             Node<K, V>[] tab;
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             if (size > 0 && (tab = table) != null) {
                 int mc = modCount;
                 for (int i = 0; i < tab.length; ++i) {
-                    for (Node<K, V> e = tab[i]; e != null; e = e.next) { action.accept(e.key); }
+                    for (Node<K, V> e = tab[i]; e != null; e = e.next) {
+                        action.accept(e.key);
+                    }
                 }
-                if (modCount != mc) { throw new ConcurrentModificationException(); }
+                if (modCount != mc) {
+                    throw new ConcurrentModificationException();
+                }
             }
         }
     }
@@ -978,13 +1058,19 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
 
         public final void forEach(Consumer<? super V> action) {
             Node<K, V>[] tab;
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             if (size > 0 && (tab = table) != null) {
                 int mc = modCount;
                 for (int i = 0; i < tab.length; ++i) {
-                    for (Node<K, V> e = tab[i]; e != null; e = e.next) { action.accept(e.value); }
+                    for (Node<K, V> e = tab[i]; e != null; e = e.next) {
+                        action.accept(e.value);
+                    }
                 }
-                if (modCount != mc) { throw new ConcurrentModificationException(); }
+                if (modCount != mc) {
+                    throw new ConcurrentModificationException();
+                }
             }
         }
     }
@@ -1020,7 +1106,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         }
 
         public final boolean contains(Object o) {
-            if (!(o instanceof Map.Entry)) { return false; }
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             Object key = e.getKey();
             Node<K, V> candidate = getNode(hash(key), key);
@@ -1043,13 +1131,19 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
 
         public final void forEach(Consumer<? super Map.Entry<K, V>> action) {
             Node<K, V>[] tab;
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             if (size > 0 && (tab = table) != null) {
                 int mc = modCount;
                 for (int i = 0; i < tab.length; ++i) {
-                    for (Node<K, V> e = tab[i]; e != null; e = e.next) { action.accept(e); }
+                    for (Node<K, V> e = tab[i]; e != null; e = e.next) {
+                        action.accept(e);
+                    }
                 }
-                if (modCount != mc) { throw new ConcurrentModificationException(); }
+                if (modCount != mc) {
+                    throw new ConcurrentModificationException();
+                }
             }
         }
     }
@@ -1672,10 +1766,13 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     }
 
     // Callbacks to allow LinkedHashMap post-actions
+    // yukms note: 节点访问之后
     void afterNodeAccess(Node<K, V> p) { }
 
+    // yukms note: 节点插入之后
     void afterNodeInsertion(boolean evict) { }
 
+    // yukms note: 节点移除之后
     void afterNodeRemoval(Node<K, V> p) { }
 
     // Called only from writeObject, to ensure compatible ordering.
@@ -1965,12 +2062,14 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         final void split(HashMap<K, V> map, Node<K, V>[] tab, int index, int bit) {
             TreeNode<K, V> b = this;
             // Relink into lo and hi lists, preserving order
+            // yukms note: 还是两个链表lo和hi
             TreeNode<K, V> loHead = null, loTail = null;
             TreeNode<K, V> hiHead = null, hiTail = null;
             int lc = 0, hc = 0;
             for (TreeNode<K, V> e = b, next; e != null; e = next) {
                 next = (TreeNode<K, V>) e.next;
                 e.next = null;
+                // yukms note: (e.hash & oldCap) == 0 作为lo
                 if ((e.hash & bit) == 0) {
                     if ((e.prev = loTail) == null) {
                         loHead = e;
@@ -1980,6 +2079,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                     loTail = e;
                     ++lc;
                 } else {
+                    // yukms note: (e.hash & oldCap) != 0 作为hi
                     if ((e.prev = hiTail) == null) {
                         hiHead = e;
                     } else {
@@ -1991,20 +2091,26 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             }
 
             if (loHead != null) {
-                if (lc <= UNTREEIFY_THRESHOLD) { tab[index] = loHead.untreeify(map); } else {
+                // yukms note: treeify阈值检测
+                if (lc <= UNTREEIFY_THRESHOLD) {
+                    tab[index] = loHead.untreeify(map);
+                } else {
                     tab[index] = loHead;
                     if (hiHead != null) {
                         // (else is already treeified)
+                        // yukms note: 将链表转化为树结构
                         loHead.treeify(tab);
                     }
                 }
             }
             if (hiHead != null) {
+                // yukms note: treeify阈值检测
                 if (hc <= UNTREEIFY_THRESHOLD) {
                     tab[index + bit] = hiHead.untreeify(map);
                 } else {
                     tab[index + bit] = hiHead;
                     if (loHead != null) {
+                        // yukms note: 将链表转化为树结构
                         hiHead.treeify(tab);
                     }
                 }
@@ -2017,10 +2123,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         static <K, V> TreeNode<K, V> rotateLeft(TreeNode<K, V> root, TreeNode<K, V> p) {
             TreeNode<K, V> r, pp, rl;
             if (p != null && (r = p.right) != null) {
-                if ((rl = p.right = r.left) != null) { rl.parent = p; }
-                if ((pp = r.parent = p.parent) == null) { (root = r).red = false; } else if (pp.left == p) {
+                if ((rl = p.right = r.left) != null) {
+                    rl.parent = p;
+                }
+                if ((pp = r.parent = p.parent) == null) {
+                    (root = r).red = false;
+                } else if (pp.left == p) {
                     pp.left = r;
-                } else { pp.right = r; }
+                } else {
+                    pp.right = r;
+                }
                 r.left = p;
                 p.parent = r;
             }
@@ -2030,10 +2142,16 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         static <K, V> TreeNode<K, V> rotateRight(TreeNode<K, V> root, TreeNode<K, V> p) {
             TreeNode<K, V> l, pp, lr;
             if (p != null && (l = p.left) != null) {
-                if ((lr = p.left = l.right) != null) { lr.parent = p; }
-                if ((pp = l.parent = p.parent) == null) { (root = l).red = false; } else if (pp.right == p) {
+                if ((lr = p.left = l.right) != null) {
+                    lr.parent = p;
+                }
+                if ((pp = l.parent = p.parent) == null) {
+                    (root = l).red = false;
+                } else if (pp.right == p) {
                     pp.right = l;
-                } else { pp.left = l; }
+                } else {
+                    pp.left = l;
+                }
                 l.right = p;
                 p.parent = l;
             }
@@ -2166,13 +2284,27 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
          */
         static <K, V> boolean checkInvariants(TreeNode<K, V> t) {
             TreeNode<K, V> tp = t.parent, tl = t.left, tr = t.right, tb = t.prev, tn = (TreeNode<K, V>) t.next;
-            if (tb != null && tb.next != t) { return false; }
-            if (tn != null && tn.prev != t) { return false; }
-            if (tp != null && t != tp.left && t != tp.right) { return false; }
-            if (tl != null && (tl.parent != t || tl.hash > t.hash)) { return false; }
-            if (tr != null && (tr.parent != t || tr.hash < t.hash)) { return false; }
-            if (t.red && tl != null && tl.red && tr != null && tr.red) { return false; }
-            if (tl != null && !checkInvariants(tl)) { return false; }
+            if (tb != null && tb.next != t) {
+                return false;
+            }
+            if (tn != null && tn.prev != t) {
+                return false;
+            }
+            if (tp != null && t != tp.left && t != tp.right) {
+                return false;
+            }
+            if (tl != null && (tl.parent != t || tl.hash > t.hash)) {
+                return false;
+            }
+            if (tr != null && (tr.parent != t || tr.hash < t.hash)) {
+                return false;
+            }
+            if (t.red && tl != null && tl.red && tr != null && tr.red) {
+                return false;
+            }
+            if (tl != null && !checkInvariants(tl)) {
+                return false;
+            }
             return tr == null || checkInvariants(tr);
         }
     }

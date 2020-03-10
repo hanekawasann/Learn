@@ -499,6 +499,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             Entry<K, V> e = src[j];
             if (e != null) {
                 src[j] = null;
+                // yukms note: 这里会使扩容后的处于同一桶的数据链表头尾倒置
                 do {
                     Entry<K, V> next = e.next;
                     int i = indexFor(e.hash, newCapacity);
@@ -533,7 +534,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
          * By using the conservative calculation, we subject ourself
          * to at most one extra resize.
          */
-        // yukms note: 如果需要增加的键值对数量大于阀值（上面说的保守计算）
+        // yukms note: 如果需要增加的键值对数量大于阈值（上面说的保守计算）
         // yukms note: 如果在保守计算的情况下仍然需要扩容，那就真的需要扩容了
         if (numKeysToBeAdded > threshold) {
             int targetCapacity = (int) (numKeysToBeAdded / loadFactor + 1);
