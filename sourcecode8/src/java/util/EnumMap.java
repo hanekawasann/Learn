@@ -25,8 +25,6 @@
 
 package java.util;
 
-import java.util.Map.Entry;
-
 import sun.misc.SharedSecrets;
 
 /**
@@ -172,7 +170,10 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
             vals = em.vals.clone();
             size = em.size;
         } else {
-            if (m.isEmpty()) { throw new IllegalArgumentException("Specified map is empty"); }
+            if (m.isEmpty()) {
+                throw new IllegalArgumentException("Specified map is empty");
+            }
+            // yukms note: 获取其中一个键的类型
             keyType = m.keySet().iterator().next().getDeclaringClass();
             keyUniverse = getKeyUniverse(keyType);
             vals = new Object[keyUniverse.length];
@@ -201,8 +202,11 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
     public boolean containsValue(Object value) {
         value = maskNull(value);
 
-        for (Object val : vals) { if (value.equals(val)) { return true; } }
-
+        for (Object val : vals) {
+            if (value.equals(val)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -300,7 +304,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
      * enum map.
      */
     private boolean isValidKey(Object key) {
-        if (key == null) { return false; }
+        if (key == null) {
+            return false;
+        }
 
         // Cheaper than instanceof Enum followed by getDeclaringClass
         Class<?> keyClass = key.getClass();
@@ -322,14 +328,18 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
         if (m instanceof EnumMap) {
             EnumMap<?, ?> em = (EnumMap<?, ?>) m;
             if (em.keyType != keyType) {
-                if (em.isEmpty()) { return; }
+                if (em.isEmpty()) {
+                    return;
+                }
                 throw new ClassCastException(em.keyType + " != " + keyType);
             }
 
             for (int i = 0; i < keyUniverse.length; i++) {
                 Object emValue = em.vals[i];
                 if (emValue != null) {
-                    if (vals[i] == null) { size++; }
+                    if (vals[i] == null) {
+                        size++;
+                    }
                     vals[i] = emValue;
                 }
             }
@@ -366,7 +376,11 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
      */
     public Set<K> keySet() {
         Set<K> ks = keySet;
-        if (ks != null) { return ks; } else { return keySet = new KeySet(); }
+        if (ks != null) {
+            return ks;
+        } else {
+            return keySet = new KeySet();
+        }
     }
 
     private class KeySet extends AbstractSet<K> {
@@ -405,7 +419,11 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
      */
     public Collection<V> values() {
         Collection<V> vs = values;
-        if (vs != null) { return vs; } else { return values = new Values(); }
+        if (vs != null) {
+            return vs;
+        } else {
+            return values = new Values();
+        }
     }
 
     private class Values extends AbstractCollection<V> {
@@ -450,7 +468,11 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
      */
     public Set<Map.Entry<K, V>> entrySet() {
         Set<Map.Entry<K, V>> es = entrySet;
-        if (es != null) { return es; } else { return entrySet = new EntrySet(); }
+        if (es != null) {
+            return es;
+        } else {
+            return entrySet = new EntrySet();
+        }
     }
 
     private class EntrySet extends AbstractSet<Map.Entry<K, V>> {
@@ -459,13 +481,17 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
         }
 
         public boolean contains(Object o) {
-            if (!(o instanceof Map.Entry)) { return false; }
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
             Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
             return containsMapping(entry.getKey(), entry.getValue());
         }
 
         public boolean remove(Object o) {
-            if (!(o instanceof Map.Entry)) { return false; }
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
             Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
             return removeMapping(entry.getKey(), entry.getValue());
         }
@@ -488,14 +514,18 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
             if (a.length < size) {
                 a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
             }
-            if (a.length > size) { a[size] = null; }
+            if (a.length > size) {
+                a[size] = null;
+            }
             return (T[]) fillEntryArray(a);
         }
 
         private Object[] fillEntryArray(Object[] a) {
             int j = 0;
             for (int i = 0; i < vals.length; i++) {
-                if (vals[i] != null) { a[j++] = new AbstractMap.SimpleEntry<>(keyUniverse[i], unmaskNull(vals[i])); }
+                if (vals[i] != null) {
+                    a[j++] = new AbstractMap.SimpleEntry<>(keyUniverse[i], unmaskNull(vals[i]));
+                }
             }
             return a;
         }
@@ -509,7 +539,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
         int lastReturnedIndex = -1;
 
         public boolean hasNext() {
-            while (index < vals.length && vals[index] == null) { index++; }
+            while (index < vals.length && vals[index] == null) {
+                index++;
+            }
             return index != vals.length;
         }
 
@@ -517,6 +549,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
             checkLastReturnedIndex();
 
             if (vals[lastReturnedIndex] != null) {
+                // yukms note: 清空
                 vals[lastReturnedIndex] = null;
                 size--;
             }
@@ -524,13 +557,17 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
         }
 
         private void checkLastReturnedIndex() {
-            if (lastReturnedIndex < 0) { throw new IllegalStateException(); }
+            if (lastReturnedIndex < 0) {
+                throw new IllegalStateException();
+            }
         }
     }
 
     private class KeyIterator extends EnumMapIterator<K> {
         public K next() {
-            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             lastReturnedIndex = index++;
             return keyUniverse[lastReturnedIndex];
         }
@@ -538,7 +575,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
 
     private class ValueIterator extends EnumMapIterator<V> {
         public V next() {
-            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             lastReturnedIndex = index++;
             return unmaskNull(vals[lastReturnedIndex]);
         }
@@ -548,7 +587,9 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
         private Entry lastReturnedEntry = null;
 
         public Map.Entry<K, V> next() {
-            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             lastReturnedEntry = new Entry(index++);
             return lastReturnedEntry;
         }
