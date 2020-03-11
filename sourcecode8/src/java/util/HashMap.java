@@ -1722,6 +1722,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
 
     /* ------------------------------------------------------------ */
     // LinkedHashMap support
+    // yukms note: 以下方法全是为了LinkedHashMap
 
 
     /*
@@ -1765,6 +1766,7 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
         size = 0;
     }
 
+    // yukms note: 这里足够证明HashMap与LinkedHashMap设计得有多差
     // Callbacks to allow LinkedHashMap post-actions
     // yukms note: 节点访问之后
     void afterNodeAccess(Node<K, V> p) { }
@@ -1931,7 +1933,9 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
             Node<K, V> hd = null, tl = null;
             for (Node<K, V> q = this; q != null; q = q.next) {
                 Node<K, V> p = map.replacementNode(q, null);
-                if (tl == null) { hd = p; } else { tl.next = p; }
+                if (tl == null) { hd = p; } else {
+                    tl.next = p;
+                }
                 tl = p;
             }
             return hd;

@@ -196,11 +196,13 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
     /**
      * The head (eldest) of the doubly linked list.
      */
+    // yukms note: 双向链表头
     transient LinkedHashMap.Entry<K, V> head;
 
     /**
      * The tail (youngest) of the doubly linked list.
      */
+    // yukms note: 双向链表尾
     transient LinkedHashMap.Entry<K, V> tail;
 
     /**
@@ -209,15 +211,19 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
      *
      * @serial
      */
+    // yukms note: 此链接哈希映射的迭代排序方法：访问顺序为true，插入顺序为false。
     final boolean accessOrder;
 
     // internal utilities
 
     // link at the end of list
     private void linkNodeLast(LinkedHashMap.Entry<K, V> p) {
+        // yukms note: 将p放到链表最后
         LinkedHashMap.Entry<K, V> last = tail;
         tail = p;
-        if (last == null) { head = p; } else {
+        if (last == null) {
+            head = p;
+        } else {
             p.before = last;
             last.after = p;
         }
@@ -227,8 +233,16 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
     private void transferLinks(LinkedHashMap.Entry<K, V> src, LinkedHashMap.Entry<K, V> dst) {
         LinkedHashMap.Entry<K, V> b = dst.before = src.before;
         LinkedHashMap.Entry<K, V> a = dst.after = src.after;
-        if (b == null) { head = dst; } else { b.after = dst; }
-        if (a == null) { tail = dst; } else { a.before = dst; }
+        if (b == null) {
+            head = dst;
+        } else {
+            b.after = dst;
+        }
+        if (a == null) {
+            tail = dst;
+        } else {
+            a.before = dst;
+        }
     }
 
     // overrides of HashMap hook methods
@@ -239,39 +253,61 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
     }
 
     Node<K, V> newNode(int hash, K key, V value, Node<K, V> e) {
-        LinkedHashMap.Entry<K, V> p = new LinkedHashMap.Entry<K, V>(hash, key, value, e);
+        LinkedHashMap.Entry<K, V> p = new LinkedHashMap.Entry<>(hash, key, value, e);
         linkNodeLast(p);
         return p;
     }
 
     Node<K, V> replacementNode(Node<K, V> p, Node<K, V> next) {
         LinkedHashMap.Entry<K, V> q = (LinkedHashMap.Entry<K, V>) p;
-        LinkedHashMap.Entry<K, V> t = new LinkedHashMap.Entry<K, V>(q.hash, q.key, q.value, next);
+        LinkedHashMap.Entry<K, V> t = new LinkedHashMap.Entry<>(q.hash, q.key, q.value, next);
         transferLinks(q, t);
         return t;
     }
 
     TreeNode<K, V> newTreeNode(int hash, K key, V value, Node<K, V> next) {
-        TreeNode<K, V> p = new TreeNode<K, V>(hash, key, value, next);
+        TreeNode<K, V> p = new TreeNode<>(hash, key, value, next);
         linkNodeLast(p);
         return p;
     }
 
     TreeNode<K, V> replacementTreeNode(Node<K, V> p, Node<K, V> next) {
         LinkedHashMap.Entry<K, V> q = (LinkedHashMap.Entry<K, V>) p;
-        TreeNode<K, V> t = new TreeNode<K, V>(q.hash, q.key, q.value, next);
+        TreeNode<K, V> t = new TreeNode<>(q.hash, q.key, q.value, next);
         transferLinks(q, t);
         return t;
     }
 
-    void afterNodeRemoval(Node<K, V> e) { // unlink
-        LinkedHashMap.Entry<K, V> p = (LinkedHashMap.Entry<K, V>) e, b = p.before, a = p.after;
-        p.before = p.after = null;
-        if (b == null) { head = a; } else { b.after = a; }
-        if (a == null) { tail = b; } else { a.before = b; }
+    void afterNodeAccess(Node<K, V> e) {
+        // move node to last
+        // yukms note: 这样做的原因全在accessOrder
+        LinkedHashMap.Entry<K, V> last;
+        if (accessOrder && (last = tail) != e) {
+            LinkedHashMap.Entry<K, V> p = (LinkedHashMap.Entry<K, V>) e, b = p.before, a = p.after;
+            p.after = null;
+            if (b == null) {
+                head = a;
+            } else {
+                b.after = a;
+            }
+            if (a != null) {
+                a.before = b;
+            } else {
+                last = b;
+            }
+            if (last == null) {
+                head = p;
+            } else {
+                p.before = last;
+                last.after = p;
+            }
+            tail = p;
+            ++modCount;
+        }
     }
 
-    void afterNodeInsertion(boolean evict) { // possibly remove eldest
+    void afterNodeInsertion(boolean evict) {
+        // possibly remove eldest
         LinkedHashMap.Entry<K, V> first;
         if (evict && (first = head) != null && removeEldestEntry(first)) {
             K key = first.key;
@@ -279,19 +315,26 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
         }
     }
 
-    void afterNodeAccess(Node<K, V> e) { // move node to last
-        LinkedHashMap.Entry<K, V> last;
-        if (accessOrder && (last = tail) != e) {
-            LinkedHashMap.Entry<K, V> p = (LinkedHashMap.Entry<K, V>) e, b = p.before, a = p.after;
-            p.after = null;
-            if (b == null) { head = a; } else { b.after = a; }
-            if (a != null) { a.before = b; } else { last = b; }
-            if (last == null) { head = p; } else {
-                p.before = last;
-                last.after = p;
-            }
-            tail = p;
-            ++modCount;
+    void afterNodeRemoval(Node<K, V> e) {
+        // unlink
+        LinkedHashMap.Entry<K, V> p = (LinkedHashMap.Entry<K, V>) e;
+        LinkedHashMap.Entry<K, V> b = p.before;
+        LinkedHashMap.Entry<K, V> a = p.after;
+        p.before = null;
+        p.after = null;
+        if (b == null) {
+            // yukms note: p是头结点
+            head = a;
+        } else {
+            // yukms note: p不是头结点
+            b.after = a;
+        }
+        if (a == null) {
+            // yukms note: p是尾结点
+            tail = b;
+        } else {
+            // yukms note: p不是尾结点
+            a.before = b;
         }
     }
 
@@ -380,7 +423,9 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
     public boolean containsValue(Object value) {
         for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
             V v = e.value;
-            if (v == value || (value != null && value.equals(v))) { return true; }
+            if (v == value || (value != null && value.equals(v))) {
+                return true;
+            }
         }
         return false;
     }
@@ -402,8 +447,12 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
      */
     public V get(Object key) {
         Node<K, V> e;
-        if ((e = getNode(hash(key), key)) == null) { return null; }
-        if (accessOrder) { afterNodeAccess(e); }
+        if ((e = getNode(hash(key), key)) == null) {
+            return null;
+        }
+        if (accessOrder) {
+            afterNodeAccess(e);
+        }
         return e.value;
     }
 
@@ -412,8 +461,12 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
      */
     public V getOrDefault(Object key, V defaultValue) {
         Node<K, V> e;
-        if ((e = getNode(hash(key), key)) == null) { return defaultValue; }
-        if (accessOrder) { afterNodeAccess(e); }
+        if ((e = getNode(hash(key), key)) == null) {
+            return defaultValue;
+        }
+        if (accessOrder) {
+            afterNodeAccess(e);
+        }
         return e.value;
     }
 
@@ -513,10 +566,16 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
         }
 
         public final void forEach(Consumer<? super K> action) {
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             int mc = modCount;
-            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) { action.accept(e.key); }
-            if (modCount != mc) { throw new ConcurrentModificationException(); }
+            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
+                action.accept(e.key);
+            }
+            if (modCount != mc) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -559,10 +618,16 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
         }
 
         public final void forEach(Consumer<? super V> action) {
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             int mc = modCount;
-            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) { action.accept(e.value); }
-            if (modCount != mc) { throw new ConcurrentModificationException(); }
+            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
+                action.accept(e.value);
+            }
+            if (modCount != mc) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
@@ -622,27 +687,45 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
         }
 
         public final void forEach(Consumer<? super Map.Entry<K, V>> action) {
-            if (action == null) { throw new NullPointerException(); }
+            if (action == null) {
+                throw new NullPointerException();
+            }
             int mc = modCount;
-            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) { action.accept(e); }
-            if (modCount != mc) { throw new ConcurrentModificationException(); }
+            for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
+                action.accept(e);
+            }
+            if (modCount != mc) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 
     // Map overrides
 
     public void forEach(BiConsumer<? super K, ? super V> action) {
-        if (action == null) { throw new NullPointerException(); }
+        if (action == null) {
+            throw new NullPointerException();
+        }
         int mc = modCount;
-        for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) { action.accept(e.key, e.value); }
-        if (modCount != mc) { throw new ConcurrentModificationException(); }
+        for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
+            action.accept(e.key, e.value);
+        }
+        if (modCount != mc) {
+            throw new ConcurrentModificationException();
+        }
     }
 
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
-        if (function == null) { throw new NullPointerException(); }
+        if (function == null) {
+            throw new NullPointerException();
+        }
         int mc = modCount;
-        for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) { e.value = function.apply(e.key, e.value); }
-        if (modCount != mc) { throw new ConcurrentModificationException(); }
+        for (LinkedHashMap.Entry<K, V> e = head; e != null; e = e.after) {
+            e.value = function.apply(e.key, e.value);
+        }
+        if (modCount != mc) {
+            throw new ConcurrentModificationException();
+        }
     }
 
     // Iterators
@@ -664,8 +747,12 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 
         final LinkedHashMap.Entry<K, V> nextNode() {
             LinkedHashMap.Entry<K, V> e = next;
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
-            if (e == null) { throw new NoSuchElementException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (e == null) {
+                throw new NoSuchElementException();
+            }
             current = e;
             next = e.after;
             return e;
@@ -673,8 +760,12 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
 
         public final void remove() {
             Node<K, V> p = current;
-            if (p == null) { throw new IllegalStateException(); }
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (p == null) {
+                throw new IllegalStateException();
+            }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
             current = null;
             K key = p.key;
             removeNode(hash(key), key, null, false, false);
@@ -693,6 +784,4 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {
     final class LinkedEntryIterator extends LinkedHashIterator implements Iterator<Map.Entry<K, V>> {
         public final Map.Entry<K, V> next() { return nextNode(); }
     }
-
-
 }
