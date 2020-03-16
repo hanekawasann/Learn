@@ -755,6 +755,7 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
      * The result is uncloned, cached, and shared by all callers.
      */
     private static <K extends Enum<K>> K[] getKeyUniverse(Class<K> keyType) {
+        // yukms note: 获取枚举类的所有枚举
         return SharedSecrets.getJavaLangAccess().getEnumConstantsShared(keyType);
     }
 
