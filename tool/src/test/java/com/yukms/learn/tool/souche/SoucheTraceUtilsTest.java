@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -16,6 +17,7 @@ public class SoucheTraceUtilsTest {
         SoucheTraceUtils.printQueryConfig(inputStream);
     }
 
+    @Ignore
     @Test
     public void test_printQueryConfig_02() throws IOException {
         SoucheTraceUtils.printQueryConfig(new File("C:\\Users\\76380\\Desktop\\logTraceidResult.htm"));
