@@ -106,6 +106,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 小于key的最大键
     Map.Entry<K, V> lowerEntry(K key);
 
     /**
@@ -120,6 +121,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 小于key的最大键
     K lowerKey(K key);
 
     /**
@@ -135,6 +137,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 小于或等于key的最大键
     Map.Entry<K, V> floorEntry(K key);
 
     /**
@@ -149,6 +152,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 小于或等于key的最大键
     K floorKey(K key);
 
     /**
@@ -164,6 +168,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 大于或等于key的最大键
     Map.Entry<K, V> ceilingEntry(K key);
 
     /**
@@ -178,6 +183,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 大于或等于key的最大键
     K ceilingKey(K key);
 
     /**
@@ -193,6 +199,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 大于key的最小键
     Map.Entry<K, V> higherEntry(K key);
 
     /**
@@ -207,6 +214,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @throws NullPointerException if the specified key is null
      *                              and this map does not permit null keys
      */
+    // yukms note: 大于key的最小键
     K higherKey(K key);
 
     /**
@@ -216,6 +224,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @return an entry with the least key,
      * or {@code null} if this map is empty
      */
+    // yukms note: 最小键
     Map.Entry<K, V> firstEntry();
 
     /**
@@ -225,6 +234,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @return an entry with the greatest key,
      * or {@code null} if this map is empty
      */
+    // yukms note: 最大键
     Map.Entry<K, V> lastEntry();
 
     /**
@@ -234,6 +244,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @return the removed first entry of this map,
      * or {@code null} if this map is empty
      */
+    // yukms note: 弹出最小键
     Map.Entry<K, V> pollFirstEntry();
 
     /**
@@ -243,6 +254,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      * @return the removed last entry of this map,
      * or {@code null} if this map is empty
      */
+    // yukms note: 弹出最大键
     Map.Entry<K, V> pollLastEntry();
 
     /**
@@ -260,6 +272,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      *
      * @return a reverse order view of this map
      */
+    // yukms note: 逆序Map视图
     NavigableMap<K, V> descendingMap();
 
     /**
@@ -276,6 +289,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      *
      * @return a navigable set view of the keys in this map
      */
+    // yukms note: key视图
     NavigableSet<K> navigableKeySet();
 
     /**
@@ -292,6 +306,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      *
      * @return a reverse order navigable set view of the keys in this map
      */
+    // yukms note: 逆序key视图
     NavigableSet<K> descendingKeySet();
 
     /**
@@ -357,6 +372,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      *                                  restricted range, and {@code toKey} lies outside the
      *                                  bounds of the range
      */
+    // yukms note: 到toKey的视图
     NavigableMap<K, V> headMap(K toKey, boolean inclusive);
 
     /**
@@ -386,6 +402,7 @@ public interface NavigableMap<K, V> extends SortedMap<K, V> {
      *                                  restricted range, and {@code fromKey} lies outside the
      *                                  bounds of the range
      */
+    // yukms note: 从formKey开始的视图
     NavigableMap<K, V> tailMap(K fromKey, boolean inclusive);
 
     /**

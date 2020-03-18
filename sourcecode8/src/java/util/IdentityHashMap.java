@@ -152,13 +152,15 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      * MUST be a power of two.
      */
     private static final int MINIMUM_CAPACITY = 4;
-
     /**
      * The maximum capacity, used if a higher value is implicitly specified
      * by either of the constructors with arguments.
      * MUST be a power of two <= 1<<29.
      */
+    // yukms note: 1 << 29 = 536,870,912‬
+    // yukms note: Integer.MAX_VALUE / 4 = 536,870,911
     private static final int MAXIMUM_CAPACITY = 1 << 29;
+
 
     /**
      * The table, resized as necessary. Length MUST always be a power of two.
@@ -180,6 +182,7 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
     /**
      * The next size value at which to resize (capacity * load factor).
      */
+    // yukms note: load factor固定为2/3
     private transient int threshold;
 
     /**
@@ -243,7 +246,10 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
             result = MAXIMUM_CAPACITY;
         } else {
             result = MINIMUM_CAPACITY;
-            while (result < minCapacity) { result <<= 1; }
+            while (result < minCapacity) {
+                // yukms note: * 2
+                result <<= 1;
+            }
         }
         return result;
     }
@@ -259,6 +265,7 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         // assert initCapacity <= MAXIMUM_CAPACITY;
 
         threshold = (initCapacity * 2) / 3;
+        // yukms note: *2是为啥？？？
         table = new Object[2 * initCapacity];
     }
 
@@ -271,6 +278,7 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      */
     public IdentityHashMap(Map<? extends K, ? extends V> m) {
         // Allow for a bit of growth
+        // yukms note: 这。。。凭空想的吧
         this((int) ((1 + m.size()) * 1.1));
         putAll(m);
     }
@@ -335,9 +343,15 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         int len = tab.length;
         int i = hash(k, len);
         while (true) {
+            // yukms note: key与value都放在同一个数组里
             Object item = tab[i];
-            if (item == k) { return (V) tab[i + 1]; }
-            if (item == null) { return null; }
+            if (item == k) {
+                return (V) tab[i + 1];
+            }
+            if (item == null) {
+                return null;
+            }
+            // yukms note: 继续往后找
             i = nextKeyIndex(i, len);
         }
     }
@@ -358,8 +372,12 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         int i = hash(k, len);
         while (true) {
             Object item = tab[i];
-            if (item == k) { return true; }
-            if (item == null) { return false; }
+            if (item == k) {
+                return true;
+            }
+            if (item == null) {
+                return false;
+            }
             i = nextKeyIndex(i, len);
         }
     }
@@ -375,8 +393,12 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      */
     public boolean containsValue(Object value) {
         Object[] tab = table;
-        for (int i = 1; i < tab.length; i += 2) { if (tab[i] == value && tab[i - 1] != null) { return true; } }
-
+        // yukms note: 从1开始
+        for (int i = 1; i < tab.length; i += 2) {
+            if (tab[i] == value && tab[i - 1] != null) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -395,8 +417,12 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         int i = hash(k, len);
         while (true) {
             Object item = tab[i];
-            if (item == k) { return tab[i + 1] == value; }
-            if (item == null) { return false; }
+            if (item == k) {
+                return tab[i + 1] == value;
+            }
+            if (item == null) {
+                return false;
+            }
             i = nextKeyIndex(i, len);
         }
     }
@@ -434,7 +460,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         }
 
         modCount++;
+        // yukms note: i为key
         tab[i] = k;
+        // yukms note: i+1为value
         tab[i + 1] = value;
         if (++size >= threshold) {
             resize(len); // len == 2 * current capacity.
@@ -454,15 +482,25 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         Object[] oldTable = table;
         int oldLength = oldTable.length;
         if (oldLength == 2 * MAXIMUM_CAPACITY) { // can't expand any further
-            if (threshold == MAXIMUM_CAPACITY - 1) { throw new IllegalStateException("Capacity exhausted."); }
+            // yukms note: 已经到最大容量
+            if (threshold == MAXIMUM_CAPACITY - 1) {
+                // yukms note: 无法扩容了
+                throw new IllegalStateException("Capacity exhausted.");
+            }
             threshold = MAXIMUM_CAPACITY - 1;  // Gigantic map!
             return;
         }
-        if (oldLength >= newLength) { return; }
+        // yukms note: 有前面的判断，都不会到这里了吧
+        if (oldLength >= newLength) {
+            // yukms note: 溢出
+            return;
+        }
 
         Object[] newTable = new Object[newLength];
+        // yukms note: ？？？
         threshold = newLength / 3;
 
+        // yukms note: 将旧节点重新置入新容器
         for (int j = 0; j < oldLength; j += 2) {
             Object key = oldTable[j];
             if (key != null) {
@@ -470,7 +508,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
                 oldTable[j] = null;
                 oldTable[j + 1] = null;
                 int i = hash(key, newLength);
-                while (newTable[i] != null) { i = nextKeyIndex(i, newLength); }
+                while (newTable[i] != null) {
+                    i = nextKeyIndex(i, newLength);
+                }
                 newTable[i] = key;
                 newTable[i + 1] = value;
             }
@@ -488,11 +528,17 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      */
     public void putAll(Map<? extends K, ? extends V> m) {
         int n = m.size();
-        if (n == 0) { return; }
-        if (n > threshold) // conservatively pre-expand
-        { resize(capacity(n)); }
+        if (n == 0) {
+            return;
+        }
+        // yukms note: 保守的策略
+        if (n > threshold) {// conservatively pre-expand
+            resize(capacity(n));
+        }
 
-        for (Entry<? extends K, ? extends V> e : m.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
@@ -517,12 +563,15 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
                 size--;
                 @SuppressWarnings("unchecked")
                 V oldValue = (V) tab[i + 1];
+                // yukms note: 清空
                 tab[i + 1] = null;
                 tab[i] = null;
                 closeDeletion(i);
                 return oldValue;
             }
-            if (item == null) { return null; }
+            if (item == null) {
+                return null;
+            }
             i = nextKeyIndex(i, len);
         }
 
@@ -566,6 +615,7 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      * @param d the index of a newly empty deleted slot
      */
     private void closeDeletion(int d) {
+        // yukms note: 反正就是往前移就是了，直到null停下
         // Adapted from Knuth Section 6.4 Algorithm R
         Object[] tab = table;
         int len = tab.length;
@@ -600,7 +650,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
     public void clear() {
         modCount++;
         Object[] tab = table;
-        for (int i = 0; i < tab.length; i++) { tab[i] = null; }
+        for (int i = 0; i < tab.length; i++) {
+            tab[i] = null;
+        }
         size = 0;
     }
 
@@ -626,12 +678,16 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
             return true;
         } else if (o instanceof IdentityHashMap) {
             IdentityHashMap<?, ?> m = (IdentityHashMap<?, ?>) o;
-            if (m.size() != size) { return false; }
+            if (m.size() != size) {
+                return false;
+            }
 
             Object[] tab = m.table;
             for (int i = 0; i < tab.length; i += 2) {
                 Object k = tab[i];
-                if (k != null && !containsMapping(k, tab[i + 1])) { return false; }
+                if (k != null && !containsMapping(k, tab[i + 1])) {
+                    return false;
+                }
             }
             return true;
         } else if (o instanceof Map) {
@@ -712,8 +768,12 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         }
 
         protected int nextIndex() {
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
-            if (!indexValid && !hasNext()) { throw new NoSuchElementException(); }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (!indexValid && !hasNext()) {
+                throw new NoSuchElementException();
+            }
 
             indexValid = false;
             lastReturnedIndex = index;
@@ -722,8 +782,12 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         }
 
         public void remove() {
-            if (lastReturnedIndex == -1) { throw new IllegalStateException(); }
-            if (modCount != expectedModCount) { throw new ConcurrentModificationException(); }
+            if (lastReturnedIndex == -1) {
+                throw new IllegalStateException();
+            }
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
 
             expectedModCount = ++modCount;
             int deletedSlot = lastReturnedIndex;
@@ -927,7 +991,11 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
      */
     public Set<K> keySet() {
         Set<K> ks = keySet;
-        if (ks != null) { return ks; } else { return keySet = new KeySet(); }
+        if (ks != null) {
+            return ks;
+        } else {
+            return keySet = new KeySet();
+        }
     }
 
     private class KeySet extends AbstractSet<K> {
@@ -984,7 +1052,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
         public <T> T[] toArray(T[] a) {
             int expectedModCount = modCount;
             int size = size();
-            if (a.length < size) { a = (T[]) Array.newInstance(a.getClass().getComponentType(), size); }
+            if (a.length < size) {
+                a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
+            }
             Object[] tab = table;
             int ti = 0;
             for (int si = 0; si < tab.length; si += 2) {
@@ -1290,7 +1360,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V
 
         Object item;
         while ((item = tab[i]) != null) {
-            if (item == k) { throw new java.io.StreamCorruptedException(); }
+            if (item == k) {
+                throw new java.io.StreamCorruptedException();
+            }
             i = nextKeyIndex(i, len);
         }
         tab[i] = k;

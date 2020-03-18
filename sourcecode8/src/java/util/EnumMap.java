@@ -690,13 +690,18 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V> implements 
     }
 
     private boolean equals(EnumMap<?, ?> em) {
-        if (em.keyType != keyType) { return size == 0 && em.size == 0; }
+        if (em.keyType != keyType) {
+            return size == 0 && em.size == 0;
+        }
 
         // Key types match, compare each value
         for (int i = 0; i < keyUniverse.length; i++) {
             Object ourValue = vals[i];
             Object hisValue = em.vals[i];
-            if (hisValue != ourValue && (hisValue == null || !hisValue.equals(ourValue))) { return false; }
+            if (hisValue != ourValue//
+                && (hisValue == null || !hisValue.equals(ourValue))) {
+                return false;
+            }
         }
         return true;
     }

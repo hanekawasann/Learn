@@ -25,6 +25,7 @@
 
 package java.util;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -194,9 +195,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
         comparator = m.comparator();
         try {
             buildFromSorted(m.size(), m.entrySet().iterator(), null, null);
-        } catch (java.io.IOException cannotHappen) {
-        } catch (ClassNotFoundException cannotHappen) {
-        }
+        } catch (IOException | ClassNotFoundException ignored) {}
     }
 
 
@@ -308,14 +307,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
     public void putAll(Map<? extends K, ? extends V> map) {
         int mapSize = map.size();
         if (size == 0 && mapSize != 0 && map instanceof SortedMap) {
+            // yukms note: SortedMap特殊处理
             Comparator<?> c = ((SortedMap<?, ?>) map).comparator();
             if (c == comparator || (c != null && c.equals(comparator))) {
                 ++modCount;
                 try {
                     buildFromSorted(mapSize, map.entrySet().iterator(), null, null);
-                } catch (java.io.IOException cannotHappen) {
-                } catch (ClassNotFoundException cannotHappen) {
-                }
+                } catch (IOException | ClassNotFoundException ignored) {}
                 return;
             }
         }
@@ -336,14 +334,24 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      */
     final Entry<K, V> getEntry(Object key) {
         // Offload comparator-based version for sake of performance
-        if (comparator != null) { return getEntryUsingComparator(key); }
-        if (key == null) { throw new NullPointerException(); }
+        if (comparator != null) {
+            return getEntryUsingComparator(key);
+        }
+        if (key == null) {
+            throw new NullPointerException();
+        }
         @SuppressWarnings("unchecked")
         Comparable<? super K> k = (Comparable<? super K>) key;
         Entry<K, V> p = root;
         while (p != null) {
             int cmp = k.compareTo(p.key);
-            if (cmp < 0) { p = p.left; } else if (cmp > 0) { p = p.right; } else { return p; }
+            if (cmp < 0) {
+                p = p.left;
+            } else if (cmp > 0) {
+                p = p.right;
+            } else {
+                return p;
+            }
         }
         return null;
     }
@@ -362,7 +370,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
             Entry<K, V> p = root;
             while (p != null) {
                 int cmp = cpr.compare(k, p.key);
-                if (cmp < 0) { p = p.left; } else if (cmp > 0) { p = p.right; } else { return p; }
+                if (cmp < 0) {
+                    p = p.left;
+                } else if (cmp > 0) {
+                    p = p.right;
+                } else {
+                    return p;
+                }
             }
         }
         return null;
@@ -379,7 +393,11 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
         while (p != null) {
             int cmp = compare(key, p.key);
             if (cmp < 0) {
-                if (p.left != null) { p = p.left; } else { return p; }
+                if (p.left != null) {
+                    p = p.left;
+                } else {
+                    return p;
+                }
             } else if (cmp > 0) {
                 if (p.right != null) {
                     p = p.right;
@@ -392,7 +410,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
                     }
                     return parent;
                 }
-            } else { return p; }
+            } else {
+                return p;
+            }
         }
         return null;
     }
@@ -2465,7 +2485,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      */
     private static int computeRedLevel(int sz) {
         int level = 0;
-        for (int m = sz - 1; m >= 0; m = m / 2 - 1) { level++; }
+        for (int m = sz - 1; m >= 0; m = m / 2 - 1) {
+            level++;
+        }
         return level;
     }
 
