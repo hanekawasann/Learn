@@ -388,29 +388,42 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      * key; if no such entry exists (i.e., the greatest key in the Tree is less
      * than the specified key), returns {@code null}.
      */
+    // yukms note: 大于或等于key的最大键
     final Entry<K, V> getCeilingEntry(K key) {
         Entry<K, V> p = root;
         while (p != null) {
+            // yukms note: key与p.key比较
             int cmp = compare(key, p.key);
             if (cmp < 0) {
+                // yukms note: p.key比key大
                 if (p.left != null) {
+                    // yukms note: 寻找更小的键
                     p = p.left;
                 } else {
+                    // yukms note: 没有比p.key更小的键
                     return p;
                 }
             } else if (cmp > 0) {
+                // yukms note: key比p.key大
                 if (p.right != null) {
+                    // yukms note: 寻找更大的键
                     p = p.right;
                 } else {
+                    // yukms note: 这里不太明白，应该是涉及到树的知识
+                    // yukms note: 找到ch的父节点
                     Entry<K, V> parent = p.parent;
                     Entry<K, V> ch = p;
                     while (parent != null && ch == parent.right) {
+                        // yukms note: 如果ch的父节点存在 && ch是ch父节点的右节点
                         ch = parent;
                         parent = parent.parent;
                     }
+                    // yukms note: 直到ch没有父节点或者ch是父节点的左节点为止，返回ch的父节点
+                    // yukms note: 其实意思就是找到大于ch的节点
                     return parent;
                 }
             } else {
+                // yukms note: 相等
                 return p;
             }
         }
@@ -422,12 +435,17 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      * exists, returns the entry for the greatest key less than the specified
      * key; if no such entry exists, returns {@code null}.
      */
+    // yukms note: 小于或等于key的最大键
     final Entry<K, V> getFloorEntry(K key) {
         Entry<K, V> p = root;
         while (p != null) {
             int cmp = compare(key, p.key);
             if (cmp > 0) {
-                if (p.right != null) { p = p.right; } else { return p; }
+                if (p.right != null) {
+                    p = p.right;
+                } else {
+                    return p;
+                }
             } else if (cmp < 0) {
                 if (p.left != null) {
                     p = p.left;
@@ -522,9 +540,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      */
     public V put(K key, V value) {
         Entry<K, V> t = root;
+        // yukms note: 根节点就不存在
         if (t == null) {
             compare(key, key); // type (and possibly null) check
-
             root = new Entry<>(key, value, null);
             size = 1;
             modCount++;
@@ -535,23 +553,47 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
         // split comparator and comparable paths
         Comparator<? super K> cpr = comparator;
         if (cpr != null) {
+            // yukms note: 没有比较器
             do {
                 parent = t;
                 cmp = cpr.compare(key, t.key);
-                if (cmp < 0) { t = t.left; } else if (cmp > 0) { t = t.right; } else { return t.setValue(value); }
+                if (cmp < 0) {
+                    // yukms note: key比t.key小
+                    t = t.left;
+                } else if (cmp > 0) {
+                    // yukms note: key比t.key大
+                    t = t.right;
+                } else {
+                    // yukms note: key等于t.key
+                    return t.setValue(value);
+                }
             } while (t != null);
         } else {
-            if (key == null) { throw new NullPointerException(); }
+            // yukms note: 有比较器
+            if (key == null) {
+                throw new NullPointerException();
+            }
             @SuppressWarnings("unchecked")
             Comparable<? super K> k = (Comparable<? super K>) key;
             do {
                 parent = t;
                 cmp = k.compareTo(t.key);
-                if (cmp < 0) { t = t.left; } else if (cmp > 0) { t = t.right; } else { return t.setValue(value); }
+                if (cmp < 0) {
+                    t = t.left;
+                } else if (cmp > 0) {
+                    t = t.right;
+                } else {
+                    return t.setValue(value);
+                }
             } while (t != null);
         }
         Entry<K, V> e = new Entry<>(key, value, parent);
-        if (cmp < 0) { parent.left = e; } else { parent.right = e; }
+        // yukms note: 放置在parent下
+        if (cmp < 0) {
+            parent.left = e;
+        } else {
+            parent.right = e;
+        }
         fixAfterInsertion(e);
         size++;
         modCount++;
@@ -574,7 +616,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      */
     public V remove(Object key) {
         Entry<K, V> p = getEntry(key);
-        if (p == null) { return null; }
+        if (p == null) {
+            return null;
+        }
 
         V oldValue = p.value;
         deleteEntry(p);
@@ -2161,6 +2205,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
     /** From CLR */
     private void fixAfterInsertion(Entry<K, V> x) {
+        // yukms note: 每次插入元素后，都要重新维持红黑树的平衡
         x.color = RED;
 
         while (x != null && x != root && x.parent.color == RED) {
@@ -2248,6 +2293,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
     /** From CLR */
     private void fixAfterDeletion(Entry<K, V> x) {
+        // yukms note: 每次删除元素后，都要重新维持红黑树的平衡
         while (x != root && colorOf(x) == BLACK) {
             if (x == leftOf(parentOf(x))) {
                 Entry<K, V> sib = rightOf(parentOf(x));
