@@ -689,7 +689,9 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
     public Map.Entry<K, V> pollFirstEntry() {
         Entry<K, V> p = getFirstEntry();
         Map.Entry<K, V> result = exportEntry(p);
-        if (p != null) { deleteEntry(p); }
+        if (p != null) {
+            deleteEntry(p);
+        }
         return result;
     }
 
@@ -2109,9 +2111,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      * Returns the successor of the specified Entry, or null if no such.
      */
     static <K, V> TreeMap.Entry<K, V> successor(Entry<K, V> t) {
-        if (t == null) { return null; } else if (t.right != null) {
+        if (t == null) {
+            return null;
+        } else if (t.right != null) {
             Entry<K, V> p = t.right;
-            while (p.left != null) { p = p.left; }
+            while (p.left != null) {
+                p = p.left;
+            }
             return p;
         } else {
             Entry<K, V> p = t.parent;
@@ -2128,9 +2134,13 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
      * Returns the predecessor of the specified Entry, or null if no such.
      */
     static <K, V> Entry<K, V> predecessor(Entry<K, V> t) {
-        if (t == null) { return null; } else if (t.left != null) {
+        if (t == null) {
+            return null;
+        } else if (t.left != null) {
             Entry<K, V> p = t.left;
-            while (p.right != null) { p = p.right; }
+            while (p.right != null) {
+                p = p.right;
+            }
             return p;
         } else {
             Entry<K, V> p = t.parent;
@@ -2268,22 +2278,32 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
         if (replacement != null) {
             // Link replacement to parent
             replacement.parent = p.parent;
-            if (p.parent == null) { root = replacement; } else if (p == p.parent.left) {
+            if (p.parent == null) {
+                root = replacement;
+            } else if (p == p.parent.left) {
                 p.parent.left = replacement;
-            } else { p.parent.right = replacement; }
+            } else {
+                p.parent.right = replacement;
+            }
 
             // Null out links so they are OK to use by fixAfterDeletion.
             p.left = p.right = p.parent = null;
 
             // Fix replacement
-            if (p.color == BLACK) { fixAfterDeletion(replacement); }
+            if (p.color == BLACK) {
+                fixAfterDeletion(replacement);
+            }
         } else if (p.parent == null) { // return if we are the only node.
             root = null;
         } else { //  No children. Use self as phantom replacement and unlink.
-            if (p.color == BLACK) { fixAfterDeletion(p); }
+            if (p.color == BLACK) {
+                fixAfterDeletion(p);
+            }
 
             if (p.parent != null) {
-                if (p == p.parent.left) { p.parent.left = null; } else if (p == p.parent.right) {
+                if (p == p.parent.left) {
+                    p.parent.left = null;
+                } else if (p == p.parent.right) {
                     p.parent.right = null;
                 }
                 p.parent = null;
