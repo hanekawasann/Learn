@@ -25,9 +25,8 @@
 
 package java.util;
 
-import java.lang.ref.WeakReference;
 import java.lang.ref.ReferenceQueue;
-import java.util.concurrent.ThreadLocalRandom;
+import java.lang.ref.WeakReference;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -202,14 +201,20 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      *                                  or if the load factor is nonpositive.
      */
     public WeakHashMap(int initialCapacity, float loadFactor) {
-        if (initialCapacity < 0) { throw new IllegalArgumentException("Illegal Initial Capacity: " + initialCapacity); }
-        if (initialCapacity > MAXIMUM_CAPACITY) { initialCapacity = MAXIMUM_CAPACITY; }
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException("Illegal Initial Capacity: " + initialCapacity);
+        }
+        if (initialCapacity > MAXIMUM_CAPACITY) {
+            initialCapacity = MAXIMUM_CAPACITY;
+        }
 
         if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
             throw new IllegalArgumentException("Illegal Load factor: " + loadFactor);
         }
         int capacity = 1;
-        while (capacity < initialCapacity) { capacity <<= 1; }
+        while (capacity < initialCapacity) {
+            capacity <<= 1;
+        }
         table = newTable(capacity);
         this.loadFactor = loadFactor;
         threshold = (int) (capacity * loadFactor);
@@ -305,6 +310,7 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     /**
      * Expunges stale entries from the table.
      */
+    // yukms note: 每次访问WeakHashMap时都会调用该方法
     private void expungeStaleEntries() {
         for (Object x; (x = queue.poll()) != null; ) {
             synchronized (queue) {
@@ -317,7 +323,13 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
                 while (p != null) {
                     Entry<K, V> next = p.next;
                     if (p == e) {
-                        if (prev == e) { table[i] = next; } else { prev.next = next; }
+                        if (prev == e) {
+                            // yukms note: p是头结点
+                            table[i] = next;
+                        } else {
+                            // yukms note: p不是头结点
+                            prev.next = next;
+                        }
                         // Must not null out e.next;
                         // stale entries may be in use by a HashIterator
                         e.value = null; // Help GC
@@ -346,7 +358,9 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      * because they are no longer referenced.
      */
     public int size() {
-        if (size == 0) { return 0; }
+        if (size == 0) {
+            return 0;
+        }
         expungeStaleEntries();
         return size;
     }
@@ -384,8 +398,14 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         Entry<K, V>[] tab = getTable();
         int index = indexFor(h, tab.length);
         Entry<K, V> e = tab[index];
+        //while (e != null && !(e.hash == h && eq(k, e.get()))) {
+        //    e = e.next;
+        //}
+        // yukms note: 上面的代码和下面的代码
         while (e != null) {
-            if (e.hash == h && eq(k, e.get())) { return e.value; }
+            if (e.hash == h && eq(k, e.get())) {
+                return e.value;
+            }
             e = e.next;
         }
         return null;
@@ -413,7 +433,9 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         Entry<K, V>[] tab = getTable();
         int index = indexFor(h, tab.length);
         Entry<K, V> e = tab[index];
-        while (e != null && !(e.hash == h && eq(k, e.get()))) { e = e.next; }
+        while (e != null && !(e.hash == h && eq(k, e.get()))) {
+            e = e.next;
+        }
         return e;
     }
 
@@ -435,18 +457,25 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         Entry<K, V>[] tab = getTable();
         int i = indexFor(h, tab.length);
 
+        // yukms note: 检查已存在映射
         for (Entry<K, V> e = tab[i]; e != null; e = e.next) {
             if (h == e.hash && eq(k, e.get())) {
                 V oldValue = e.value;
-                if (value != oldValue) { e.value = value; }
+                if (value != oldValue) {
+                    e.value = value;
+                }
                 return oldValue;
             }
         }
 
         modCount++;
         Entry<K, V> e = tab[i];
+        // yukms note: 新增节点
         tab[i] = new Entry<>(k, value, queue, h, e);
-        if (++size >= threshold) { resize(tab.length * 2); }
+        // yukms note: 检查容量
+        if (++size >= threshold) {
+            resize(tab.length * 2);
+        }
         return null;
     }
 
@@ -473,6 +502,7 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
 
         Entry<K, V>[] newTable = newTable(newCapacity);
+        // yukms note: 转移数据
         transfer(oldTable, newTable);
         table = newTable;
 
@@ -481,6 +511,7 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
          * shrinkage, then restore old table.  This should be rare, but avoids
          * unbounded expansion of garbage-filled tables.
          */
+        // yukms note: 这里更新threshold的条件很奇怪
         if (size >= threshold / 2) {
             threshold = (int) (newCapacity * loadFactor);
         } else {
@@ -522,7 +553,9 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      */
     public void putAll(Map<? extends K, ? extends V> m) {
         int numKeysToBeAdded = m.size();
-        if (numKeysToBeAdded == 0) { return; }
+        if (numKeysToBeAdded == 0) {
+            return;
+        }
 
         /*
          * Expand the map if the map if the number of mappings to be added
@@ -535,13 +568,21 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
          */
         if (numKeysToBeAdded > threshold) {
             int targetCapacity = (int) (numKeysToBeAdded / loadFactor + 1);
-            if (targetCapacity > MAXIMUM_CAPACITY) { targetCapacity = MAXIMUM_CAPACITY; }
+            if (targetCapacity > MAXIMUM_CAPACITY) {
+                targetCapacity = MAXIMUM_CAPACITY;
+            }
             int newCapacity = table.length;
-            while (newCapacity < targetCapacity) { newCapacity <<= 1; }
-            if (newCapacity > table.length) { resize(newCapacity); }
+            while (newCapacity < targetCapacity) {
+                newCapacity <<= 1;
+            }
+            if (newCapacity > table.length) {
+                resize(newCapacity);
+            }
         }
 
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
@@ -577,7 +618,11 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             if (h == e.hash && eq(k, e.get())) {
                 modCount++;
                 size--;
-                if (prev == e) { tab[i] = next; } else { prev.next = next; }
+                if (prev == e) {
+                    tab[i] = next;
+                } else {
+                    prev.next = next;
+                }
                 return e.value;
             }
             prev = e;
@@ -603,7 +648,11 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             if (h == e.hash && e.equals(entry)) {
                 modCount++;
                 size--;
-                if (prev == e) { tab[i] = next; } else { prev.next = next; }
+                if (prev == e) {
+                    tab[i] = next;
+                } else {
+                    prev.next = next;
+                }
                 return true;
             }
             prev = e;
@@ -641,11 +690,17 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      * specified value
      */
     public boolean containsValue(Object value) {
-        if (value == null) { return containsNullValue(); }
+        if (value == null) {
+            return containsNullValue();
+        }
 
         Entry<K, V>[] tab = getTable();
         for (int i = tab.length; i-- > 0; ) {
-            for (Entry<K, V> e = tab[i]; e != null; e = e.next) { if (value.equals(e.value)) { return true; } }
+            for (Entry<K, V> e = tab[i]; e != null; e = e.next) {
+                if (value.equals(e.value)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -656,7 +711,11 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     private boolean containsNullValue() {
         Entry<K, V>[] tab = getTable();
         for (int i = tab.length; i-- > 0; ) {
-            for (Entry<K, V> e = tab[i]; e != null; e = e.next) { if (e.value == null) { return true; } }
+            for (Entry<K, V> e = tab[i]; e != null; e = e.next) {
+                if (e.value == null) {
+                    return true;
+                }
+            }
         }
         return false;
     }
