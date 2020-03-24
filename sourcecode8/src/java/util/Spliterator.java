@@ -301,6 +301,9 @@ public interface Spliterator<T> {
      * upon entry to this method, else {@code true}.
      * @throws NullPointerException if the specified action is null
      */
+    // yukms note: 如果剩余元素存在，则对其执行给定操作，返回true；否则返回false。
+    // 如果这个拆分器是按顺序排列的，则按遇到顺序对下一个元素执行操作。
+    // 操作引发的异常将中继到调用方。
     boolean tryAdvance(Consumer<? super T> action);
 
     /**
@@ -315,6 +318,7 @@ public interface Spliterator<T> {
      * @implSpec The default implementation repeatedly invokes {@link #tryAdvance} until
      * it returns {@code false}.  It should be overridden whenever possible.
      */
+    // yukms note: 对当前线程中的每个剩余元素按顺序执行给定的操作，直到处理完所有元素或操作引发异常为止。
     default void forEachRemaining(Consumer<? super T> action) {
         do { } while (tryAdvance(action));
     }
@@ -358,6 +362,7 @@ public interface Spliterator<T> {
      * trySplit} mechanics typically result in poor parallel
      * performance.
      */
+    // yukms note: 尝试拆分任务，如果此拆分器不能拆分，则为空
     Spliterator<T> trySplit();
 
     /**
@@ -381,6 +386,7 @@ public interface Spliterator<T> {
      * accurate count, it could estimate size to be the power of two
      * corresponding to its maximum depth.
      */
+    // yukms note: 返回forEachRemaining遍历将遇到的元素数的估计值，或者返回Long.MAX_值（如果无限、未知或计算成本太高）
     long estimateSize();
 
     /**
@@ -392,6 +398,7 @@ public interface Spliterator<T> {
      * if the Spliterator reports a characteristic of {@code SIZED}, and
      * {@code -1} otherwise.
      */
+    // yukms note: 当迭代器拥有SIZED特征时，返回剩余元素个数；否则返回-1
     default long getExactSizeIfKnown() {
         return (characteristics() & SIZED) == 0 ? -1L : estimateSize();
     }
@@ -416,6 +423,15 @@ public interface Spliterator<T> {
      * examples see the characteristic values {@link #SIZED}, {@link #SUBSIZED}
      * and {@link #CONCURRENT}.
      */
+    // yukms note: 返回此拆分器及其元素的一组特征
+    // ORDERED      按原顺序的
+    // DISTINCT     不重复的
+    // SORTED       有序的
+    // SIZED        可计数的
+    // NONNULL      不为null
+    // IMMUTABLE    不可变
+    // CONCURRENT   线程安全
+    // SUBSIZED
     int characteristics();
 
     /**
@@ -428,6 +444,7 @@ public interface Spliterator<T> {
      * @implSpec The default implementation returns true if the corresponding bits
      * of the given characteristics are set.
      */
+    // yukms note: 是否拥有这些特征值
     default boolean hasCharacteristics(int characteristics) {
         return (characteristics() & characteristics) == characteristics;
     }
@@ -444,6 +461,7 @@ public interface Spliterator<T> {
      *                               a characteristic of {@code SORTED}.
      * @implSpec The default implementation always throws {@link IllegalStateException}.
      */
+    // yukms note: 获取比较器
     default Comparator<? super T> getComparator() {
         throw new IllegalStateException();
     }

@@ -24,15 +24,8 @@
  */
 package java.util.stream;
 
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.IntConsumer;
-import java.util.function.Predicate;
 
 /**
  * Base interface for streams, which are sequences of elements supporting
@@ -89,6 +82,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable
      *
      * @return {@code true} if this stream would execute in parallel if executed
      */
+    // yukms note: 是否支持并行
     boolean isParallel();
 
     /**
@@ -101,6 +95,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable
      *
      * @return a sequential stream
      */
+    // yukms note: 返回顺序的等效流
     S sequential();
 
     /**
@@ -113,6 +108,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable
      *
      * @return a parallel stream
      */
+    // yukms note: 返回并行的等效流
     S parallel();
 
     /**
@@ -126,6 +122,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable
      *
      * @return an unordered stream
      */
+    // yukms note: 返回未排序的等效流
     S unordered();
 
     /**
@@ -146,6 +143,7 @@ public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable
      * @param closeHandler A task to execute when the stream is closed
      * @return a stream with a handler that is run if the stream is closed
      */
+    // yukms note: 返回具有附加关闭处理程序的等效流
     S onClose(Runnable closeHandler);
 
     /**
