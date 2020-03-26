@@ -41,4 +41,10 @@ public class StreamTest {
         Assert.assertEquals("2", people.getName());
         Assert.assertEquals("2", collect.get(0).getName());
     }
+
+    @Test
+    public void test_empty() {
+        Assert.assertTrue(new ArrayList<>().stream().allMatch(o -> false));
+        Assert.assertTrue(new ArrayList<>().stream().allMatch(o -> true));
+    }
 }
