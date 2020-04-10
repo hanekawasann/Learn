@@ -552,9 +552,11 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
             Object[] current = getArray();
             int len = current.length;
             if (snapshot != current) {
+                // yukms note: 已修改，重新找index
                 findIndex:
                 {
                     int prefix = Math.min(index, len);
+                    // yukms note: 找index之前
                     for (int i = 0; i < prefix; i++) {
                         if (current[i] != snapshot[i] && eq(o, current[i])) {
                             index = i;
@@ -562,17 +564,22 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
                         }
                     }
                     if (index >= len) {
+                        // yukms note: 不存在了
                         return false;
                     }
+                    // yukms note: 找当前index
                     if (current[index] == o) {
                         break findIndex;
                     }
+                    // yukms note: 找index之后
                     index = indexOf(o, current, index, len);
                     if (index < 0) {
+                        // yukms note: 找不到了
                         return false;
                     }
                 }
             }
+            // yukms note: 移除
             Object[] newElements = new Object[len - 1];
             System.arraycopy(current, 0, newElements, 0, index);
             System.arraycopy(current, index + 1, newElements, index, len - index - 1);
@@ -607,7 +614,9 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
             }
             int newlen = len - (toIndex - fromIndex);
             int numMoved = len - toIndex;
-            if (numMoved == 0) { setArray(Arrays.copyOf(elements, newlen)); } else {
+            if (numMoved == 0) {
+                setArray(Arrays.copyOf(elements, newlen));
+            } else {
                 Object[] newElements = new Object[newlen];
                 System.arraycopy(elements, 0, newElements, 0, fromIndex);
                 System.arraycopy(elements, toIndex, newElements, fromIndex, numMoved);
