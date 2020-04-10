@@ -130,7 +130,9 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
      */
     public CopyOnWriteArrayList(Collection<? extends E> c) {
         Object[] elements;
-        if (c.getClass() == CopyOnWriteArrayList.class) { elements = ((CopyOnWriteArrayList<?>) c).getArray(); } else {
+        if (c.getClass() == CopyOnWriteArrayList.class) {
+            elements = ((CopyOnWriteArrayList<?>) c).getArray();
+        } else {
             elements = c.toArray();
             // c.toArray might (incorrectly) not return Object[] (see 6260652)
             if (elements.getClass() != Object[].class) {
@@ -188,9 +190,17 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
      */
     private static int indexOf(Object o, Object[] elements, int index, int fence) {
         if (o == null) {
-            for (int i = index; i < fence; i++) { if (elements[i] == null) { return i; } }
+            for (int i = index; i < fence; i++) {
+                if (elements[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = index; i < fence; i++) { if (o.equals(elements[i])) { return i; } }
+            for (int i = index; i < fence; i++) {
+                if (o.equals(elements[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -205,9 +215,17 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
      */
     private static int lastIndexOf(Object o, Object[] elements, int index) {
         if (o == null) {
-            for (int i = index; i >= 0; i--) { if (elements[i] == null) { return i; } }
+            for (int i = index; i >= 0; i--) {
+                if (elements[i] == null) {
+                    return i;
+                }
+            }
         } else {
-            for (int i = index; i >= 0; i--) { if (o.equals(elements[i])) { return i; } }
+            for (int i = index; i >= 0; i--) {
+                if (o.equals(elements[i])) {
+                    return i;
+                }
+            }
         }
         return -1;
     }
@@ -361,9 +379,13 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
     public <T> T[] toArray(T[] a) {
         Object[] elements = getArray();
         int len = elements.length;
-        if (a.length < len) { return (T[]) Arrays.copyOf(elements, len, a.getClass()); } else {
+        if (a.length < len) {
+            return (T[]) Arrays.copyOf(elements, len, a.getClass());
+        } else {
             System.arraycopy(elements, 0, a, 0, len);
-            if (a.length > len) { a[len] = null; }
+            if (a.length > len) {
+                a[len] = null;
+            }
             return a;
         }
     }
@@ -398,6 +420,7 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
             E oldValue = get(elements, index);
 
             if (oldValue != element) {
+                // yukms note: 复制
                 int len = elements.length;
                 Object[] newElements = Arrays.copyOf(elements, len);
                 newElements[index] = element;
@@ -422,6 +445,7 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+            // yukms note: 复制
             Object[] elements = getArray();
             int len = elements.length;
             Object[] newElements = Arrays.copyOf(elements, len + 1);
@@ -446,10 +470,16 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
         try {
             Object[] elements = getArray();
             int len = elements.length;
-            if (index > len || index < 0) { throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + len); }
+            if (index > len || index < 0) {
+                throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + len);
+            }
             Object[] newElements;
             int numMoved = len - index;
-            if (numMoved == 0) { newElements = Arrays.copyOf(elements, len + 1); } else {
+            if (numMoved == 0) {
+                // yukms note: 末尾
+                newElements = Arrays.copyOf(elements, len + 1);
+            } else {
+                // yukms note: 中间
                 newElements = new Object[len + 1];
                 System.arraycopy(elements, 0, newElements, 0, index);
                 System.arraycopy(elements, index, newElements, index + 1, numMoved);
@@ -476,7 +506,11 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
             int len = elements.length;
             E oldValue = get(elements, index);
             int numMoved = len - index - 1;
-            if (numMoved == 0) { setArray(Arrays.copyOf(elements, len - 1)); } else {
+            if (numMoved == 0) {
+                // yukms note: 末尾
+                setArray(Arrays.copyOf(elements, len - 1));
+            } else {
+                // yukms note: 中间
                 Object[] newElements = new Object[len - 1];
                 System.arraycopy(elements, 0, newElements, 0, index);
                 System.arraycopy(elements, index + 1, newElements, index, numMoved);
@@ -527,10 +561,16 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
                             break findIndex;
                         }
                     }
-                    if (index >= len) { return false; }
-                    if (current[index] == o) { break findIndex; }
+                    if (index >= len) {
+                        return false;
+                    }
+                    if (current[index] == o) {
+                        break findIndex;
+                    }
                     index = indexOf(o, current, index, len);
-                    if (index < 0) { return false; }
+                    if (index < 0) {
+                        return false;
+                    }
                 }
             }
             Object[] newElements = new Object[len - 1];
@@ -562,7 +602,9 @@ public class CopyOnWriteArrayList<E> implements List<E>, RandomAccess, Cloneable
             Object[] elements = getArray();
             int len = elements.length;
 
-            if (fromIndex < 0 || toIndex > len || toIndex < fromIndex) { throw new IndexOutOfBoundsException(); }
+            if (fromIndex < 0 || toIndex > len || toIndex < fromIndex) {
+                throw new IndexOutOfBoundsException();
+            }
             int newlen = len - (toIndex - fromIndex);
             int numMoved = len - toIndex;
             if (numMoved == 0) { setArray(Arrays.copyOf(elements, newlen)); } else {
