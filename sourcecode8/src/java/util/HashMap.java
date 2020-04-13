@@ -358,8 +358,8 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
                 for (Type type : ts) {
                     if (((t = type) instanceof ParameterizedType)//
                         && ((p = (ParameterizedType) t).getRawType() == Comparable.class)//
-                        && (as = p.getActualTypeArguments()) != null //
-                        && as.length == 1 //
+                        && (as = p.getActualTypeArguments()) != null//
+                        && as.length == 1//
                         && as[0] == c) {
                         // type arg is c
                         return c;

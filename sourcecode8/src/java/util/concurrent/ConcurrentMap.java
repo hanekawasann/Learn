@@ -309,8 +309,10 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
     default V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         Objects.requireNonNull(mappingFunction);
         V v, newValue;
-        return ((v = get(key)) == null && (newValue = mappingFunction.apply(key)) != null &&
-            (v = putIfAbsent(key, newValue)) == null) ? newValue : v;
+        return ((v = get(key)) == null//
+            && (newValue = mappingFunction.apply(key)) != null//
+            && (v = putIfAbsent(key, newValue)) == null)//
+            ? newValue : v;
     }
 
     /**
@@ -351,8 +353,12 @@ public interface ConcurrentMap<K, V> extends Map<K, V> {
         while ((oldValue = get(key)) != null) {
             V newValue = remappingFunction.apply(key, oldValue);
             if (newValue != null) {
-                if (replace(key, oldValue, newValue)) { return newValue; }
-            } else if (remove(key, oldValue)) { return null; }
+                if (replace(key, oldValue, newValue)) {
+                    return newValue;
+                }
+            } else if (remove(key, oldValue)) {
+                return null;
+            }
         }
         return oldValue;
     }

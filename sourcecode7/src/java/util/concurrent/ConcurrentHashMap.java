@@ -35,12 +35,21 @@
 
 package java.util.concurrent;
 
-import java.util.concurrent.locks.*;
-import java.util.*;
-import java.io.Serializable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.AbstractCollection;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A hash table supporting full concurrency of retrievals and
@@ -132,18 +141,21 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * The default initial capacity for this table,
      * used when not otherwise specified in a constructor.
      */
+    // yukms note: 默认初始容量
     static final int DEFAULT_INITIAL_CAPACITY = 16;
 
     /**
      * The default load factor for this table, used when not
      * otherwise specified in a constructor.
      */
+    // yukms note: 默认负载系数
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
      * The default concurrency level for this table, used when not
      * otherwise specified in a constructor.
      */
+    // yukms note: 默认并发数量，会影响segments数组的长度(初始化后不能修改)
     static final int DEFAULT_CONCURRENCY_LEVEL = 16;
 
     /**
@@ -152,6 +164,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * be a power of two <= 1<<30 to ensure that entries are indexable
      * using ints.
      */
+    // yukms note: 最大容量（无法再扩容了）
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
@@ -159,13 +172,15 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * of two, at least two to avoid immediate resizing on next use
      * after lazy construction.
      */
+    // yukms note: 每段表的最小容量，必须是2^n，至少为2
     static final int MIN_SEGMENT_TABLE_CAPACITY = 2;
 
     /**
      * The maximum number of segments to allow; used to bound
      * constructor arguments. Must be power of two less than 1 << 24.
      */
-    static final int MAX_SEGMENTS = 1 << 16; // slightly conservative
+    // yukms note: 允许的最大段数，用于限定concurrencyLevel的边界，必须是2^n
+    static final int MAX_SEGMENTS = 1 << 16; // slightly conservative 略为保守
 
     /**
      * Number of unsynchronized retries in size and containsValue
@@ -173,6 +188,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * unbounded retries if tables undergo continuous modification
      * which would make it impossible to obtain an accurate result.
      */
+    // yukms note: 非锁定情况下调用size和contains方法的重试次数，避免由于table连续被修改导致无限重试
     static final int RETRIES_BEFORE_LOCK = 2;
 
     /* ---------------- Fields -------------- */
@@ -181,18 +197,22 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * Mask value for indexing into segments. The upper bits of a
      * key's hash code are used to choose the segment.
      */
+    // yukms note: 段掩码
     final int segmentMask;
 
     /**
      * Shift value for indexing within segments.
      */
+    // yukms note: 段偏移量
     final int segmentShift;
 
     /**
      * The segments, each of which is a specialized hash table.
      */
+    // yukms note: 段（每个段都是专门的哈希表）
     final Segment<K, V>[] segments;
 
+    // yukms note: 缓存
     transient Set<K> keySet;
     transient Set<Map.Entry<K, V>> entrySet;
     transient Collection<V> values;
@@ -219,6 +239,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
          * about use of putOrderedObject.)
          */
         final void setNext(HashEntry<K, V> n) {
+            // yukms note: 设置obj对象中offset偏移地址对应的object型field的值为指定值
+            // 这是一个有序或者有延迟的putObjectVolatile方法，并且不保证值的改变被其他线程立即看到
+            // 只有在field被volatile修饰并且期望被意外修改的时候使用才有用
             UNSAFE.putOrderedObject(this, nextOffset, n);
         }
 
@@ -314,18 +337,22 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
          * number of retries maintains cache acquired while locating
          * nodes.
          */
+        // yukms note: 加锁时，在阻塞之前自旋的次数
         static final int MAX_SCAN_RETRIES = Runtime.getRuntime().availableProcessors() > 1 ? 64 : 1;
 
         /**
          * The per-segment table. Elements are accessed via
          * entryAt/setEntryAt providing volatile semantics.
          */
+        // yukms note: 每个segment的HashEntry table数组
+        // 访问数组元素可以通过entryAt/setEntryAt提供的volatile语义来完成volatile保证可见性
         transient volatile HashEntry<K, V>[] table;
 
         /**
          * The number of elements. Accessed only either within locks
          * or among other volatile reads that maintain visibility.
          */
+        // yukms note: 元素的数量,只能在锁中或者其他保证volatile可见性之间进行访问
         transient int count;
 
         /**
@@ -637,15 +664,19 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         long u = (k << SSHIFT) + SBASE; // raw offset
         Segment<K, V> seg;
         if ((seg = (Segment<K, V>) UNSAFE.getObjectVolatile(ss, u)) == null) {
+            // yukms note: 第零个已经初始化
             Segment<K, V> proto = ss[0]; // use segment 0 as prototype
             int cap = proto.table.length;
             float lf = proto.loadFactor;
             int threshold = (int) (cap * lf);
             HashEntry<K, V>[] tab = (HashEntry<K, V>[]) new HashEntry[cap];
             if ((seg = (Segment<K, V>) UNSAFE.getObjectVolatile(ss, u)) == null) { // recheck
-                Segment<K, V> s = new Segment<K, V>(lf, threshold, tab);
+                Segment<K, V> s = new Segment<>(lf, threshold, tab);
                 while ((seg = (Segment<K, V>) UNSAFE.getObjectVolatile(ss, u)) == null) {
-                    if (UNSAFE.compareAndSwapObject(ss, u, null, seg = s)) { break; }
+                    // yukms note: 重试
+                    if (UNSAFE.compareAndSwapObject(ss, u, null, seg = s)) {
+                        break;
+                    }
                 }
             }
         }
@@ -693,24 +724,39 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      */
     @SuppressWarnings("unchecked")
     public ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-        if (!(loadFactor > 0) || initialCapacity < 0 || concurrencyLevel <= 0) { throw new IllegalArgumentException(); }
-        if (concurrencyLevel > MAX_SEGMENTS) { concurrencyLevel = MAX_SEGMENTS; }
+        if (!(loadFactor > 0) || initialCapacity < 0 || concurrencyLevel <= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (concurrencyLevel > MAX_SEGMENTS) {
+            concurrencyLevel = MAX_SEGMENTS;
+        }
         // Find power-of-two sizes best matching arguments
         int sshift = 0;
         int ssize = 1;
         while (ssize < concurrencyLevel) {
+            // yukms note: sshift = concurrencyLevel？？？
             ++sshift;
+            // yukms note: 2N
             ssize <<= 1;
         }
         this.segmentShift = 32 - sshift;
         this.segmentMask = ssize - 1;
-        if (initialCapacity > MAXIMUM_CAPACITY) { initialCapacity = MAXIMUM_CAPACITY; }
+        if (initialCapacity > MAXIMUM_CAPACITY) {
+            initialCapacity = MAXIMUM_CAPACITY;
+        }
+        // yukms note: 计算每段表的容量
         int c = initialCapacity / ssize;
-        if (c * ssize < initialCapacity) { ++c; }
+        if (c * ssize < initialCapacity) {
+            ++c;
+        }
         int cap = MIN_SEGMENT_TABLE_CAPACITY;
-        while (cap < c) { cap <<= 1; }
+        while (cap < c) {
+            // yukms note: 2N
+            cap <<= 1;
+        }
+        // yukms note: 延迟初始化其余的segment
         // create segments and segments[0]
-        Segment<K, V> s0 = new Segment<K, V>(loadFactor, (int) (cap * loadFactor), new HashEntry[cap]);
+        Segment<K, V> s0 = new Segment<>(loadFactor, (int) (cap * loadFactor), new HashEntry[cap]);
         Segment<K, V>[] ss = (Segment<K, V>[]) new Segment[ssize];
         UNSAFE.putOrderedObject(ss, SBASE, s0); // ordered write of segments[0]
         this.segments = ss;
@@ -992,12 +1038,17 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
     @SuppressWarnings("unchecked")
     public V put(K key, V value) {
         Segment<K, V> s;
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+            // yukms note: HashMap没有这个限定条件
+            throw new NullPointerException();
+        }
         int hash = hash(key.hashCode());
         int j = (hash >>> segmentShift) & segmentMask;
-        if ((s = (Segment<K, V>) UNSAFE.getObject          // nonvolatile; recheck
-            (segments, (j << SSHIFT) + SBASE)) == null) //  in ensureSegment
-        { s = ensureSegment(j); }
+        // nonvolatile; recheck
+        if ((s = (Segment<K, V>) UNSAFE.getObject(segments, (j << SSHIFT) + SBASE)) == null) {
+            // yukms note: 初始化
+            s = ensureSegment(j);
+        }
         return s.put(key, hash, value, false);
     }
 
@@ -1011,10 +1062,14 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
     @SuppressWarnings("unchecked")
     public V putIfAbsent(K key, V value) {
         Segment<K, V> s;
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+            throw new NullPointerException();
+        }
         int hash = hash(key.hashCode());
         int j = (hash >>> segmentShift) & segmentMask;
-        if ((s = (Segment<K, V>) UNSAFE.getObject(segments, (j << SSHIFT) + SBASE)) == null) { s = ensureSegment(j); }
+        if ((s = (Segment<K, V>) UNSAFE.getObject(segments, (j << SSHIFT) + SBASE)) == null) {
+            s = ensureSegment(j);
+        }
         return s.put(key, hash, value, true);
     }
 
@@ -1026,7 +1081,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * @param m mappings to be stored in this map
      */
     public void putAll(Map<? extends K, ? extends V> m) {
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) { put(e.getKey(), e.getValue()); }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            put(e.getKey(), e.getValue());
+        }
     }
 
     /**
@@ -1052,7 +1109,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
     public boolean remove(Object key, Object value) {
         int hash = hash(key.hashCode());
         Segment<K, V> s;
-        return value != null && (s = segmentForHash(hash)) != null && s.remove(key, hash, value) != null;
+        return value != null //
+            && (s = segmentForHash(hash)) != null//
+            && s.remove(key, hash, value) != null;
     }
 
     /**
@@ -1062,7 +1121,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      */
     public boolean replace(K key, V oldValue, V newValue) {
         int hash = hash(key.hashCode());
-        if (oldValue == null || newValue == null) { throw new NullPointerException(); }
+        if (oldValue == null || newValue == null) {
+            throw new NullPointerException();
+        }
         Segment<K, V> s = segmentForHash(hash);
         return s != null && s.replace(key, hash, oldValue, newValue);
     }
@@ -1076,7 +1137,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      */
     public V replace(K key, V value) {
         int hash = hash(key.hashCode());
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+            throw new NullPointerException();
+        }
         Segment<K, V> s = segmentForHash(hash);
         return s == null ? null : s.replace(key, hash, value);
     }
@@ -1087,8 +1150,11 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
     public void clear() {
         final Segment<K, V>[] segments = this.segments;
         for (int j = 0; j < segments.length; ++j) {
+            // yukms note: 逐一置空
             Segment<K, V> s = segmentAt(segments, j);
-            if (s != null) { s.clear(); }
+            if (s != null) {
+                s.clear();
+            }
         }
     }
 
@@ -1197,43 +1263,67 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         final void advance() {
             for (; ; ) {
                 if (nextTableIndex >= 0) {
-                    if ((nextEntry = entryAt(currentTable, nextTableIndex--)) != null) { break; }
+                    if ((nextEntry = entryAt(currentTable, nextTableIndex--)) != null) {
+                        break;
+                    }
                 } else if (nextSegmentIndex >= 0) {
                     Segment<K, V> seg = segmentAt(segments, nextSegmentIndex--);
-                    if (seg != null && (currentTable = seg.table) != null) { nextTableIndex = currentTable.length - 1; }
-                } else { break; }
+                    if (seg != null && (currentTable = seg.table) != null) {
+                        nextTableIndex = currentTable.length - 1;
+                    }
+                } else {
+                    break;
+                }
             }
         }
 
         final HashEntry<K, V> nextEntry() {
             HashEntry<K, V> e = nextEntry;
-            if (e == null) { throw new NoSuchElementException(); }
+            if (e == null) {
+                throw new NoSuchElementException();
+            }
             lastReturned = e; // cannot assign until after null check
-            if ((nextEntry = e.next) == null) { advance(); }
+            if ((nextEntry = e.next) == null) {
+                advance();
+            }
             return e;
         }
 
-        public final boolean hasNext() { return nextEntry != null; }
+        public final boolean hasNext() {
+            return nextEntry != null;
+        }
 
-        public final boolean hasMoreElements() { return nextEntry != null; }
+        public final boolean hasMoreElements() {
+            return nextEntry != null;
+        }
 
         public final void remove() {
-            if (lastReturned == null) { throw new IllegalStateException(); }
+            if (lastReturned == null) {
+                throw new IllegalStateException();
+            }
             ConcurrentHashMap.this.remove(lastReturned.key);
             lastReturned = null;
         }
     }
 
     final class KeyIterator extends HashIterator implements Iterator<K>, Enumeration<K> {
-        public final K next() { return super.nextEntry().key; }
+        public final K next() {
+            return super.nextEntry().key;
+        }
 
-        public final K nextElement() { return super.nextEntry().key; }
+        public final K nextElement() {
+            return super.nextEntry().key;
+        }
     }
 
     final class ValueIterator extends HashIterator implements Iterator<V>, Enumeration<V> {
-        public final V next() { return super.nextEntry().value; }
+        public final V next() {
+            return super.nextEntry().value;
+        }
 
-        public final V nextElement() { return super.nextEntry().value; }
+        public final V nextElement() {
+            return super.nextEntry().value;
+        }
     }
 
     /**
@@ -1428,6 +1518,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             UNSAFE = sun.misc.Unsafe.getUnsafe();
             Class tc = HashEntry[].class;
             Class sc = Segment[].class;
+            // yukms note: 获取给定数组中第一个元素的偏移地址
             TBASE = UNSAFE.arrayBaseOffset(tc);
             SBASE = UNSAFE.arrayBaseOffset(sc);
             ts = UNSAFE.arrayIndexScale(tc);

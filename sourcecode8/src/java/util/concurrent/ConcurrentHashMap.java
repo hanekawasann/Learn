@@ -706,14 +706,20 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             Type[] ts, as;
             Type t;
             ParameterizedType p;
-            if ((c = x.getClass()) == String.class) // bypass checks
-            { return c; }
+            if ((c = x.getClass()) == String.class) {
+                // bypass checks
+                return c;
+            }
             if ((ts = c.getGenericInterfaces()) != null) {
-                for (int i = 0; i < ts.length; ++i) {
-                    if (((t = ts[i]) instanceof ParameterizedType) &&
-                        ((p = (ParameterizedType) t).getRawType() == Comparable.class) &&
-                        (as = p.getActualTypeArguments()) != null && as.length == 1 && as[0] == c) // type arg is c
-                    { return c; }
+                for (Type type : ts) {
+                    if (((t = type) instanceof ParameterizedType)//
+                        && ((p = (ParameterizedType) t).getRawType() == Comparable.class)//
+                        && (as = p.getActualTypeArguments()) != null//
+                        && as.length == 1//
+                        && as[0] == c) {
+                        // type arg is c
+                        return c;
+                    }
                 }
             }
         }
@@ -778,6 +784,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * but also as a fallback during table initialization
      * races. Updated via CAS.
      */
+    // yukms note: 基本计数器值，主要在没有争用时使用，但在表初始化竞争期间也用作回退。通过CAS更新
     private transient volatile long baseCount;
 
     /**
@@ -788,21 +795,28 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * creation, or 0 for default. After initialization, holds the
      * next element count value upon which to resize the table.
      */
+    // yukms note: 表初始化和调整大小控件。
+    // 如果为负，则正在初始化或调整表的大小：-1用于初始化，否则-（1+活动的调整大小线程数）。
+    // 否则，当table为空时，将保留创建时要使用的初始表大小，默认值为0。
+    // 初始化后，保存下一个元素计数值，根据该值调整表的大小
     private transient volatile int sizeCtl;
 
     /**
      * The next table index (plus one) to split while resizing.
      */
+    // yukms note: 调整大小时要拆分的下一个表索引（加上一个）
     private transient volatile int transferIndex;
 
     /**
      * Spinlock (locked via CAS) used when resizing and/or creating CounterCells.
      */
+    // yukms note: 调整大小和/或创建计数器单元格时使用的自旋锁（通过CAS锁定）
     private transient volatile int cellsBusy;
 
     /**
      * Table of counter cells. When non-null, size is a power of 2.
      */
+    // yukms note: 计数器单元格表。非空时，大小是2的幂。
     private transient volatile CounterCell[] counterCells;
 
     // views
@@ -830,8 +844,12 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      *                                  elements is negative
      */
     public ConcurrentHashMap(int initialCapacity) {
-        if (initialCapacity < 0) { throw new IllegalArgumentException(); }
-        int cap = ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException();
+        }
+        // yukms note: 如果initialCapacity大于等于MAXIMUM_CAPACITY的一半，则...（这里其实和HashMap逻辑一致，这里范围不那么易懂）
+        int cap = ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1))//
+            ? MAXIMUM_CAPACITY//
             : tableSizeFor(initialCapacity + (initialCapacity >>> 1) + 1));
         this.sizeCtl = cap;
     }
@@ -883,11 +901,13 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      *                                  nonpositive
      */
     public ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
+        // yukms note: concurrencyLevel 估计并发更新线程数
         if (!(loadFactor > 0.0f) || initialCapacity < 0 || concurrencyLevel <= 0) {
             throw new IllegalArgumentException();
         }
-        if (initialCapacity < concurrencyLevel)   // Use at least as many bins
-        {
+        // yukms note: ?????
+        if (initialCapacity < concurrencyLevel) {
+            // Use at least as many bins
             initialCapacity = concurrencyLevel;   // as estimated threads
         }
         long size = (long) (1.0 + (long) initialCapacity / loadFactor);
@@ -902,7 +922,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      */
     public int size() {
         long n = sumCount();
-        return ((n < 0L) ? 0 : (n > (long) Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) n);
+        return (n < 0L) ? 0 : (n > (long) Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) n;
     }
 
     /**
@@ -1054,8 +1074,11 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * @param m mappings to be stored in this map
      */
     public void putAll(Map<? extends K, ? extends V> m) {
+        // yukms note: 尝试预先调整表的大小以容纳给定数量的元素
         tryPresize(m.size());
-        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) { putVal(e.getKey(), e.getValue(), false); }
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            putVal(e.getKey(), e.getValue(), false);
+        }
     }
 
     /**
@@ -2171,7 +2194,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             Node<K, V>[] tab = table;
             int n;
             if (tab == null || (n = tab.length) == 0) {
-                n = (sc > c) ? sc : c;
+                n = Math.max(sc, c);
                 if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
                     try {
                         if (table == tab) {
@@ -2184,13 +2207,17 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                         sizeCtl = sc;
                     }
                 }
-            } else if (c <= sc || n >= MAXIMUM_CAPACITY) { break; } else if (tab == table) {
+            } else if (c <= sc || n >= MAXIMUM_CAPACITY) {
+                break;
+            } else if (tab == table) {
                 int rs = resizeStamp(n);
                 if (sc < 0) {
                     Node<K, V>[] nt;
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS ||
-                        (nt = nextTable) == null || transferIndex <= 0) { break; }
-                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) { transfer(tab, nt); }
+                        (nt = nextTable) == null || transferIndex <= 0) {
+                        break; }
+                    if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
+                        transfer(tab, nt); }
                 } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)) {
                     transfer(tab, null);
                 }
