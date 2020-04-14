@@ -387,16 +387,21 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         }
 
         final V put(K key, int hash, V value, boolean onlyIfAbsent) {
+            // yukms note: 尝试获取锁
             HashEntry<K, V> node = tryLock() ? null : scanAndLockForPut(key, hash, value);
             V oldValue;
             try {
+                // yukms note: 这里为什么就不用UNSAFE.getObjectVolatile？？
                 HashEntry<K, V>[] tab = table;
+                // yukms note: 计算下标
                 int index = (tab.length - 1) & hash;
+                // yukms note: 获取table下index链表
                 HashEntry<K, V> first = entryAt(tab, index);
                 for (HashEntry<K, V> e = first; ; ) {
                     if (e != null) {
                         K k;
                         if ((k = e.key) == key || (e.hash == hash && key.equals(k))) {
+                            // yukms note: 以上和HashMap一致
                             oldValue = e.value;
                             if (!onlyIfAbsent) {
                                 e.value = value;
@@ -406,11 +411,20 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                         }
                         e = e.next;
                     } else {
-                        if (node != null) { node.setNext(first); } else {
-                            node = new HashEntry<K, V>(hash, key, value, first);
+                        // yukms note: 没找到旧值
+                        if (node != null) {
+                            node.setNext(first);
+                        } else {
+                            node = new HashEntry<>(hash, key, value, first);
                         }
+                        // yukms note: 是否需要扩容
                         int c = count + 1;
-                        if (c > threshold && tab.length < MAXIMUM_CAPACITY) { rehash(node); } else {
+                        if (c > threshold && tab.length < MAXIMUM_CAPACITY) {
+                            // yukms note: 需要扩容
+                            rehash(node);
+                        } else {
+                            // yukms note: 不需要扩容
+                            // yukms note: 将头结点设置到对应的下标
                             setEntryAt(tab, index, node);
                         }
                         ++modCount;
@@ -449,19 +463,33 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
              */
             HashEntry<K, V>[] oldTable = table;
             int oldCapacity = oldTable.length;
+            // yukms note: 新容量2n
             int newCapacity = oldCapacity << 1;
+            // yukms note: 下次扩容的标准
             threshold = (int) (newCapacity * loadFactor);
+            // yukms note: 新哈希表
             HashEntry<K, V>[] newTable = (HashEntry<K, V>[]) new HashEntry[newCapacity];
             int sizeMask = newCapacity - 1;
             for (int i = 0; i < oldCapacity; i++) {
+                // yukms note: 遍历旧哈希表
                 HashEntry<K, V> e = oldTable[i];
                 if (e != null) {
+                    // yukms note: 头结点存在
                     HashEntry<K, V> next = e.next;
+                    // yukms note: 新下标
                     int idx = e.hash & sizeMask;
-                    if (next == null)   //  Single node on list
-                    { newTable[idx] = e; } else { // Reuse consecutive sequence at same slot
+                    if (next == null) {
+                        // yukms note: 只有头结点
+                        //  Single node on list
+                        // yukms note: 能确定新下标下的链表一定为空吗？？？
+                        newTable[idx] = e;
+                    } else {
+                        // yukms note: 不只头结点
+                        // Reuse consecutive sequence at same slot
                         HashEntry<K, V> lastRun = e;
                         int lastIdx = idx;
+                        // yukms note: “遍历找到最后一个不在原桶序号处的元素”——不明白
+                        // yukms note: 任何一个元素都有两种情况，在原桶或不在原桶
                         for (HashEntry<K, V> last = next; last != null; last = last.next) {
                             int k = last.hash & sizeMask;
                             if (k != lastIdx) {
@@ -471,16 +499,19 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                         }
                         newTable[lastIdx] = lastRun;
                         // Clone remaining nodes
+                        // yukms note: 最后一个不在原桶序号处的元素之前的元素赋值到新桶上
                         for (HashEntry<K, V> p = e; p != lastRun; p = p.next) {
                             V v = p.value;
                             int h = p.hash;
                             int k = h & sizeMask;
                             HashEntry<K, V> n = newTable[k];
-                            newTable[k] = new HashEntry<K, V>(h, p.key, v, n);
+                            // yukms note: 头插法
+                            newTable[k] = new HashEntry<>(h, p.key, v, n);
                         }
                     }
                 }
             }
+            // yukms note: 将新添加的node也放置到对应的桶
             int nodeIndex = node.hash & sizeMask; // add the new node
             node.setNext(newTable[nodeIndex]);
             newTable[nodeIndex] = node;
@@ -503,17 +534,31 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             HashEntry<K, V> node = null;
             int retries = -1; // negative while locating node
             while (!tryLock()) {
+                // yukms note: 获取锁失败
                 HashEntry<K, V> f; // to recheck first below
                 if (retries < 0) {
+                    // yukms note: 第一次尝试获取锁
                     if (e == null) {
-                        if (node == null) // speculatively create node
-                        { node = new HashEntry<K, V>(hash, key, value, null); }
+                        // yukms note: 头结点不存在
+                        if (node == null) {
+                            // yukms note: 当前节点还未创建
+                            // speculatively create node
+                            node = new HashEntry<>(hash, key, value, null);
+                        }
                         retries = 0;
-                    } else if (key.equals(e.key)) { retries = 0; } else { e = e.next; }
+                    } else if (key.equals(e.key)) {
+                        retries = 0;
+                    } else {
+                        // yukms note: 前面两种情况都将retries=0
+                        // yukms note: 这样做的意思应该是，如果找到了e所在的位置，才开始计数
+                        e = e.next;
+                    }
                 } else if (++retries > MAX_SCAN_RETRIES) {
+                    // yukms note: 超过最大重试次数，不再重试，直接挂起
                     lock();
                     break;
                 } else if ((retries & 1) == 0 && (f = entryForHash(this, hash)) != first) {
+                    // yukms note: 链头发生变化
                     e = first = f; // re-traverse if entry changed
                     retries = -1;
                 }
@@ -530,17 +575,24 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
          */
         private void scanAndLock(Object key, int hash) {
             // similar to but simpler than scanAndLockForPut
+            // yukms note: 类似于scanAndLockForPut，但更简单
             HashEntry<K, V> first = entryForHash(this, hash);
             HashEntry<K, V> e = first;
             int retries = -1;
             while (!tryLock()) {
                 HashEntry<K, V> f;
                 if (retries < 0) {
-                    if (e == null || key.equals(e.key)) { retries = 0; } else { e = e.next; }
+                    if (e == null || key.equals(e.key)) {
+                        retries = 0;
+                    } else {
+                        e = e.next;
+                    }
                 } else if (++retries > MAX_SCAN_RETRIES) {
+                    // yukms note: 超过重试次数，直接挂起
                     lock();
                     break;
                 } else if ((retries & 1) == 0 && (f = entryForHash(this, hash)) != first) {
+                    // yukms note: 链表结构变化
                     e = first = f;
                     retries = -1;
                 }
@@ -551,7 +603,10 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
          * Remove; match on key only if value null, else match both.
          */
         final V remove(Object key, int hash, Object value) {
-            if (!tryLock()) { scanAndLock(key, hash); }
+            if (!tryLock()) {
+                // yukms note: 自旋重试
+                scanAndLock(key, hash);
+            }
             V oldValue = null;
             try {
                 HashEntry<K, V>[] tab = table;
@@ -564,7 +619,13 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                     if ((k = e.key) == key || (e.hash == hash && key.equals(k))) {
                         V v = e.value;
                         if (value == null || value == v || value.equals(v)) {
-                            if (pred == null) { setEntryAt(tab, index, next); } else { pred.setNext(next); }
+                            if (pred == null) {
+                                // yukms note: 头结点不存在
+                                setEntryAt(tab, index, next);
+                            } else {
+                                // yukms note: 头结点存在
+                                pred.setNext(next);
+                            }
                             ++modCount;
                             --count;
                             oldValue = v;
@@ -581,7 +642,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         }
 
         final boolean replace(K key, int hash, V oldValue, V newValue) {
-            if (!tryLock()) { scanAndLock(key, hash); }
+            if (!tryLock()) {
+                scanAndLock(key, hash);
+            }
             boolean replaced = false;
             try {
                 HashEntry<K, V> e;
@@ -626,7 +689,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             lock();
             try {
                 HashEntry<K, V>[] tab = table;
-                for (int i = 0; i < tab.length; i++) { setEntryAt(tab, i, null); }
+                for (int i = 0; i < tab.length; i++) {
+                    setEntryAt(tab, i, null);
+                }
                 ++modCount;
                 count = 0;
             } finally {
@@ -700,7 +765,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
     @SuppressWarnings("unchecked")
     static final <K, V> HashEntry<K, V> entryForHash(Segment<K, V> seg, int h) {
         HashEntry<K, V>[] tab;
-        return (seg == null || (tab = seg.table) == null) ? null
+        return (seg == null || (tab = seg.table) == null)//
+            ? null//
             : (HashEntry<K, V>) UNSAFE.getObjectVolatile(tab, ((long) (((tab.length - 1) & h)) << TSHIFT) + TBASE);
     }
 
@@ -834,15 +900,20 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (int j = 0; j < segments.length; ++j) {
             Segment<K, V> seg = segmentAt(segments, j);
             if (seg != null) {
-                if (seg.count != 0) { return false; }
+                if (seg.count != 0) {
+                    return false;
+                }
                 sum += seg.modCount;
             }
         }
+        // yukms note: 再次检查，所有哈希表必须未被修改过结构
         if (sum != 0L) { // recheck unless no modifications
             for (int j = 0; j < segments.length; ++j) {
                 Segment<K, V> seg = segmentAt(segments, j);
                 if (seg != null) {
-                    if (seg.count != 0) { return false; }
+                    if (seg.count != 0) {
+                        return false;
+                    }
                     sum -= seg.modCount;
                 }
             }
@@ -863,17 +934,23 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         // continuous async changes in table, resort to locking.
         final Segment<K, V>[] segments = this.segments;
         int size;
+        // yukms note: 是否溢出
         boolean overflow; // true if size overflows 32 bits
+        // yukms note: 本次modCounts总和
         long sum;         // sum of modCounts
+        // yukms note: 上次modCounts总和
         long last = 0L;   // previous sum
+        // yukms note: 重试次数
         int retries = -1; // first iteration isn't retry
         try {
             for (; ; ) {
                 if (retries++ == RETRIES_BEFORE_LOCK) {
                     for (int j = 0; j < segments.length; ++j) {
+                        // yukms note: 超过重试次数，强制挂起，获取所有段的锁
                         ensureSegment(j).lock(); // force creation
                     }
                 }
+                // yukms note: 重置计数
                 sum = 0L;
                 size = 0;
                 overflow = false;
@@ -882,17 +959,28 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                     if (seg != null) {
                         sum += seg.modCount;
                         int c = seg.count;
-                        if (c < 0 || (size += c) < 0) { overflow = true; }
+                        if (c < 0 || (size += c) < 0) {
+                            // yukms note: 小于0则已经溢出
+                            overflow = true;
+                        }
                     }
                 }
-                if (sum == last) { break; }
+                if (sum == last) {
+                    // yukms note: 上一次和本次modCounts相等才退出
+                    // yukms note: 这么看来该循环至少会执行两次
+                    break;
+                }
                 last = sum;
             }
         } finally {
+            // yukms note: 超过重试次数，需要依次释放锁
             if (retries > RETRIES_BEFORE_LOCK) {
-                for (int j = 0; j < segments.length; ++j) { segmentAt(segments, j).unlock(); }
+                for (int j = 0; j < segments.length; ++j) {
+                    segmentAt(segments, j).unlock();
+                }
             }
         }
+        // yukms note: 溢出则返回int的最大值
         return overflow ? Integer.MAX_VALUE : size;
     }
 
@@ -912,11 +1000,14 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         HashEntry<K, V>[] tab;
         int h = hash(key.hashCode());
         long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
-        if ((s = (Segment<K, V>) UNSAFE.getObjectVolatile(segments, u)) != null && (tab = s.table) != null) {
+        if ((s = (Segment<K, V>) UNSAFE.getObjectVolatile(segments, u)) != null//
+            && (tab = s.table) != null) {
             for (HashEntry<K, V> e = (HashEntry<K, V>) UNSAFE
                 .getObjectVolatile(tab, ((long) (((tab.length - 1) & h)) << TSHIFT) + TBASE); e != null; e = e.next) {
                 K k;
-                if ((k = e.key) == key || (e.hash == h && key.equals(k))) { return e.value; }
+                if ((k = e.key) == key || (e.hash == h && key.equals(k))) {
+                    return e.value;
+                }
             }
         }
         return null;
@@ -937,11 +1028,14 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         HashEntry<K, V>[] tab;
         int h = hash(key.hashCode());
         long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
-        if ((s = (Segment<K, V>) UNSAFE.getObjectVolatile(segments, u)) != null && (tab = s.table) != null) {
+        if ((s = (Segment<K, V>) UNSAFE.getObjectVolatile(segments, u)) != null//
+            && (tab = s.table) != null) {
             for (HashEntry<K, V> e = (HashEntry<K, V>) UNSAFE
                 .getObjectVolatile(tab, ((long) (((tab.length - 1) & h)) << TSHIFT) + TBASE); e != null; e = e.next) {
                 K k;
-                if ((k = e.key) == key || (e.hash == h && key.equals(k))) { return true; }
+                if ((k = e.key) == key || (e.hash == h && key.equals(k))) {
+                    return true;
+                }
             }
         }
         return false;
@@ -959,8 +1053,11 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * @throws NullPointerException if the specified value is null
      */
     public boolean containsValue(Object value) {
+        // yukms note: 和size方法一致
         // Same idea as size()
-        if (value == null) { throw new NullPointerException(); }
+        if (value == null) {
+            throw new NullPointerException();
+        }
         final Segment<K, V>[] segments = this.segments;
         boolean found = false;
         long last = 0;
@@ -992,12 +1089,16 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                         sum += seg.modCount;
                     }
                 }
-                if (retries > 0 && sum == last) { break; }
+                if (retries > 0 && sum == last) {
+                    break;
+                }
                 last = sum;
             }
         } finally {
             if (retries > RETRIES_BEFORE_LOCK) {
-                for (int j = 0; j < segments.length; ++j) { segmentAt(segments, j).unlock(); }
+                for (int j = 0; j < segments.length; ++j) {
+                    segmentAt(segments, j).unlock();
+                }
             }
         }
         return found;
