@@ -507,12 +507,14 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * because the top two bits of 32bit hash fields are used for
      * control purposes.
      */
+    // yukms note: 最大容量
     private static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
      * The default initial table capacity.  Must be a power of 2
      * (i.e., at least 1) and at most MAXIMUM_CAPACITY.
      */
+    // yukms note: 默认容量
     private static final int DEFAULT_CAPACITY = 16;
 
     /**
@@ -525,6 +527,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * The default concurrency level for this table. Unused but
      * defined for compatibility with previous versions of this class.
      */
+    // yukms note: 默认并发数量
     private static final int DEFAULT_CONCURRENCY_LEVEL = 16;
 
     /**
