@@ -1020,12 +1020,15 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         for (Node<K, V>[] tab = table; ; ) {
             Node<K, V> f;
             int n, i, fh;
-            if (tab == null || (n = tab.length) == 0) { tab = initTable(); } else if (
-                (f = tabAt(tab, i = (n - 1) & hash)) == null) {
+            if (tab == null || (n = tab.length) == 0) {
+                tab = initTable();
+            } else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
                 if (casTabAt(tab, i, null, new Node<K, V>(hash, key, value, null))) {
                     break;                   // no lock when adding to empty bin
                 }
-            } else if ((fh = f.hash) == MOVED) { tab = helpTransfer(tab, f); } else {
+            } else if ((fh = f.hash) == MOVED) {
+                tab = helpTransfer(tab, f);
+            } else {
                 V oldVal = null;
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
@@ -1035,7 +1038,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                                 K ek;
                                 if (e.hash == hash && ((ek = e.key) == key || (ek != null && key.equals(ek)))) {
                                     oldVal = e.val;
-                                    if (!onlyIfAbsent) { e.val = value; }
+                                    if (!onlyIfAbsent) {
+                                        e.val = value;
+                                    }
                                     break;
                                 }
                                 Node<K, V> pred = e;
@@ -1049,7 +1054,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                             binCount = 2;
                             if ((p = ((TreeBin<K, V>) f).putTreeVal(hash, key, value)) != null) {
                                 oldVal = p.val;
-                                if (!onlyIfAbsent) { p.val = value; }
+                                if (!onlyIfAbsent) {
+                                    p.val = value;
+                                }
                             }
                         }
                     }
@@ -2194,10 +2201,13 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         while ((sc = sizeCtl) >= 0) {
             Node<K, V>[] tab = table;
             int n;
-            if (tab == null || (n = tab.length) == 0) {// yukms note: 哈希表未初始化
+            if (tab == null || (n = tab.length) == 0) {
+                // yukms note: 哈希表未初始化
+
                 // yukms note: 构造函数可能指定了容量，此时容量保存在sizeCtl
                 n = Math.max(sc, c);
-                if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) { // yukms note: 初始化tab的时候，把sizeCtl设为-1
+                if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
+                    // yukms note: 初始化tab的时候，把sizeCtl设为-1
                     try {
                         if (table == tab) {// yukms note: 这里比较一次的意义是什么
                             // yukms note: 初始化
@@ -2218,18 +2228,27 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             } else if (c <= sc || n >= MAXIMUM_CAPACITY) {
                 // yukms note: 无需扩容
                 break;
-            } else if (tab == table) {// yukms note: ？？？
+            } else if (tab == table) {
+                // yukms note: “tab == table”？？？
+
+                // yukms note: ？？？下面的代码也很懵逼
                 int rs = resizeStamp(n);
                 if (sc < 0) {
+                    // yukms note: 如果正在扩容Table的话，则帮助扩容
                     Node<K, V>[] nt;
-                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS ||
-                        (nt = nextTable) == null || transferIndex <= 0) {
+                    if ((sc >>> RESIZE_STAMP_SHIFT) != rs//
+                        || sc == rs + 1 //
+                        || sc == rs + MAX_RESIZERS//
+                        || (nt = nextTable) == null //
+                        || transferIndex <= 0) {
+                        // yukms note: ？？？以上条件完全看不懂
                         break;
                     }
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
                         transfer(tab, nt);
                     }
                 } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)) {
+                    // yukms note: 否则的话，开始新的扩容
                     transfer(tab, null);
                 }
             }
@@ -2240,6 +2259,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * Moves and/or copies the nodes in each bin to new table. See
      * above for explanation.
      */
+    // yukms note: 将每个bin中的节点移动和/或复制到新表中
+    // 在transfer操作，将第一个参数的table中的元素，移动到第二个元素的table中去，
+    // 虽然此时第二个参数设置的是null，但是，在transfer方法中，当第二个参数为null的时候，会创建一个两倍大小的table
     private final void transfer(Node<K, V>[] tab, Node<K, V>[] nextTab) {
         int n = tab.length, stride;
         if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE) {
