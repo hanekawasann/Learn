@@ -714,10 +714,10 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Clone
     }
 
     static class Entry<K, V> implements Map.Entry<K, V> {
+        final int hash;
         final K key;
         V value;
         Entry<K, V> next;
-        final int hash;
 
         /**
          * Creates new entry.

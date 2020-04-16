@@ -42,7 +42,6 @@ import java.lang.reflect.Type;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -51,14 +50,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
@@ -690,6 +686,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * See Hackers Delight, sec 3.2
      */
     private static final int tableSizeFor(int c) {
+        // yukms note: 与JDK8 HashMap一致
         int n = c - 1;
         n |= n >>> 1;
         n |= n >>> 2;
@@ -798,10 +795,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * creation, or 0 for default. After initialization, holds the
      * next element count value upon which to resize the table.
      */
-    // yukms note: 表初始化和调整大小控件。
-    // 如果为负，则正在初始化或调整表的大小：-1用于初始化，否则-（1+活动的调整大小线程数）。
-    // 否则，当table为空时，将保留创建时要使用的初始表大小，默认值为0。
-    // 初始化后，保存下一个元素计数值，根据该值调整表的大小
+    // yukms note: 用来控制表初始化和扩容的，默认值为0
+    // 当在初始化的时候指定了大小，这会将这个大小保存在sizeCtl中，大小为数组的0.75
+    // 当为负的时候，说明表正在初始化或扩张，初始化时值为-1，扩张时值为-(1+n)，n表示活动的扩张线程
     private transient volatile int sizeCtl;
 
     /**
@@ -904,11 +900,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      *                                  nonpositive
      */
     public ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-        // yukms note: concurrencyLevel 估计并发更新线程数
         if (!(loadFactor > 0.0f) || initialCapacity < 0 || concurrencyLevel <= 0) {
             throw new IllegalArgumentException();
         }
-        // yukms note: ?????
         if (initialCapacity < concurrencyLevel) {
             // Use at least as many bins
             initialCapacity = concurrencyLevel;   // as estimated threads
@@ -1018,7 +1012,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
 
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
-        if (key == null || value == null) { throw new NullPointerException(); }
+        if (key == null || value == null) {
+            throw new NullPointerException();
+        }
         int hash = spread(key.hashCode());
         int binCount = 0;
         for (Node<K, V>[] tab = table; ; ) {
@@ -2191,36 +2187,48 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * @param size number of elements (doesn't need to be perfectly accurate)
      */
     private final void tryPresize(int size) {
+        // yukms note: 如果size超过MAXIMUM_CAPACITY的一半，那么容量设置为MAXIMUM_CAPACITY，通过调用tableSizeFor计算
+        // yukms note: 但是这里的“size + (size >>> 1) + 1”不明白为什么，HashMap没有这样子做
         int c = (size >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY : tableSizeFor(size + (size >>> 1) + 1);
         int sc;
         while ((sc = sizeCtl) >= 0) {
             Node<K, V>[] tab = table;
             int n;
-            if (tab == null || (n = tab.length) == 0) {
+            if (tab == null || (n = tab.length) == 0) {// yukms note: 哈希表未初始化
+                // yukms note: 构造函数可能指定了容量，此时容量保存在sizeCtl
                 n = Math.max(sc, c);
-                if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
+                if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) { // yukms note: 初始化tab的时候，把sizeCtl设为-1
                     try {
-                        if (table == tab) {
+                        if (table == tab) {// yukms note: 这里比较一次的意义是什么
+                            // yukms note: 初始化
                             @SuppressWarnings("unchecked")
                             Node<K, V>[] nt = (Node<K, V>[]) new Node<?, ?>[n];
                             table = nt;
+                            /** {@link com.yukms.learn.java.util.concurrent.ConcurrentHashMapTest#test_tryPresize_sz()}*/
+                            // yukms note: n一定是2的幂次方
+                            // yukms note: 为什么这样做？？
                             sc = n - (n >>> 2);
                         }
                     } finally {
+                        // yukms note: 前面会调用CAS，这里为什么就不会了？
+                        // yukms note: 将大小重新复制为
                         sizeCtl = sc;
                     }
                 }
             } else if (c <= sc || n >= MAXIMUM_CAPACITY) {
+                // yukms note: 无需扩容
                 break;
-            } else if (tab == table) {
+            } else if (tab == table) {// yukms note: ？？？
                 int rs = resizeStamp(n);
                 if (sc < 0) {
                     Node<K, V>[] nt;
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS ||
                         (nt = nextTable) == null || transferIndex <= 0) {
-                        break; }
+                        break;
+                    }
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
-                        transfer(tab, nt); }
+                        transfer(tab, nt);
+                    }
                 } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)) {
                     transfer(tab, null);
                 }
