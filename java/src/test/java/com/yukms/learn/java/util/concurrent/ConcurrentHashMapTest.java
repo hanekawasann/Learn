@@ -36,6 +36,7 @@ public class ConcurrentHashMapTest {
     }
 
     private static final int MAXIMUM_CAPACITY = 1 << 30;
+
     private int tableSizeFor(int c) {
         // yukms note: 与JDK8 HashMap一致
         int n = c - 1;
