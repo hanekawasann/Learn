@@ -229,6 +229,13 @@ public interface Lock {
      *                              interrupted while acquiring the lock (and interruption
      *                              of lock acquisition is supported)
      */
+    // yukms note: 首先你得了解为什么Lock要提供tryLock和tryInterruptibly因为它要破坏死锁中的“不可抢占条件”。
+    // synchronized没办法破坏“不可抢占条件”，synchronized申请资源的时候，如果申请不到，线程直接进入阻塞状态，无法释放已经占有的锁。
+    // 但我们希望的是：如果占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源，这样不可抢占条件被破坏掉了。
+    // 所以，Lock提供了三种方法，均可以破坏不可抢占条件。这也是为什么有了synchronized还要搞一个Lock的原因之一。
+    // tryLock(long time, TimeUint unit)： 一段时间内没有获取锁，不是进入阻塞状态，而是返回一个错误；
+    // tryLock：立即返回，获得锁返回true,没获得锁返回false；
+    // tryInterruptibly：在锁上等待，直到获取锁，但是会响应中断，这个方法优先考虑响应中断，而不是响应锁的普通获取或重入获取。
     void lockInterruptibly() throws InterruptedException;
 
     /**

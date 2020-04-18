@@ -47,6 +47,7 @@ package java.util.concurrent.locks;
  * @author Doug Lea
  * @since 1.6
  */
+// yukms note: 可能由线程独占的同步器
 public abstract class AbstractOwnableSynchronizer implements java.io.Serializable {
 
     /** Use serial ID even though all fields transient. */

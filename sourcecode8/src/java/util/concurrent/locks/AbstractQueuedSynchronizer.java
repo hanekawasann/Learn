@@ -377,22 +377,29 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * expert group, for helpful ideas, discussions, and critiques
      * on the design of this class.
      */
+    // yukms note: 每个没有获得锁的线程封装成一个Node（双向链表）
     static final class Node {
         /** Marker to indicate a node is waiting in shared mode */
+        // yukms note: 表示节点正在共享模式下等待的标记
         static final Node SHARED = new Node();
         /** Marker to indicate a node is waiting in exclusive mode */
+        // yukms note: 表示节点正在独占模式下等待的标记
         static final Node EXCLUSIVE = null;
 
         /** waitStatus value to indicate thread has cancelled */
+        // yukms note: 已取消
         static final int CANCELLED = 1;
         /** waitStatus value to indicate successor's thread needs unparking */
+        // yukms note: 当前节点的后继节点包含的线程需要运行
         static final int SIGNAL = -1;
         /** waitStatus value to indicate thread is waiting on condition */
+        // yukms note: 表示当前节点在等待condition
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should
          * unconditionally propagate
          */
+        // yukms note: 表示当前场景下后续的acquireShared能够得以执行
         static final int PROPAGATE = -3;
 
         /**
@@ -429,6 +436,8 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * CONDITION for condition nodes.  It is modified using CAS
          * (or when possible, unconditional volatile writes).
          */
+        // yukms note: 等待状态
+        // 默认值0，表示当前节点在sync队列中，等待着获取锁
         volatile int waitStatus;
 
         /**
