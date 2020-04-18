@@ -47,6 +47,7 @@ package java.util.concurrent.atomic;
  * @author Doug Lea
  * @since 1.5
  */
+// yukms note: 比AtomicStampedReference灵活
 public class AtomicStampedReference<V> {
 
     private static class Pair<T> {

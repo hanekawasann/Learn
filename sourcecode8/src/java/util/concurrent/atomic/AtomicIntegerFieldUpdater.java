@@ -67,6 +67,8 @@ import sun.reflect.Reflection;
  * @author Doug Lea
  * @since 1.5
  */
+// yukms note: 基于反射的实用工具，可以对指定类的指定 volatile int 字段进行原子更新
+// 此类用于原子数据结构，该结构中同一节点的几个字段都独立受原子更新控制
 public abstract class AtomicIntegerFieldUpdater<T> {
     /**
      * Creates and returns an updater for objects with the given field.

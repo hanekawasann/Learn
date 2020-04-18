@@ -141,10 +141,12 @@ public class AtomicMarkableReference<V> {
      * @return {@code true} if successful
      */
     public boolean compareAndSet(V expectedReference, V newReference, boolean expectedMark, boolean newMark) {
+        // yukms note: 有些CopyOnWrite的意思，每次更新都是更新pair的引用
         Pair<V> current = pair;
-        return expectedReference == current.reference && expectedMark == current.mark &&
-            ((newReference == current.reference && newMark == current.mark) ||
-                casPair(current, Pair.of(newReference, newMark)));
+        return expectedReference == current.reference//
+            && expectedMark == current.mark//
+            && ((newReference == current.reference && newMark == current.mark) ||
+            casPair(current, Pair.of(newReference, newMark)));
     }
 
     /**

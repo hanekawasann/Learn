@@ -59,13 +59,16 @@ public class AtomicIntegerArray implements java.io.Serializable {
 
     static {
         int scale = unsafe.arrayIndexScale(int[].class);
-        if ((scale & (scale - 1)) != 0) { throw new Error("data type scale not a power of two"); }
+        if ((scale & (scale - 1)) != 0) {
+            throw new Error("data type scale not a power of two");
+        }
         shift = 31 - Integer.numberOfLeadingZeros(scale);
     }
 
     private long checkedByteOffset(int i) {
-        if (i < 0 || i >= array.length) { throw new IndexOutOfBoundsException("index " + i); }
-
+        if (i < 0 || i >= array.length) {
+            throw new IndexOutOfBoundsException("index " + i);
+        }
         return byteOffset(i);
     }
 

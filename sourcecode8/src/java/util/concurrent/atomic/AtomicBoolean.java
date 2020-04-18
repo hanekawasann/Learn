@@ -57,7 +57,9 @@ public class AtomicBoolean implements java.io.Serializable {
     static {
         try {
             valueOffset = unsafe.objectFieldOffset(AtomicBoolean.class.getDeclaredField("value"));
-        } catch (Exception ex) { throw new Error(ex); }
+        } catch (Exception ex) {
+            throw new Error(ex);
+        }
     }
 
     private volatile int value;
@@ -113,6 +115,10 @@ public class AtomicBoolean implements java.io.Serializable {
      * @param update the new value
      * @return {@code true} if successful
      */
+    // yukms note: weakCompareAndSet操作仅保留了volatile自身变量的特性，
+    // 而除去happens-before规则带来的内存语义（对一个volatile域的写，happens-before于任意后续对这个volatile域的读）
+    // 也就是说，weakCompareAndSet无法保证处理操作目标的volatile变量外的其他变量的执行顺序( 编译器和处理器为了优化程序性能而对指令序列进行重新排序 )，
+    // 同时也无法保证这些变量的可见性
     public boolean weakCompareAndSet(boolean expect, boolean update) {
         int e = expect ? 1 : 0;
         int u = update ? 1 : 0;
