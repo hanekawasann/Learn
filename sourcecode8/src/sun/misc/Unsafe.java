@@ -998,6 +998,8 @@ public final class Unsafe {
      * because <tt>unpark</tt> is, so it would be strange to place it
      * elsewhere.
      */
+    // yukms note: 阻塞一个线程直到调用unpark、线程被中断或者timeout时间到期
+    // timeout为0表示永不过期，当isAbsolute为true时，timeout是相对于新纪元之后的毫秒，否则这个值就是超时前的纳秒数
     public native void park(boolean isAbsolute, long time);
 
     /**
@@ -1010,8 +1012,8 @@ public final class Unsafe {
      *
      * @return the number of samples actually retrieved; or -1
      * if the load average is unobtainable.
-     * @params loadavg an array of double of size nelems
-     * @params nelems the number of samples to be retrieved and
+     * @param loadavg an array of double of size nelems
+     * @param nelems the number of samples to be retrieved and
      * must be 1 to 3.
      */
     public native int getLoadAverage(double[] loadavg, int nelems);

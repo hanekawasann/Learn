@@ -118,6 +118,7 @@ import sun.misc.Unsafe;
  *   }
  * }}</pre>
  */
+// yukms note: 用来创建锁和其他同步类的基本线程阻塞原语
 public class LockSupport {
     private LockSupport() {} // Cannot be instantiated.
 
@@ -138,7 +139,9 @@ public class LockSupport {
      *               this operation has no effect
      */
     public static void unpark(Thread thread) {
-        if (thread != null) { UNSAFE.unpark(thread); }
+        if (thread != null) {
+            UNSAFE.unpark(thread);
+        }
     }
 
     /**
@@ -333,7 +336,9 @@ public class LockSupport {
      * @param nanos the maximum number of nanoseconds to wait
      */
     public static void parkNanos(long nanos) {
-        if (nanos > 0) { UNSAFE.park(false, nanos); }
+        if (nanos > 0) {
+            UNSAFE.park(false, nanos);
+        }
     }
 
     /**
