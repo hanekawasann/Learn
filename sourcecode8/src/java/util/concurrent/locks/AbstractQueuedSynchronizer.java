@@ -1747,23 +1747,27 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * @param node the node
      * @return true if is reacquiring
      */
-    // yukms note: 判断节点是否在同步队列上
+    // yukms note: 判断节点是否在同步队列上（在head上也算）
     final boolean isOnSyncQueue(Node node) {
-        if (node.waitStatus == Node.CONDITION || node.prev == null) {
+        // yukms note: 状态为CONDITION时，一定不再同步队列上
+        if (node.waitStatus == Node.CONDITION
+            // yukms note: node.prev 仅会在节点获取同步状态后，调用setHead方法将自己设为头结点时被置为null，
+            // 所以只要节点在同步队列上，node.prev 一定不会为 null
+            || node.prev == null) {
             return false;
         }
+        // yukms note: 条件队列使用的是nextWaiter指向后继节点的，条件队列上节点的next指针均为null
         if (node.next != null) {
             // If has successor, it must be on queue
             return true;
         }
         /*
-         * node.prev can be non-null, but not yet on queue because
-         * the CAS to place it on queue can fail. So we have to
-         * traverse from tail to make sure it actually made it.  It
-         * will always be near the tail in calls to this method, and
-         * unless the CAS failed (which is unlikely), it will be
-         * there, so we hardly ever traverse much.
+         * node.prev can be non-null, but not yet on queue because the CAS to place it on queue can fail.
+         * So we have to traverse from tail to make sure it actually made it.
+         * It will always be near the tail in calls to this method, and unless the CAS failed (which is unlikely),
+         * it will be there, so we hardly ever traverse much.
          */
+        // yukms note: 在同步队列上，从后向前查找 node 节点
         return findNodeFromTail(node);
     }
 
@@ -1798,6 +1802,8 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
         /*
          * If cannot change waitStatus, the node has been cancelled.
          */
+        // yukms note: 如果将节点的等待状态由CONDITION设为0失败，则表明节点被取消。
+        // 因为transferForSignal中不存在线程竞争的问题，所以下面的CAS失败的唯一原因是节点的等待状态为CANCELLED。
         if (!compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
             return false;
         }
@@ -1808,9 +1814,15 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * attempt to set waitStatus fails, wake up to resync (in which
          * case the waitStatus can be transiently and harmlessly wrong).
          */
+        // yukms note: 调用enq方法将node转移到同步队列中，并返回node的前驱节点p
         Node p = enq(node);
         int ws = p.waitStatus;
+        // yukms note: 如果前驱节点的等待状态 ws > 0，则表明前驱节点处于取消状态，此时应唤醒 node 对应的 线程去获取同步状态。
+        // yukms note: 如果 ws <= 0，这里通过 CAS 将节点 p 的等待设为 SIGNAL。
+        // 这样，节点 p 在释放同步状态后，才会唤醒后继节点 node。如果 CAS 设置失败，则应立即
+        // 唤醒 node 节点对应的线程。以免因 node 没有被唤醒导致同步队列挂掉
         if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL)) {
+            // yukms note: 唤醒node对应的线程去获取同步状态
             LockSupport.unpark(node.thread);
         }
         return true;
@@ -1823,8 +1835,13 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * @param node the node
      * @return true if cancelled before the node was signalled
      */
+    // yukms note: 判断中断发生的时机，分为两种：
+    // yukms note: 1. 中断在节点被转移到同步队列前发生，此时返回true
+    // yukms note: 2. 中断在节点被转移到同步队列期间或之后发生，此时返回false
     final boolean transferAfterCancelledWait(Node node) {
+        // yukms note: compareAndSetWaitStatus能成功说明node的状态为0，此时node还未被转移到同步队列上
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
+            // yukms note: 调用enq将节点转移到同步队列中
             enq(node);
             return true;
         }
@@ -1834,9 +1851,12 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * incomplete transfer is both rare and transient, so just
          * spin.
          */
+        // yukms note: 不在同步队列上
         while (!isOnSyncQueue(node)) {
+            // yukms note: 等待signal/signalAll完成
             Thread.yield();
         }
+        // yukms note: 中断在节点被转移到同步队列期间或之后发生，返回false
         return false;
     }
 
@@ -1989,17 +2009,20 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
             if (t != null && t.waitStatus != Node.CONDITION) {
                 // yukms note: 清理不是CONDITION状态的节点
                 unlinkCancelledWaiters();
-                // yukms note: 再次获取尾节点
+                // yukms note: 重新获取尾节点
                 t = lastWaiter;
             }
-            // yukms note: 构建节点
+            // yukms note: 构建新节点
             Node node = new Node(Thread.currentThread(), Node.CONDITION);
-            // yukms note: 置入末尾
+            // yukms note: 尾节点为null
             if (t == null) {
+                // yukms note: 将新节点设置为头结点
                 firstWaiter = node;
             } else {
+                // yukms note: 该nextWaiter发挥作用的时候了
                 t.nextWaiter = node;
             }
+            // yukms note: 将新节点设置为尾节点（当只有一个节点时，将头结点与尾节点都设置为该节点）
             lastWaiter = node;
             return node;
         }
@@ -2013,10 +2036,15 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          */
         private void doSignal(Node first) {
             do {
+                // yukms note: Condition只有一个元素
                 if ((firstWaiter = first.nextWaiter) == null) {
+                    // yukms note: 因为Condition队列是单向链表，只有一个元素的时候，first和last都是指向同元素
+                    // yukms note: 所以移除这唯一一个元素时，first和last都要清除
                     lastWaiter = null;
                 }
+                // yukms note: 清除nextWaiter
                 first.nextWaiter = null;
+                // yukms note: 尝试将first转移到同步队列中
             } while (!transferForSignal(first) && (first = firstWaiter) != null);
         }
 
@@ -2026,12 +2054,15 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * @param first (non-null) the first node on condition queue
          */
         private void doSignalAll(Node first) {
+
             lastWaiter = firstWaiter = null;
+            // yukms note: 将所有节点都转移到同步队列中
             do {
                 Node next = first.nextWaiter;
                 first.nextWaiter = null;
                 transferForSignal(first);
                 first = next;
+                // yukms note: 直到Condition队列上没有节点
             } while (first != null);
         }
 
@@ -2088,6 +2119,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          */
         public final void signal() {
             if (!isHeldExclusively()) {
+                // yukms note: 获取独占锁调用signal方法是不允许的
                 throw new IllegalMonitorStateException();
             }
             Node first = firstWaiter;
@@ -2105,6 +2137,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          */
         public final void signalAll() {
             if (!isHeldExclusively()) {
+                // yukms note: 获取独占锁调用signal方法是不允许的
                 throw new IllegalMonitorStateException();
             }
             Node first = firstWaiter;
@@ -2146,9 +2179,14 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * interrupted while blocked waiting to re-acquire.
          */
 
+        // yukms note: 两种中断模式
         /** Mode meaning to reinterrupt on exit from wait */
+        // yukms note: 中断在node转移到同步队列“期间”或“之后”发生，此时表明有线程正在调用singal/singalAll 转移节点
+        // 在该种中断模式下，再次设置线程的中断状态。向后传递中断标志，由后续代码去处理中断
         private static final int REINTERRUPT = 1;
         /** Mode meaning to throw InterruptedException on exit from wait */
+        // yukms note: 中断在 node 转移到同步队列“前”发生
+        // 在该种中断模式下，需要当前线程自行将node转移到同步队列中，并在随后抛出InterruptedException异常
         private static final int THROW_IE = -1;
 
         /**
@@ -2156,8 +2194,11 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * before signalled, REINTERRUPT if after signalled, or
          * 0 if not interrupted.
          */
+        // yukms note: 检测线程在等待期间是否发生了中断
         private int checkInterruptWhileWaiting(Node node) {
-            return Thread.interrupted() ? (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) : 0;
+            return Thread.interrupted()//
+                ? (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT)//
+                : 0;
         }
 
         /**
@@ -2166,8 +2207,10 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          */
         private void reportInterruptAfterWait(int interruptMode) throws InterruptedException {
             if (interruptMode == THROW_IE) {
+                // yukms note: 抛出
                 throw new InterruptedException();
             } else if (interruptMode == REINTERRUPT) {
+                // yukms note: 重新设置中断标志，向后传递
                 selfInterrupt();
             }
         }
@@ -2186,7 +2229,12 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * </ol>
          */
         public final void await() throws InterruptedException {
+            // yukms note: 缺少获取独占锁的检测（https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8187408）
+            /** {@link ConditionObject#signal()}和{@link ConditionObject#signalAll()} */
+
+            // yukms note: 线程已中断
             if (Thread.interrupted()) {
+                // yukms note: 告辞！
                 throw new InterruptedException();
             }
             // yukms note: 构建节点并置入Condition队列
@@ -2195,9 +2243,11 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
             int savedState = fullyRelease(node);
             int interruptMode = 0;
             // yukms note: 节点不在同步队列上
+            // yukms question: 为什么会出现不在同步队列上的情况（在使用await时会保证一定获取到了锁，此时一定在同步队列上呀）
             while (!isOnSyncQueue(node)) {
                 // yukms note: 阻塞
                 LockSupport.park(this);
+                // yukms note: 线程在等待期间发生了中断
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0) {
                     break;
                 }
@@ -2210,6 +2260,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                 unlinkCancelledWaiters();
             }
             if (interruptMode != 0) {
+                // yukms note: 处理中断
                 reportInterruptAfterWait(interruptMode);
             }
         }
@@ -2227,6 +2278,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * <li> If interrupted while blocked in step 4, throw InterruptedException.
          * </ol>
          */
+        /** {@link ConditionObject#await()} */
         public final long awaitNanos(long nanosTimeout) throws InterruptedException {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -2274,6 +2326,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * <li> If timed out while blocked in step 4, return false, else true.
          * </ol>
          */
+        /** {@link ConditionObject#await()} */
         public final boolean awaitUntil(Date deadline) throws InterruptedException {
             long abstime = deadline.getTime();
             if (Thread.interrupted()) {
@@ -2319,6 +2372,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * <li> If timed out while blocked in step 4, return false, else true.
          * </ol>
          */
+        /** {@link ConditionObject#await()} */
         public final boolean await(long time, TimeUnit unit) throws InterruptedException {
             long nanosTimeout = unit.toNanos(time);
             if (Thread.interrupted()) {
