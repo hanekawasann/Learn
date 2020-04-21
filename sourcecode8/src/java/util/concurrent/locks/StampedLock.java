@@ -36,10 +36,6 @@
 package java.util.concurrent.locks;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.LockSupport;
 
 /**
  * A capability-based lock with three modes for controlling read/write
@@ -188,6 +184,8 @@ import java.util.concurrent.locks.LockSupport;
  * @author Doug Lea
  * @since 1.8
  */
+// yukms note: 读写锁，如果有线程正在读，写线程需要等待读线程释放锁后才能获取写锁，即读的过程中不允许写，这是一种悲观的读锁
+// yukms note: StampedLock提供了乐观读锁，可取代ReadWriteLock以进一步提升并发性能；StampedLock是不可重入锁
 public class StampedLock implements java.io.Serializable {
     /*
      * Algorithmic notes:
