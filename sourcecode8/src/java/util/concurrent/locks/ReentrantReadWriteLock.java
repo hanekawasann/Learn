@@ -35,8 +35,8 @@
 
 package java.util.concurrent.locks;
 
-import java.util.concurrent.TimeUnit;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An implementation of {@link ReadWriteLock} supporting similar
@@ -255,29 +255,33 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
 
         /*
          * Read vs write count extraction constants and functions.
-         * Lock state is logically divided into two unsigned shorts:
-         * The lower one representing the exclusive (writer) lock hold count,
-         * and the upper the shared (reader) hold count.
+         * Lock state is logically divided into two unsigned shorts: AQS 的状态state是32位（int 类型）的，辦成两份
+         * The lower one representing the exclusive (writer) lock hold count 写锁低16位，表示写锁的重入次数（exclusiveCount）
+         * and the upper the shared (reader) hold count.读锁用高16位， 表示持有读锁的线程数（sharedCount）
          */
-
+        // yukms note: /** 对 32 位的 int 进行分割 (对半 16) */
         static final int SHARED_SHIFT = 16;
-        static final int SHARED_UNIT = (1 << SHARED_SHIFT);
-        static final int MAX_COUNT = (1 << SHARED_SHIFT) - 1;
-        static final int EXCLUSIVE_MASK = (1 << SHARED_SHIFT) - 1;
+        static final int SHARED_UNIT = (1 << SHARED_SHIFT);// yukms note: 000000000 00000001 00000000 00000000
+        // yukms note: 写锁的可重入的最大次数、读锁允许的最大数量
+        static final int MAX_COUNT = (1 << SHARED_SHIFT) - 1;// yukms note: 000000000 00000000 11111111 11111111
+        static final int EXCLUSIVE_MASK = (1 << SHARED_SHIFT) - 1;// yukms note: 000000000 00000000 11111111 11111111
 
         /** Returns the number of shared holds represented in count */
+        // yukms note: 读锁计数，当前持有读锁的线程数
         static int sharedCount(int c) { return c >>> SHARED_SHIFT; }
 
         /** Returns the number of exclusive holds represented in count */
+        // yukms note: 写锁的计数，也就是它的重入次数
         static int exclusiveCount(int c) { return c & EXCLUSIVE_MASK; }
 
         /**
          * A counter for per-thread read hold counts.
          * Maintained as a ThreadLocal; cached in cachedHoldCounter
          */
+        // yukms note: 每个线程特定的read持有计数
         static final class HoldCounter {
             int count = 0;
-            // Use id, not reference, to avoid garbage retention
+            // Use id, not reference, to avoid garbage retention 使用id而不是引用是为了避免保留垃圾
             final long tid = getThreadId(Thread.currentThread());
         }
 
@@ -296,6 +300,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * Initialized only in constructor and readObject.
          * Removed whenever a thread's read hold count drops to 0.
          */
+        // yukms note: 当前线程重入读锁的次数的容器，在读锁重入次数为0时移除
         private transient ThreadLocalHoldCounter readHolds;
 
         /**
@@ -332,7 +337,9 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * <p>This allows tracking of read holds for uncontended read
          * locks to be very cheap.
          */
+        // yukms note: 第一个获取读锁的线程
         private transient Thread firstReader = null;
+        // yukms note: firstReader的重入次数
         private transient int firstReaderHoldCount;
 
         Sync() {
@@ -368,14 +375,22 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          */
 
         protected final boolean tryRelease(int releases) {
-            if (!isHeldExclusively()) { throw new IllegalMonitorStateException(); }
+            if (!isHeldExclusively()) {
+                throw new IllegalMonitorStateException();
+            }
+            // yukms note: 释放一次
             int nextc = getState() - releases;
             boolean free = exclusiveCount(nextc) == 0;
-            if (free) { setExclusiveOwnerThread(null); }
+            if (free) {
+                // yukms note: 清空
+                setExclusiveOwnerThread(null);
+            }
+            // yukms note: 更新同步状态
             setState(nextc);
             return free;
         }
 
+        /** {@link Sync#tryWriteLock()} */
         protected final boolean tryAcquire(int acquires) {
             /*
              * Walkthrough:
@@ -393,13 +408,20 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
             int w = exclusiveCount(c);
             if (c != 0) {
                 // (Note: if c != 0 and w == 0 then shared count != 0)
-                if (w == 0 || current != getExclusiveOwnerThread()) { return false; }
-                if (w + exclusiveCount(acquires) > MAX_COUNT) { throw new Error("Maximum lock count exceeded"); }
+                if (w == 0 || current != getExclusiveOwnerThread()) {
+                    return false;
+                }
+                if (w + exclusiveCount(acquires) > MAX_COUNT) {
+                    throw new Error("Maximum lock count exceeded");
+                }
                 // Reentrant acquire
                 setState(c + acquires);
                 return true;
             }
-            if (writerShouldBlock() || !compareAndSetState(c, c + acquires)) { return false; }
+            // yukms note: 区别仅在writerShouldBlock()
+            if (writerShouldBlock() || !compareAndSetState(c, c + acquires)) {
+                return false;
+            }
             setExclusiveOwnerThread(current);
             return true;
         }
@@ -408,25 +430,35 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
             Thread current = Thread.currentThread();
             if (firstReader == current) {
                 // assert firstReaderHoldCount > 0;
-                if (firstReaderHoldCount == 1) { firstReader = null; } else { firstReaderHoldCount--; }
+                if (firstReaderHoldCount == 1) {
+                    firstReader = null;
+                } else {
+                    firstReaderHoldCount--;
+                }
             } else {
                 HoldCounter rh = cachedHoldCounter;
-                if (rh == null || rh.tid != getThreadId(current)) { rh = readHolds.get(); }
+                if (rh == null || rh.tid != getThreadId(current)) {
+                    rh = readHolds.get();
+                }
                 int count = rh.count;
                 if (count <= 1) {
                     readHolds.remove();
-                    if (count <= 0) { throw unmatchedUnlockException(); }
+                    if (count <= 0) {
+                        throw unmatchedUnlockException();
+                    }
                 }
                 --rh.count;
             }
+            // yukms note: 多个读锁释放
             for (; ; ) {
                 int c = getState();
                 int nextc = c - SHARED_UNIT;
-                if (compareAndSetState(c, nextc))
-                // Releasing the read lock has no effect on readers,
-                // but it may allow waiting writers to proceed if
-                // both read and write locks are now free.
-                { return nextc == 0; }
+                if (compareAndSetState(c, nextc)) {
+                    // Releasing the read lock has no effect on readers,
+                    // but it may allow waiting writers to proceed if
+                    // both read and write locks are now free.
+                    return nextc == 0;
+                }
             }
         }
 
@@ -434,6 +466,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
             return new IllegalMonitorStateException("attempt to unlock read lock, not locked by current thread");
         }
 
+        /** 见{@link Sync#tryReadLock()} */
         protected final int tryAcquireShared(int unused) {
             /*
              * Walkthrough:
@@ -452,9 +485,13 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
              */
             Thread current = Thread.currentThread();
             int c = getState();
-            if (exclusiveCount(c) != 0 && getExclusiveOwnerThread() != current) { return -1; }
+            if (exclusiveCount(c) != 0 && getExclusiveOwnerThread() != current) {
+                return -1;
+            }
             int r = sharedCount(c);
-            if (!readerShouldBlock() && r < MAX_COUNT && compareAndSetState(c, c + SHARED_UNIT)) {
+            if (!readerShouldBlock()//
+                && r < MAX_COUNT//
+                && compareAndSetState(c, c + SHARED_UNIT)) {
                 if (r == 0) {
                     firstReader = current;
                     firstReaderHoldCount = 1;
@@ -464,7 +501,9 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
                     HoldCounter rh = cachedHoldCounter;
                     if (rh == null || rh.tid != getThreadId(current)) {
                         cachedHoldCounter = rh = readHolds.get();
-                    } else if (rh.count == 0) { readHolds.set(rh); }
+                    } else if (rh.count == 0) {
+                        readHolds.set(rh);
+                    }
                     rh.count++;
                 }
                 return 1;
@@ -476,6 +515,8 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * Full version of acquire for reads, that handles CAS misses
          * and reentrant reads not dealt with in tryAcquireShared.
          */
+        // yukms note: fullTryAcquireShared 这个方法其实是 tryAcquireShared 的冗余(redundant)方法,
+        // 主要补足 readerShouldBlock 导致的获取等待 和 CAS 修改 AQS 中 state 值失败进行的修补工作
         final int fullTryAcquireShared(Thread current) {
             /*
              * This code is in part redundant with that in
@@ -532,12 +573,26 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
         final boolean tryWriteLock() {
             Thread current = Thread.currentThread();
             int c = getState();
+            // yukms note: 当前有线程持有锁
             if (c != 0) {
                 int w = exclusiveCount(c);
-                if (w == 0 || current != getExclusiveOwnerThread()) { return false; }
-                if (w == MAX_COUNT) { throw new Error("Maximum lock count exceeded"); }
+                // yukms note: 写锁的重入次数为0（此刻有线程持有读锁）
+                if (w == 0
+                    // yukms note: 当前线程不是持有锁的线程（此刻有线程持有写锁）
+                    || current != getExclusiveOwnerThread()) {
+                    // yukms note: 获取失败
+                    return false;
+                }
+                if (w == MAX_COUNT) {
+                    throw new Error("Maximum lock count exceeded");
+                }
             }
-            if (!compareAndSetState(c, c + 1)) { return false; }
+            // yukms note: 尝试更新同步状态
+            if (!compareAndSetState(c, c + 1)) {
+                // yukms note: 更新失败
+                return false;
+            }
+            // yukms note: 设置当前独占锁线程
             setExclusiveOwnerThread(current);
             return true;
         }
@@ -551,20 +606,42 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
             Thread current = Thread.currentThread();
             for (; ; ) {
                 int c = getState();
-                if (exclusiveCount(c) != 0 && getExclusiveOwnerThread() != current) { return false; }
+                // yukms note: 当前存在写锁
+                if (exclusiveCount(c) != 0
+                    // yukms note: 当前持有写锁（独占锁）的线程不是当前线程（读写锁的可重入）
+                    && getExclusiveOwnerThread() != current) {
+                    // yukms note: 获取失败
+                    return false;
+                }
+                // yukms note: 获取读锁的数量
                 int r = sharedCount(c);
-                if (r == MAX_COUNT) { throw new Error("Maximum lock count exceeded"); }
+                if (r == MAX_COUNT) {
+                    throw new Error("Maximum lock count exceeded");
+                }
+                // yukms note: 尝试更新同步状态
                 if (compareAndSetState(c, c + SHARED_UNIT)) {
+                    // yukms note: 更新同步状态成功，开始更新读锁信息
+
+                    // yukms note: 当前线程是第一个读锁
                     if (r == 0) {
                         firstReader = current;
                         firstReaderHoldCount = 1;
+                        // yukms note: 第一个获取readLock的是当前线程
                     } else if (firstReader == current) {
                         firstReaderHoldCount++;
                     } else {
                         HoldCounter rh = cachedHoldCounter;
-                        if (rh == null || rh.tid != getThreadId(current)) {
+                        // yukms note: 没有缓存
+                        if (rh == null
+                            // yukms note: 缓存的线程不一样
+                            || rh.tid != getThreadId(current)) {
+                            // yukms note: 获取从ThreadLocalHoldCounter计数器
                             cachedHoldCounter = rh = readHolds.get();
-                        } else if (rh.count == 0) { readHolds.set(rh); }
+                        } else if (rh.count == 0) {
+                            // yukms note: 添加到ThreadLocalHoldCounter
+                            readHolds.set(rh);
+                        }
+                        // yukms note: +1
                         rh.count++;
                     }
                     return true;
@@ -656,10 +733,12 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
         private static final long serialVersionUID = -2274990926593161451L;
 
         final boolean writerShouldBlock() {
+            // yukms note: 是否有前继节点
             return hasQueuedPredecessors();
         }
 
         final boolean readerShouldBlock() {
+            // yukms note: 是否有前继节点
             return hasQueuedPredecessors();
         }
     }
@@ -692,6 +771,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * purposes and lies dormant until the read lock has been acquired.
          */
         public void lock() {
+            // yukms note: 获取共享锁
             sync.acquireShared(1);
         }
 
@@ -737,6 +817,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * @throws InterruptedException if the current thread is interrupted
          */
         public void lockInterruptibly() throws InterruptedException {
+            // yukms note: 获取共享锁
             sync.acquireSharedInterruptibly(1);
         }
 
@@ -764,6 +845,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * @return {@code true} if the read lock was acquired
          */
         public boolean tryLock() {
+            // yukms note: 获取读锁
             return sync.tryReadLock();
         }
 
@@ -906,6 +988,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * time the write lock hold count is set to one.
          */
         public void lock() {
+            // yukms note: 获取独占锁
             sync.acquire(1);
         }
 
@@ -961,6 +1044,7 @@ public class ReentrantReadWriteLock implements ReadWriteLock, java.io.Serializab
          * @throws InterruptedException if the current thread is interrupted
          */
         public void lockInterruptibly() throws InterruptedException {
+            // yukms note: 获取独占锁
             sync.acquireInterruptibly(1);
         }
 

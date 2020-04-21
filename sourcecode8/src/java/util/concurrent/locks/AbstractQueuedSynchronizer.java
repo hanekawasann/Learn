@@ -733,6 +733,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                 }
             }
             if (h == head) {
+                // yukms note: 当前节点已经出列
                 // loop if head changed
                 break;
             }
@@ -1361,6 +1362,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      *            can represent anything you like.
      * @return the value returned from {@link #tryRelease}
      */
+    // yukms question: 为什么release不内旋？释放失败了怎么办？
     public final boolean release(int arg) {
         // yukms note: 释放成功
         if (tryRelease(arg)) {
@@ -1388,8 +1390,8 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      *            and can represent anything you like.
      */
     public final void acquireShared(int arg) {
-        // yukms note: 尝试获取失败
         if (tryAcquireShared(arg) < 0) {
+            // yukms note: 尝试获取失败
             doAcquireShared(arg);
         }
     }
@@ -1449,7 +1451,9 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      *            and can represent anything you like.
      * @return the value returned from {@link #tryReleaseShared}
      */
+    // yukms question: 为什么release不内旋？释放失败了怎么办？
     public final boolean releaseShared(int arg) {
+        // yukms note: 释放成功
         if (tryReleaseShared(arg)) {
             doReleaseShared();
             return true;
@@ -1623,6 +1627,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * is at the head of the queue or the queue is empty
      * @since 1.7
      */
+    // yukms note: 是否有排队的前继节点
     public final boolean hasQueuedPredecessors() {
         // The correctness of this depends on head being initialized
         // before tail and on head.next being accurate if the current
@@ -1630,7 +1635,10 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
         Node t = tail; // Read fields in reverse initialization order
         Node h = head;
         Node s;
-        return h != t && ((s = h.next) == null || s.thread != Thread.currentThread());
+        // yukms note: “h == t”时，h和t都为null，此时没有前继节点
+        return h != t
+            // yukms note: 在同步队列中，头结点是已经获取了锁的节点，头结点的后继节点则是即将获取锁的节点
+            && ((s = h.next) == null || s.thread != Thread.currentThread());
     }
 
 

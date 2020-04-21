@@ -61,6 +61,7 @@ public abstract class AbstractOwnableSynchronizer implements java.io.Serializabl
     /**
      * The current owner of exclusive mode synchronization.
      */
+    // yukms note: 独占锁线程
     private transient Thread exclusiveOwnerThread;
 
     /**

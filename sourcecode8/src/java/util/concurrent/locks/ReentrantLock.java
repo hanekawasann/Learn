@@ -35,8 +35,8 @@
 
 package java.util.concurrent.locks;
 
-import java.util.concurrent.TimeUnit;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A reentrant mutual exclusion {@link Lock} with the same basic
@@ -131,14 +131,17 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
+                /** {@link FairSync#tryAcquire(int)} */
+                // yukms note: 缺少“!hasQueuedPredecessors()”
                 if (compareAndSetState(0, acquires)) {
                     setExclusiveOwnerThread(current);
                     return true;
                 }
             } else if (current == getExclusiveOwnerThread()) {
                 int nextc = c + acquires;
-                if (nextc < 0) // overflow
-                { throw new Error("Maximum lock count exceeded"); }
+                if (nextc < 0) {
+                    throw new Error("Maximum lock count exceeded");
+                }
                 setState(nextc);
                 return true;
             }
@@ -146,13 +149,21 @@ public class ReentrantLock implements Lock, java.io.Serializable {
         }
 
         protected final boolean tryRelease(int releases) {
+            // yukms note: 用同步状态量state减去释放量releases，得到本次释放锁后的同步状态量。
             int c = getState() - releases;
-            if (Thread.currentThread() != getExclusiveOwnerThread()) { throw new IllegalMonitorStateException(); }
+            // yukms note: 持有锁检测
+            if (Thread.currentThread() != getExclusiveOwnerThread()) {
+                throw new IllegalMonitorStateException();
+            }
             boolean free = false;
+            // yukms note: 当将 state 为0，锁才能被完全释放
             if (c == 0) {
+                // yukms note: 完全释放成功
                 free = true;
+                // yukms note: 将持锁线程设为 null
                 setExclusiveOwnerThread(null);
             }
+            // yukms note: 设置新的同步状态
             setState(c);
             return free;
         }
@@ -193,6 +204,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
     /**
      * Sync object for non-fair locks
      */
+    // yukms note: 非公平锁
     static final class NonfairSync extends Sync {
         private static final long serialVersionUID = 7316153563782823691L;
 
@@ -201,7 +213,16 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * acquire on failure.
          */
         final void lock() {
-            if (compareAndSetState(0, 1)) { setExclusiveOwnerThread(Thread.currentThread()); } else { acquire(1); }
+            // yukms note: 这里调用直接 CAS 设置 state 变量，如果设置成功，表明加锁成功。
+            // 这里并没有像公平锁那样调用 acquire 方法让线程进入同步队列进行排队，而是直接调用 CAS 抢占锁。
+            // 抢占失败再调用 acquire 方法将线程置于队列尾部排队。
+            if (compareAndSetState(0, 1)) {
+                // yukms note: 抢到了就不进同步队列
+                setExclusiveOwnerThread(Thread.currentThread());
+            } else {
+                // yukms note: 正常流程
+                acquire(1);
+            }
         }
 
         protected final boolean tryAcquire(int acquires) {
@@ -212,6 +233,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
     /**
      * Sync object for fair locks
      */
+    // yukms note: 公平锁
     static final class FairSync extends Sync {
         private static final long serialVersionUID = -3000897897090466540L;
 
@@ -225,15 +247,29 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          */
         protected final boolean tryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
+            // yukms note: 获取同步状态
             int c = getState();
+            // yukms note: 如果同步状态c为0，表示锁暂时没被其他线程获取
             if (c == 0) {
-                if (!hasQueuedPredecessors() && compareAndSetState(0, acquires)) {
+                // yukms note: 没有等待时间更长的其他线程
+                if (!hasQueuedPredecessors()
+                    // yukms note: 尝试设置同步状态
+                    && compareAndSetState(0, acquires)) {
+                    // yukms note: 同步状态设置成功
+
+                    // yukms note: 将当前线程设置为持有锁的线程
                     setExclusiveOwnerThread(current);
                     return true;
                 }
+                // yukms note: 重入
             } else if (current == getExclusiveOwnerThread()) {
+                // yukms note: 计算重入后的同步状态，acquires 一般为1
                 int nextc = c + acquires;
-                if (nextc < 0) { throw new Error("Maximum lock count exceeded"); }
+                // yukms note: 重入次数超过限制（int的最大值）
+                if (nextc < 0) {
+                    throw new Error("Maximum lock count exceeded");
+                }
+                // yukms note: 设置重入后的同步状态
                 setState(nextc);
                 return true;
             }
@@ -681,7 +717,9 @@ public class ReentrantLock implements Lock, java.io.Serializable {
      * @throws NullPointerException         if the condition is null
      */
     public boolean hasWaiters(Condition condition) {
-        if (condition == null) { throw new NullPointerException(); }
+        if (condition == null) {
+            throw new NullPointerException();
+        }
         if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject)) {
             throw new IllegalArgumentException("not owner");
         }
@@ -704,7 +742,9 @@ public class ReentrantLock implements Lock, java.io.Serializable {
      * @throws NullPointerException         if the condition is null
      */
     public int getWaitQueueLength(Condition condition) {
-        if (condition == null) { throw new NullPointerException(); }
+        if (condition == null) {
+            throw new NullPointerException();
+        }
         if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject)) {
             throw new IllegalArgumentException("not owner");
         }
@@ -729,7 +769,9 @@ public class ReentrantLock implements Lock, java.io.Serializable {
      * @throws NullPointerException         if the condition is null
      */
     protected Collection<Thread> getWaitingThreads(Condition condition) {
-        if (condition == null) { throw new NullPointerException(); }
+        if (condition == null) {
+            throw new NullPointerException();
+        }
         if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject)) {
             throw new IllegalArgumentException("not owner");
         }

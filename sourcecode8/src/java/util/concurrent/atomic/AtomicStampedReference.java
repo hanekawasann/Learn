@@ -52,6 +52,7 @@ public class AtomicStampedReference<V> {
 
     private static class Pair<T> {
         final T reference;
+        // yukms note: 版本号
         final int stamp;
 
         private Pair(T reference, int stamp) {
