@@ -663,13 +663,12 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      */
     private void unparkSuccessor(Node node) {
         /*
-         * If status is negative (i.e., possibly needing signal) try
-         * to clear in anticipation of signalling.  It is OK if this
-         * fails or if status is changed by waiting thread.
+         * If status is negative (i.e., possibly needing signal) try to clear in anticipation of signalling.
+         * It is OK if this fails or if status is changed by waiting thread.
          */
         int ws = node.waitStatus;
-        // yukms note: 什么时候会出现这样的状态呢？？？
         if (ws < 0) {
+            // yukms note: 清理状态（该操作一定会成功）
             compareAndSetWaitStatus(node, ws, 0);
         }
 
@@ -769,7 +768,11 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          * anyway.
          */
         // yukms note: 还有可共享资源
-        if (propagate > 0 || h == null || h.waitStatus < 0 || (h = head) == null || h.waitStatus < 0) {
+        if (propagate > 0//
+            || h == null //
+            || h.waitStatus < 0//
+            || (h = head) == null //
+            || h.waitStatus < 0) {
             Node s = node.next;
             if (s == null || s.isShared()) {
                 // yukms note: 传播
@@ -814,11 +817,9 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
 
         // If we are the tail, remove ourselves.
         // yukms note: 如果node是尾节点，尝试更新尾节点为有效的前继节点
-        // yukms question: 为什么只尝试一次
         if (node == tail && compareAndSetTail(node, pred)) {
             // yukms note: 场景1. node是tail
             // yukms note: 更新有效的前继节点的next指向null
-            // yukms question: 为什么只尝试一次
             compareAndSetNext(pred, predNext, null);
         } else {
             // If successor needs signal, try to set pred's next-link so it will get one.
@@ -916,11 +917,11 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * @param arg  the acquire argument
      * @return {@code true} if interrupted while waiting
      */
+    // yukms note: 内部自旋，直到获取到锁或者阻塞
     final boolean acquireQueued(final Node node, int arg) {
         boolean failed = true;
         try {
             boolean interrupted = false;
-            // yukms note: 内部自旋，直到获取到锁
             for (; ; ) {
                 // yukms note: 获取当前节点的前驱节点
                 final Node p = node.predecessor();
@@ -929,7 +930,6 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                     // yukms note: 所以再次尝试获取锁
                     && tryAcquire(arg)) {
                     // yukms note: 获取锁成功
-
                     // yukms note: 将当前节点设置为头结点
                     setHead(node);
                     // yukms note: 清空前继节点的next
@@ -939,7 +939,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                 }
                 // yukms note: 在获取锁失败后，是否应该进入阻塞状态
                 if (shouldParkAfterFailedAcquire(p, node)
-                    // yukms note: 阻塞并且返回中断状态
+                    // yukms note: 阻塞并且返回中断状态（被唤醒之后依然需要继续尝试获取锁）
                     && parkAndCheckInterrupt()) {
                     // yukms note: 中断
                     interrupted = true;
@@ -947,9 +947,8 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
             }
         } finally {
             // yukms note: 发生异常才进入进来
-
-            // yukms note: 获取锁失败
             if (failed) {
+                // yukms note: 获取锁失败
                 cancelAcquire(node);
             }
         }
@@ -1297,7 +1296,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
     public final void acquire(int arg) {
         // yukms note: 尝试获取独占锁
         if (!tryAcquire(arg)
-            // yukms note: 如果获取不到，将当前线程构造成节点Node并加入sync队列
+            // yukms note: 如果获取不到，将当前线程构造成节点Node并加入sync队列，然后自旋，直到获取到锁或阻塞
             && acquireQueued(addWaiter(Node.EXCLUSIVE), arg)) {
             // yukms note: 再次尝试获取，如果没有获取到那么将当前线程从线程调度器上摘下，进入等待状态
             selfInterrupt();
@@ -1867,11 +1866,19 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      * @param node the condition node for this wait
      * @return previous sync state
      */
+    /**
+     * 这个方法用于完全释放同步状态。
+     * 这里解释一下完全释放的原因：为了避免死锁的产生，锁的实现上一般应该支持重入功能。
+     * 对应的场景就是一个线程在不释放锁的情况下可以多次调用同一把锁的lock 方法进行加锁，且不会加锁失败，如失败必然导致导致死锁。
+     * 锁的实现类可通过 AQS 中的整型成员变量 state 记录加锁次数，每次加锁，将 state++。每次 unlock 方法释放锁时，则将 state--，直至 state = 0，线程完全释放锁。
+     * 用这种方式即可实现了锁的重入功能。
+     */
     final int fullyRelease(Node node) {
         boolean failed = true;
         try {
-            // yukms note: 当前同步状态
+            // yukms note: 获取同步状态数值
             int savedState = getState();
+            // yukms note: 调用 release 释放指定数量的同步状态
             if (release(savedState)) {
                 failed = false;
                 return savedState;
@@ -2230,7 +2237,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
          */
         public final void await() throws InterruptedException {
             // yukms note: 缺少获取独占锁的检测（https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8187408）
-            /** {@link ConditionObject#signal()}和{@link ConditionObject#signalAll()} */
+            /** 见{@link ConditionObject#signal()}和{@link ConditionObject#signalAll()} */
 
             // yukms note: 线程已中断
             if (Thread.interrupted()) {
@@ -2242,8 +2249,7 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
             // yukms note: 保存并完全释放同步状态
             int savedState = fullyRelease(node);
             int interruptMode = 0;
-            // yukms note: 节点不在同步队列上
-            // yukms question: 为什么会出现不在同步队列上的情况（在使用await时会保证一定获取到了锁，此时一定在同步队列上呀）
+            // yukms note: 节点不在同步队列上（注意是新构建的节点）
             while (!isOnSyncQueue(node)) {
                 // yukms note: 阻塞
                 LockSupport.park(this);
@@ -2251,7 +2257,13 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0) {
                     break;
                 }
+                // yukms note: 循环结束的条件：
+                // yukms note: 1.其他线程调用 singal/singalAll，node 将会被转移到同步队列上
+                // yukms note: 2.线程在阻塞过程中产生中断
             }
+            // yukms note: 退出循环时，节点在同步队列上了
+
+            // yukms note: 获取锁
             if (acquireQueued(node, savedState) && interruptMode != THROW_IE) {
                 interruptMode = REINTERRUPT;
             }
