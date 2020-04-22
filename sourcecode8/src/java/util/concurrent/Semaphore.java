@@ -175,11 +175,14 @@ public class Semaphore implements java.io.Serializable {
             return getState();
         }
 
+        /** {@link FairSync#tryAcquireShared(int)}的简版 */
         final int nonfairTryAcquireShared(int acquires) {
             for (; ; ) {
                 int available = getState();
                 int remaining = available - acquires;
-                if (remaining < 0 || compareAndSetState(available, remaining)) { return remaining; }
+                if (remaining < 0 || compareAndSetState(available, remaining)) {
+                    return remaining;
+                }
             }
         }
 
@@ -187,9 +190,15 @@ public class Semaphore implements java.io.Serializable {
             for (; ; ) {
                 int current = getState();
                 int next = current + releases;
-                if (next < current) // overflow
-                { throw new Error("Maximum permit count exceeded"); }
-                if (compareAndSetState(current, next)) { return true; }
+                // yukms note: int溢出
+                if (next < current) {
+                    // overflow
+                    throw new Error("Maximum permit count exceeded");
+                }
+                // yukms note: 设置新的信号量
+                if (compareAndSetState(current, next)) {
+                    return true;
+                }
             }
         }
 
@@ -197,16 +206,22 @@ public class Semaphore implements java.io.Serializable {
             for (; ; ) {
                 int current = getState();
                 int next = current - reductions;
-                if (next > current) // underflow
-                { throw new Error("Permit count underflow"); }
-                if (compareAndSetState(current, next)) { return; }
+                if (next > current) {
+                    // underflow
+                    throw new Error("Permit count underflow");
+                }
+                if (compareAndSetState(current, next)) {
+                    return;
+                }
             }
         }
 
         final int drainPermits() {
             for (; ; ) {
                 int current = getState();
-                if (current == 0 || compareAndSetState(current, 0)) { return current; }
+                if (current == 0 || compareAndSetState(current, 0)) {
+                    return current;
+                }
             }
         }
     }
@@ -238,10 +253,20 @@ public class Semaphore implements java.io.Serializable {
 
         protected int tryAcquireShared(int acquires) {
             for (; ; ) {
-                if (hasQueuedPredecessors()) { return -1; }
+                // yukms note: 存在前继节点
+                if (hasQueuedPredecessors()) {
+                    // yukms note: 获取锁失败
+                    return -1;
+                }
                 int available = getState();
+                // yukms note: 剩余信号量
                 int remaining = available - acquires;
-                if (remaining < 0 || compareAndSetState(available, remaining)) { return remaining; }
+                // yukms note: 剩余信号量不足，返回的是负数
+                if (remaining < 0
+                    // yukms note: 设置剩余信号量
+                    || compareAndSetState(available, remaining)) {
+                    return remaining;
+                }
             }
         }
     }
@@ -450,12 +475,14 @@ public class Semaphore implements java.io.Serializable {
      * assigned to other threads trying to acquire permits, as if
      * permits had been made available by a call to {@link #release()}.
      *
-     * @param permits the number of permits to acquire
+     * @param permits the number of permits to acquire 许可证的数量
      * @throws InterruptedException     if the current thread is interrupted
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public void acquire(int permits) throws InterruptedException {
-        if (permits < 0) { throw new IllegalArgumentException(); }
+        if (permits < 0) {
+            throw new IllegalArgumentException();
+        }
         sync.acquireSharedInterruptibly(permits);
     }
 
@@ -482,7 +509,9 @@ public class Semaphore implements java.io.Serializable {
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public void acquireUninterruptibly(int permits) {
-        if (permits < 0) { throw new IllegalArgumentException(); }
+        if (permits < 0) {
+            throw new IllegalArgumentException();
+        }
         sync.acquireShared(permits);
     }
 
@@ -514,7 +543,9 @@ public class Semaphore implements java.io.Serializable {
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public boolean tryAcquire(int permits) {
-        if (permits < 0) { throw new IllegalArgumentException(); }
+        if (permits < 0) {
+            throw new IllegalArgumentException();
+        }
         return sync.nonfairTryAcquireShared(permits) >= 0;
     }
 
@@ -569,7 +600,9 @@ public class Semaphore implements java.io.Serializable {
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException {
-        if (permits < 0) { throw new IllegalArgumentException(); }
+        if (permits < 0) {
+            throw new IllegalArgumentException();
+        }
         return sync.tryAcquireSharedNanos(permits, unit.toNanos(timeout));
     }
 
@@ -596,7 +629,9 @@ public class Semaphore implements java.io.Serializable {
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public void release(int permits) {
-        if (permits < 0) { throw new IllegalArgumentException(); }
+        if (permits < 0) {
+            throw new IllegalArgumentException();
+        }
         sync.releaseShared(permits);
     }
 
