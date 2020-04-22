@@ -149,6 +149,7 @@ public class CyclicBarrier {
      * but no subsequent reset.
      */
     private static class Generation {
+        // yukms note: 用于记录屏障有没有被破坏
         boolean broken = false;
     }
 
@@ -157,18 +158,18 @@ public class CyclicBarrier {
     /** Condition to wait on until tripped */
     private final Condition trip = lock.newCondition();
     /** The number of parties */
-    private final int parties;
+    private final int parties;// yukms note: 线程数
     /* The command to run when tripped */
-    private final Runnable barrierCommand;
+    private final Runnable barrierCommand;// yukms note: 回调对象
     /** The current generation */
-    private Generation generation = new Generation();
+    private Generation generation = new Generation();// yukms note: 屏障
 
     /**
      * Number of parties still waiting. Counts down from parties to 0
      * on each generation.  It is reset to parties on each new
      * generation or when broken.
      */
-    private int count;
+    private int count;// yukms note: 计数器
 
     /**
      * Updates state on barrier trip and wakes up everyone.
@@ -176,9 +177,12 @@ public class CyclicBarrier {
      */
     private void nextGeneration() {
         // signal completion of last generation
+        // yukms note: 唤醒所有处于等待状态中的线程
         trip.signalAll();
         // set up next generation
+        // yukms note: 重置 count
         count = parties;
+        // yukms note: 重新创建 Generation，表明进入循环屏障进入新的一轮运行轮次中
         generation = new Generation();
     }
 
@@ -187,8 +191,11 @@ public class CyclicBarrier {
      * Called only while holding lock.
      */
     private void breakBarrier() {
+        // yukms note: 设置屏障是否被破坏标志
         generation.broken = true;
+        // yukms note: 重置 count
         count = parties;
+        // yukms note: 唤醒所有处于等待状态中的线程
         trip.signalAll();
     }
 
@@ -202,36 +209,69 @@ public class CyclicBarrier {
         try {
             final Generation g = generation;
 
-            if (g.broken) { throw new BrokenBarrierException(); }
+            // yukms note: 屏障被破坏
+            if (g.broken) {
+                throw new BrokenBarrierException();
+            }
 
+            // yukms note: 线程中断
             if (Thread.interrupted()) {
+                // yukms note: 破坏屏障
                 breakBarrier();
                 throw new InterruptedException();
             }
-
+            // yukms note: 线程到达屏障的顺序
             int index = --count;
+            // yukms note: 线程全部到达屏障
             if (index == 0) {  // tripped
                 boolean ranAction = false;
                 try {
+                    // yukms note: 执行回调
                     final Runnable command = barrierCommand;
-                    if (command != null) { command.run(); }
+                    if (command != null) {
+                        command.run();
+                    }
                     ranAction = true;
+                    // yukms note: 重置屏障状态
                     nextGeneration();
                     return 0;
                 } finally {
-                    if (!ranAction) { breakBarrier(); }
+                    // yukms note: 回调执行失败
+                    if (!ranAction) {
+                        // yukms note: 破坏屏障
+                        breakBarrier();
+                    }
                 }
             }
 
+            // yukms note: 并非所有线程都到达屏障
             // loop until tripped, broken, interrupted, or timed out
             for (; ; ) {
                 try {
-                    if (!timed) { trip.await(); } else if (nanos > 0L) { nanos = trip.awaitNanos(nanos); }
+                    // yukms note:  阻塞
+                    if (!timed) {
+                        trip.await();
+                    } else if (nanos > 0L) {
+                        nanos = trip.awaitNanos(nanos);
+                    }
                 } catch (InterruptedException ie) {
+                    // yukms note: 若下面的条件成立，则表明本轮运行还未结束
                     if (g == generation && !g.broken) {
+                        // yukms note: 破坏屏障
                         breakBarrier();
+                        // yukms note: 抛出异常
                         throw ie;
                     } else {
+                        /*
+                         * 若上面的条件不成立，则有两种可能：
+                         * 1. g != generation
+                         *     此种情况下，表明循环屏障的第 g 轮次的运行已经结束，屏障已经
+                         *     进入了新的一轮运行轮次中。当前线程在稍后返回 到达屏障 的顺序即可
+                         *
+                         * 2. g = generation 但 g.broken = true
+                         *     此种情况下，表明已经有线程执行过 breakBarrier 方法了，当前
+                         *     线程则会在稍后抛出 BrokenBarrierException
+                         */
                         // We're about to finish waiting even if we had not
                         // been interrupted, so this interrupt is deemed to
                         // "belong" to subsequent execution.
@@ -239,12 +279,22 @@ public class CyclicBarrier {
                     }
                 }
 
-                if (g.broken) { throw new BrokenBarrierException(); }
+                // yukms note: 屏障被破坏
+                if (g.broken) {
+                    throw new BrokenBarrierException();
+                }
 
-                if (g != generation) { return index; }
+                // yukms note: 屏障进入新的运行轮次
+                if (g != generation) {
+                    // yukms note: 返回线程在上一轮次到达屏障的顺序
+                    return index;
+                }
 
+                // yukms note: 超时
                 if (timed && nanos <= 0L) {
+                    // yukms note: 破坏屏障
                     breakBarrier();
+                    // yukms note: 抛出异常
                     throw new TimeoutException();
                 }
             }
@@ -455,7 +505,9 @@ public class CyclicBarrier {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+            // yukms note: 破坏屏障
             breakBarrier();   // break the current generation
+            // yukms note: 开启新一轮的运行过程
             nextGeneration(); // start a new generation
         } finally {
             lock.unlock();

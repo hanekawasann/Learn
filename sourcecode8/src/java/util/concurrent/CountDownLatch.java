@@ -178,9 +178,13 @@ public class CountDownLatch {
             // Decrement count; signal when transition to zero
             for (; ; ) {
                 int c = getState();
-                if (c == 0) { return false; }
+                if (c == 0) {
+                    return false;
+                }
                 int nextc = c - 1;
-                if (compareAndSetState(c, nextc)) { return nextc == 0; }
+                if (compareAndSetState(c, nextc)) {
+                    return nextc == 0;
+                }
             }
         }
     }
@@ -195,7 +199,9 @@ public class CountDownLatch {
      * @throws IllegalArgumentException if {@code count} is negative
      */
     public CountDownLatch(int count) {
-        if (count < 0) { throw new IllegalArgumentException("count < 0"); }
+        if (count < 0) {
+            throw new IllegalArgumentException("count < 0");
+        }
         this.sync = new Sync(count);
     }
 

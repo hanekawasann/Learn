@@ -1089,7 +1089,9 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
                 }
             }
         } finally {
-            if (failed) { cancelAcquire(node); }
+            if (failed) {
+                cancelAcquire(node);
+            }
         }
     }
 
