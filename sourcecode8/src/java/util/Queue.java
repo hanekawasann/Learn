@@ -141,6 +141,7 @@ package java.util;
  * @see java.util.concurrent.PriorityBlockingQueue
  * @since 1.5
  */
+// yukms note: 队列
 public interface Queue<E> extends Collection<E> {
     /**
      * Inserts the specified element into this queue if it is possible to do so

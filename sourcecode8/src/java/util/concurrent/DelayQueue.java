@@ -68,6 +68,7 @@ import java.util.*;
  * @author Doug Lea
  * @since 1.5
  */
+// yukms note: 延迟阻塞队列
 public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements BlockingQueue<E> {
 
     private final transient ReentrantLock lock = new ReentrantLock();
@@ -137,7 +138,9 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements B
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+            // yukms note: 入列
             q.offer(e);
+            // yukms note: e是第一个元素
             if (q.peek() == e) {
                 leader = null;
                 available.signal();
@@ -204,23 +207,37 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements B
         try {
             for (; ; ) {
                 E first = q.peek();
-                if (first == null) { available.await(); } else {
+                // yukms note: 没有元素
+                if (first == null) {
+                    available.await();
+                } else {
+                    // yukms note: 获取剩余延迟
                     long delay = first.getDelay(NANOSECONDS);
-                    if (delay <= 0) { return q.poll(); }
-                    first = null; // don't retain ref while waiting
-                    if (leader != null) { available.await(); } else {
+                    // yukms note: 达到延迟
+                    if (delay <= 0) {
+                        // yukms note: 弹出
+                        return q.poll();
+                    }
+                    first = null; // don't retain ref while waiting 等待时不要保留引用
+                    if (leader != null) {
+                        available.await();
+                    } else {
                         Thread thisThread = Thread.currentThread();
                         leader = thisThread;
                         try {
                             available.awaitNanos(delay);
                         } finally {
-                            if (leader == thisThread) { leader = null; }
+                            if (leader == thisThread) {
+                                leader = null;
+                            }
                         }
                     }
                 }
             }
         } finally {
-            if (leader == null && q.peek() != null) { available.signal(); }
+            if (leader == null && q.peek() != null) {
+                available.signal();
+            }
             lock.unlock();
         }
     }

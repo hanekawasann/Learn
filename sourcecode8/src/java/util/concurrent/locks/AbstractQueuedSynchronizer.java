@@ -1362,7 +1362,6 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      *            can represent anything you like.
      * @return the value returned from {@link #tryRelease}
      */
-    // yukms question: 为什么release不内旋？释放失败了怎么办？
     public final boolean release(int arg) {
         // yukms note: 释放成功
         if (tryRelease(arg)) {
@@ -1451,7 +1450,6 @@ public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchron
      *            and can represent anything you like.
      * @return the value returned from {@link #tryReleaseShared}
      */
-    // yukms question: 为什么release不内旋？释放失败了怎么办？
     public final boolean releaseShared(int arg) {
         // yukms note: 释放成功
         if (tryReleaseShared(arg)) {

@@ -35,15 +35,15 @@
 
 package java.util.concurrent;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 /**
@@ -151,12 +151,14 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
     private transient Node<E> last;
 
     /** Lock held by take, poll, etc */
+    // yukms note: 生产者锁
     private final ReentrantLock takeLock = new ReentrantLock();
 
     /** Wait queue for waiting takes */
     private final Condition notEmpty = takeLock.newCondition();
 
     /** Lock held by put, offer, etc */
+    // yukms note: 消费者锁
     private final ReentrantLock putLock = new ReentrantLock();
 
     /** Wait queue for waiting puts */
@@ -257,7 +259,9 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
      *                                  than zero
      */
     public LinkedBlockingQueue(int capacity) {
-        if (capacity <= 0) { throw new IllegalArgumentException(); }
+        if (capacity <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.capacity = capacity;
         last = head = new Node<E>(null);
     }
@@ -275,12 +279,16 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
     public LinkedBlockingQueue(Collection<? extends E> c) {
         this(Integer.MAX_VALUE);
         final ReentrantLock putLock = this.putLock;
-        putLock.lock(); // Never contended, but necessary for visibility
+        putLock.lock(); // Never contended, but necessary for visibility 从未竞争过，但对可见性是必要的
         try {
             int n = 0;
             for (E e : c) {
-                if (e == null) { throw new NullPointerException(); }
-                if (n == capacity) { throw new IllegalStateException("Queue full"); }
+                if (e == null) {
+                    throw new NullPointerException();
+                }
+                if (n == capacity) {
+                    throw new IllegalStateException("Queue full");
+                }
                 enqueue(new Node<E>(e));
                 ++n;
             }
@@ -328,13 +336,16 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
      * @throws NullPointerException {@inheritDoc}
      */
     public void put(E e) throws InterruptedException {
-        if (e == null) { throw new NullPointerException(); }
+        if (e == null) {
+            throw new NullPointerException();
+        }
         // Note: convention in all put/take/etc is to preset local var
         // holding count negative to indicate failure unless set.
         int c = -1;
-        Node<E> node = new Node<E>(e);
+        Node<E> node = new Node<>(e);
         final ReentrantLock putLock = this.putLock;
         final AtomicInteger count = this.count;
+        // yukms note: 获取生产者锁
         putLock.lockInterruptibly();
         try {
             /*
@@ -345,16 +356,29 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
              * signalled if it ever changes from capacity. Similarly
              * for all other uses of count in other wait guards.
              */
+            // yukms note: 队列已满
             while (count.get() == capacity) {
+                // yukms note: 阻塞
                 notFull.await();
             }
+            // yukms note: 入列
             enqueue(node);
+            // yukms note: ++
             c = count.getAndIncrement();
-            if (c + 1 < capacity) { notFull.signal(); }
+            // yukms question: 为什么要自己唤醒自己
+            // yukms note: 队列未满
+            if (c + 1 < capacity) {
+                // yukms note: 唤醒一个生产者
+                notFull.signal();
+            }
         } finally {
             putLock.unlock();
         }
-        if (c == 0) { signalNotEmpty(); }
+        // yukms note: 注意“c = count.getAndIncrement()”，所以实际上“c == 1”
+        if (c == 0) {
+            // yukms note: 唤醒一个消费者
+            signalNotEmpty();
+        }
     }
 
     /**
@@ -426,18 +450,33 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
         int c = -1;
         final AtomicInteger count = this.count;
         final ReentrantLock takeLock = this.takeLock;
+        // yukms note: 获取消费锁
         takeLock.lockInterruptibly();
         try {
+            // yukms note: 没有元素
             while (count.get() == 0) {
+                // yukms note: 阻塞
                 notEmpty.await();
             }
+            // yukms note: 出列
             x = dequeue();
+            // yukms note: --
             c = count.getAndDecrement();
-            if (c > 1) { notEmpty.signal(); }
+            // yukms question: 为什么要自己唤醒自己
+            // yukms note: 有元素
+            if (c > 1) {
+                // yukms note: 唤醒一个消费者
+                notEmpty.signal();
+            }
         } finally {
+            // yukms note: 释放消费锁
             takeLock.unlock();
         }
-        if (c == capacity) { signalNotFull(); }
+        // yukms note: 容量未满，注意“c = count.getAndDecrement()”，此时“c == capacity-1”
+        if (c == capacity) {
+            // yukms note: 唤醒一个生产者
+            signalNotFull();
+        }
         return x;
     }
 
@@ -544,10 +583,16 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
      * @return {@code true} if this queue contains the specified element
      */
     public boolean contains(Object o) {
-        if (o == null) { return false; }
+        if (o == null) {
+            return false;
+        }
         fullyLock();
         try {
-            for (Node<E> p = head.next; p != null; p = p.next) { if (o.equals(p.item)) { return true; } }
+            for (Node<E> p = head.next; p != null; p = p.next) {
+                if (o.equals(p.item)) {
+                    return true;
+                }
+            }
             return false;
         } finally {
             fullyUnlock();
@@ -666,7 +711,9 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements Blocking
             }
             head = last;
             // assert head.item == null && head.next == null;
-            if (count.getAndSet(0) == capacity) { notFull.signal(); }
+            if (count.getAndSet(0) == capacity) {
+                notFull.signal();
+            }
         } finally {
             fullyUnlock();
         }

@@ -190,6 +190,7 @@ package java.util;
  * @author Josh Bloch
  * @since 1.6
  */
+// yukms note: “double ended queue”双端队列
 public interface Deque<E> extends Queue<E> {
     /**
      * Inserts the specified element at the front of this deque if it is
