@@ -35,11 +35,15 @@
 
 package java.util.concurrent;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.*;
 
 /**
  * An {@link ExecutorService} that executes each submitted task using
@@ -375,20 +379,29 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * that workerCount is 0 (which sometimes entails a recheck -- see
      * below).
      */
+    // yukms note: 运行状态和工作者数
     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     private static final int COUNT_BITS = Integer.SIZE - 3;
     private static final int CAPACITY = (1 << COUNT_BITS) - 1;
 
     // runState is stored in the high-order bits
+    // yukms note: 运行状态
+    // yukms note: ‭1111 1111 1111 1111 1111 1111 1111 1111 1110 0000 0000 0000 0000 0000 0000 0000    -536870912
     private static final int RUNNING = -1 << COUNT_BITS;
+    // yukms note: ‭0000 0000 0000 0000 0000 0000 0000 0000 ‬‭0000 0000 0000 0000 0000 0000 0000 0000    0
     private static final int SHUTDOWN = 0 << COUNT_BITS;
+    // yukms note: ‭0000 0000 0000 0000 0000 0000 0000 0000‬ ‭0010 0000 0000 0000 0000 0000 0000 0000    536870912
     private static final int STOP = 1 << COUNT_BITS;
+    // yukms note: ‭0000 0000 0000 0000 0000 0000 0000 0000‬ ‭0100 0000 0000 0000 0000 0000 0000 0000‬    1073741824
     private static final int TIDYING = 2 << COUNT_BITS;
+    // yukms note: ‭0000 0000 0000 0000 0000 0000 0000 0000‬ ‭0110 0000 0000 0000 0000 0000 0000 0000    ‬1610612736
     private static final int TERMINATED = 3 << COUNT_BITS;
 
     // Packing and unpacking ctl
+    // yukms note: 获取运行状态
     private static int runStateOf(int c) { return c & ~CAPACITY; }
 
+    // yukms note: 获取工作者数
     private static int workerCountOf(int c) { return c & CAPACITY; }
 
     private static int ctlOf(int rs, int wc) { return rs | wc; }
@@ -444,6 +457,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * return null even if it may later return non-null when delays
      * expire.
      */
+    // yukms note: 缓存队列
     private final BlockingQueue<Runnable> workQueue;
 
     /**
@@ -459,13 +473,15 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * ensuring workers set is stable while separately checking
      * permission to interrupt and actually interrupting.
      */
+    // yukms note: 主锁
     private final ReentrantLock mainLock = new ReentrantLock();
 
     /**
      * Set containing all worker threads in pool. Accessed only when
      * holding mainLock.
      */
-    private final HashSet<Worker> workers = new HashSet<Worker>();
+    // yukms note: 工作者容器
+    private final HashSet<Worker> workers = new HashSet<>();
 
     /**
      * Wait condition to support awaitTermination
@@ -476,12 +492,14 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * Tracks largest attained pool size. Accessed only under
      * mainLock.
      */
+    // yukms note: 已达到的最大池大小
     private int largestPoolSize;
 
     /**
      * Counter for completed tasks. Updated only on termination of
      * worker threads. Accessed only under mainLock.
      */
+    // yukms note: 已完成任务的计数器
     private long completedTaskCount;
 
     /*
@@ -513,6 +531,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     /**
      * Handler called when saturated or shutdown in execute.
      */
+    // yukms note: 拒绝策略
     private volatile RejectedExecutionHandler handler;
 
     /**
@@ -521,6 +540,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * present or if allowCoreThreadTimeOut. Otherwise they wait
      * forever for new work.
      */
+    // yukms note: 保持活跃时间
     private volatile long keepAliveTime;
 
     /**
@@ -528,6 +548,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * If true, core threads use keepAliveTime to time out waiting
      * for work.
      */
+    // yukms note: 是否允许回收核心线程
     private volatile boolean allowCoreThreadTimeOut;
 
     /**
@@ -535,17 +556,20 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * (and not allow to time out etc) unless allowCoreThreadTimeOut
      * is set, in which case the minimum is zero.
      */
+    // yukms note: 核心线程数
     private volatile int corePoolSize;
 
     /**
      * Maximum pool size. Note that the actual maximum is internally
      * bounded by CAPACITY.
      */
+    // yukms note: 最大线程数
     private volatile int maximumPoolSize;
 
     /**
      * The default rejected execution handler
      */
+    // yukms note: 默认拒绝策略
     private static final RejectedExecutionHandler defaultHandler = new AbortPolicy();
 
     /**
@@ -611,7 +635,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             this.thread = getThreadFactory().newThread(this);
         }
 
-        /** Delegates main run loop to outer runWorker */
+        /** Delegates main run loop to outer runWorker 将主运行循环委托给外部runWorker */
         public void run() {
             runWorker(this);
         }
@@ -689,12 +713,24 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * allow access from ScheduledThreadPoolExecutor.
      */
     final void tryTerminate() {
+        // yukms question: 这个方法没看懂
         for (; ; ) {
             int c = ctl.get();
-            if (isRunning(c) || runStateAtLeast(c, TIDYING) || (runStateOf(c) == SHUTDOWN && !workQueue.isEmpty())) {
+            // yukms note: 状态是RUNNING
+            if (isRunning(c)
+                // yukms note: || 状态是TERMINATED
+                || runStateAtLeast(c, TIDYING)
+                // yukms note: || (状态是SHUTDOWN && 缓存队列不为空)
+                || (runStateOf(c) == SHUTDOWN && !workQueue.isEmpty())) {
                 return;
             }
-            if (workerCountOf(c) != 0) { // Eligible to terminate
+            // yukms note: 线程池stop或者shutdown且任务队列为空
+
+            // yukms note: 工作者数量不为0
+            if (workerCountOf(c) != 0) {
+                // yukms question: “有资格终止”是什么意思
+                // Eligible to terminate
+                // yukms note: 只终止一个工作者
                 interruptIdleWorkers(ONLY_ONE);
                 return;
             }
@@ -737,7 +773,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             final ReentrantLock mainLock = this.mainLock;
             mainLock.lock();
             try {
-                for (Worker w : workers) { security.checkAccess(w.thread); }
+                for (Worker w : workers) {
+                    security.checkAccess(w.thread);
+                }
             } finally {
                 mainLock.unlock();
             }
@@ -752,7 +790,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
         try {
-            for (Worker w : workers) { w.interruptIfStarted(); }
+            for (Worker w : workers) {
+                w.interruptIfStarted();
+            }
         } finally {
             mainLock.unlock();
         }
@@ -783,7 +823,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         try {
             for (Worker w : workers) {
                 Thread t = w.thread;
-                if (!t.isInterrupted() && w.tryLock()) {
+                if (!t.isInterrupted()
+                    // yukms note: “w.tryLock()”执行成功说明是空闲工作者
+                    && w.tryLock()) {
                     try {
                         t.interrupt();
                     } catch (SecurityException ignore) {
@@ -791,7 +833,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                         w.unlock();
                     }
                 }
-                if (onlyOne) { break; }
+                if (onlyOne) {
+                    break;
+                }
             }
         } finally {
             mainLock.unlock();
@@ -848,11 +892,15 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      */
     private List<Runnable> drainQueue() {
         BlockingQueue<Runnable> q = workQueue;
-        ArrayList<Runnable> taskList = new ArrayList<Runnable>();
+        ArrayList<Runnable> taskList = new ArrayList<>();
+        // yukms note: 将任务队列排入新列表
         q.drainTo(taskList);
+        // yukms note: 如果队列是DelayQueue或任何其他类型的队列，而poll或drainTo可能无法删除某些元素，则会逐个删除这些元素
         if (!q.isEmpty()) {
             for (Runnable r : q.toArray(new Runnable[0])) {
-                if (q.remove(r)) { taskList.add(r); }
+                if (q.remove(r)) {
+                    taskList.add(r);
+                }
             }
         }
         return taskList;
@@ -891,25 +939,46 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         retry:
         for (; ; ) {
             int c = ctl.get();
+            // yukms note: 运行状态
             int rs = runStateOf(c);
 
             // Check if queue empty only if necessary.
-            if (rs >= SHUTDOWN && !(rs == SHUTDOWN && firstTask == null && !workQueue.isEmpty())) { return false; }
+            // yukms note: 线程池被关闭
+            if (rs >= SHUTDOWN//
+                && !(rs == SHUTDOWN && firstTask == null && !workQueue.isEmpty())) {
+                return false;
+            }
 
             for (; ; ) {
+                // yukms note: 工作线程数
                 int wc = workerCountOf(c);
-                if (wc >= CAPACITY || wc >= (core ? corePoolSize : maximumPoolSize)) { return false; }
-                if (compareAndIncrementWorkerCount(c)) { break retry; }
+                if (wc >= CAPACITY
+                    // yukms note: 检测工作线程数与核心线程数或最大线程数的关系
+                    || wc >= (core ? corePoolSize : maximumPoolSize)) {
+                    return false;
+                }
+                // yukms note: 工作者数++
+                if (compareAndIncrementWorkerCount(c)) {
+                    // yukms note: 成功
+                    break retry;
+                }
                 c = ctl.get();  // Re-read ctl
-                if (runStateOf(c) != rs) { continue retry; }
+                // yukms note: workerCount被更改，CAS失败
+                if (runStateOf(c) != rs) {
+                    // yukms note: 重试
+                    continue retry;
+                }
                 // else CAS failed due to workerCount change; retry inner loop
             }
         }
 
+        // yukms note: 工作者是否已开始
         boolean workerStarted = false;
+        // yukms note: 工作者是否已添加
         boolean workerAdded = false;
         Worker w = null;
         try {
+            // yukms note: 创建工作者
             w = new Worker(firstTask);
             final Thread t = w.thread;
             if (t != null) {
@@ -917,28 +986,38 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                 mainLock.lock();
                 try {
                     // Recheck while holding lock.
-                    // Back out on ThreadFactory failure or if
-                    // shut down before lock acquired.
+                    // Back out on ThreadFactory failure or if shut down before lock acquired.
                     int rs = runStateOf(ctl.get());
 
                     if (rs < SHUTDOWN || (rs == SHUTDOWN && firstTask == null)) {
-                        if (t.isAlive()) // precheck that t is startable
-                        { throw new IllegalThreadStateException(); }
+                        if (t.isAlive()) {
+                            // precheck that t is startable
+                            throw new IllegalThreadStateException();
+                        }
+                        // yukms note: 添加
                         workers.add(w);
                         int s = workers.size();
-                        if (s > largestPoolSize) { largestPoolSize = s; }
+                        if (s > largestPoolSize) {
+                            // yukms note: 更新达到最大的线程数
+                            largestPoolSize = s;
+                        }
                         workerAdded = true;
                     }
                 } finally {
                     mainLock.unlock();
                 }
+                // yukms note: 工作者添加成功
                 if (workerAdded) {
+                    // yukms note: 立即执行
                     t.start();
                     workerStarted = true;
                 }
             }
         } finally {
-            if (!workerStarted) { addWorkerFailed(w); }
+            // yukms note: 线程启动失败
+            if (!workerStarted) {
+                addWorkerFailed(w);
+            }
         }
         return workerStarted;
     }
@@ -954,7 +1033,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
         try {
-            if (w != null) { workers.remove(w); }
+            if (w != null) {
+                // yukms note: 移除报错的线程
+                workers.remove(w);
+            }
+            // yukms note: 工作者数量-1
             decrementWorkerCount();
             tryTerminate();
         } finally {
@@ -976,13 +1059,19 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @param completedAbruptly if the worker died due to user exception
      */
     private void processWorkerExit(Worker w, boolean completedAbruptly) {
-        if (completedAbruptly) // If abrupt, then workerCount wasn't adjusted
-        { decrementWorkerCount(); }
+        // yukms note: 非正常完成
+        if (completedAbruptly) {
+            // If abrupt, then workerCount wasn't adjusted
+            // yukms note: 工作者数--
+            decrementWorkerCount();
+        }
 
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
         try {
+            // yukms note: 更新任务完成数
             completedTaskCount += w.completedTasks;
+            // yukms note: 移除工作者
             workers.remove(w);
         } finally {
             mainLock.unlock();
@@ -991,14 +1080,22 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         tryTerminate();
 
         int c = ctl.get();
+        // yukms note: 线程状态RUNNING或SHUTDOWN
         if (runStateLessThan(c, STOP)) {
+            // yukms note: 正常完成
             if (!completedAbruptly) {
+                // yukms note: 如果允许回收核心线程，则返回核心线程数，否则返回0
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
-                if (min == 0 && !workQueue.isEmpty()) { min = 1; }
+                // yukms note: 不允许回收核心线程 && 工作队列不为空
+                if (min == 0 && !workQueue.isEmpty()) {
+                    min = 1;
+                }
+
                 if (workerCountOf(c) >= min) {
                     return; // replacement not needed
                 }
             }
+            // yukms question: 这里是干什么
             addWorker(null, false);
         }
     }
@@ -1101,31 +1198,39 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         Runnable task = w.firstTask;
         w.firstTask = null;
         w.unlock(); // allow interrupts
+        // yukms note: 是否非正常完成
         boolean completedAbruptly = true;
         try {
-            while (task != null || (task = getTask()) != null) {
+            while (task != null
+                // yukms note: 循环从任务队列中获取新任务
+                || (task = getTask()) != null) {
                 w.lock();
                 // If pool is stopping, ensure thread is interrupted;
                 // if not, ensure thread is not interrupted.  This
                 // requires a recheck in second case to deal with
                 // shutdownNow race while clearing interrupt
-                if ((runStateAtLeast(ctl.get(), STOP) || (Thread.interrupted() && runStateAtLeast(ctl.get(), STOP))) &&
-                    !wt.isInterrupted()) { wt.interrupt(); }
+                // yukms note: 线程状态为STOP、TIDYING、TERMINATED || 线程中断
+                if ((runStateAtLeast(ctl.get(), STOP) || (Thread.interrupted() && runStateAtLeast(ctl.get(), STOP)))//
+                    // yukms note: 线程的状态不是中断
+                    && !wt.isInterrupted()) {
+                    // yukms note: 更新线程中断状态
+                    wt.interrupt();
+                }
                 try {
+                    // yukms note: 前置
                     beforeExecute(wt, task);
                     Throwable thrown = null;
                     try {
+                        // yukms note: 执行任务
                         task.run();
-                    } catch (RuntimeException x) {
-                        thrown = x;
-                        throw x;
-                    } catch (Error x) {
+                    } catch (RuntimeException | Error x) {
                         thrown = x;
                         throw x;
                     } catch (Throwable x) {
                         thrown = x;
                         throw new Error(x);
                     } finally {
+                        // yukms note: 后置
                         afterExecute(task, thrown);
                     }
                 } finally {
@@ -1136,6 +1241,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             }
             completedAbruptly = false;
         } finally {
+            // yukms note: 线程退出后，进行后续处理
             processWorkerExit(w, completedAbruptly);
         }
     }
@@ -1264,7 +1370,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         if (corePoolSize < 0 || maximumPoolSize <= 0 || maximumPoolSize < corePoolSize || keepAliveTime < 0) {
             throw new IllegalArgumentException();
         }
-        if (workQueue == null || threadFactory == null || handler == null) { throw new NullPointerException(); }
+        if (workQueue == null || threadFactory == null || handler == null) {
+            throw new NullPointerException();
+        }
         this.corePoolSize = corePoolSize;
         this.maximumPoolSize = maximumPoolSize;
         this.workQueue = workQueue;
@@ -1288,7 +1396,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @throws NullPointerException       if {@code command} is null
      */
     public void execute(Runnable command) {
-        if (command == null) { throw new NullPointerException(); }
+        if (command == null) {
+            throw new NullPointerException();
+        }
         /*
          * Proceed in 3 steps:
          *
@@ -1310,16 +1420,34 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * and so reject the task.
          */
         int c = ctl.get();
+        // yukms note: 工作线程数 < 核心线程数
         if (workerCountOf(c) < corePoolSize) {
-            if (addWorker(command, true)) { return; }
+            // yukms note: 创建新工作者（并立即执行任务）
+            if (addWorker(command, true)) {
+                // yukms note: 创建成功
+                return;
+            }
             c = ctl.get();
         }
+        // yukms note: 状态是RUNNABLE && 插入缓存队列成功
         if (isRunning(c) && workQueue.offer(command)) {
             int recheck = ctl.get();
-            if (!isRunning(recheck) && remove(command)) { reject(command); } else if (workerCountOf(recheck) == 0) {
+            // yukms note: 状态不是RUNNABLE
+            if (!isRunning(recheck)
+                // yukms note: 移除成功（还未被执行）
+                && remove(command)) {
+                // yukms note: 拒绝
+                reject(command);
+                // yukms note: 没有工作者
+            } else if (workerCountOf(recheck) == 0) {
+                // yukms note: 创建一个
                 addWorker(null, false);
             }
-        } else if (!addWorker(command, false)) { reject(command); }
+            // yukms note: 无法排队，那么创建新工作者
+        } else if (!addWorker(command, false)) {
+            // yukms note: 拒绝
+            reject(command);
+        }
     }
 
     /**
@@ -1338,9 +1466,12 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         mainLock.lock();
         try {
             checkShutdownAccess();
+            // yukms note: 设置运行状态为SHUTDOWN
             advanceRunState(SHUTDOWN);
+            // yukms note: 中断空闲工作者
             interruptIdleWorkers();
-            onShutdown(); // hook for ScheduledThreadPoolExecutor
+            // hook for ScheduledThreadPoolExecutor
+            onShutdown();
         } finally {
             mainLock.unlock();
         }
@@ -1370,7 +1501,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         mainLock.lock();
         try {
             checkShutdownAccess();
+            // yukms note: 设置运行状态为STOP
             advanceRunState(STOP);
+            // yukms note: 中断所有工作者
             interruptWorkers();
             tasks = drainQueue();
         } finally {
@@ -1410,8 +1543,12 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         mainLock.lock();
         try {
             for (; ; ) {
-                if (runStateAtLeast(ctl.get(), TERMINATED)) { return true; }
-                if (nanos <= 0) { return false; }
+                if (runStateAtLeast(ctl.get(), TERMINATED)) {
+                    return true;
+                }
+                if (nanos <= 0) {
+                    return false;
+                }
                 nanos = termination.awaitNanos(nanos);
             }
         } finally {
@@ -1538,7 +1675,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      */
     public int prestartAllCoreThreads() {
         int n = 0;
-        while (addWorker(null, true)) { ++n; }
+        while (addWorker(null, true)) {
+            ++n;
+        }
         return n;
     }
 
@@ -1580,7 +1719,9 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         }
         if (value != allowCoreThreadTimeOut) {
             allowCoreThreadTimeOut = value;
-            if (value) { interruptIdleWorkers(); }
+            if (value) {
+                interruptIdleWorkers();
+            }
         }
     }
 

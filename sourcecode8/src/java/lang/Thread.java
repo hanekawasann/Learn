@@ -28,11 +28,11 @@ package java.lang;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.security.AccessController;
 import java.security.AccessControlContext;
+import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.LockSupport;
@@ -146,7 +146,9 @@ public class Thread implements Runnable {
         registerNatives();
     }
 
+    // yukms note: 名称
     private volatile char[] name;
+    // yukms note: 优先级
     private int priority;
     private Thread threadQ;
     private long eetop;
@@ -155,43 +157,53 @@ public class Thread implements Runnable {
     private boolean single_step;
 
     /* Whether or not the thread is a daemon thread. */
+    // yukms note: 是否为守护线程
     private boolean daemon = false;
 
     /* JVM state */
     private boolean stillborn = false;
 
     /* What will be run. */
+    // yukms note: 线程执行的目标对象
     private Runnable target;
 
     /* The group of this thread */
+    // yukms note: 线程组
     private ThreadGroup group;
 
-    /* The context ClassLoader for this thread */
+    /* The context ClassLoader for this thread 此线程的上下文类加载器*/
     private ClassLoader contextClassLoader;
 
     /* The inherited AccessControlContext of this thread */
     private AccessControlContext inheritedAccessControlContext;
 
-    /* For autonumbering anonymous threads. */
+    /* For autonumbering anonymous threads. 用于自动编号匿名线程*/
     private static int threadInitNumber;
 
     private static synchronized int nextThreadNum() {
         return threadInitNumber++;
     }
 
-    /* ThreadLocal values pertaining to this thread. This map is maintained
-     * by the ThreadLocal class. */ ThreadLocal.ThreadLocalMap threadLocals = null;
+    /*
+     * ThreadLocal values pertaining to this thread. This map is maintained
+     * by the ThreadLocal class. */
+    // yukms note: 存储当前线程的局部变量
+    ThreadLocal.ThreadLocalMap threadLocals = null;
 
     /*
      * InheritableThreadLocal values pertaining to this thread. This map is
      * maintained by the InheritableThreadLocal class.
-     */ ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
+     */
+    // yukms note: 在创建子线程时，子线程会接收所有可继承的线程局部变量的初始值，
+    // 以获得父线程所具有的值为子线程提供从父线程那里继承的值
+    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
 
     /*
      * The requested stack size for this thread, or 0 if the creator did
      * not specify a stack size.  It is up to the VM to do whatever it
      * likes with this number; some VMs will ignore it.
      */
+    // yukms note: 当前线程的指定栈大小，默认值为0，设置似乎意义不大，具体栈分配由jvm决定
     private long stackSize;
 
     /*
@@ -202,6 +214,7 @@ public class Thread implements Runnable {
     /*
      * Thread ID
      */
+    // yukms note: 线程id
     private long tid;
 
     /* For generating thread ID */
@@ -210,7 +223,7 @@ public class Thread implements Runnable {
     /* Java thread status for tools,
      * initialized to indicate thread 'not yet started'
      */
-
+    // yukms note: 线程状态
     private volatile int threadStatus = 0;
 
 
@@ -224,16 +237,21 @@ public class Thread implements Runnable {
      * Set by (private) java.util.concurrent.locks.LockSupport.setBlocker
      * Accessed using java.util.concurrent.locks.LockSupport.getBlocker
      */
+    /** {@link LockSupport#park(Object)} */
     volatile Object parkBlocker;
 
-    /* The object in which this thread is blocked in an interruptible I/O
+    /*
+     * The object in which this thread is blocked in an interruptible I/O
      * operation, if any.  The blocker's interrupt method should be invoked
      * after setting this thread's interrupt status.
      */
+    // yukms note: 阻塞器锁，主要用于处理阻塞情况
     private volatile Interruptible blocker;
+    // yukms note: 阻断锁
     private final Object blockerLock = new Object();
 
-    /* Set the blocker field; invoked via sun.misc.SharedSecrets from java.nio code
+    /*
+     * Set the blocker field; invoked via sun.misc.SharedSecrets from java.nio code
      */
     void blockedOn(Interruptible b) {
         synchronized (blockerLock) {
@@ -351,26 +369,25 @@ public class Thread implements Runnable {
             throw new NullPointerException("name cannot be null");
         }
 
+        // yukms note: 当前线程即是父线程
         Thread parent = currentThread();
+        // yukms note: 获得系统的安全管理器
         SecurityManager security = System.getSecurityManager();
         if (g == null) {
             /* Determine if it's an applet or not */
 
-            /* If there is a security manager, ask the security manager
-               what to do. */
+            /* If there is a security manager, ask the security manager what to do. */
             if (security != null) {
                 g = security.getThreadGroup();
             }
 
-            /* If the security doesn't have a strong opinion of the matter
-               use the parent thread group. */
+            /* If the security doesn't have a strong opinion of the matter use the parent thread group. */
             if (g == null) {
                 g = parent.getThreadGroup();
             }
         }
 
-        /* checkAccess regardless of whether or not threadgroup is
-           explicitly passed in. */
+        /* checkAccess regardless of whether or not threadgroup is explicitly passed in. */
         g.checkAccess();
 
         /*
@@ -382,6 +399,7 @@ public class Thread implements Runnable {
             }
         }
 
+        // yukms note: 线程组未启动线程个数++
         g.addUnstarted();
 
         this.group = g;
@@ -390,11 +408,14 @@ public class Thread implements Runnable {
         this.name = name.toCharArray();
         if (security == null || isCCLOverridden(parent.getClass())) {
             this.contextClassLoader = parent.getContextClassLoader();
-        } else { this.contextClassLoader = parent.contextClassLoader; }
+        } else {
+            this.contextClassLoader = parent.contextClassLoader;
+        }
         this.inheritedAccessControlContext = acc != null ? acc : AccessController.getContext();
         this.target = target;
         setPriority(priority);
         if (parent.inheritableThreadLocals != null) {
+            // yukms note: 为子线程提供从父线程那里继承的值
             this.inheritableThreadLocals = ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
         }
         /* Stash the specified stack size in case the VM cares */
@@ -648,20 +669,27 @@ public class Thread implements Runnable {
          *
          * A zero status value corresponds to state "NEW".
          */
-        if (threadStatus != 0) { throw new IllegalThreadStateException(); }
+        // yukms note: 线程状态校验，线程必须是NEW即新建态才能启动
+        if (threadStatus != 0) {
+            throw new IllegalThreadStateException();
+        }
 
         /* Notify the group that this thread is about to be started
          * so that it can be added to the group's list of threads
          * and the group's unstarted count can be decremented. */
+        // yukms note: 通知线程组当前线程即将执行，同时线程组中未启动线程数-1
         group.add(this);
 
         boolean started = false;
         try {
+            // yukms note: 使线程进入Runnable状态
             start0();
             started = true;
         } finally {
             try {
+                // yukms note: 启动失败
                 if (!started) {
+                    // yukms note: 修改线程组未启动线程数+1
                     group.threadStartFailed(this);
                 }
             } catch (Throwable ignore) {
@@ -852,7 +880,9 @@ public class Thread implements Runnable {
      * @spec JSR-51
      */
     public void interrupt() {
-        if (this != Thread.currentThread()) { checkAccess(); }
+        if (this != Thread.currentThread()) {
+            checkAccess();
+        }
 
         synchronized (blockerLock) {
             Interruptible b = blocker;
