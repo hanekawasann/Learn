@@ -25,7 +25,7 @@
 
 package java.lang;
 
-import java.lang.ref.*;
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -96,6 +96,7 @@ public class ThreadLocal<T> {
      * implicit sequential thread-local IDs into near-optimally spread
      * multiplicative hash values for power-of-two-sized tables.
      */
+    // yukms note: ‭0110 0001 1100 1000 1000 0110 0100 0111‬
     private static final int HASH_INCREMENT = 0x61c88647;
 
     /**
@@ -181,7 +182,11 @@ public class ThreadLocal<T> {
         T value = initialValue();
         Thread t = Thread.currentThread();
         ThreadLocalMap map = getMap(t);
-        if (map != null) { map.set(this, value); } else { createMap(t, value); }
+        if (map != null) {
+            map.set(this, value);
+        } else {
+            createMap(t, value);
+        }
         return value;
     }
 
@@ -197,7 +202,11 @@ public class ThreadLocal<T> {
     public void set(T value) {
         Thread t = Thread.currentThread();
         ThreadLocalMap map = getMap(t);
-        if (map != null) { map.set(this, value); } else { createMap(t, value); }
+        if (map != null) {
+            map.set(this, value);
+        } else {
+            createMap(t, value);
+        }
     }
 
     /**
@@ -213,7 +222,9 @@ public class ThreadLocal<T> {
      */
     public void remove() {
         ThreadLocalMap m = getMap(Thread.currentThread());
-        if (m != null) { m.remove(this); }
+        if (m != null) {
+            m.remove(this);
+        }
     }
 
     /**
@@ -312,22 +323,26 @@ public class ThreadLocal<T> {
         /**
          * The initial capacity -- MUST be a power of two.
          */
+        // yukms note: 初始容量
         private static final int INITIAL_CAPACITY = 16;
 
         /**
          * The table, resized as necessary.
          * table.length MUST always be a power of two.
          */
+        // yukms note: 哈希表
         private Entry[] table;
 
         /**
          * The number of entries in the table.
          */
+        // yukms note: 元素个数
         private int size = 0;
 
         /**
          * The next size value at which to resize.
          */
+        // yukms note: 下次扩容大小
         private int threshold; // Default to 0
 
         /**
@@ -385,7 +400,9 @@ public class ThreadLocal<T> {
                         Object value = key.childValue(e.value);
                         Entry c = new Entry(key, value);
                         int h = key.threadLocalHashCode & (len - 1);
-                        while (table[h] != null) { h = nextIndex(h, len); }
+                        while (table[h] != null) {
+                            h = nextIndex(h, len);
+                        }
                         table[h] = c;
                         size++;
                     }
@@ -406,7 +423,11 @@ public class ThreadLocal<T> {
         private Entry getEntry(ThreadLocal<?> key) {
             int i = key.threadLocalHashCode & (table.length - 1);
             Entry e = table[i];
-            if (e != null && e.get() == key) { return e; } else { return getEntryAfterMiss(key, i, e); }
+            if (e != null && e.get() == key) {
+                return e;
+            } else {
+                return getEntryAfterMiss(key, i, e);
+            }
         }
 
         /**
@@ -424,8 +445,14 @@ public class ThreadLocal<T> {
 
             while (e != null) {
                 ThreadLocal<?> k = e.get();
-                if (k == key) { return e; }
-                if (k == null) { expungeStaleEntry(i); } else { i = nextIndex(i, len); }
+                if (k == key) {
+                    return e;
+                }
+                if (k == null) {
+                    expungeStaleEntry(i);
+                } else {
+                    i = nextIndex(i, len);
+                }
                 e = tab[i];
             }
             return null;
@@ -464,7 +491,9 @@ public class ThreadLocal<T> {
 
             tab[i] = new Entry(key, value);
             int sz = ++size;
-            if (!cleanSomeSlots(i, sz) && sz >= threshold) { rehash(); }
+            if (!cleanSomeSlots(i, sz) && sz >= threshold) {
+                rehash();
+            }
         }
 
         /**
@@ -509,7 +538,9 @@ public class ThreadLocal<T> {
             // up refs in bunches (i.e., whenever the collector runs).
             int slotToExpunge = staleSlot;
             for (int i = prevIndex(staleSlot, len); (e = tab[i]) != null; i = prevIndex(i, len)) {
-                if (e.get() == null) { slotToExpunge = i; }
+                if (e.get() == null) {
+                    slotToExpunge = i;
+                }
             }
 
             // Find either the key or trailing null slot of run, whichever
@@ -529,7 +560,9 @@ public class ThreadLocal<T> {
                     tab[staleSlot] = e;
 
                     // Start expunge at preceding stale entry if it exists
-                    if (slotToExpunge == staleSlot) { slotToExpunge = i; }
+                    if (slotToExpunge == staleSlot) {
+                        slotToExpunge = i;
+                    }
                     cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);
                     return;
                 }
@@ -537,7 +570,9 @@ public class ThreadLocal<T> {
                 // If we didn't find stale entry on backward scan, the
                 // first stale entry seen while scanning for key is the
                 // first still present in the run.
-                if (k == null && slotToExpunge == staleSlot) { slotToExpunge = i; }
+                if (k == null && slotToExpunge == staleSlot) {
+                    slotToExpunge = i;
+                }
             }
 
             // If key not found, put new entry in stale slot
@@ -545,7 +580,9 @@ public class ThreadLocal<T> {
             tab[staleSlot] = new Entry(key, value);
 
             // If there are any other stale entries in run, expunge them
-            if (slotToExpunge != staleSlot) { cleanSomeSlots(expungeStaleEntry(slotToExpunge), len); }
+            if (slotToExpunge != staleSlot) {
+                cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);
+            }
         }
 
         /**
@@ -584,7 +621,9 @@ public class ThreadLocal<T> {
 
                         // Unlike Knuth 6.4 Algorithm R, we must scan until
                         // null because multiple entries could have been stale.
-                        while (tab[h] != null) { h = nextIndex(h, len); }
+                        while (tab[h] != null) {
+                            h = nextIndex(h, len);
+                        }
                         tab[h] = e;
                     }
                 }
@@ -639,7 +678,9 @@ public class ThreadLocal<T> {
             expungeStaleEntries();
 
             // Use lower threshold for doubling to avoid hysteresis
-            if (size >= threshold - threshold / 4) { resize(); }
+            if (size >= threshold - threshold / 4) {
+                resize();
+            }
         }
 
         /**
@@ -660,7 +701,9 @@ public class ThreadLocal<T> {
                         e.value = null; // Help the GC
                     } else {
                         int h = k.threadLocalHashCode & (newLen - 1);
-                        while (newTab[h] != null) { h = nextIndex(h, newLen); }
+                        while (newTab[h] != null) {
+                            h = nextIndex(h, newLen);
+                        }
                         newTab[h] = e;
                         count++;
                     }
@@ -680,7 +723,9 @@ public class ThreadLocal<T> {
             int len = tab.length;
             for (int j = 0; j < len; j++) {
                 Entry e = tab[j];
-                if (e != null && e.get() == null) { expungeStaleEntry(j); }
+                if (e != null && e.get() == null) {
+                    expungeStaleEntry(j);
+                }
             }
         }
     }
