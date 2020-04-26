@@ -1136,13 +1136,17 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
 
             if ((wc > maximumPoolSize || (timed && timedOut)) && (wc > 1 || workQueue.isEmpty())) {
-                if (compareAndDecrementWorkerCount(c)) { return null; }
+                if (compareAndDecrementWorkerCount(c)) {
+                    return null;
+                }
                 continue;
             }
 
             try {
                 Runnable r = timed ? workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) : workQueue.take();
-                if (r != null) { return r; }
+                if (r != null) {
+                    return r;
+                }
                 timedOut = true;
             } catch (InterruptedException retry) {
                 timedOut = false;
